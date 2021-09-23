@@ -4,11 +4,11 @@ import * as locales from 'date-fns/locale';
 export const globalVar = {}
 
 export const formatSeparatorDec = (value: any, decimal?: number) => {
-    if (decimal || decimal === 0) value = Number(value).toFixed(decimal)
-    return parseFloat((value || 0).toString().replace(/,/g, ''))
-      .toLocaleString('en')
-      .replace(/,/gi, ',')
-  }
+  if (decimal || decimal === 0) value = Number(value).toFixed(decimal)
+  return parseFloat((value || 0).toString().replace(/,/g, ''))
+    .toLocaleString('en')
+    .replace(/,/gi, ',')
+}
 
 export const dateFormat = (
   value: any,

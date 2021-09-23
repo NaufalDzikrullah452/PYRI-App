@@ -66,8 +66,8 @@ export const CRUD = (props: ICRUD) => {
         formData:
           !parent && location.hash.length > 1
             ? {
-                __crudLoad: location.hash.substr(1),
-              }
+              __crudLoad: location.hash.substr(1),
+            }
             : {},
       },
       tree: {
@@ -83,7 +83,7 @@ export const CRUD = (props: ICRUD) => {
   const current = meta.current
 
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       meta.init = true
       meta.content = props.content
       initializeState(meta.state, parent as any)
@@ -100,7 +100,7 @@ export const CRUD = (props: ICRUD) => {
       }
 
       meta.state.crud.title = title
-      ;(window as any).r = render
+        ; (window as any).r = render
       render()
     })()
     return () => {

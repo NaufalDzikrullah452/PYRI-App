@@ -4,6 +4,10 @@
     "esbuild": "0.12.20",
     "fs-extra": "^10.0.0",
     "lodash.get": "^4.4.2",
+    "mobx": "^6.3.2",
+    "mobx-react-lite": "^3.2.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "twind": "^0.16.16"
   },
   "license": "MIT",

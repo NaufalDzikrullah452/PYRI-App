@@ -8,7 +8,6 @@ export const prepareDBClient = (dbname: string) => {
       get(_, name) {
         const post = async (params: any) => {
           const url = '/__data'
-
           const options = {
             method: 'POST',
             headers: {
@@ -103,8 +102,7 @@ export const prepareDBClient = (dbname: string) => {
 
                 if (result && result.status === 'failed' && result.reason) {
                   console.error(
-                    `db.${name.toString()}.${sname.toString()}() error: ${
-                      result.reason
+                    `db.${name.toString()}.${sname.toString()}() error: ${result.reason
                     }`
                   )
                   return result

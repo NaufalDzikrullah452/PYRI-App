@@ -8,9 +8,9 @@ import { ParentThread } from '../../../builder/src/thread'
 import { runYarn } from '../../../main/src/utils/yarn'
 import { CustomGlobal } from '../server'
 declare const global: CustomGlobal
-;(BigInt.prototype as any).toJSON = function () {
-  return Number(this)
-}
+  ; (BigInt.prototype as any).toJSON = function () {
+    return Number(this)
+  }
 
 export const dataRouter = async (
   req: FastifyRequest,
@@ -54,10 +54,7 @@ export const dataRouter = async (
     }
     if (req.url === '/__data/query') {
       try {
-        const dbx = appDb
-        let result = null
-        eval(`result = dbx.$queryRaw\`${req.body}\``)
-        return reply.compress(await result)
+        return reply.compress(await appDb.$queryRaw(req.body as any))
       } catch (e) {
         console.error(
           `Failed when executing sql: ${JSON.stringify(req.body)}\n\n`,
@@ -96,13 +93,12 @@ export const dataRouter = async (
     ) {
       reply.send({
         status: 'failed',
-        reason: `Table ${
-          body.table
-        } not found. Available tables are: ${Object.keys(appDb)
-          .filter((e) => {
-            !e.startsWith('_')
-          })
-          .join(', ')}`,
+        reason: `Table ${body.table
+          } not found. Available tables are: ${Object.keys(appDb)
+            .filter((e) => {
+              !e.startsWith('_')
+            })
+            .join(', ')}`,
       })
       return
     }
@@ -119,18 +115,18 @@ export const dataRouter = async (
               return `\
 ${e.name}: {
 ${e.fields
-  .map((f) => {
-    if (f.kind === 'object') {
-      if (f.isList) {
-        return `   ${f.name}: Array<DBDefinitions['${f.type}']>`
-      } else {
-        return `   ${f.name}: DBDefinitions['${f.type}']`
-      }
-    }
+                  .map((f) => {
+                    if (f.kind === 'object') {
+                      if (f.isList) {
+                        return `   ${f.name}: Array<DBDefinitions['${f.type}']>`
+                      } else {
+                        return `   ${f.name}: DBDefinitions['${f.type}']`
+                      }
+                    }
 
-    return `   ${f.name}: ${convertDBType(f.type)}`
-  })
-  .join('\n')}
+                    return `   ${f.name}: ${convertDBType(f.type)}`
+                  })
+                  .join('\n')}
 }`
             })
             .join('\n')
@@ -203,7 +199,7 @@ type DBTables = ${tables.join(' | ')}
                       const rel = foreign.fields.find(
                         (f) => f.relationName === e.relationName
                       )
-                      relations[e.name] = {
+                      relations[e.type] = {
                         relation: 'Model.BelongsToOneRelation',
                         modelClass: e.type,
                         join: {
@@ -273,7 +269,7 @@ type DBTables = ${tables.join(' | ')}
             }
           }
 
-          let func = async (params: any) => {}
+          let func = async (params: any) => { }
           eval(`func = db.${body.table}.findMany`)
           const result: any = await func(params)
 
@@ -305,8 +301,7 @@ type DBTables = ${tables.join(' | ')}
       if (body.action && body.table) {
         log(
           'platform',
-          `Failed to ${body.action} on table "${
-            body.table
+          `Failed to ${body.action} on table "${body.table
           }" on data-router: ${e.toString()}`
         )
       }

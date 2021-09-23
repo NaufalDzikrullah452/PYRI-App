@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {},
-  "dependencies": {
-    "crypto-js": "^4.1.1"
-  },
+  "dependencies": {},
   "types": "./src/index.ts",
   "main": "./build/index.js"
 }

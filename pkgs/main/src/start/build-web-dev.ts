@@ -74,42 +74,42 @@ export const buildWebDev = async (
         watch:
           mode === 'dev'
             ? {
-                async onRebuild(error, result) {
-                  if (!error && result) {
-                    ;(async () => {
-                      await waitUntil(() => global.platform.ready)
-                      global.platform.metafile = result.metafile
+              async onRebuild(error, result) {
+                if (!error && result) {
+                  ; (async () => {
+                    await waitUntil(() => global.platform.ready)
+                    global.platform.metafile = result.metafile
 
-                      const changedFile = changed.src
-                        .substr(dirs.root.length)
-                        .replace(/\\/gi, '/')
+                    const changedFile = changed.src
+                      .substr(dirs.root.length)
+                      .replace(/\\/gi, '/')
 
-                      if (changedFile) {
-                        await pool.send('platform', {
-                          action: 'hmr',
-                          metafile: result.metafile,
-                          type: changed.type,
-                          path: changed.src
-                            .substr(dirs.root.length)
-                            .replace(/\\/gi, '/'),
-                        })
-                        log(
-                          'refresh',
-                          `${changedFile} - ${timeSince(changed.tstamp)}`
+                    if (changedFile) {
+                      await pool.send('platform', {
+                        action: 'hmr',
+                        metafile: result.metafile,
+                        type: changed.type,
+                        path: changed.src
+                          .substr(dirs.root.length)
+                          .replace(/\\/gi, '/'),
+                      })
+                      log(
+                        'refresh',
+                        `${changedFile} - ${timeSince(changed.tstamp)}`
+                      )
+                    } else {
+                      log('refresh', 'Web rebuilt.')
+                      try {
+                        fetch(
+                          `http://localhost:${global.port}/__cms/0/reload-all`
                         )
-                      } else {
-                        log('refresh', 'Web rebuilt.')
-                        try {
-                          fetch(
-                            `http://localhost:${global.port}/__cms/0/reload-all`
-                          )
-                        } catch (e) {}
-                      }
-                      changed.src = ''
-                    })()
-                  }
-                },
-              }
+                      } catch (e) { }
+                    }
+                    changed.src = ''
+                  })()
+                }
+              },
+            }
             : undefined,
       },
       plugins: [cssLoader(mode)],

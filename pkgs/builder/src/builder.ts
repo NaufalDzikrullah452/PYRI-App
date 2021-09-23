@@ -136,7 +136,7 @@ export class Builder {
   constructor(args: IBuilderArgs) {
     this._args = args
     for (let i in args) {
-      ;(this as any)[i] = (args as any)[i]
+      ; (this as any)[i] = (args as any)[i]
     }
   }
 }
