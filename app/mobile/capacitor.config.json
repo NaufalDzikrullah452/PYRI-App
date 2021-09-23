@@ -1,0 +1,11 @@
+{
+  "appId": "com.andromedia.base",
+  "appName": "Andro Base",
+  "bundledWebRuntime": true,
+  "webDir": "www",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  }
+}
