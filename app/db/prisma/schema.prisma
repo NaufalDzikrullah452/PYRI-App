@@ -5,46 +5,34 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://magang:magang123$%^@db.plansys.co:5432/magang1?schema=public"
+  url      = "postgresql://magang:magang123$%^@db.plansys.co:5432/magang4?schema=public"
 }
 
-model Authors {
-  author_id   Int    @id @default(autoincrement())
-  author_name String @db.VarChar(50)
+model albums {
+  AlbumId  Int     @id @default(autoincrement())
+  Title    String
+  ArtistId Int
+  artists  artists @relation(fields: [ArtistId], references: [ArtistId])
+  songs    songs[]
 }
 
-model Category {
-  category_id       Int    @id @default(autoincrement())
-  category_name     String @db.VarChar
-  category_pictures String @db.VarChar(100)
+model artists {
+  ArtistId   Int        @id @default(autoincrement())
+  Name       String
+  CoutriesId Int?
+  countries  countries? @relation(fields: [CoutriesId], references: [id])
+  albums     albums[]
 }
 
-model Tags {
-  tag_id   Int    @id @default(autoincrement())
-  tag_name String @db.VarChar(50)
+model countries {
+  id      Int       @id @default(autoincrement())
+  name    String    @db.VarChar(45)
+  artists artists[]
 }
 
-model Users {
-  user_id                Int              @id @default(autoincrement())
-  user_name              String?          @db.VarChar(50)
-  user_email             String           @db.VarChar(50)
-  user_password          String           @db.VarChar(50)
-  user_birthday          DateTime?        @db.Date
-  user_forgot_token      String           @db.VarChar
-  user_membership_status user_membership? @default(NonActive)
-  user_level             Boolean
-  user_date_created      DateTime         @db.Timestamptz(6)
-  user_note              String?
-  user_gender            user_gender?     @default(unknown)
-}
-
-enum user_gender {
-  unknown
-  male
-  female
-}
-
-enum user_membership {
-  Active
-  NonActive
+model songs {
+  id       Int    @id @default(autoincrement())
+  song     String @db.VarChar(45)
+  albumsId Int
+  albums   albums @relation(fields: [albumsId], references: [AlbumId])
 }
