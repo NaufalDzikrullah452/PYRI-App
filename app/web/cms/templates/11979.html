@@ -1,16 +1,19 @@
 <>
   <effect meta={{}} run={async () => {}} />
-  <div class="flex flex-col items-start justify-start bg-white">
+  <div class="flex self-stretch flex-col items-start justify-start bg-white">
     <div
       class="flex flex-1 self-stretch flex-col items-center justify-end"
       style="width: 411px; min-width: 411px; max-width: 411px; height: 823px; min-height: 823px; max-height: 823px;background-image: url('/fimgs/bg-ff2b4084986bd7da53995b9a752b9e5665e21788');background-size:100% 100%;background-repeat:no-repeat;"
     >
-      <div class="flex flex-1 self-stretch flex-col space-y-12 items-center justify-center px-9 pt-6 pb-16 bg-black bg-opacity-50">
+      <div
+        class={`flex flex-1 self-stretch flex-col space-y-12 items-center justify-center px-9 pt-6 pb-16 bg-black bg-opacity-50`}
+        style={`backdrop-filter: blur(20px);`}
+      >
         <div class="flex self-stretch flex-col space-y-4 items-center justify-center">
-          <div class="text-3xl font-bold leading-10 text-center text-white">
+          <div class="text-3xl leading-10 text-center text-white">
             Create new password!
           </div>
-          <div class="text-lg font-medium leading-relaxed text-center text-white">
+          <div class="text-lg font-bold leading-relaxed text-center text-white">
             Your new password must be <br />
             different from previously used
             <br />
@@ -24,7 +27,7 @@
               style="width: 339px; min-width: 339px; max-width: 339px; height: 60px; min-height: 60px; max-height: 60px;"
             >
               <div class="flex self-stretch items-start justify-start">
-                <div class="text-xs leading-none text-gray-500">
+                <div class="text-xs font-bold leading-none text-gray-500">
                   New Password
                 </div>
               </div>
@@ -46,7 +49,7 @@
               style="width: 339px; min-width: 339px; max-width: 339px; height: 60px; min-height: 60px; max-height: 60px;"
             >
               <div class="flex flex-1 self-stretch space-x-2.5 items-center justify-start">
-                <div class="text-base leading-normal text-white">
+                <div class="text-base font-bold leading-normal text-white">
                   Confirm new password
                 </div>
                 undefined
@@ -59,7 +62,7 @@
           >
             <div class="flex flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-amber-500 rounded">
               <div class="flex self-stretch items-center justify-center p-2.5">
-                <div class="text-xl font-bold leading-loose text-center text-white">
+                <div class="text-xl leading-loose text-center text-white">
                   Create
                 </div>
               </div>
