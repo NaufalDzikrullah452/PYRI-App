@@ -10,5 +10,9 @@
       "command": "open",
       "name": "Open Figma Base"
     }
+  ],
+  "editorType": [
+    "figma",
+    "figjam"
   ]
 }
