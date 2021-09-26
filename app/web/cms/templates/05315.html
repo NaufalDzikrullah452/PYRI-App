@@ -1,5 +1,10 @@
 <>
-  <effect meta={{}} run={async () => {}} />
+  <effect
+    meta={{
+      loginURL: "/m/login",
+    }}
+    run={async () => {}}
+  />
   <div class="flex flex-col items-start justify-start bg-white">
     <div
       class="flex flex-1 self-stretch flex-col items-center justify-center"
@@ -121,9 +126,12 @@
                 <div class="text-base font-medium leading-normal text-white">
                   Already have an account?
                 </div>
-                <div class="text-base font-bold leading-normal text-amber-500">
+                <a
+                  href={meta.loginURL}
+                  class={`text-base font-bold leading-normal text-amber-500`}
+                >
                   Login
-                </div>
+                </a>
               </div>
             </div>
           </div>
