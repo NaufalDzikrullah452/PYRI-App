@@ -28,4 +28,17 @@ export default {
     { c: "", s: "", h: "" },
   ],
   test: () => [import("./components/test"), { c: "", s: "", h: "" }],
+  "loginbtn-splash": () => [
+    import("./components/loginbtn-splash"),
+    { c: "", s: "", h: "" },
+  ],
+  "mini-btn": () => [import("./components/mini-btn"), { c: "", s: "", h: "" }],
+  "btn-primary": () => [
+    import("./components/btn-primary"),
+    { c: "", s: "", h: "" },
+  ],
+  "button-test": () => [
+    import("./components/button-test"),
+    { c: "", s: "", h: "" },
+  ],
 };
