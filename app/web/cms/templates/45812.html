@@ -10,7 +10,7 @@
     }}
   />
   <div
-    class={`flex flex-col items-start justify-start bg-white`}
+    class={`flex self-stretch flex-col items-start justify-start bg-white`}
     style={`width: 411px; min-width: 411px; max-width: 411px; height: 823px; min-height: 823px; max-height: 823px;`}
   >
     <div
@@ -41,7 +41,10 @@
           >
             <div class="flex self-stretch space-x-2 items-center justify-center">
               <div class="flex items-start justify-start">
-                <div class="text-4xl font-bold leading-10 text-center text-amber-500">
+                <div
+                  class={`text-4xl font-bold leading-10 text-center text-amber-500`}
+                  style={`color: #FF8F00`}
+                >
                   Read
                 </div>
               </div>
@@ -51,7 +54,7 @@
                 </div>
               </div>
             </div>
-            <div class="text-xl leading-loose text-center text-white">
+            <div class={`text-xl leading-loose text-center text-white`}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit.{" "}
             </div>
           </div>
@@ -64,39 +67,26 @@
             class="flex self-stretch flex-col items-center justify-start"
             style="width: 113px; min-width: 113px; max-width: 113px; height: 221px; min-height: 221px; max-height: 221px;"
           >
-            <button
-              class="flex flex-col items-start justify-start"
-              style="width: 113px; min-width: 113px; max-width: 113px; height: 60px; min-height: 60px; max-height: 60px;"
+            <mini-btn
+              class={`flex flex-col items-center justify-center border rounded border-white`}
+              style={`width: 113px; min-width: 113px; max-width: 113px; height: 60px; min-height: 60px; max-height: 60px;`}
             >
-              <div class="flex flex-col items-center justify-center border rounded border-white">
-                <button
-                  class="flex flex-1 self-stretch flex-col items-center justify-center px-4 py-2 rounded"
-                  style="width: 113px; min-width: 113px; max-width: 113px; height: 60px; min-height: 60px; max-height: 60px;"
-                >
-                  <div class="text-xl font-bold leading-loose text-white">
-                    Skip
-                  </div>
-                </button>
-              </div>
-            </button>
+              BUTTON
+            </mini-btn>
           </div>
           <div
             class="flex self-stretch flex-col items-center justify-start"
             style="width: 210px; min-width: 210px; max-width: 210px; height: 221px; min-height: 221px; max-height: 221px;"
           >
-            <button
-              class={`flex flex-col items-center justify-center`}
-              onClick={meta.action.toLogin}
-            >
-              <div
-                class="flex items-center justify-center px-4 py-2 bg-amber-500 rounded"
-                style="width: 210px; min-width: 210px; max-width: 210px; height: 60px; min-height: 60px; max-height: 60px;"
-              >
-                <div class="text-xl font-bold leading-loose text-center text-white">
-                  Login
-                </div>
-              </div>
-            </button>
+            <div class={`flex flex-col items-start justify-start`}>
+              <loginbtn-splash
+                onClick={() => {
+                  navigate("/m/login");
+                }}
+                class={`flex items-center justify-center px-4 py-2 bg-amber-500 rounded rounded-md`}
+                style="width: 210px; min-width: 210px; max-width: 210px; height: 60px; min-height: 60px; max-height: 60px; background-color: #FF8F00"
+              />
+            </div>
           </div>
         </div>
       </div>

@@ -1,0 +1,84 @@
+<div class={`flex self-stretch flex-col items-start justify-start bg-white`}>
+  <div
+    class={`flex flex-1 self-stretch flex-col items-start justify-start bg-coolGray-100 overflow-hidden`}
+  >
+    <m-topbar-notitle backLink={true} />
+    <div
+      class={`flex flex-1 self-stretch flex-col items-center justify-start p-4`}
+    >
+      <div
+        class={`flex flex-1 self-stretch flex-col space-y-5 items-center justify-start p-8`}
+      >
+        <div class={`text-2xl font-bold leading-9 text-center text-blue-500`}>
+          OTP Verifikasi
+        </div>
+        <div class={`text-base leading-normal text-center text-coolGray-800`}>
+          Kami mengirimkan 6 digit kode ke <br />
+          nomer{" "}
+          <b>
+            {meta.kode_negara}
+            {meta.nomor_telepon}
+          </b>{" "}
+          . Masukkan kode dikolom bawah
+        </div>
+        {!!meta.timer && (
+          <div class={`flex space-x-1 items-center justify-center`}>
+            <div class={`text-sm leading-tight text-center`}>
+              Waktu Menunggu :
+            </div>
+            <div
+              class={`text-sm font-bold leading-tight text-center text-blue-900`}
+            >
+              {meta.timer || "00:00"}
+            </div>
+          </div>
+        )}
+        <div
+          class={`flex flex-col items-start justify-center px-2.5 bg-gray-200 rounded`}
+          style={`width: 190px; min-width: 190px; max-width: 190px; height: 40px; min-height: 40px; max-height: 40px;`}
+        >
+          <m-input
+            type="text"
+            value={meta.otp}
+            onChange={(e) => meta.onChange("otp", e)}
+            class={`flex self-stretch flex-col items-center justify-center`}
+            style={`> input {
+    font-weight: 700;
+    text-align: center;
+    font-size: 1.5rem;
+line-height: 2rem;
+  }`}
+          />
+        </div>
+        <m-button
+          large={true}
+          type="button"
+          onClick={meta.reqOTP}
+          disabled={!!meta.timer}
+          class={`flex space-x-1 items-center justify-center p-2.5`}
+        >
+          <img
+            src="/fimgs/888_119159.x1.svg"
+            style="width: 14px; min-width: 14px; max-width: 14px; height: 12px; min-height: 12px; max-height: 12px;"
+          />
+          <div class={`text-sm leading-tight text-center text-red-500`}>
+            Tidak menerima kode
+          </div>
+        </m-button>
+      </div>
+      <div class="flex self-stretch flex-col items-start justify-start">
+        <m-button
+          fill={true}
+          round={true}
+          raised={true}
+          large={true}
+          type="button"
+          onClick={meta.validateOTP}
+          disabled={meta.otp.length !== 6}
+        >
+          <div class={`text-sm leading-tight text-white`}>Verifikasi</div>
+        </m-button>
+      </div>
+    </div>
+  </div>
+</div>

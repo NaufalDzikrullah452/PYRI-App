@@ -1,41 +1,45 @@
-<div class="flex self-stretch flex-col items-start justify-start bg-white">
-  <div
-    class="flex flex-1 self-stretch flex-col items-center justify-center"
-    style="width: 411px; min-width: 411px; max-width: 411px; height: 823px; min-height: 823px; max-height: 823px;background-image: url('/fimgs/bg-e7b6df6c58bc28f2de4151141a2d2fc9fc5e4526');background-size:100% 100%;background-repeat:no-repeat;"
-  >
+<>
+  <effect meta={{}} run={async () => {}} />
+  <div class="flex self-stretch flex-col items-start justify-start bg-white">
     <div
-      class={`flex flex-1 self-stretch flex-col space-y-12 items-center justify-center px-9 pt-6 pb-16 bg-black bg-opacity-50`}
-      style={`backdrop-filter: blur(20px);`}
+      class="flex flex-1 self-stretch flex-col items-center justify-center"
+      style="width: 411px; min-width: 411px; max-width: 411px; height: 823px; min-height: 823px; max-height: 823px;background-image: url('/fimgs/bg-e7b6df6c58bc28f2de4151141a2d2fc9fc5e4526');background-size:100% 100%;background-repeat:no-repeat;"
     >
-      <div class="flex self-stretch flex-col space-y-2 items-center justify-center">
-        <div
-          class="text-3xl font-bold leading-10 text-center text-white"
-          style="width: 339px; min-width: 339px; max-width: 339px; height: 45px; min-height: 45px; max-height: 45px;"
-        >
-          Verification code
-        </div>
-        <div
-          class="text-lg font-medium leading-relaxed text-center text-white"
-          style="width: 339px; min-width: 339px; max-width: 339px; height: 27px; min-height: 27px; max-height: 27px;"
-        >
-          Verification code sent to your email
-        </div>
-      </div>
-      <div class="flex self-stretch flex-col space-y-8 items-start justify-start">
-        <div class="flex self-stretch space-x-2.5 items-center justify-center px-4 py-2 rounded">
-          <input style="width: 42.83px; min-width: 42.83px; max-width: 42.83px; height: 48px; min-height: 48px; max-height: 48px;" />
-          <input style="width: 42.83px; min-width: 42.83px; max-width: 42.83px; height: 48px; min-height: 48px; max-height: 48px;" />
-          <input style="width: 42.83px; min-width: 42.83px; max-width: 42.83px; height: 48px; min-height: 48px; max-height: 48px;" />
-          <input style="width: 42.83px; min-width: 42.83px; max-width: 42.83px; height: 48px; min-height: 48px; max-height: 48px;" />
-          <input style="width: 42.83px; min-width: 42.83px; max-width: 42.83px; height: 48px; min-height: 48px; max-height: 48px;" />
-          <input style="width: 42.83px; min-width: 42.83px; max-width: 42.83px; height: 48px; min-height: 48px; max-height: 48px;" />
-        </div>
-        <button class="flex self-stretch flex-col items-center justify-center px-4 py-2 bg-amber-500 rounded">
-          <div class="text-xl font-bold leading-loose text-center text-white">
-            Send
+      <div
+        class={`flex flex-1 self-stretch flex-col space-y-12 items-center justify-center px-9 pt-6 pb-16 bg-black bg-opacity-50`}
+        style={`backdrop-filter: blur(20px);`}
+      >
+        <div class="flex self-stretch flex-col space-y-2 items-center justify-center">
+          <div
+            class="text-3xl font-bold leading-10 text-center text-white"
+            style="width: 339px; min-width: 339px; max-width: 339px; height: 45px; min-height: 45px; max-height: 45px;"
+          >
+            Verification code
           </div>
-        </button>
+          <div
+            class={`text-lg font-medium leading-relaxed text-center text-white`}
+            style={`width: 339px; min-width: 339px; max-width: 339px; height: 27px; min-height: 27px; max-height: 27px;`}
+          >
+            Verification code sent to your email
+          </div>
+        </div>
+        <div class="flex self-stretch flex-col space-y-8 items-start justify-start">
+          <img
+            src="/fimgs/365_1922.x1.svg"
+            class="flex flex-col items-center justify-center"
+            style="width: 339px; min-width: 339px; max-width: 339px; height: 64px; min-height: 64px; max-height: 64px;"
+          />
+          <btn-primary
+            onClick={() => {
+              navigate("/m/forgot-new-password");
+            }}
+            class={`flex flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-amber-500 rounded rounded-md`}
+            style="width: 339px; min-width: 339px; max-width: 339px; height: 60px; min-height: 60px; max-height: 60px; background-color: #FF8F00"
+          >
+            Send
+          </btn-primary>
+        </div>
       </div>
     </div>
   </div>
-</div>
+</>
