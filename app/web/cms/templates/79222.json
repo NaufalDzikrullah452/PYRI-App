@@ -1,1 +1,15 @@
-{"content":{"structure":"00000","type":"Page","figma":{}},"id":"79222","lang":"","parent_id":"54643","site":"*","slug":"/m/verification-code","status":"SYSTEM","title":"verification-code","type":"cms-template"}
+{
+    "content": {
+        "structure": "00000",
+        "type": "Page",
+        "figma": {}
+    },
+    "id": "79222",
+    "lang": "",
+    "parent_id": "54643",
+    "site": "*",
+    "slug": "/m/verification-code",
+    "status": "SYSTEM",
+    "title": "verification-code",
+    "type": "cms-template"
+}

@@ -1,237 +1,170 @@
 <>
-  <effect
-    meta={{
-      code_1: "",
-      code_2: "",
-      code_3: "",
-      code_4: "",
-      code_5: "",
-      code_6: "",
+  <effect meta={{ code_1: "" , code_2: "" , code_3: "" , code_4: "" , code_5: "" , code_6: "" , async onChange(key, e) {
+    let value=e.target.value; runInAction(()=> (this[key] = value));
+    console.log(key + " : " + value);
+    },
 
-      async onChange(key, e) {
-        let value = e.target.value;
-        runInAction(() => (this[key] = value));
-        console.log(key + " : " + value);
-      },
+    async nextFocus(key1, key2) {
+    if (this[key1] !== "") {
+    document.querySelectorAll(key2)[0].focus(); // console.log("input focus : " + key2)
+    }
+    },
 
-      async nextFocus(key1, key2) {
-        if (this[key1] !== "") {
-          document.querySelectorAll(key2)[0].focus(); // console.log("input focus : " + key2)
-        }
-      },
+    validation() {
+    let msg =
+    this.code_1 === "" || this.code_1 === null
+    ? "Please, Fill all the fields!"
+    : this.code_2 === "" || this.code_2 === null
+    ? "Please, Fill all the fields!"
+    : this.code_3 === "" || this.code_3 === null
+    ? "Please, Fill all the fields!"
+    : this.code_4 === "" || this.code_4 === null
+    ? "Please, Fill all the fields!"
+    : this.code_5 === "" || this.code_5 === null
+    ? "Please, Fill all the fields!"
+    : this.code_6 === "" || this.code_6 === null
+    ? "Please, Fill all the fields!"
+    : false; // console.log(msg);
 
-      validation() {
-        let msg =
-          this.code_1 === "" || this.code_1 === null
-            ? "Please, Fill all the fields!"
-            : this.code_2 === "" || this.code_2 === null
-            ? "Please, Fill all the fields!"
-            : this.code_3 === "" || this.code_3 === null
-            ? "Please, Fill all the fields!"
-            : this.code_4 === "" || this.code_4 === null
-            ? "Please, Fill all the fields!"
-            : this.code_5 === "" || this.code_5 === null
-            ? "Please, Fill all the fields!"
-            : this.code_6 === "" || this.code_6 === null
-            ? "Please, Fill all the fields!"
-            : false; // console.log(msg);
+    return msg;
+    },
 
-        return msg;
-      },
+    async submit() {
+    let error_msg = this.validation();
+    let user = window.user.user || "";
 
-      async submit() {
-        let error_msg = this.validation();
-        let user = window.user.user || "";
+    if (error_msg || user === "") {
+    window.mobileApp.app.dialog.alert(
+    null,
+    error_msg || "Email not entered before!"
+    );
+    } else {
+    const code =
+    this.code_1 +
+    this.code_2 +
+    this.code_3 +
+    this.code_4 +
+    this.code_5 +
+    this.code_6; // console.log(code);
 
-        if (error_msg || user === "") {
-          window.mobileApp.app.dialog.alert(
-            null,
-            error_msg || "Email not entered before!"
-          );
-        } else {
-          const code =
-            this.code_1 +
-            this.code_2 +
-            this.code_3 +
-            this.code_4 +
-            this.code_5 +
-            this.code_6; // console.log(code);
-
-          if (user.user_forgot_token === code) {
-            console.log("code sama");
-            window.mobileApp.app.dialog.preloader("Success");
-            setTimeout(function () {
-              window.mobileApp.app.dialog.close();
-            }, 1000);
-            navigate("/m/create-new-password");
-          } else {
-            window.mobileApp.app.dialog.alert(
-              "Please check your Email!</br>" + user.user_email,
-              "Wrong code"
-            );
-          }
-        }
-      },
+    if (user.user_forgot_token === code) {
+    console.log("code sama");
+    window.mobileApp.app.dialog.preloader("Success");
+    setTimeout(function () {
+    window.mobileApp.app.dialog.close();
+    }, 1000);
+    navigate("/m/create-new-password");
+    } else {
+    window.mobileApp.app.dialog.alert(
+    "Please check your Email!</br>" + user.user_email,
+    "Wrong code"
+    );
+    }
+    }
+    },
     }}
     run={async () => {
-      console.log(window.user);
+    console.log(window.user);
     }}
-  />
-  <div class={`flex flex-col items-start justify-start bg-white w-full h-full`}>
-    <div
-      class="flex flex-1 self-stretch flex-col items-center justify-center"
-      style="background-image: url('/fimgs/bg-e7b6df6c58bc28f2de4151141a2d2fc9fc5e4526');background-size:100% 100%;background-repeat:no-repeat;"
-    >
-      <div
-        class={`flex flex-1 self-stretch flex-col space-y-12 items-center justify-center px-9 pt-6 pb-16 bg-black bg-opacity-50`}
-        style={`backdrop-filter: blur(20px);`}
-      >
-        <div class="flex self-stretch flex-col space-y-2 items-center justify-center">
-          <div
-            class="text-3xl font-bold leading-10 text-center text-white"
-            style="height: 45px; min-height: 45px; max-height: 45px;"
-          >
-            Verification code
+    />
+    <div class={`flex flex-col items-start justify-start bg-white w-full h-full`}>
+      <div class="flex flex-1 self-stretch flex-col items-center justify-center"
+        style="background-image: url('/fimgs/bg-e7b6df6c58bc28f2de4151141a2d2fc9fc5e4526');background-size:100% 100%;background-repeat:no-repeat;">
+        <div class={`flex flex-1 self-stretch flex-col space-y-12 items-center justify-center px-9 pt-6 pb-16 bg-black
+          bg-opacity-50`} style={`backdrop-filter: blur(20px);`}>
+          <div class="flex self-stretch flex-col space-y-2 items-center justify-center">
+            <div class="text-3xl font-bold leading-10 text-center text-white"
+              style="height: 45px; min-height: 45px; max-height: 45px;">
+              Verification code
+            </div>
+            <div class={`text-lg font-medium leading-relaxed text-center text-white`} style={`height: 27px; min-height:
+              27px; max-height: 27px;`}>
+              Verification code sent to your email
+            </div>
           </div>
-          <div
-            class={`text-lg font-medium leading-relaxed text-center text-white`}
-            style={`height: 27px; min-height: 27px; max-height: 27px;`}
-          >
-            Verification code sent to your email
-          </div>
-        </div>
-        <div
-          class={`flex self-stretch flex-col space-y-8 items-center justify-center`}
-        >
-          <div
-            class={`flex space-x-2.5 items-center justify-center px-4 py-2 rounded`}
-            style="height: 64px; min-height: 64px; max-height: 64px;"
-          >
-            <input
-              style={`width: 42.83px; min-width: 42.83px; max-width: 42.83px; height: 48px; min-height: 48px; max-height: 48px; 
-  background: transparent !important; 
-  font-size:16px !important;
-  text-align:center;
-  border: none !important;
-  border:solid 1px #ffffff !important;
-  border-radius: 5px !important;
-  color: #ffffff !important`}
-              type="number"
-              onInput={(e) => {
-                e.target.value = e.target.value.slice(0, 1);
-                meta.onChange("code_1", e);
-                meta.nextFocus("code_1", ".code_2");
+          <div class={`flex self-stretch flex-col space-y-8 items-center justify-center`}>
+            <div class={`flex space-x-2.5 items-center justify-center px-4 py-2 rounded`}
+              style="height: 64px; min-height: 64px; max-height: 64px;">
+              <input style={`width: 42.83px; min-width: 42.83px; max-width: 42.83px; height: 48px; min-height: 48px;
+                max-height: 48px; background: transparent !important; font-size:16px !important; text-align:center;
+                border: none !important; border:solid 1px #ffffff !important; border-radius: 5px !important; color:
+                #ffffff !important`} type="number" onInput={(e)=> {
+              e.target.value = e.target.value.slice(0, 1);
+              meta.onChange("code_1", e);
+              meta.nextFocus("code_1", ".code_2");
               }}
               value={meta.code_1}
               class={"code_1"}
               required={true}
               autoFocus={true}
-            />
-            <input
-              style={`width: 42.83px; min-width: 42.83px; max-width: 42.83px; height: 48px; min-height: 48px; max-height: 48px; 
-  background: transparent !important; 
-  font-size:16px !important;
-  text-align:center;
-  border: none !important;
-  border:solid 1px #ffffff !important;
-  border-radius: 5px !important;
-  color: #ffffff !important`}
-              type="number"
-              onInput={(e) => {
-                e.target.value = e.target.value.slice(0, 1);
-                meta.onChange("code_2", e);
-                meta.nextFocus("code_2", ".code_3");
+              />
+              <input style={`width: 42.83px; min-width: 42.83px; max-width: 42.83px; height: 48px; min-height: 48px;
+                max-height: 48px; background: transparent !important; font-size:16px !important; text-align:center;
+                border: none !important; border:solid 1px #ffffff !important; border-radius: 5px !important; color:
+                #ffffff !important`} type="number" onInput={(e)=> {
+              e.target.value = e.target.value.slice(0, 1);
+              meta.onChange("code_2", e);
+              meta.nextFocus("code_2", ".code_3");
               }}
               value={meta.code_2}
               class={"code_2"}
               required={true}
-            />
-            <input
-              style={`width: 42.83px; min-width: 42.83px; max-width: 42.83px; height: 48px; min-height: 48px; max-height: 48px; 
-  background: transparent !important; 
-  font-size:16px !important;
-  text-align:center;
-  border: none !important;
-  border:solid 1px #ffffff !important;
-  border-radius: 5px !important;
-  color: #ffffff !important`}
-              type="number"
-              onInput={(e) => {
-                e.target.value = e.target.value.slice(0, 1);
-                meta.onChange("code_3", e);
-                meta.nextFocus("code_3", ".code_4");
+              />
+              <input style={`width: 42.83px; min-width: 42.83px; max-width: 42.83px; height: 48px; min-height: 48px;
+                max-height: 48px; background: transparent !important; font-size:16px !important; text-align:center;
+                border: none !important; border:solid 1px #ffffff !important; border-radius: 5px !important; color:
+                #ffffff !important`} type="number" onInput={(e)=> {
+              e.target.value = e.target.value.slice(0, 1);
+              meta.onChange("code_3", e);
+              meta.nextFocus("code_3", ".code_4");
               }}
               value={meta.code_3}
               class="code_3"
               required={true}
-            />
-            <input
-              style={`width: 42.83px; min-width: 42.83px; max-width: 42.83px; height: 48px; min-height: 48px; max-height: 48px; 
-  background: transparent !important; 
-  font-size:16px !important;
-  text-align:center;
-  border: none !important;
-  border:solid 1px #ffffff !important;
-  border-radius: 5px !important;
-  color: #ffffff !important`}
-              type="number"
-              onInput={(e) => {
-                e.target.value = e.target.value.slice(0, 1);
-                meta.onChange("code_4", e);
-                meta.nextFocus("code_4", ".code_5");
+              />
+              <input style={`width: 42.83px; min-width: 42.83px; max-width: 42.83px; height: 48px; min-height: 48px;
+                max-height: 48px; background: transparent !important; font-size:16px !important; text-align:center;
+                border: none !important; border:solid 1px #ffffff !important; border-radius: 5px !important; color:
+                #ffffff !important`} type="number" onInput={(e)=> {
+              e.target.value = e.target.value.slice(0, 1);
+              meta.onChange("code_4", e);
+              meta.nextFocus("code_4", ".code_5");
               }}
               value={meta.code_4}
               class="code_4"
               required={true}
-            />
-            <input
-              style={`width: 42.83px; min-width: 42.83px; max-width: 42.83px; height: 48px; min-height: 48px; max-height: 48px; 
-  background: transparent !important; 
-  font-size:16px !important;
-  text-align:center;
-  border: none !important;
-  border:solid 1px #ffffff !important;
-  border-radius: 5px !important;
-  color: #ffffff !important`}
-              type="number"
-              onInput={(e) => {
-                e.target.value = e.target.value.slice(0, 1);
-                meta.onChange("code_5", e);
-                meta.nextFocus("code_5", ".code_6");
+              />
+              <input style={`width: 42.83px; min-width: 42.83px; max-width: 42.83px; height: 48px; min-height: 48px;
+                max-height: 48px; background: transparent !important; font-size:16px !important; text-align:center;
+                border: none !important; border:solid 1px #ffffff !important; border-radius: 5px !important; color:
+                #ffffff !important`} type="number" onInput={(e)=> {
+              e.target.value = e.target.value.slice(0, 1);
+              meta.onChange("code_5", e);
+              meta.nextFocus("code_5", ".code_6");
               }}
               value={meta.code_5}
               class="code_5"
               required={true}
-            />
-            <input
-              style={`width: 42.83px; min-width: 42.83px; max-width: 42.83px; height: 48px; min-height: 48px; max-height: 48px; 
-  background: transparent !important; 
-  font-size:16px !important;
-  text-align:center;
-  border: none !important;
-  border:solid 1px #ffffff !important;
-  border-radius: 5px !important;
-  color: #ffffff !important`}
-              type="number"
-              onInput={(e) => {
-                e.target.value = e.target.value.slice(0, 1);
-                meta.onChange("code_6", e);
+              />
+              <input style={`width: 42.83px; min-width: 42.83px; max-width: 42.83px; height: 48px; min-height: 48px;
+                max-height: 48px; background: transparent !important; font-size:16px !important; text-align:center;
+                border: none !important; border:solid 1px #ffffff !important; border-radius: 5px !important; color:
+                #ffffff !important`} type="number" onInput={(e)=> {
+              e.target.value = e.target.value.slice(0, 1);
+              meta.onChange("code_6", e);
               }}
               value={meta.code_6}
               class="code_6"
               required={true}
-            />
+              />
+            </div>
+            <btn-primary class={`flex flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-amber-500 rounded
+              rounded-md`} style="height: 60px; min-height: 60px; max-height: 60px; background-color: #FF8F00"
+              type={"submit"} onClick={meta.submit}>
+              Send
+            </btn-primary>
           </div>
-          <btn-primary
-            class={`flex flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-amber-500 rounded rounded-md`}
-            style="height: 60px; min-height: 60px; max-height: 60px; background-color: #FF8F00"
-            type={"submit"}
-            onClick={meta.submit}
-          >
-            Send
-          </btn-primary>
         </div>
       </div>
     </div>
-  </div>
 </>
