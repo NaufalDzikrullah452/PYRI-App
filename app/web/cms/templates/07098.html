@@ -1,6 +1,12 @@
 <>
-  <effect meta={{}} run={async () => {}} />
-  <div class="flex self-stretch flex-col items-start justify-start bg-white">
+  <effect
+    meta={{
+      regisURL: "/m/register",
+      forgotURL: "/m/forgot-password",
+    }}
+    run={async () => {}}
+  />
+  <div class="flex flex-col items-start justify-start bg-white">
     <div
       class="flex flex-1 self-stretch flex-col items-center justify-start"
       style="background-image: url('/fimgs/bg-e7b6df6c58bc28f2de4151141a2d2fc9fc5e4526');background-size:100% 100%;background-repeat:no-repeat;"
@@ -53,13 +59,16 @@
                 undefined
               </div>
             </div>
-            <div class="flex self-stretch flex-col items-start justify-start">
-              <div class="flex self-stretch flex-col items-start justify-start">
-                <div class="flex self-stretch items-center justify-end">
+            <div class="flex self-stretch flex-col items-end justify-center">
+              <div class="flex self-stretch flex-col items-end justify-center">
+                <a
+                  href={meta.forgotURL}
+                  class={`flex self-stretch items-center justify-end`}
+                >
                   <div class="text-base font-medium leading-normal text-white">
                     Did you forgot your password?
                   </div>
-                </div>
+                </a>
               </div>
             </div>
           </div>
@@ -77,9 +86,11 @@
               <div class="text-base font-medium leading-normal text-white">
                 Don’t have an account?
               </div>
-              <div class="text-base font-bold leading-normal text-amber-500">
-                Register
-              </div>
+              <a href={meta.regisURL} class={`flex items-start justify-start`}>
+                <div class="text-base font-bold leading-normal text-amber-500">
+                  Register
+                </div>
+              </a>
             </div>
           </div>
         </div>
