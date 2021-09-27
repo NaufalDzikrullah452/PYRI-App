@@ -5,14 +5,17 @@
     }}
     run={async () => {}}
   />
-  <div class="flex flex-col items-start justify-start bg-white">
+  <div
+    class="flex flex-col items-start justify-start bg-white"
+    style="height: 823px; min-height: 823px; max-height: 823px;"
+  >
     <div
       class="flex flex-1 self-stretch flex-col items-center justify-center"
-      style="width: 411px; min-width: 411px; max-width: 411px; height: 823px; min-height: 823px; max-height: 823px;background-image: url('/fimgs/bg-ff2b4084986bd7da53995b9a752b9e5665e21788');background-size:100% 100%;background-repeat:no-repeat;"
+      style="background-image: url('/fimgs/bg-ff2b4084986bd7da53995b9a752b9e5665e21788');background-size:100% 100%;background-repeat:no-repeat;"
     >
       <div
         class={`flex flex-1 self-stretch flex-col space-y-9 items-center justify-center px-9 py-16 bg-black bg-opacity-50`}
-        style={`width: 411px; min-width: 411px; max-width: 411px; height: 823px; min-height: 823px; max-height: 823px; backdrop-filter: blur(20px);`}
+        style={`backdrop-filter: blur(20px);`}
       >
         <div
           class="flex flex-col items-center justify-center px-10 py-8 bg-white bg-opacity-30 rounded-3xl"
@@ -29,70 +32,66 @@
             </div>
           </div>
         </div>
-        <div
-          class="flex self-stretch flex-col space-y-8 items-start justify-start"
-          style="width: 339px; min-width: 339px; max-width: 339px;"
-        >
+        <div class="flex self-stretch flex-col space-y-8 items-start justify-start">
           <div
             class="flex self-stretch flex-col space-y-4 items-start justify-start"
-            style="width: 339px; min-width: 339px; max-width: 339px; height: 404px; min-height: 404px; max-height: 404px;"
+            style="height: 404px; min-height: 404px; max-height: 404px;"
           >
-            <div
-              class="flex self-stretch flex-col items-start justify-center py-1.5 pl-4 pr-6 bg-white border rounded border-white"
-              style="width: 339px; min-width: 339px; max-width: 339px; height: 60px; min-height: 60px; max-height: 60px;"
-            >
-              <div class="flex self-stretch items-start justify-start">
-                <div class="text-xs leading-none text-gray-500">Full Name</div>
-              </div>
-              <div class="flex flex-1 self-stretch items-center justify-start">
-                <div class="text-base font-medium leading-normal text-gray-900">
-                  May Mayomee
-                </div>
-              </div>
-            </div>
-            <div
-              class="flex self-stretch flex-col items-start justify-center py-1.5 pl-4 pr-6 border rounded border-white"
-              style="width: 339px; min-width: 339px; max-width: 339px; height: 60px; min-height: 60px; max-height: 60px;"
-            >
-              <div class="flex self-stretch items-start justify-start">
-                <div class="text-base leading-normal text-gray-100">Email</div>
-              </div>
-            </div>
-            <div
-              class="flex self-stretch flex-col items-start justify-center py-1.5 pl-4 pr-6 border rounded border-white"
-              style="width: 339px; min-width: 339px; max-width: 339px; height: 60px; min-height: 60px; max-height: 60px;"
-            >
-              <div class="flex flex-1 self-stretch space-x-2.5 items-center justify-start">
-                <div class="flex flex-1 self-stretch items-center justify-start">
-                  <div class="text-base leading-normal text-gray-100">
-                    Gender
-                  </div>
-                </div>
-                <div />
-              </div>
-            </div>
-            <div
-              class="flex self-stretch flex-col items-start justify-center py-1.5 pl-4 pr-6 border rounded border-white"
-              style="width: 339px; min-width: 339px; max-width: 339px; height: 60px; min-height: 60px; max-height: 60px;"
-            >
-              <div class="flex flex-1 self-stretch space-x-2.5 items-center justify-start">
-                <div class="flex flex-1 self-stretch items-center justify-start">
-                  <div class="text-base leading-normal text-gray-100">
-                    Birthday
-                  </div>
-                </div>
-                <div />
-              </div>
-            </div>
-            <div
-              class="flex self-stretch flex-col items-start justify-center py-1.5 pl-4 pr-6 border rounded border-white"
-              style="width: 339px; min-width: 339px; max-width: 339px; height: 60px; min-height: 60px; max-height: 60px;"
-            >
-              <div class="flex flex-1 self-stretch space-x-2.5 items-center justify-start">
-                <div class="text-base leading-normal text-white">Password</div>
-                undefined
-              </div>
-            </div>
+            <input-field
+              style={`height: 60px; min-height: 60px; max-height: 60px; 
+  background: transparent; 
+  font-size:16px;
+  text-align:left;
+  padding-left:10px;
+  border: none; /* <-- This thing here */
+  border:solid 1px #ffffff;
+  border-radius: 5px;`}
+              placeholder={"Full Name"}
+            />
+            <input-field
+              style={`height: 60px; min-height: 60px; max-height: 60px; 
+  background: transparent; 
+  font-size:16px;
+  text-align:left;
+  padding-left:10px;
+  border: none; /* <-- This thing here */
+  border:solid 1px #ffffff;
+  border-radius: 5px;`}
+              placeholder={"Email"}
+            />
+            <input-field
+              style={`height: 60px; min-height: 60px; max-height: 60px; 
+  background: transparent; 
+  font-size:16px;
+  text-align:left;
+  padding-left:10px;
+  border: none; /* <-- This thing here */
+  border:solid 1px #ffffff;
+  border-radius: 5px;`}
+              placeholder={"Gender"}
+            />
+            <input-field
+              style={`height: 60px; min-height: 60px; max-height: 60px; 
+  background: transparent; 
+  font-size:16px;
+  text-align:left;
+  padding-left:10px;
+  border: none; /* <-- This thing here */
+  border:solid 1px #ffffff;
+  border-radius: 5px;`}
+              placeholder={"Birthday"}
+            />
+            <input-field
+              style={`height: 60px; min-height: 60px; max-height: 60px; 
+  background: transparent; 
+  font-size:16px;
+  text-align:left;
+  padding-left:10px;
+  border: none;
+  border:solid 1px #ffffff;
+  border-radius: 5px;`}
+              placeholder={"Password"}
+            />
             <div class="flex self-stretch space-x-2.5 items-center justify-start">
               <div class="flex items-center justify-center">
                 <input
@@ -128,7 +127,7 @@
                   navigate("/m/login");
                 }}
                 class={`flex flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-amber-500 rounded rounded-md`}
-                style="width: 339px; min-width: 339px; max-width: 339px; height: 60px; min-height: 60px; max-height: 60px; background-color: #FF8F00"
+                style="height: 60px; min-height: 60px; max-height: 60px; background-color: #FF8F00"
               >
                 Register
               </btn-primary>

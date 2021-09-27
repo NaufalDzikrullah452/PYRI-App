@@ -2,7 +2,7 @@
 import { jsx } from "@emotion/react";
 import { useComponent } from "web.utils/component";
 
-export default ({ children, onClick }) => {
-  const _component = useComponent("mini-btn","/app/web/src/components/mini-btn",{ onClick });
+export default ({ children }) => {
+  const _component = useComponent("input-code","/app/web/src/components/input-code",{});
   return eval(_component.render)
 }

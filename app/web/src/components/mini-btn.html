@@ -1,5 +1,9 @@
-<div class="flex self-stretch flex-col items-center justify-center border rounded border-white">
-  <div class="flex flex-1 self-stretch flex-col items-center justify-center px-4 py-2 rounded">
-    <div class="text-xl font-bold leading-loose text-white">Skip</div>
+<button
+  class={`flex flex-col items-center justify-center border rounded border-white`}
+  style={`width: 113px; min-width: 113px; max-width: 113px; height: 60px; min-height: 60px; max-height: 60px;`}
+  onClick={onClick}
+>
+  <div class={`text-xl font-bold leading-loose text-white`}>
+    {children || "Button"}
   </div>
-</div>
+</button>
