@@ -41,4 +41,13 @@ export default {
     import("./components/button-test"),
     { c: "", s: "", h: "" },
   ],
+  "input-code": () => [
+    import("./components/input-code"),
+    { c: "", s: "", h: "" },
+  ],
+  "m-input": () => [import("./components/m-input"), { c: "", s: "", h: "" }],
+  "input-field": () => [
+    import("./components/input-field"),
+    { c: "", s: "", h: "" },
+  ],
 };
