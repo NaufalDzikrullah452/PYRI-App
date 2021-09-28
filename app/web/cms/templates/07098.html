@@ -7,7 +7,7 @@
     run={async () => {}}
   />
   <div
-    class="flex flex-col items-start justify-start bg-white"
+    class="flex self-stretch flex-col items-start justify-start bg-white"
     style="height: 823px; min-height: 823px; max-height: 823px;"
   >
     <div
@@ -38,42 +38,29 @@
             </div>
           </div>
         </div>
-        <div
-          class="flex self-stretch flex-col space-y-8 items-start justify-start"
-          style="height: 308px; min-height: 308px; max-height: 308px;"
+        <form
+          class={`flex self-stretch flex-col space-y-8 items-start justify-start`}
+          style={`height: 308px; min-height: 308px; max-height: 308px;`}
+          action={"/m/register"}
         >
           <div class="flex self-stretch flex-col space-y-4 items-start justify-start">
             <input-field
               class="placeholder-white"
-              style={`height: 60px; min-height: 60px; max-height: 60px; 
-  background: transparent; 
-  font-size:16px;
-  text-align:left;
-  padding-left:15px;
-  border: none;
-  border:solid 1px #ffffff;
-  border-radius: 5px;
-  color: #ffffff`}
+              style={`width: 339px; min-width: 339px; max-width: 339px; height: 60px; min-height: 60px; max-height: 60px;`}
               placeholder={"Email"}
+              type={"email"}
             />
             <input-field
               class="placeholder-white"
-              style={`height: 60px; min-height: 60px; max-height: 60px; 
-  background: transparent; 
-  font-size:16px;
-  text-align:left;
-  padding-left:15px;
-  border: none;
-  border:solid 1px #ffffff;
-  border-radius: 5px;
-  color: #ffffff`}
+              style={`width: 339px; min-width: 339px; max-width: 339px; height: 60px; min-height: 60px; max-height: 60px;`}
               placeholder={"Password"}
+              type={"password"}
             />
             <div class="flex self-stretch flex-col items-end justify-center">
               <div class="flex self-stretch flex-col items-end justify-center">
                 <a
                   href={meta.forgotURL}
-                  class={`flex self-stretch items-center justify-end`}
+                  class={`flex items-center justify-end`}
                 >
                   <div class="text-base font-medium leading-normal text-white">
                     Did you forgot your password?
@@ -84,11 +71,9 @@
           </div>
           <div class="flex self-stretch flex-col space-y-4 items-start justify-start">
             <btn-primary
-              onClick={() => {
-                navigate("/m/register");
-              }}
               class={`flex flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-amber-500 rounded rounded-md`}
               style="height: 60px; min-height: 60px; max-height: 60px; background-color: #FF8F00"
+              type={"submit"}
             >
               Login
             </btn-primary>
@@ -106,7 +91,7 @@
               </a>
             </div>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   </div>
