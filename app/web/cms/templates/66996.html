@@ -1,77 +1,97 @@
-<div class="flex self-stretch flex-col items-start justify-start bg-white">
-  <div class="flex self-stretch flex-col space-y-8 items-start justify-start px-9 pt-16 pb-9">
-    <div class="flex self-stretch flex-col space-y-1.5 items-start justify-start">
-      <div class="text-2xl font-bold leading-9 text-amber-500">Hi, Mayomee</div>
-      <div class="text-base leading-normal">
-        Choose up to 3 genres that you enjoy reading. This will help us better
-        recommend stories you’ll love.
+<>
+  <effect meta={{}} run={async () => {}} />
+  <div class={`flex flex-col items-start justify-start bg-white`}>
+    <div
+      class="flex self-stretch flex-col space-y-8 items-center justify-end px-9 pt-16 pb-9"
+      style="height: 823px; min-height: 823px; max-height: 823px;"
+    >
+      <div class="flex self-stretch flex-col space-y-1.5 items-start justify-start">
+        <div class="text-2xl font-bold leading-9 text-amber-500">
+          Hi, Mayomee
+        </div>
+        <div class="text-base leading-normal">
+          Choose up to 3 genres that you enjoy reading. This will help us better
+          recommend stories you’ll love.
+        </div>
+      </div>
+      <div
+        class={`flex flex-1 self-stretch flex-col space-y-2.5 items-start justify-start`}
+        style={`height: 477px; min-height: 477px; max-height: 477px;`}
+      >
+        <div class="flex self-stretch space-x-2.5 items-start justify-start">
+          <div class="flex flex-1 items-center justify-center px-4 py-2 border rounded-lg border-amber-500">
+            <div class="text-base font-medium leading-normal text-center">
+              Fiction
+            </div>
+          </div>
+          <div class="flex flex-1 items-center justify-center px-4 py-2 border rounded-lg border-amber-500">
+            <div class="text-base font-medium leading-normal text-center">
+              Fantasi
+            </div>
+          </div>
+          <div class="flex flex-1 items-center justify-center px-4 py-2 bg-amber-500 border rounded-lg border-amber-500">
+            <div class="text-base font-medium leading-normal text-center">
+              Comedy
+            </div>
+          </div>
+        </div>
+        <div class="flex self-stretch space-x-2.5 items-start justify-start">
+          <div class="flex flex-1 items-center justify-center px-4 py-2 border rounded-lg border-amber-500">
+            <div class="text-base font-medium leading-normal text-center">
+              Romance
+            </div>
+          </div>
+          <div class="flex flex-1 items-center justify-center px-4 py-2 bg-amber-500 border rounded-lg border-amber-500">
+            <div class="text-base font-medium leading-normal text-center">
+              Mistery
+            </div>
+          </div>
+          <div class="flex flex-1 items-center justify-center px-4 py-2 border rounded-lg border-amber-500">
+            <div class="text-base font-medium leading-normal text-center">
+              Realistic
+            </div>
+          </div>
+        </div>
+        <div class={`flex self-stretch space-x-2.5 items-start justify-start`}>
+          <div class="flex flex-1 items-center justify-center px-4 py-2 bg-amber-500 border rounded-lg border-amber-500">
+            <div class="text-base font-medium leading-normal text-center">
+              Science Fiction
+            </div>
+          </div>
+          <div class="flex flex-1 items-center justify-center px-4 py-2 border rounded-lg border-amber-500">
+            <div class="text-base font-medium leading-normal text-center">
+              Science Fiction
+            </div>
+          </div>
+        </div>
+        <div class={`flex self-stretch space-x-2.5 items-start justify-start`}>
+          <div class="flex flex-1 items-center justify-center px-4 py-2 border rounded-lg border-amber-500">
+            <div class="text-base font-medium leading-normal text-center">
+              Classic
+            </div>
+          </div>
+          <div class="flex flex-1 items-center justify-center px-4 py-2 border rounded-lg border-amber-500">
+            <div class="text-base font-medium leading-normal text-center">
+              Action
+            </div>
+          </div>
+          <div class="flex flex-1 items-center justify-center px-4 py-2 border rounded-lg border-amber-500">
+            <div class="text-base font-medium leading-normal text-center">
+              Romance
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class={`flex self-stretch flex-col items-center justify-center`}
+        style={`height: 60px; min-height: 60px; max-height: 60px;`}
+      >
+        <btn-rounded
+          class={`flex items-center justify-center px-4 py-2 bg-amber-500 shadow border rounded-3xl border-amber-500`}
+        >
+          Done
+        </btn-rounded>
       </div>
     </div>
-    <div class="flex flex-1 self-stretch flex-col space-y-2.5 items-start justify-start">
-      <div class="flex self-stretch space-x-2.5 items-start justify-start">
-        <div class="flex flex-1 items-center justify-center px-4 py-2 border rounded-lg border-amber-500">
-          <div class="text-base font-medium leading-normal text-center">
-            Romance
-          </div>
-        </div>
-        <div class="flex flex-1 items-center justify-center px-4 py-2 bg-amber-500 border rounded-lg border-amber-500">
-          <div class="text-base font-medium leading-normal text-center">
-            Mistery
-          </div>
-        </div>
-        <div class="flex flex-1 items-center justify-center px-4 py-2 border rounded-lg border-amber-500">
-          <div class="text-base font-medium leading-normal text-center">
-            Realistic
-          </div>
-        </div>
-      </div>
-      <div class="flex self-stretch space-x-2.5 items-start justify-start">
-        <div class="flex flex-1 items-center justify-center px-4 py-2 bg-amber-500 border rounded-lg border-amber-500">
-          <div class="text-base font-medium leading-normal text-center">
-            Science Fiction
-          </div>
-        </div>
-        <div class="flex flex-1 items-center justify-center px-4 py-2 border rounded-lg border-amber-500">
-          <div class="text-base font-medium leading-normal text-center">
-            Science Fiction
-          </div>
-        </div>
-      </div>
-      <div class="flex self-stretch space-x-2.5 items-start justify-start">
-        <div class="flex flex-1 items-center justify-center px-4 py-2 border rounded-lg border-amber-500">
-          <div class="text-base font-medium leading-normal text-center">
-            Fiction
-          </div>
-        </div>
-        <div class="flex flex-1 items-center justify-center px-4 py-2 border rounded-lg border-amber-500">
-          <div class="text-base font-medium leading-normal text-center">
-            Fantasi
-          </div>
-        </div>
-        <div class="flex flex-1 items-center justify-center px-4 py-2 bg-amber-500 border rounded-lg border-amber-500">
-          <div class="text-base font-medium leading-normal text-center">
-            Comedy
-          </div>
-        </div>
-      </div>
-      <div class="flex self-stretch space-x-2.5 items-start justify-start">
-        <div class="flex flex-1 items-center justify-center px-4 py-2 border rounded-lg border-amber-500">
-          <div class="text-base font-medium leading-normal text-center">
-            Classic
-          </div>
-        </div>
-        <div class="flex flex-1 items-center justify-center px-4 py-2 border rounded-lg border-amber-500">
-          <div class="text-base font-medium leading-normal text-center">
-            Action
-          </div>
-        </div>
-        <div class="flex flex-1 items-center justify-center px-4 py-2 border rounded-lg border-amber-500">
-          <div class="text-base font-medium leading-normal text-center">
-            Romance
-          </div>
-        </div>
-      </div>
-    </div>
-    <btn-rounded>Done</btn-rounded>
   </div>
-</div>
+</>
