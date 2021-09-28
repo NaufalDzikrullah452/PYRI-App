@@ -50,4 +50,8 @@ export default {
     import("./components/input-field"),
     { c: "", s: "", h: "" },
   ],
+  "btn-rounded": () => [
+    import("./components/btn-rounded"),
+    { c: "", s: "", h: "" },
+  ],
 };
