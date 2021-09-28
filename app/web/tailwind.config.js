@@ -267,7 +267,7 @@ module.exports = {
     },
     fontFamily: {
       sans: [
-        'Lato',
+        '"Lato"',
         'Poppins',
         'ui-sans-serif',
         'system-ui',
@@ -285,7 +285,7 @@ module.exports = {
         '"Noto Color Emoji"',
       ],
       serif: [
-        'Lato',
+        '"Lato"',
         'Poppins',
         'ui-serif',
         'Georgia',
@@ -295,7 +295,7 @@ module.exports = {
         'serif',
       ],
       mono: [
-        'Lato',
+        '"Lato"',
         'Poppins',
         'ui-monospace',
         'SFMono-Regular',
