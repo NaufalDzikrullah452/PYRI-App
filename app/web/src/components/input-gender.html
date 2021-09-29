@@ -1,0 +1,45 @@
+<div
+  class={`flex self-stretch flex-col items-start justify-center`}
+  style={`width: 339px; min-width: 339px; max-width: 339px; height: 60px; min-height: 60px; max-height: 60px;`}
+>
+  <select
+    class={`flex flex-1 self-stretch flex-col items-start justify-center px-4 py-1 border rounded border-white`}
+    style={`width: 339px; min-width: 339px; max-width: 339px; height: 60px; min-height: 60px; max-height: 60px;
+  background: transparent !important; 
+  font-size:16px !important;
+  text-align:left;
+  padding:15px ;
+  border:solid 1px #ffffff !important;
+  border-radius: 5px !important;
+  color: #ffffff !important`}
+    defaultValue={""}
+    required={true}
+  >
+    <option
+      class={`text-xl font-medium leading-loose text-white`}
+      value={""}
+      hidden={true}
+      style={`width: 66px; min-width: 66px; max-width: 66px; height: 30px; min-height: 30px; max-height: 30px;`}
+    >
+      Gender
+    </option>
+    <option
+      class={`text-xl font-medium leading-loose text-white`}
+      value="male"
+      style={`width: 44px; min-width: 44px; max-width: 44px; height: 30px; min-height: 30px; max-height: 30px; 
+  background: rgba(0,0,0,0.3);
+  font-size: 12px`}
+    >
+      Male
+    </option>
+    <option
+      class={`text-xl font-medium leading-loose text-white`}
+      value="female"
+      style={`width: 63px; min-width: 63px; max-width: 63px; height: 30px; min-height: 30px; max-height: 30px; 
+  background: rgba(0,0,0,0.3);
+  font-size: 12px`}
+    >
+      Female
+    </option>
+  </select>
+</div>
