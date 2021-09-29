@@ -54,4 +54,6 @@ export default {
     import("./components/btn-rounded"),
     { c: "", s: "", h: "" },
   ],
+  navbottom: () => [import("./components/navbottom"), { c: "", s: "", h: "" }],
+  btnlogout: () => [import("./components/btnlogout"), { c: "", s: "", h: "" }],
 };
