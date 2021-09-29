@@ -45,4 +45,8 @@ export default {
     import("./components/btn-rounded"),
     { c: "", s: "", h: "" },
   ],
+  "input-gender": () => [
+    import("./components/input-gender"),
+    { c: "", s: "", h: "" },
+  ],
 };

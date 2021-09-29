@@ -5,7 +5,7 @@
     }}
     run={async () => {}}
   />
-  <div class="flex self-stretch flex-col items-start justify-start bg-white">
+  <div class="flex flex-col items-start justify-start bg-white">
     <div
       class="flex flex-1 self-stretch flex-col items-center justify-center"
       style="height: 823px; min-height: 823px; max-height: 823px;background-image: url('/fimgs/bg-ff2b4084986bd7da53995b9a752b9e5665e21788');background-size:100% 100%;background-repeat:no-repeat;"
@@ -39,24 +39,24 @@
               style={`width: 339px; min-width: 339px; max-width: 339px; height: 60px; min-height: 60px; max-height: 60px;`}
               placeholder={"Full Name"}
               type={"text"}
+              required={"true"}
             />
             <input-field
               class="placeholder-white"
               style={`width: 339px; min-width: 339px; max-width: 339px; height: 60px; min-height: 60px; max-height: 60px;`}
               placeholder={"Email"}
               type={"email"}
+              required={"true"}
             />
-            <input-field
-              class="placeholder-white"
+            <input-gender
+              class={`flex flex-col items-start justify-center`}
               style={`width: 339px; min-width: 339px; max-width: 339px; height: 60px; min-height: 60px; max-height: 60px;`}
-              placeholder={"Gender"}
-              type={"text"}
             />
             <input-field
               class="placeholder-white"
               style={`width: 339px; min-width: 339px; max-width: 339px; height: 60px; min-height: 60px; max-height: 60px;`}
               placeholder={"Birthday"}
-              type={"text"}
+              type={"date"}
             />
             <input-field
               class="placeholder-white"
@@ -72,7 +72,7 @@
   background-color : transparent !important ;
   border:2px solid #ffffff !important;
   border-radius:3px`}
-                  required="true"
+                  required={true}
                 />
               </div>
               <div class="flex space-x-1 items-start justify-start">
