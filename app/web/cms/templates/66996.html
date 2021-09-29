@@ -1,6 +1,6 @@
 <>
   <effect meta={{}} run={async () => {}} />
-  <div class={`flex flex-col items-start justify-start bg-white`}>
+  <div class={`flex self-stretch flex-col items-start justify-start bg-white`}>
     <div
       class="flex self-stretch flex-col space-y-8 items-center justify-end px-9 pt-16 pb-9"
       style="height: 823px; min-height: 823px; max-height: 823px;"
@@ -88,6 +88,9 @@
       >
         <btn-rounded
           class={`flex items-center justify-center px-4 py-2 bg-amber-500 shadow border rounded-3xl border-amber-500`}
+          onClick={() => {
+            navigate("/m/profile-page");
+          }}
         >
           Done
         </btn-rounded>

@@ -51,4 +51,8 @@ export default {
     import("./components/input-gender"),
     { c: "", s: "", h: "" },
   ],
+  "input-date": () => [
+    import("./components/input-date"),
+    { c: "", s: "", h: "" },
+  ],
 };
