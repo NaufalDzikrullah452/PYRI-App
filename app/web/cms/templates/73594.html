@@ -1,9 +1,18 @@
 <>
   <effect meta={{}} run={async () => {}} />
   <div class="flex flex-col items-start justify-start relative overflow-y-auto bg-gradient-to-b from-white to-white">
-    <div class="flex flex-1 self-stretch flex-col items-center justify-end relative overflow-y-auto">
-      <div class="flex self-stretch flex-col items-center justify-start pt-9 bg-white shadow">
-        <div class="flex flex-1 self-stretch flex-col items-center justify-center px-9">
+    <div
+      class="flex flex-1 self-stretch flex-col items-center justify-end relative overflow-y-auto"
+      style="height: 823px; min-height: 823px; max-height: 823px;"
+    >
+      <div
+        class="flex self-stretch flex-col items-center justify-start pt-9 bg-white shadow"
+        style="height: 88px; min-height: 88px; max-height: 88px;"
+      >
+        <div
+          class="flex self-stretch flex-col items-center justify-start px-9"
+          style="height: 52px; min-height: 52px; max-height: 52px;"
+        >
           <div class="text-2xl font-bold leading-9">Profile</div>
         </div>
       </div>
@@ -119,9 +128,18 @@
             </div>
           </div>
         </div>
-        <btnlogout />
+        <btnlogout
+          class={`flex self-stretch flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-red-600 shadow rounded`}
+          style={`background: #FF1000`}
+          onClick={() => {
+            navigate("/m/login");
+          }}
+        />
       </div>
-      <navbottom />
+      <navbottom
+        class={`flex self-stretch flex-col items-center justify-center bg-white bg-opacity-70 shadow border border-coolGray-200 fixed`}
+        style={`height: 60px; min-height: 60px; max-height: 60px;`}
+      />
     </div>
   </div>
 </>
