@@ -54,6 +54,8 @@ Thumbs.db
 
 app/**/build
 pkgs/**/build
+pkgs.old
+pkgs.zip
 uploads
 sessions.db-lock
 sessions.db

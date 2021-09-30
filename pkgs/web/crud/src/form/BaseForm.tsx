@@ -808,6 +808,7 @@ export const createFormContext = (
           if (!data) {
             data = state.db.data.__meta.raw
           }
+          let def = state.db.definition?.columns
           for (let [k, value] of Object.entries(data)) {
             if (
               !state.db.definition.rels[k] &&
@@ -815,7 +816,13 @@ export const createFormContext = (
             ) {
               delete data[k]
             }
-
+            if(def && def[k] && typeof data[k] !== def[k].type){
+              if(def[k].type === 'number'){
+                let cols = parseFloat(data[k])
+                set(state.db.data, k, cols)
+                data[k] = cols
+              }
+            }
             if (value === null) {
               delete data[k]
             }

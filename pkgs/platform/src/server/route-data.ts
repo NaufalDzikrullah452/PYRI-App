@@ -54,7 +54,10 @@ export const dataRouter = async (
     }
     if (req.url === '/__data/query') {
       try {
-        return reply.compress(await appDb.$queryRaw(req.body as any))
+        const dbx = appDb
+        let result = null
+        eval(`result = dbx.$queryRaw\`${req.body}\``)
+        return reply.compress(await result)
       } catch (e) {
         console.error(
           `Failed when executing sql: ${JSON.stringify(req.body)}\n\n`,

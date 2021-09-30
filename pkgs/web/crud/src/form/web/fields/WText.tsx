@@ -8,13 +8,6 @@ import type { IBaseFieldProps } from '../../../../../ext/types/__form'
 import set from 'lodash.set'
 import get from 'lodash.get'
 
-export const formatSeparatorDec = (value: any, decimal?: number) => {
-  if (decimal || decimal === 0) value = Number(value).toFixed(decimal)
-  return parseFloat((value || 0).toString().replace(/,/g, ''))
-    .toLocaleString('en')
-    .replace(/,/gi, ',')
-}
-
 declare const window: BaseWindow
 
 export const WText = ({ name, internalChange, ctx }: IBaseFieldProps) => {
@@ -87,9 +80,10 @@ export const WText = ({ name, internalChange, ctx }: IBaseFieldProps) => {
           }
 
           if (value && ['decimal'].indexOf(state.type) >= 0) {
-            console.log('masuk')
-            let cols = formatSeparatorDec(value, 2)
-            set(form.db.data, name, cols)
+            // let cols = value.replace(/[^\d,-]/g, '')
+            let cols = value.replace(',', '.').replace(/[^\d\.]/g, "").replace(/\./, "x").replace(/\./g, "").replace(/x/, ".")
+            set(form.db.data, name, cols) 
+            // console.log(cols, 'masuk', typeof res, cols === value)
           }
           internalChange(value)
         }}

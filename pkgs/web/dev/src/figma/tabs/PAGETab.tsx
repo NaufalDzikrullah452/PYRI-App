@@ -293,7 +293,7 @@ export const PAGETab = observer(({ frame, node, target, html }: any) => {
                       meta.new.name = e || ''
                       if (meta.new.overrideUrl) {
                         meta.new.url = `/${meta.new.name
-                          .replace(/[\W_\[\\]\/]+/g, '-')
+                          .replace(/[\W_]+/g, '-')
                           .toLowerCase()}`
                       }
                     })}
@@ -304,14 +304,9 @@ export const PAGETab = observer(({ frame, node, target, html }: any) => {
                     spellCheck={false}
                     value={meta.new.url}
                     onChange={action((_, e) => {
-                      let value = e || ''
+                      meta.new.url = e || ''
                       if (meta.new.overrideUrl) {
                         meta.new.overrideUrl = false
-                        meta.new.url = value
-                      } else {
-                        meta.new.url = `${value
-                          .replace(/[\W_\[\\]\/]+/g, '-')
-                          .toLowerCase()}`
                       }
                     })}
                   />
