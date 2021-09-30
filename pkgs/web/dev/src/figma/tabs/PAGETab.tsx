@@ -304,11 +304,11 @@ export const PAGETab = observer(({ frame, node, target, html }: any) => {
                     spellCheck={false}
                     value={meta.new.url}
                     onChange={action((_, e) => {
-                      let value = e || '';
+                      let value = e || ''
                       if (meta.new.overrideUrl) {
                         meta.new.overrideUrl = false
                         meta.new.url = value
-                    } else {
+                      } else {
                         meta.new.url = `${value
                           .replace(/[\W_\[\\]\/]+/g, '-')
                           .toLowerCase()}`
