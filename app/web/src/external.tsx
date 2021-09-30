@@ -47,12 +47,12 @@ export default {
   ],
   navbottom: () => [import("./components/navbottom"), { c: "", s: "", h: "" }],
   btnlogout: () => [import("./components/btnlogout"), { c: "", s: "", h: "" }],
-  "input-gender": () => [
-    import("./components/input-gender"),
-    { c: "", s: "", h: "" },
-  ],
   "input-date": () => [
     import("./components/input-date"),
+    { c: "", s: "", h: "" },
+  ],
+  "input-gender": () => [
+    import("./components/input-gender"),
     { c: "", s: "", h: "" },
   ],
 };
