@@ -8,6 +8,9 @@ export const detectType = (v: any, name?: string): IFieldType => {
     } else {
       type = 'string'
     }
+    // } else if (typeof v === 'decimal') {
+    //   v = Number(v.replace(/[^0-9 \,]/g, ''))
+    //   type = 'decimal'
   } else if (typeof v === 'number') {
     type = 'number'
   } else if (typeof v === 'boolean') {

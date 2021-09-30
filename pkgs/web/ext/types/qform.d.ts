@@ -25,7 +25,7 @@ export type IFieldType =
   | 'multiline'
   | 'belongs-to'
   | 'has-many'
-
+  | 'decimal'
 
 export type IQueryComponent = (props: IBaseFormProps) => any
 export type qform = IBaseFormProps

@@ -20,4 +20,5 @@ export default {
   unknown: WUnknown,
   info: WInfo,
   section: WSection,
+  decimal: WText,
 }
