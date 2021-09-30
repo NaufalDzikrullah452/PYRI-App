@@ -1,5 +1,20 @@
 <>
-  <effect meta={{}} run={async () => {}} />
+  <effect
+    meta={{
+      user: [],
+    }}
+    run={async () => {
+      const res = await db.users.findFirst({
+        where: {
+          user_id: 1,
+        },
+      });
+      runInAction(() => {
+        meta.user = res;
+      });
+      console.log(meta.user);
+    }}
+  />
   <div class="flex flex-col items-start justify-start relative overflow-y-auto bg-gradient-to-b from-white to-white">
     <div
       class="flex flex-1 self-stretch flex-col items-center justify-end relative overflow-y-auto"
@@ -24,19 +39,43 @@
             style="width: 70px; min-width: 70px; max-width: 70px; height: 70px; min-height: 70px; max-height: 70px;"
           />
           <div class="flex flex-1 self-stretch flex-col items-start justify-center p-4">
-            <div class="text-2xl font-bold leading-9">May Mayomee</div>
-            <div class="flex items-center justify-center px-4 py-0.5 bg-gray-500 border rounded border-gray-500">
-              <div class="text-xs font-bold leading-none text-center text-white">
-                FREE
-              </div>
+            <div class={`text-2xl font-bold leading-9`}>
+              {meta.user.user_name || "Username"}
             </div>
+            {(meta.user.user_membership_status === undefined ||
+              meta.user.user_membership_status === "NonActive") && (
+              <div
+                class={`flex items-center justify-center px-4 py-0.5 bg-gray-500 border rounded border-gray-500`}
+              >
+                <div class="text-xs font-bold leading-none text-center text-white">
+                  FREE
+                </div>
+              </div>
+            )}
+            {meta.user.user_membership_status === "Active" && (
+              <div
+                class={`flex items-center justify-center px-2.5 py-0.5 border rounded`}
+              >
+                <div class="text-xs font-bold leading-none text-center">
+                  PREMIUM
+                </div>
+              </div>
+            )}
           </div>
         </div>
         <div class="flex self-stretch flex-col space-y-4 items-start justify-start px-4 py-4 bg-gray-50 border rounded-lg border-gray-200">
           <div class="flex self-stretch flex-col items-start justify-start">
-            <div class="flex self-stretch space-x-2.5 items-start justify-start">
-              <div class="text-base font-bold leading-normal">Pyri Account</div>
-              <div class="flex flex-col items-start justify-start bg-white" />
+            <div class="flex self-stretch space-x-2.5 items-center justify-center">
+              <div class="flex flex-1 items-start justify-start">
+                <div class="text-base font-bold leading-normal">
+                  Pyri Account
+                </div>
+              </div>
+              <img
+                src="/fimgs/543_1715.x1.svg"
+                class="flex flex-col items-start justify-start bg-gray-50"
+                style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
+              />
             </div>
           </div>
           <div class="flex self-stretch items-center justify-center">
@@ -44,8 +83,8 @@
               <div class="text-base font-bold leading-normal text-gray-500">
                 Full Name
               </div>
-              <div class="text-base font-bold leading-normal text-gray-900">
-                May Mayomee
+              <div class={`text-base font-bold leading-normal text-gray-900`}>
+                {meta.user.user_name || "Your Name"}
               </div>
             </div>
           </div>
@@ -54,8 +93,8 @@
               <div class="text-base font-bold leading-normal text-gray-500">
                 Email
               </div>
-              <div class="text-base font-bold leading-normal text-gray-900">
-                mayomee@gmail.com
+              <div class={`text-base font-bold leading-normal text-gray-900`}>
+                {meta.user.user_email || "Your Email"}
               </div>
             </div>
           </div>
@@ -64,8 +103,8 @@
               <div class="text-base font-bold leading-normal text-gray-500">
                 Birthday
               </div>
-              <div class="text-base font-bold leading-normal text-gray-900">
-                23-09-2021
+              <div class={`text-base font-bold leading-normal text-gray-900`}>
+                {meta.user.user_birthday || "Your Birthday"}
               </div>
             </div>
           </div>
@@ -74,8 +113,8 @@
               <div class="text-base font-bold leading-normal text-gray-500">
                 Gender
               </div>
-              <div class="text-base font-bold leading-normal text-gray-900">
-                Female
+              <div class={`text-base font-bold leading-normal text-gray-900`}>
+                {meta.user["user_gender"] || "Your Gender"}
               </div>
             </div>
           </div>
@@ -86,25 +125,44 @@
               <div class="text-base font-bold leading-normal text-gray-500">
                 Subcription
               </div>
-              <div class="text-base font-bold leading-normal text-gray-900">
-                User Free
-              </div>
+              {(meta.user.user_membership_status === undefined ||
+                meta.user.user_membership_status === "NonActive") && (
+                <div class={`text-base font-bold leading-normal text-gray-900`}>
+                  User Free
+                </div>
+              )}
+              {meta.user.user_membership_status === "Active" && (
+                <div class={`text-base font-bold leading-normal`}>
+                  User Premium
+                </div>
+              )}
             </div>
-            <div class="flex items-start justify-start px-2.5 py-0.5 bg-gradient-to-r from-red-600 to-yellow-400 shadow rounded">
-              <div class="text-base font-bold leading-normal text-white">
-                Upgrade to Pro
-              </div>
+            <div class={`flex flex-col items-end justify-start`}>
+              {meta.user.user_membership_status === "NonActive" && (
+                <div
+                  class={`flex items-start justify-start px-2.5 py-0.5 bg-gradient-to-r from-red-600 to-yellow-400 shadow rounded`}
+                >
+                  <div class={`text-base font-bold leading-normal text-white`}>
+                    Upgrade to Pro
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
         <div class="flex self-stretch flex-col items-start justify-start px-4 py-4 bg-gray-50 border rounded-lg border-gray-200">
           <div class="flex self-stretch items-center justify-start">
             <div class="flex flex-1 flex-col space-y-1.5 items-start justify-center">
-              <div class="flex self-stretch space-x-2.5 items-start justify-start">
+              <div class="flex self-stretch space-x-2.5 items-center justify-center">
                 <div class="text-base font-bold leading-normal">
                   Your Interest
                 </div>
-                <div class="flex flex-col items-start justify-start bg-white" />
+                <div class="flex flex-1 flex-col items-end justify-start bg-gray-50">
+                  <img
+                    src="/fimgs/357_1889.x1.svg"
+                    style="width: 24px; min-width: 24px; max-width: 24px; height: 11.98px; min-height: 11.98px; max-height: 11.98px;"
+                  />
+                </div>
               </div>
               <div class="flex self-stretch flex-col items-start justify-start">
                 <div class="flex self-stretch space-x-1 items-start justify-start">
@@ -137,7 +195,7 @@
         />
       </div>
       <navbottom
-        class={`flex self-stretch flex-col items-center justify-center bg-white bg-opacity-70 shadow border border-coolGray-200 fixed`}
+        class={`flex self-stretch flex-col items-center justify-center bg-white bg-opacity-70 shadow border border-coolGray-200`}
         style={`height: 60px; min-height: 60px; max-height: 60px;`}
       />
     </div>

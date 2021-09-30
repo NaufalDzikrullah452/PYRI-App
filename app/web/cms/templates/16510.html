@@ -1,13 +1,27 @@
 <>
-  <effect meta={{}} run={async () => {}} />
-  <div class={`flex self-stretch flex-col items-start justify-start bg-white`}>
+  <effect
+    meta={{
+      user: [],
+    }}
+    run={async () => {
+      const res = await db.users.findFirst({
+        where: {
+          user_id: 1,
+        },
+      });
+      runInAction(() => {
+        meta.user = res;
+      });
+    }}
+  />
+  <div class={`flex flex-col items-start justify-start bg-white`}>
     <div
       class="flex self-stretch flex-col space-y-8 items-center justify-end px-9 pt-16 pb-9"
       style="height: 823px; min-height: 823px; max-height: 823px;"
     >
       <div class="flex self-stretch flex-col space-y-1.5 items-start justify-start">
-        <div class="text-2xl font-bold leading-9 text-amber-500">
-          Hi, Mayomee
+        <div class={`text-2xl font-bold leading-9 text-amber-500`}>
+          Hi, {meta.user["user_name"] || "Username"}
         </div>
         <div class="text-base leading-normal">
           Choose up to 3 genres that you enjoy reading. This will help us better
