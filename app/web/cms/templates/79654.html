@@ -1,4 +1,21 @@
 <div>
+  <effect
+    meta={{}}
+    run={() => {
+      db.albums.findMany().then((res) => {
+        console.log(res);
+      });
+
+      db.query("select * from albums");
+
+      api("/api/sample?id=12345&nama=budiiii", {
+        username: "budi",
+        password: "12345",
+      }).then((res) => {
+        console.log(res);
+      });
+    }}
+  />
   <hello-world />
   <div>Sample Font Fluent</div>
   <ficon aria-label="Compass" iconName="CompassNW" />
@@ -6,4 +23,7 @@
   <ficon aria-label="Train" iconName="TrainSolid" />
   <div>Sample Font Awesome {params.id}</div>
   <faicon iconName="Home" />
+  {user.nama}
+  {user.role}
+  <qrcode val={12345} />
 </div>

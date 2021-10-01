@@ -4,7 +4,7 @@ import { faHome } from '@fortawesome/free-solid-svg-icons';
 
 registerIcons({
   icons: {
-    Filter: <FontAwesomeIcon icon={faHome} />
+    Home: <FontAwesomeIcon icon={faHome} />
   }
 });
 

@@ -1,0 +1,28 @@
+<>
+  <effect
+    meta={{
+      value: "",
+      action: {},
+    }}
+    run={() => {
+      meta.action = {
+        onChange: (e) => {
+          runInAction(() => {
+            meta.value = e.target.value;
+          });
+        },
+      };
+    }}
+  />
+  <div class="">
+    <input
+      class="border border-1"
+      type={"text"}
+      onChange={(e) => {
+        meta.action.onChange(e);
+      }}
+      value={meta.value}
+    />
+    {meta.value}
+  </div>
+</>
