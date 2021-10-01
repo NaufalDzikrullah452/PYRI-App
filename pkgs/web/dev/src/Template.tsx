@@ -278,12 +278,12 @@ export const Template = (props: {
                       onChange: (val: any, { row, col }) => {
                         if (col === 'title') {
                           row.title = row.title
-                            .replace(/[^a-z0-9]/gim, '-')
+                            .replace(/[^a-z0-9:]/gim, '-')
                             .replace(/\-+/g, '-')
                             .toLowerCase()
                         } else if (col === 'slug') {
                           row.slug = row.slug
-                            .replace(/[^a-z0-9\-\/]/gim, '-')
+                            .replace(/[^a-z0-9\-\\[\\]\/]/gim, '-')
                             .toLowerCase()
                         }
 
