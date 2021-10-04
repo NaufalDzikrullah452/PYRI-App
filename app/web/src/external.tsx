@@ -1,143 +1,23 @@
 // make sure to export default component not export const
 export default {
-  "render-html": () => [
-    import("web.utils/components/RenderHTML"),
-    { c: "", s: "", h: "" },
-  ],
-  "html-head": () => [
-    import("web.utils/components/HtmlHead"),
-    { c: "", s: "", h: "" },
-  ],
-  "hello-world": () => [
-    import("web.utils/components/HelloWorld"),
-    { c: "", s: "", h: "" },
-  ],
-  loading: () => [
-    import("web.crud/src/legacy/Loading"),
-    { c: "", s: "", h: "" },
-  ],
-  admin: () => [import("web.crud/src/CRUD"), { c: "", s: "", h: "" }],
-  qform: () => [import("web.crud/src/form/BaseForm"), { c: "", s: "", h: "" }],
-  qlist: () => [import("web.crud/src/list/QBaseList"), { c: "", s: "", h: "" }],
-  ficon: () => [import("./components/FluentIcon"), { c: "", s: "", h: "" }],
-  faicon: () => [import("./components/FAIcon"), { c: "", s: "", h: "" }],
-  qrcode: () => [import("./components/qrcode"), { c: "", s: "", h: "" }],
-  dtable: () => [import("./components/DataTable"), { c: "", s: "", h: "" }],
-  "sample-component": () => [
-    import("./components/sample-component"),
-    { c: "", s: "", h: "" },
-  ],
-  test: () => [import("./components/test"), { c: "", s: "", h: "" }],
-  "loginbtn-splash": () => [
-    import("./components/loginbtn-splash"),
-    { c: "", s: "", h: "" },
-  ],
-  "mini-btn": () => [import("./components/mini-btn"), { c: "", s: "", h: "" }],
-  "btn-primary": () => [
-    import("./components/btn-primary"),
-    { c: "", s: "", h: "" },
-  ],
-  "button-test": () => [
-    import("./components/button-test"),
-    { c: "", s: "", h: "" },
-  ],
-  "input-code": () => [
-    import("./components/input-code"),
-    { c: "", s: "", h: "" },
-  ],
-  "m-input": () => [import("./components/m-input"), { c: "", s: "", h: "" }],
-  "input-field": () => [
-    import("./components/input-field"),
-    { c: "", s: "", h: "" },
-  ],
-  "btn-rounded": () => [
-    import("./components/btn-rounded"),
-    { c: "", s: "", h: "" },
-  ],
-  navbottom: () => [import("./components/navbottom"), { c: "", s: "", h: "" }],
-  btnlogout: () => [import("./components/btnlogout"), { c: "", s: "", h: "" }],
-  "input-dropdown": () => [
-    import("./components/input-dropdown"),
-    { c: "", s: "", h: "" },
-  ],
-  "input-datepicker": () => [
-    import("./components/input-datepicker"),
-    { c: "", s: "", h: "" },
-  ],
-  "input-new": () => [
-    import("./components/input-new"),
-    { c: "", s: "", h: "" },
-  ],
-  "titlebar-back": () => [
-    import("./components/titlebar-back"),
-    { c: "", s: "", h: "" },
-  ],
-  "input-new-white": () => [
-    import("./components/input-new-white"),
-    { c: "", s: "", h: "" },
-  ],
-  "input-dropdown-white": () => [
-    import("./components/input-dropdown-white"),
-    { c: "", s: "", h: "" },
-  ],
-  "input-datepicker-white": () => [
-    import("./components/input-datepicker-white"),
-    { c: "", s: "", h: "" },
-  ],
-  "span-genres": () => [
-    import("./components/span-genres"),
-    { c: "", s: "", h: "" },
-  ],
-  "titlebar-left": () => [
-    import("./components/titlebar-left"),
-    { c: "", s: "", h: "" },
-  ],
-  "input-float-web": () => [
-    import("./components/input-float-web"),
-    { c: "", s: "", h: "" },
-  ],
-  "input-comment": () => [
-    import("./components/input-comment"),
-    { c: "", s: "", h: "" },
-  ],
-  "item-comment-active": () => [
-    import("./components/item-comment-active"),
-    { c: "", s: "", h: "" },
-  ],
-  "item-comment": () => [
-    import("./components/item-comment"),
-    { c: "", s: "", h: "" },
-  ],
-  "span-category-active": () => [
-    import("./components/span-category-active"),
-    { c: "", s: "", h: "" },
-  ],
-  "span-category": () => [
-    import("./components/span-category"),
-    { c: "", s: "", h: "" },
-  ],
-  "w-profile-admin": () => [
-    import("./components/w-profile-admin"),
-    { c: "", s: "", h: "" },
-  ],
-  "w-sidebar": () => [
-    import("./components/w-sidebar"),
-    { c: "", s: "", h: "" },
-  ],
-  "w-add-btn": () => [
-    import("./components/w-add-btn"),
-    { c: "", s: "", h: "" },
-  ],
-  "readbar-book": () => [
-    import("./components/readbar-book"),
-    { c: "", s: "", h: "" },
-  ],
-  "titlebar-book": () => [
-    import("./components/titlebar-book"),
-    { c: "", s: "", h: "" },
-  ],
-  "books-item02": () => [
-    import("./components/books-item02"),
-    { c: "", s: "", h: "" },
-  ],
-};
+"render-html": () => import("web.utils/components/RenderHTML"),
+  "html-head": () => import("web.utils/components/HtmlHead"),
+  "hello-world": () => import("web.utils/components/HelloWorld"),
+  "loading": () => import("web.crud/src/legacy/Loading"),
+  "admin": () => import("web.crud/src/CRUD"),
+  "qform": () => import("web.crud/src/form/BaseForm"),
+  "qlist": () => import("web.crud/src/list/QBaseList"),
+  "loginbtn-splash": () => import("./components/loginbtn-splash"),
+  "mini-btn": () => import("./components/mini-btn"),
+  "btn-primary": () => import("./components/btn-primary"),
+  "button-test": () => import("./components/button-test"),
+  "input-code": () => import("./components/input-code"),
+  "m-input": () => import("./components/m-input"),
+  "input-field": () => import("./components/input-field"),
+  "btn-rounded": () => import("./components/btn-rounded"),
+  "navbottom": () => import("./components/navbottom"),
+  "btnlogout": () => import("./components/btnlogout"),
+  "input-testing": () => import("./components/input-testing"),
+  "input-dropdown": () => import("./components/input-dropdown"),
+  "input-datepicker": () => import("./components/input-datepicker")
+}
