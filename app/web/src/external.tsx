@@ -56,12 +56,16 @@ export default {
   ],
   navbottom: () => [import("./components/navbottom"), { c: "", s: "", h: "" }],
   btnlogout: () => [import("./components/btnlogout"), { c: "", s: "", h: "" }],
-  "input-date": () => [
-    import("./components/input-date"),
+  "input-dropdown": () => [
+    import("./components/input-dropdown"),
     { c: "", s: "", h: "" },
   ],
-  "input-gender": () => [
-    import("./components/input-gender"),
+  "input-datepicker": () => [
+    import("./components/input-datepicker"),
+    { c: "", s: "", h: "" },
+  ],
+  "input-new": () => [
+    import("./components/input-new"),
     { c: "", s: "", h: "" },
   ],
 };
