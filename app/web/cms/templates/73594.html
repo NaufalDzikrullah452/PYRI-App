@@ -15,7 +15,9 @@
       console.log(meta.user);
     }}
   />
-  <div class="flex flex-col items-start justify-start relative overflow-y-auto bg-gradient-to-b from-white to-white">
+  <div
+    class={`flex flex-col items-start justify-start relative overflow-y-auto bg-gradient-to-b from-white to-white`}
+  >
     <div
       class="flex flex-1 self-stretch flex-col items-center justify-end relative overflow-y-auto"
       style="height: 823px; min-height: 823px; max-height: 823px;"
@@ -57,7 +59,7 @@
                 class={`flex items-center justify-center px-2.5 py-0.5 border rounded`}
               >
                 <div class="text-xs font-bold leading-none text-center">
-                  PREMIUM
+                  PRO
                 </div>
               </div>
             )}
@@ -65,7 +67,7 @@
         </div>
         <div class="flex self-stretch flex-col space-y-4 items-start justify-start px-4 py-4 bg-gray-50 border rounded-lg border-gray-200">
           <div class="flex self-stretch flex-col items-start justify-start">
-            <div class="flex self-stretch space-x-2.5 items-center justify-center">
+            <div class="flex self-stretch items-center justify-center">
               <div class="flex flex-1 items-start justify-start">
                 <div class="text-base font-bold leading-normal">
                   Pyri Account
@@ -104,7 +106,10 @@
                 Birthday
               </div>
               <div class={`text-base font-bold leading-normal text-gray-900`}>
-                {meta.user.user_birthday || "Your Birthday"}
+                {dateFormat(
+                  new Date(meta.user.user_birthday),
+                  "dd MMMM yyyy"
+                ) || "Your Birthday"}
               </div>
             </div>
           </div>
@@ -132,13 +137,12 @@
                 </div>
               )}
               {meta.user.user_membership_status === "Active" && (
-                <div class={`text-base font-bold leading-normal`}>
-                  User Premium
-                </div>
+                <div class={`text-base font-bold leading-normal`}>User Pro</div>
               )}
             </div>
             <div class={`flex flex-col items-end justify-start`}>
-              {meta.user.user_membership_status === "NonActive" && (
+              {(meta.user.user_membership_status === undefined ||
+                meta.user.user_membership_status === "NonActive") && (
                 <div
                   class={`flex items-start justify-start px-2.5 py-0.5 bg-gradient-to-r from-red-600 to-yellow-400 shadow rounded`}
                 >

@@ -12,34 +12,35 @@ datasource db {
   url      = "postgresql://magang:magang123$%^@db.plansys.co:5432/magang1?schema=public&pool_timeout=0"
 }
 
-model Authors {
+model authors {
   author_id   Int    @id @default(autoincrement())
   author_name String @db.VarChar(50)
 }
 
-model Category {
+model category {
   category_id       Int    @id @default(autoincrement())
-  category_name     String @db.VarChar
+  category_name     String @db.VarChar(50)
   category_pictures String @db.VarChar(100)
 }
 
-model Tags {
-  tag_id   Int    @id @default(autoincrement())
-  tag_name String @db.VarChar(50)
+model tags {
+  tag_id      Int    @id @default(autoincrement())
+  tag_name    String @db.VarChar(50)
+  tag_picture String @db.VarChar(100)
 }
 
-model Users {
-  user_id                Int              @id @default(autoincrement())
-  user_name              String?          @db.VarChar(50)
-  user_email             String           @db.VarChar(50)
-  user_password          String           @db.VarChar(50)
-  user_birthday          DateTime?        @db.Date
-  user_forgot_token      String           @db.VarChar
-  user_membership_status user_membership? @default(NonActive)
+model users {
+  user_id                Int             @id @default(autoincrement())
+  user_name              String          @db.VarChar(50)
+  user_email             String          @db.VarChar(50)
+  user_password          String          @db.VarChar(50)
+  user_gender            user_gender
+  user_birthday          DateTime        @db.Date
+  user_forgot_token      String          @db.VarChar(50)
+  user_membership_status user_membership
   user_level             Boolean
-  user_date_created      DateTime         @db.Timestamptz(6)
+  user_date_created      DateTime        @db.Timestamp(6)
   user_note              String?
-  user_gender            user_gender?     @default(unknown)
 }
 
 enum user_gender {
