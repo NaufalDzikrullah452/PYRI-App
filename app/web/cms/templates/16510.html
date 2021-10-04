@@ -4,13 +4,9 @@
       user: [],
     }}
     run={async () => {
-      const res = await db.users.findFirst({
-        where: {
-          user_id: 1,
-        },
-      });
+      const res = await api("/api/users");
       runInAction(() => {
-        meta.user = res;
+        meta.user = res.user[0];
       });
     }}
   />

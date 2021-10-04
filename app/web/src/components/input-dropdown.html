@@ -1,1 +1,37 @@
-<div class="flex self-stretch flex-col items-start justify-center py-1.5 pl-4 pr-6 border rounded border-white"><div class="flex flex-1 self-stretch space-x-2.5 items-center justify-start"><div class="flex flex-1 self-stretch items-center justify-start"><div class="text-base leading-normal text-gray-100">Gender</div></div><div/></div></div>
+<m-list-input
+  label={label}
+  type={"select"}
+  class="w-full "
+  floatingLabel={true}
+  required={true}
+  inputStyle={{
+    color: "white",
+  }}
+  style={"color:white; background:transparent; border-radius: 5px !important; "}
+>
+  <option value={""} hidden={true} />
+  <option
+    value={"male"}
+    hidden={true}
+    class={`flex self-stretch flex-col items-start justify-start`}
+    style="color: black"
+  >
+    male
+  </option>
+  <option
+    value={"female"}
+    hidden={true}
+    class={`flex self-stretch flex-col items-start justify-start`}
+    style="color: black"
+  >
+    female
+  </option>
+  <option
+    value={"unknown"}
+    hidden={true}
+    class={`flex self-stretch flex-col items-start justify-start`}
+    style="color: black"
+  >
+    {"rather not say"}
+  </option>
+</m-list-input>

@@ -1,0 +1,77 @@
+<>
+  <form>
+    <m-list noHairlinesMd>
+      <ul style="background-color: grey!important">
+        <m-list-input
+          label="Birthday"
+          type="datepicker"
+          // style="--f7-list-bg-color: transparent"
+          floatingLabel
+          clearButton
+          readonly
+          inputStyle={{
+            color: "black",
+          }}
+          calendarParams={{
+            openIn: "customModal",
+            header: true,
+            footer: true,
+            dateFormat: "MM dd yyyy",
+          }}
+          outline
+        />
+        <div>
+          <m-list-input
+            label="Full Name"
+            style="background: transparent; "
+            type="text"
+            inputStyle={{
+              color: "black",
+            }}
+            required
+            floatingLabel
+            clearButton
+          />
+        </div>
+        <m-list-input
+          label="Birthday"
+          // style="--f7-list-bg-color: transparent"
+          type="date"
+          placeholder="Please choose..."
+          inputStyle={{
+            color: "black",
+          }}
+          floatingLabel
+          outline
+          clearButton
+        />
+        <m-list-input
+          // style="--f7-list-bg-color: transparent"
+          label="Gender"
+          type="select"
+          defaultValue=""
+          inputStyle={{
+            color: "black",
+          }}
+          outline
+          floatingLabel
+        >
+          <option value="" hidden></option>
+          <option value="Male" style="color: black">
+            Male
+          </option>
+          <option value="Female" style="color: black">
+            Female
+          </option>
+          <option value="Unknown" style="color: black">
+            Rather not say
+          </option>
+        </m-list-input>
+        <m-input type="password" />
+      </ul>
+    </m-list>
+    <m-button fill type="submit">
+      Ini Page Baru
+    </m-button>
+  </form>
+</>
