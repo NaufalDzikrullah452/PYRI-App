@@ -1,6 +1,6 @@
 <>
   <effect meta={{}} run={async () => {}} />
-  <div class="flex self-stretch flex-col items-start justify-start bg-white">
+  <div class="flex flex-col items-start justify-start bg-white">
     <div
       class="flex flex-1 self-stretch flex-col items-center justify-end"
       style="height: 823px; min-height: 823px; max-height: 823px;background-image: url('/fimgs/bg-ff2b4084986bd7da53995b9a752b9e5665e21788');background-size:100% 100%;background-repeat:no-repeat;"
@@ -26,20 +26,42 @@
           class={`flex self-stretch flex-col space-y-8 items-start justify-start`}
           action={"/m/login"}
         >
-          <div class="flex self-stretch flex-col space-y-4 items-start justify-start">
-            <input-field
-              class="placeholder-white"
-              style={`width: 339px; min-width: 339px; max-width: 339px; height: 60px; min-height: 60px; max-height: 60px;`}
-              placeholder={"New Password"}
-              type={"password"}
-            />
-            <input-field
-              class="placeholder-white"
-              style={`width: 339px; min-width: 339px; max-width: 339px; height: 60px; min-height: 60px; max-height: 60px;`}
-              placeholder={"Confirm Your Password"}
-              type={"password"}
-            />
-          </div>
+          <m-list
+            class={`flex self-stretch flex-col space-y-4 items-start justify-start list-none`}
+          >
+            <div class="flex self-stretch flex-col items-start justify-start border rounded border-white">
+              <input-testing
+                label={"Password"}
+                type={"password"}
+                class="w-full "
+                floatingLabel={true}
+                clearButton={true}
+                required={true}
+                inputStyle={{
+                  color: "white",
+                }}
+                style={
+                  "color:white; background:transparent; border-radius: 5px !important; "
+                }
+              />
+            </div>
+            <div class="flex self-stretch flex-col items-start justify-start border rounded border-white">
+              <input-testing
+                label={"Confirm New Password"}
+                type={"password"}
+                class="w-full "
+                floatingLabel={true}
+                clearButton={true}
+                required={true}
+                inputStyle={{
+                  color: "white",
+                }}
+                style={
+                  "color:white; background:transparent; border-radius: 5px !important; "
+                }
+              />
+            </div>
+          </m-list>
           <btn-primary
             class={`flex flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-amber-500 rounded rounded-md`}
             style="height: 60px; min-height: 60px; max-height: 60px; background-color: #FF8F00"

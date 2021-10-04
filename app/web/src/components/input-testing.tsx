@@ -2,9 +2,10 @@
 import { jsx } from "@emotion/react";
 import { useComponent } from "web.utils/component";
 
-export default ({ children, label }) => {
-  const _component = useComponent("input-dropdown","/app/web/src/components/input-dropdown",{
+export default ({ children, label, type }) => {
+  const _component = useComponent("input-testing","/app/web/src/components/input-testing",{
     label,
+    type,
   });
   return eval(_component.render)
 }

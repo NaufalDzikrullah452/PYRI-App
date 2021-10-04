@@ -24,7 +24,7 @@
         </div>
         <div class="flex self-stretch flex-col items-center justify-start">
           <div class="flex self-stretch flex-col items-center justify-center">
-            <div class="text-3xl font-bold leading-10 text-center text-white">
+            <div class={`text-3xl font-bold leading-10 text-center text-white`}>
               Create your account
             </div>
           </div>
@@ -33,54 +33,97 @@
           class={`flex self-stretch flex-col space-y-8 items-start justify-start`}
           action={"/m/login"}
         >
-          <div class="flex self-stretch flex-col space-y-4 items-start justify-start">
-            <input-field
-              class="placeholder-white"
-              style={`height: 60px; min-height: 60px; max-height: 60px;
-background: transparent !important; 
-  font-size:16px !important;
-  text-align:left;
-  padding-left:15px !important;
-  border:solid 1px #ffffff !important;
-  border-radius: 5px !important;
-  color: #ffffff !important`}
-              placeholder={"Full Name"}
-              type={"text"}
-              required={true}
-            />
-            <input-field
-              class="placeholder-white"
-              style={`height: 60px; min-height: 60px; max-height: 60px;
-background: transparent !important; 
-  font-size:16px !important;
-  text-align:left;
-  padding-left:15px !important;
-  border:solid 1px #ffffff !important;
-  border-radius: 5px !important;
-  color: #ffffff !important`}
-              placeholder={"Email"}
-              type={"email"}
-              required={true}
-            />
-            <input-gender
-              class={`flex items-center justify-center border rounded border-white`}
-              style={`width: 339px; min-width: 339px; max-width: 339px; height: 60px; min-height: 60px; max-height: 60px;`}
-            />
-            <input-date />
-            <input-field
-              class="placeholder-white"
-              style={`height: 60px; min-height: 60px; max-height: 60px;
-background: transparent !important; 
-  font-size:16px !important;
-  text-align:left;
-  padding-left:15px !important;
-  border:solid 1px #ffffff !important;
-  border-radius: 5px !important;
-  color: #ffffff !important`}
-              placeholder={"Password"}
-              type={"password"}
-              required={true}
-            />
+          <m-list
+            class={`flex self-stretch flex-col space-y-4 items-start justify-start list-none`}
+          >
+            <div class="flex self-stretch flex-col items-start justify-start border rounded border-white">
+              <input-testing
+                label={"Full Name"}
+                type={"text"}
+                class="w-full "
+                floatingLabel={true}
+                clearButton={true}
+                required={true}
+                inputStyle={{
+                  color: "white",
+                }}
+                style={
+                  "color:white; background:transparent; border-radius: 5px !important; "
+                }
+              />
+            </div>
+            <div class="flex self-stretch flex-col items-start justify-start border rounded border-white">
+              <input-testing
+                label={"Email"}
+                type={"email"}
+                class="w-full "
+                floatingLabel={true}
+                clearButton={true}
+                required={true}
+                inputStyle={{
+                  color: "white",
+                }}
+                style={
+                  "color:white; background:transparent; border-radius: 5px !important; "
+                }
+              />
+            </div>
+            <div class="flex self-stretch flex-col items-start justify-start border rounded border-white">
+              <input-dropdown
+                label={"Gender"}
+                type={"select"}
+                class="w-full "
+                floatingLabel={true}
+                required={true}
+                inputStyle={{
+                  color: "white",
+                }}
+                style={
+                  "color:white; background:transparent; border-radius: 5px !important; "
+                }
+              >
+                option
+              </input-dropdown>
+            </div>
+            <div class="flex self-stretch flex-col items-start justify-start border rounded border-white">
+              <input-datepicker
+                label={"Birthday"}
+                type={"datepicker"}
+                class="w-full "
+                floatingLabel={true}
+                clearButton={true}
+                required={true}
+                inputStyle={{
+                  color: "white",
+                }}
+                style={
+                  "color:white; background:transparent; border-radius: 5px !important; "
+                }
+                calendarParams={{
+                  openIn: "customModal",
+                  header: true,
+                  footer: true,
+                  dateFormat: "MM dd yyyy",
+                }}
+                readonly={true}
+              />
+            </div>
+            <div class="flex self-stretch flex-col items-start justify-start border rounded border-white">
+              <input-testing
+                label={"Password"}
+                type={"password"}
+                class="w-full "
+                floatingLabel={true}
+                clearButton={true}
+                required={true}
+                inputStyle={{
+                  color: "white",
+                }}
+                style={
+                  "color:white; background:transparent; border-radius: 5px !important; "
+                }
+              />
+            </div>
             <div class="flex self-stretch space-x-2.5 items-center justify-start">
               <div class="flex items-center justify-center">
                 <input
@@ -110,7 +153,7 @@ background: transparent !important;
                 </div>
               </div>
             </div>
-          </div>
+          </m-list>
           <div class="flex self-stretch flex-col items-start justify-start">
             <div class="flex self-stretch flex-col space-y-4 items-center justify-center">
               <btn-primary
