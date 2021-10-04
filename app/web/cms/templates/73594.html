@@ -1,235 +1,192 @@
 <>
-  <effect
-    meta={{
-      user: [],
+  <effect meta={{ user: [], async logout() { await api("/api/api-users", { users: "Logout" , e: "Logout" ,
+    }).then((res)=> {
+    console.log(res);
+    window.user = {
+    role: "guest",
+    };
+    navigate("/m/home-guest");
+    });
+    },
 
-      async logout() {
-        await api("/api/api-users", {
-          users: "Logout",
-          e: "Logout",
-        }).then((res) => {
-          console.log(res);
-          window.user = {
-            role: "guest",
-          };
-          navigate("/m/home-guest");
-        });
-      },
-
-      interests: [],
+    interests: [],
     }}
     run={async () => {
-      // const res = await api("/api/api-users", { users: "ReadMany", e: "RefreshAPI" });
-      const tag = await api("/api/interests", {
-        e: "show",
-        user_id: 1,
-      });
-      runInAction(() => {
-        meta.user = window.user.user || [];
-      });
-      document.getElementById("kotak").className =
-        "flex self-stretch items-start justify-start space-x-1.5"; // membuat div interest
+    // const res = await api("/api/api-users", { users: "ReadMany", e: "RefreshAPI" });
+    const tag = await api("/api/interests", {
+    e: "show",
+    user_id: 1,
+    });
+    runInAction(() => {
+    meta.user = window.user.user || [];
+    });
+    document.getElementById("kotak").className =
+    "flex self-stretch items-start justify-start space-x-1.5"; // membuat div interest
 
-      for (let index = 0; index < tag.result.length; index++) {
-        let mainDiv = document.createElement("div");
-        mainDiv.className =
-          "flex flex-1 items-center justify-center px-2.5 py-0.5 bg-gray-200 rounded";
-        document.getElementById("kotak").appendChild(mainDiv);
-        let textDiv = document.createElement("div");
-        textDiv.className = "text-xs font-bold leading-none text-gray-700";
-        textDiv.innerHTML = tag.result[index].tags.tag_name;
-        mainDiv.appendChild(textDiv);
-      }
-
-      console.log(window.user);
-    }}
-  />
-  <div
-    class={`flex flex-col items-start justify-start relative overflow-y-auto bg-gradient-to-b from-white to-white`}
-  >
-    <div
-      class="flex flex-1 self-stretch flex-col items-center justify-end relative overflow-y-auto"
-      style="height: 823px; min-height: 823px; max-height: 823px;"
-    >
-      <div class="flex flex-col items-start justify-start">
-        <div
-          class="flex flex-col items-center justify-start pt-9 bg-white shadow"
-          style="height: 88px; min-height: 88px; max-height: 88px;"
-        >
-          <div
-            class="flex self-stretch flex-col items-center justify-start px-9"
-            style="height: 52px; min-height: 52px; max-height: 52px;"
-          >
-            <div class="text-2xl font-bold leading-9">Profile</div>
+    for (let index = 0; index
+    < tag.result.length; index++) { let mainDiv=document.createElement("div");
+      mainDiv.className="flex flex-1 items-center justify-center px-2.5 py-0.5 bg-gray-200 rounded" ;
+      document.getElementById("kotak").appendChild(mainDiv); let textDiv=document.createElement("div");
+      textDiv.className="text-xs font-bold leading-none text-gray-700" ;
+      textDiv.innerHTML=tag.result[index].tags.tag_name; mainDiv.appendChild(textDiv); } console.log(window.user); }} />
+    <div class={`flex flex-col items-start justify-start relative overflow-y-auto bg-gradient-to-b from-white
+      to-white`}>
+      <div class="flex flex-1 self-stretch flex-col items-center justify-end relative overflow-y-auto"
+        style="height: 823px; min-height: 823px; max-height: 823px;">
+        <div class="flex flex-col items-start justify-start">
+          <div class="flex flex-col items-center justify-start pt-9 bg-white shadow"
+            style="height: 88px; min-height: 88px; max-height: 88px;">
+            <div class="flex self-stretch flex-col items-center justify-start px-9"
+              style="height: 52px; min-height: 52px; max-height: 52px;">
+              <div class="text-2xl font-bold leading-9">Profile</div>
+            </div>
           </div>
-        </div>
-        <div class="flex flex-col space-y-2.5 items-start justify-start px-6 pt-2">
-          <div class="flex self-stretch space-x-2.5 items-center justify-start">
-            <img
-              src="/fimgs/355_1849.x1.svg"
-              class="flex flex-col items-start justify-start"
-              style="width: 70px; min-width: 70px; max-width: 70px; height: 70px; min-height: 70px; max-height: 70px;"
-            />
-            <div class="flex flex-1 self-stretch flex-col items-start justify-center p-4">
-              <div class={`text-2xl font-bold leading-9`}>
-                {meta.user.user_name || "Username"}
-              </div>
-              {(meta.user.user_membership_status === undefined ||
+          <div class="flex flex-col space-y-2.5 items-start justify-start px-6 pt-2">
+            <div class="flex self-stretch space-x-2.5 items-center justify-start">
+              <img src="/fimgs/355_1849.x1.svg" class="flex flex-col items-start justify-start"
+                style="width: 70px; min-width: 70px; max-width: 70px; height: 70px; min-height: 70px; max-height: 70px;" />
+              <div class="flex flex-1 self-stretch flex-col items-start justify-center p-4">
+                <div class={`text-2xl font-bold leading-9`}>
+                  {meta.user.user_name || "Username"}
+                </div>
+                {(meta.user.user_membership_status === undefined ||
                 meta.user.user_membership_status === "NonActive") && (
-                <div
-                  class={`flex items-center justify-center px-4 py-0.5 bg-gray-500 border rounded border-gray-500`}
-                >
+                <div class={`flex items-center justify-center px-4 py-0.5 bg-gray-500 border rounded border-gray-500`}>
                   <div class="text-xs font-bold leading-none text-center text-white">
                     FREE
                   </div>
                 </div>
-              )}
-              {meta.user.user_membership_status === "Active" && (
-                <div
-                  class={`flex items-center justify-center px-2.5 py-0.5 border rounded`}
-                >
+                )}
+                {meta.user.user_membership_status === "Active" && (
+                <div class={`flex items-center justify-center px-2.5 py-0.5 border rounded`}>
                   <div class="text-xs font-bold leading-none text-center">
                     PRO
                   </div>
                 </div>
-              )}
+                )}
+              </div>
             </div>
-          </div>
-          <div
-            class={`flex self-stretch flex-col space-y-4 items-start justify-start px-4 py-4 bg-gray-50 border rounded-lg border-gray-200`}
-            onClick={() => {
+            <div class={`flex self-stretch flex-col space-y-4 items-start justify-start px-4 py-4 bg-gray-50 border
+              rounded-lg border-gray-200`} onClick={()=> {
               navigate("/m/edit-profile");
-            }}
-          >
-            <div class="flex self-stretch flex-col items-start justify-start">
+              }}
+              >
+              <div class="flex self-stretch flex-col items-start justify-start">
+                <div class="flex self-stretch items-center justify-center">
+                  <div class="flex flex-1 items-start justify-start">
+                    <div class="text-base font-bold leading-normal">
+                      Pyri Account
+                    </div>
+                  </div>
+                  <img src="/fimgs/543_1715.x1.svg" class="flex flex-col items-start justify-start bg-gray-50"
+                    style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;" />
+                </div>
+              </div>
               <div class="flex self-stretch items-center justify-center">
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-base font-bold leading-normal">
-                    Pyri Account
+                <div class="flex flex-1 flex-col items-start justify-center">
+                  <div class="text-base font-bold leading-normal text-gray-500">
+                    Full Name
+                  </div>
+                  <div class={`text-base font-bold leading-normal text-gray-900`}>
+                    {meta.user.user_name || "Your Name"}
                   </div>
                 </div>
-                <img
-                  src="/fimgs/543_1715.x1.svg"
-                  class="flex flex-col items-start justify-start bg-gray-50"
-                  style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
-                />
               </div>
-            </div>
-            <div class="flex self-stretch items-center justify-center">
-              <div class="flex flex-1 flex-col items-start justify-center">
-                <div class="text-base font-bold leading-normal text-gray-500">
-                  Full Name
-                </div>
-                <div class={`text-base font-bold leading-normal text-gray-900`}>
-                  {meta.user.user_name || "Your Name"}
+              <div class="flex self-stretch items-center justify-center">
+                <div class="flex flex-1 flex-col items-start justify-center">
+                  <div class="text-base font-bold leading-normal text-gray-500">
+                    Email
+                  </div>
+                  <div class={`text-base font-bold leading-normal text-gray-900`}>
+                    {meta.user.user_email || "Your Email"}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="flex self-stretch items-center justify-center">
-              <div class="flex flex-1 flex-col items-start justify-center">
-                <div class="text-base font-bold leading-normal text-gray-500">
-                  Email
-                </div>
-                <div class={`text-base font-bold leading-normal text-gray-900`}>
-                  {meta.user.user_email || "Your Email"}
-                </div>
-              </div>
-            </div>
-            <div class="flex self-stretch items-center justify-center">
-              <div class="flex flex-1 flex-col items-start justify-center">
-                <div class="text-base font-bold leading-normal text-gray-500">
-                  Birthday
-                </div>
-                <div class={`text-base font-bold leading-normal text-gray-900`}>
-                  {dateFormat(
+              <div class="flex self-stretch items-center justify-center">
+                <div class="flex flex-1 flex-col items-start justify-center">
+                  <div class="text-base font-bold leading-normal text-gray-500">
+                    Birthday
+                  </div>
+                  <div class={`text-base font-bold leading-normal text-gray-900`}>
+                    {dateFormat(
                     new Date(meta.user.user_birthday),
                     "dd MMMM yyyy"
-                  ) || "Your Birthday"}
+                    ) || "Your Birthday"}
+                  </div>
+                </div>
+              </div>
+              <div class="flex self-stretch items-center justify-center">
+                <div class="flex flex-1 flex-col items-start justify-center">
+                  <div class="text-base font-bold leading-normal text-gray-500">
+                    Gender
+                  </div>
+                  <div class={`text-base font-bold leading-normal text-gray-900`}>
+                    {meta.user["user_gender"] || "Your Gender"}
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="flex self-stretch items-center justify-center">
-              <div class="flex flex-1 flex-col items-start justify-center">
-                <div class="text-base font-bold leading-normal text-gray-500">
-                  Gender
-                </div>
-                <div class={`text-base font-bold leading-normal text-gray-900`}>
-                  {meta.user["user_gender"] || "Your Gender"}
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="flex self-stretch flex-col items-start justify-start px-4 py-4 bg-gray-50 border rounded-lg border-gray-200">
-            <div class="flex self-stretch space-x-2.5 items-center justify-start">
-              <div class="flex flex-1 flex-col items-start justify-center">
-                <div class="text-base font-bold leading-normal text-gray-500">
-                  Subcription
-                </div>
-                {(meta.user.user_membership_status === undefined ||
+            <div
+              class="flex self-stretch flex-col items-start justify-start px-4 py-4 bg-gray-50 border rounded-lg border-gray-200">
+              <div class="flex self-stretch space-x-2.5 items-center justify-start">
+                <div class="flex flex-1 flex-col items-start justify-center">
+                  <div class="text-base font-bold leading-normal text-gray-500">
+                    Subcription
+                  </div>
+                  {(meta.user.user_membership_status === undefined ||
                   meta.user.user_membership_status === "NonActive") && (
-                  <div
-                    class={`text-base font-bold leading-normal text-gray-900`}
-                  >
+                  <div class={`text-base font-bold leading-normal text-gray-900`}>
                     User Free
                   </div>
-                )}
-                {meta.user.user_membership_status === "Active" && (
+                  )}
+                  {meta.user.user_membership_status === "Active" && (
                   <div class={`text-base font-bold leading-normal`}>
                     User Pro
                   </div>
-                )}
-              </div>
-              <div class={`flex flex-col items-end justify-start`}>
-                {(meta.user.user_membership_status === undefined ||
+                  )}
+                </div>
+                <div class={`flex flex-col items-end justify-start`}>
+                  {(meta.user.user_membership_status === undefined ||
                   meta.user.user_membership_status === "NonActive") && (
-                  <div
-                    class={`flex items-start justify-start px-2.5 py-0.5 bg-gradient-to-r from-red-600 to-yellow-400 shadow rounded`}
-                  >
-                    <div
-                      class={`text-base font-bold leading-normal text-white`}
-                    >
+                  <div class={`flex items-start justify-start px-2.5 py-0.5 bg-gradient-to-r from-red-600 to-yellow-400
+                    shadow rounded`}>
+                    <div class={`text-base font-bold leading-normal text-white`}>
                       Upgrade to Pro
                     </div>
                   </div>
-                )}
-              </div>
-            </div>
-          </div>
-          <div class="flex self-stretch flex-col items-start justify-start px-4 py-4 bg-gray-50 border rounded-lg border-gray-200">
-            <div class="flex self-stretch items-center justify-start">
-              <div class="flex flex-1 flex-col space-y-1.5 items-start justify-center">
-                <div class="flex self-stretch space-x-2.5 items-center justify-center">
-                  <div class="text-base font-bold leading-normal">
-                    Your Interest
-                  </div>
-                  <div class="flex flex-1 flex-col items-end justify-start bg-gray-50">
-                    <img
-                      src="/fimgs/357_1889.x1.svg"
-                      style="width: 24px; min-width: 24px; max-width: 24px; height: 11.98px; min-height: 11.98px; max-height: 11.98px;"
-                    />
-                  </div>
-                </div>
-                <div class="flex self-stretch flex-col items-start justify-start">
-                  <div id="kotak" />
+                  )}
                 </div>
               </div>
             </div>
-          </div>
-          <div class={`flex self-stretch flex-col items-start justify-start`}>
-            {window.user.role !== "guest" ? (
-              <btnlogout
-                class={`flex flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-red-600 shadow rounded`}
-                style={`background: #FF1000`}
-                onClick={meta.logout}
-              />
-            ) : null}
+            <div
+              class="flex self-stretch flex-col items-start justify-start px-4 py-4 bg-gray-50 border rounded-lg border-gray-200">
+              <div class="flex self-stretch items-center justify-start">
+                <div class="flex flex-1 flex-col space-y-1.5 items-start justify-center">
+                  <div class="flex self-stretch space-x-2.5 items-center justify-center">
+                    <div class="text-base font-bold leading-normal">
+                      Your Interest
+                    </div>
+                    <div class="flex flex-1 flex-col items-end justify-start bg-gray-50">
+                      <img src="/fimgs/357_1889.x1.svg"
+                        style="width: 24px; min-width: 24px; max-width: 24px; height: 11.98px; min-height: 11.98px; max-height: 11.98px;" />
+                    </div>
+                  </div>
+                  <div class="flex self-stretch flex-col items-start justify-start">
+                    <div id="kotak" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class={`flex self-stretch flex-col items-start justify-start`}>
+              {window.user.role !== "guest" ? (
+              <btnlogout class={`flex flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-red-600 shadow rounded`}
+                style={`background: #FF1000`} onClick={meta.logout} />
+              ) : null}
+            </div>
           </div>
         </div>
+        <navbottom class={`flex self-stretch flex-col items-center justify-center bg-white bg-opacity-70 shadow border
+          border-coolGray-200 fixed w-full bottom-0`} style={`height: 60px; min-height: 60px; max-height: 60px;`} />
       </div>
-      <navbottom
-        class={`flex self-stretch flex-col items-center justify-center bg-white bg-opacity-70 shadow border border-coolGray-200 fixed w-full bottom-0`}
-        style={`height: 60px; min-height: 60px; max-height: 60px;`}
-      />
     </div>
-  </div>
 </>
