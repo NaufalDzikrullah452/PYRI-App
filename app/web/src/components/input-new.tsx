@@ -11,7 +11,7 @@ export default ({
   condition,
   disabled,
 }) => {
-  const _component = useComponent("input-new","/app/web/src/components/input-new",{
+  const _component = useComponent("input-new", "/app/web/src/components/input-new", {
     label,
     type,
     value,
