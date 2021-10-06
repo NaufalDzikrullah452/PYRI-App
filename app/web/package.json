@@ -6,12 +6,13 @@
   "dependencies": {
     "@emotion/core": "^11.0.0",
     "@emotion/react": "^11.1.5",
-    "date-fns": "^2.24.0",
     "@fluentui/react": "^8.36.0",
+    "date-fns": "^2.24.0",
+    "md5": "^2.3.0",
     "mobx": "^6.1.8",
     "mobx-react-lite": "^3.2.0",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
   },
   "script": {
     "post-install": "patch-package"

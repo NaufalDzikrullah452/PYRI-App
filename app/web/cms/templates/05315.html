@@ -7,11 +7,11 @@
       user_email: "",
       user_password: "",
       user_gender: "",
-      user_birthday: "",
+      user_birthday: null,
       user_forgot_token: "-",
       user_membership_status: "NonActive",
       user_level: false,
-      user_date_created: "",
+      user_date_created: now,
       user_note: null,
 
       async onChange(key, e) {
@@ -22,24 +22,28 @@
 
       async submit() {
         let users = {};
-        users = {
-          user_id: this.user_id,
-          user_name: this.user_name,
-          user_email: this.user_email,
-          user_password: this.user_password,
-          user_gender: this.user_gender,
-          user_birthday: this.user_birthday,
-          user_forgot_token: this.user_forgot_token,
-          user_membership_status: this.user_membership_status,
-          user_level: this.user_level,
-          user_date_created: this.user_date_created,
-          user_note: this.user_note,
-        };
-        api("/api/create-user", {
-          users,
-        }).then((res) => {
-          console.log(res);
-        }); // console.log(users);
+        window.mobileApp.app.dialog.confirm(
+          "Apakah data yang anda masukkan sudah benar?",
+          "Alert",
+          () => {
+            users = {
+              user_name: this.user_name,
+              user_email: this.user_email,
+              user_password: encrypt(this.user_password),
+              user_gender: this.user_gender,
+              user_birthday: this.user_birthday,
+              user_forgot_token: this.user_forgot_token,
+              user_membership_status: this.user_membership_status,
+              user_level: this.user_level,
+              user_date_created: this.user_date_created,
+              user_note: this.user_note,
+            };
+            api("/api/create-user", { ...users }).then((res) => {
+              console.log(res);
+            });
+            navigate("/m/login");
+          }
+        ); // console.log(users);
       },
     }}
     run={async () => {

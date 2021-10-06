@@ -1,10 +1,10 @@
 import { format as formatFNS, parseISO } from 'date-fns'
-export const globalVar = {}
+const md5 = require('md5');
 
-export const dateFormat = (
+const dateFormat = (
     value: any,
     format?: string,
-    
+
 
 ) => {
     const inputFormat = format ? format : 'dd mmmm yyyy - HH:mm'
@@ -19,3 +19,11 @@ export const dateFormat = (
     }
 }
 
+const encrypt =(value) =>{
+    return md5(value)
+}
+
+export const globalVar = {
+    dateFormat,
+    encrypt
+}
