@@ -6,14 +6,16 @@
   clearButton={true}
   required={true}
   inputStyle={{
-    color: "white",
+    inputStyle,
   }}
-  style={"color:white; background:transparent; border-radius: 5px !important; "}
+  style={`${style}`}
   calendarParams={{
     openIn: "customModal",
     header: true,
     footer: true,
-    dateFormat: "MM dd yyyy",
+    dateFormat: "dd MM yyyy",
   }}
   readonly={true}
+  value={value}
+  calendarChange={calendarChange}
 />

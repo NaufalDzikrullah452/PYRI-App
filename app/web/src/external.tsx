@@ -59,4 +59,8 @@ export default {
     import("./components/input-new"),
     { c: "", s: "", h: "" },
   ],
+  "titlebar-back": () => [
+    import("./components/titlebar-back"),
+    { c: "", s: "", h: "" },
+  ],
 };
