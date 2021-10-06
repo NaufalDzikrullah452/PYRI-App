@@ -1,0 +1,22 @@
+<div
+  class={`flex self-stretch flex-col items-start justify-start px-6 pt-9 pb-4 bg-white shadow`}
+>
+  <div class="flex self-stretch space-x-4 items-center justify-start">
+    <div class="flex self-stretch items-center justify-start">
+      <img
+        src="/fimgs/733_4428.x1.svg"
+        class={`flex self-stretch items-center justify-start`}
+        style={`width: 24px; min-width: 24px; max-width: 24px; height: 30px; min-height: 30px; max-height: 30px;`}
+        onClick={() => {
+          navigate("/m/profile-page");
+        }}
+      />
+    </div>
+    <div class="flex flex-1 items-center justify-center">
+      <div class={`text-xl font-bold leading-loose text-center`}>
+        {children || "Edit Profile"}
+      </div>
+    </div>
+    <div />
+  </div>
+</div>

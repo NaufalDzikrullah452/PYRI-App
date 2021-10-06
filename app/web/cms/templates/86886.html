@@ -1,100 +1,176 @@
 <>
-  <effect meta={{}} run={async () => {}} />
+  <effect
+    meta={{
+      user_id: "",
+      user_name: "",
+      user_email: "",
+      user_password: "",
+      user_gender: "",
+      user_birthday: "",
+      user_forgot_token: "-",
+      user_membership_status: "NonActive",
+      user_level: false,
+      user_date_created: "",
+      user_note: null,
+      user: [],
+
+      async onChange(key, e) {
+        let value = e.target.value;
+        runInAction(() => (this[key] = value));
+        console.log(key + " : " + value);
+      },
+    }}
+    run={async () => {
+      const res = await api("/api/users");
+      runInAction(() => {
+        user = res.user[0];
+        meta.user_id = user.user_id;
+        meta.user_name = user.user_name;
+        meta.user_email = user.user_email;
+        meta.user_password = user.user_password;
+        meta.user_gender = user.user_gender;
+        meta.user_birthday = user.user_birthday;
+        meta.user_forgot_token = user.user_forgot_token;
+        meta.user_membership_status = user.user_membership_status;
+        meta.user_level = user.user_level;
+        meta.user_date_created = user.user_date_created;
+        meta.user_note = user.user_note;
+      });
+      console.log(meta.user);
+    }}
+  />
   <div class="flex flex-col items-start justify-start bg-white">
-    <div class="flex self-stretch flex-col space-y-8 items-start justify-start px-6 pt-9 pb-6">
-      <div class="flex self-stretch items-center justify-start">
-        <div class="flex items-center justify-center">
-          <div />
-        </div>
-        <div class="flex flex-1 items-center justify-start pl-20 pr-10">
-          <div class="text-2xl font-bold leading-9 text-center text-gray-800">
-            Edit Profile
-          </div>
-        </div>
-      </div>
-      <div class="flex self-stretch flex-col space-y-2.5 items-center justify-center py-2">
-        <div style="background-image: url('/fimgs/bg-96571cde0391b4ac383144646a92dc42586d0919');background-size:100% 100%;background-repeat:no-repeat;" />
-        <div class="flex items-start justify-start px-2 py-0.5 border rounded border-trueGray-600">
-          <div class="text-xs font-medium leading-none text-center text-trueGray-600">
-            Change photo
-          </div>
-        </div>
-      </div>
-      <div class="flex self-stretch flex-col space-y-4 items-start justify-start">
-        <div class="text-base font-bold leading-normal text-center">
-          Pyri Account
-        </div>
-        <div class="flex flex-col space-y-2 items-start justify-start">
-          <div class="flex self-stretch flex-col items-start justify-center py-1.5 pl-4 pr-6 bg-white border rounded border-gray-300">
-            <div class="flex self-stretch items-start justify-start">
-              <div class="text-xs leading-none text-gray-500">Full Name</div>
-            </div>
-            <div class="flex flex-1 self-stretch items-center justify-start">
-              <div class="text-base font-medium leading-normal text-gray-900">
-                May Mayomee
-              </div>
-            </div>
-          </div>
-          <div class="flex self-stretch flex-col items-start justify-center py-1.5 pl-4 pr-6 bg-white border rounded border-gray-300">
-            <div class="flex self-stretch items-start justify-start">
-              <div class="text-xs leading-none text-gray-500">Email</div>
-            </div>
-            <div class="flex flex-1 self-stretch items-center justify-start">
-              <div class="text-base font-medium leading-normal text-gray-900">
-                mayomee@gmail.com
-              </div>
-            </div>
-          </div>
-          <div class="flex self-stretch flex-col items-start justify-center py-1.5 pl-4 pr-6 bg-white border rounded border-gray-300">
-            <div class="flex self-stretch items-start justify-start">
-              <div class="text-xs leading-none text-gray-500">Gender</div>
-            </div>
-            <div class="flex flex-1 self-stretch space-x-2.5 items-center justify-start">
-              <div class="text-base font-medium leading-normal text-gray-900">
-                Gender
-              </div>
-              <div />
-            </div>
-          </div>
-          <div class="flex self-stretch flex-col items-start justify-center py-1.5 pl-4 pr-6 bg-white border rounded border-gray-300">
-            <div class="flex self-stretch items-start justify-start">
-              <div class="text-xs leading-none text-gray-500">Birthday</div>
-            </div>
-            <div class="flex flex-1 self-stretch space-x-2.5 items-center justify-start">
-              <div class="text-base font-medium leading-normal text-gray-900">
-                DD/MM/YY
-              </div>
-              <div />
-            </div>
-          </div>
-          <div class="flex self-stretch flex-col items-start justify-center py-1.5 pl-4 pr-6 bg-white border rounded border-gray-300">
-            <div class="flex self-stretch items-start justify-start">
-              <div class="text-xs leading-none text-gray-500">New Password</div>
-            </div>
-            <div class="flex flex-1 self-stretch space-x-2.5 items-center justify-start">
-              <div class="flex flex-1 self-stretch space-x-1 items-center justify-start">
-                <div class="bg-gray-700 rounded-full" />
-                <div class="bg-gray-700 rounded-full" />
-                <div class="bg-gray-700 rounded-full" />
-                <div class="bg-gray-700 rounded-full" />
-                <div class="bg-gray-700 rounded-full" />
-                <div class="bg-gray-700 rounded-full" />
-                <div class="bg-gray-700 rounded-full" />
-              </div>
-              undefined
+    <div class="flex self-stretch flex-col space-y-8 items-start justify-start">
+      <titlebar-back
+        class={`flex self-stretch flex-col items-start justify-start px-6 pt-9 pb-4 bg-white shadow`}
+      />
+      <div class="flex self-stretch flex-col space-y-8 items-start justify-start px-6">
+        <div class="flex self-stretch flex-col space-y-2.5 items-center justify-center py-2">
+          <img src="/fimgs/855_10873.x1.svg" />
+          <div class="flex items-start justify-start px-2 py-0.5 border rounded border-trueGray-600">
+            <div class="text-xs font-medium leading-none text-center text-trueGray-600">
+              Change photo
             </div>
           </div>
         </div>
-      </div>
-      <button class="flex self-stretch flex-col items-start justify-start">
+        <div class="flex self-stretch flex-col space-y-4 items-start justify-start">
+          <div
+            class={`flex self-stretch items-start justify-start`}
+            style={"margin-bottom: 10px"}
+          >
+            <div class="text-base font-bold leading-normal">Pyri Account</div>
+          </div>
+          <m-list
+            class={`flex self-stretch flex-col space-y-2 items-start justify-start list-none`}
+          >
+            <div class="flex self-stretch flex-col items-start justify-start border border-gray-300">
+              <input-new
+                label={"Full Name"}
+                type={"text"}
+                class="w-full "
+                floatingLabel={true}
+                required={true}
+                inputStyle={{
+                  color: "white",
+                }}
+                style={`color:white; 
+    background:transparent; 
+    border-radius: 5px !important;`}
+                value={meta.user_name}
+                onChange={(e) => meta.onChange("user_name", e)}
+              />
+            </div>
+            <div
+              class={`flex self-stretch flex-col items-start justify-start border border-gray-300`}
+            >
+              <input-new
+                label={"Email"}
+                type={"email"}
+                class="w-full "
+                floatingLabel={true}
+                required={true}
+                inputStyle={{
+                  color: "white",
+                }}
+                style={`color:white; 
+    background:transparent; 
+    border-radius: 5px !important;`}
+                value={meta.user_email}
+                onChange={(e) => meta.onChange("user_email", e)}
+              />
+            </div>
+            <div class="flex self-stretch flex-col items-start justify-start border border-gray-300">
+              <input-dropdown
+                label={"Gender"}
+                type={"select"}
+                class="w-full "
+                floatingLabel={true}
+                required={true}
+                inputStyle={{
+                  color: "black",
+                }}
+                style={
+                  "color:black; background:transparent; border-radius: 5px !important; "
+                }
+                value={meta.user_gender}
+                onChange={(e) => meta.onChange("user_gender", e)}
+              >
+                option
+              </input-dropdown>
+            </div>
+            <div class="flex self-stretch flex-col items-start justify-start border border-gray-300">
+              <input-datepicker
+                label={"Birthday"}
+                type={"datepicker"}
+                class="w-full "
+                floatingLabel={true}
+                clearButton={true}
+                required={true}
+                inputStyle={{
+                  color: "black",
+                }}
+                style={
+                  "color:black; background:transparent; border-radius: 5px !important; "
+                }
+                calendarParams={{
+                  openIn: "customModal",
+                  header: true,
+                  footer: true,
+                  dateFormat: "dd MM yyyy",
+                }}
+                readonly={true}
+              />
+            </div>
+            <div class="flex self-stretch flex-col items-start justify-start border border-gray-300">
+              <input-new
+                label={"Password"}
+                type={"password"}
+                class="w-full "
+                floatingLabel={true}
+                required={true}
+                inputStyle={{
+                  color: "white",
+                }}
+                style={`color:white; 
+    background:transparent; 
+    border-radius: 5px !important;`}
+                value={meta.user_password}
+                onChange={(e) => meta.onChange("user_password", e)}
+              />
+            </div>
+          </m-list>
+        </div>
         <btn-primary
-          onClick={onClick}
-          class={`flex self-stretch flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-blue-500 rounded rounded-md`}
-          style="width: 363px; min-width: 363px; max-width: 363px; height: 60px; min-height: 60px; max-height: 60px; background-color: #FF8F00"
+          class={`flex self-stretch flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-amber-500 rounded rounded-md`}
+          style="height: 60px; min-height: 60px; max-height: 60px; background-color: #FF8F00"
+          type={"submit"}
+          onClick={() => {
+            navigate("/m/profile-page");
+          }}
         >
           Save
         </btn-primary>
-      </button>
+      </div>
     </div>
   </div>
 </>
