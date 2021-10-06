@@ -63,4 +63,16 @@ export default {
     import("./components/titlebar-back"),
     { c: "", s: "", h: "" },
   ],
+  "input-new-white": () => [
+    import("./components/input-new-white"),
+    { c: "", s: "", h: "" },
+  ],
+  "input-dropdown-white": () => [
+    import("./components/input-dropdown-white"),
+    { c: "", s: "", h: "" },
+  ],
+  "input-datepicker-white": () => [
+    import("./components/input-datepicker-white"),
+    { c: "", s: "", h: "" },
+  ],
 };

@@ -2,8 +2,50 @@
   <effect
     meta={{
       loginURL: "/m/login",
+      user_id: "",
+      user_name: "",
+      user_email: "",
+      user_password: "",
+      user_gender: "",
+      user_birthday: "",
+      user_forgot_token: "-",
+      user_membership_status: "NonActive",
+      user_level: false,
+      user_date_created: "",
+      user_note: null,
+
+      async onChange(key, e) {
+        let value = e.target.value;
+        runInAction(() => (this[key] = value));
+        console.log(key + " : " + value);
+      },
+
+      async submit() {
+        let users = {};
+        users = {
+          user_id: this.user_id,
+          user_name: this.user_name,
+          user_email: this.user_email,
+          user_password: this.user_password,
+          user_gender: this.user_gender,
+          user_birthday: this.user_birthday,
+          user_forgot_token: this.user_forgot_token,
+          user_membership_status: this.user_membership_status,
+          user_level: this.user_level,
+          user_date_created: this.user_date_created,
+          user_note: this.user_note,
+        };
+        api("/api/create-user", {
+          users,
+        }).then((res) => {
+          console.log(res);
+        }); // console.log(users);
+      },
     }}
-    run={async () => {}}
+    run={async () => {
+      const res = await api("/api/users");
+      console.log(res);
+    }}
   />
   <div class="flex flex-col items-start justify-start bg-white">
     <div
@@ -29,47 +71,52 @@
             </div>
           </div>
         </div>
-        <form
+        <div
           class={`flex self-stretch flex-col space-y-8 items-start justify-start`}
-          action={"/m/login"}
         >
           <m-list
             class={`flex self-stretch flex-col space-y-4 items-start justify-start list-none`}
           >
             <div class="flex self-stretch flex-col items-start justify-start border rounded border-white">
-              <input-new
+              <input-new-white
                 label={"Full Name"}
                 type={"text"}
                 class="w-full "
                 floatingLabel={true}
-                clearButton={true}
                 required={true}
                 inputStyle={{
                   color: "white",
                 }}
-                style={
-                  "color:white; background:transparent; border-radius: 5px !important; "
-                }
+                style={`color: white; 
+      background:transparent; 
+      border-radius: 5px !important;`}
+                value={meta.user_name}
+                onChange={(e) => {
+                  meta.onChange("user_name", e);
+                }}
               />
             </div>
             <div class="flex self-stretch flex-col items-start justify-start border rounded border-white">
-              <input-new
+              <input-new-white
                 label={"Email"}
                 type={"email"}
                 class="w-full "
                 floatingLabel={true}
-                clearButton={true}
                 required={true}
                 inputStyle={{
                   color: "white",
                 }}
-                style={
-                  "color:white; background:transparent; border-radius: 5px !important; "
-                }
+                style={`color: white; 
+      background:transparent; 
+      border-radius: 5px !important;`}
+                value={meta.user_email}
+                onChange={(e) => {
+                  meta.onChange("user_email", e);
+                }}
               />
             </div>
             <div class="flex self-stretch flex-col items-start justify-start border rounded border-white">
-              <input-dropdown
+              <input-dropdown-white
                 label={"Gender"}
                 type={"select"}
                 class="w-full "
@@ -78,50 +125,57 @@
                 inputStyle={{
                   color: "white",
                 }}
-                style={
-                  "color:white; background:transparent; border-radius: 5px !important; "
-                }
+                style={`color: white; 
+      background:transparent; 
+      border-radius: 5px !important;`}
+                value={meta.user_gender}
+                onChange={(e) => meta.onChange("user_gender", e)}
               >
                 option
-              </input-dropdown>
+              </input-dropdown-white>
             </div>
             <div class="flex self-stretch flex-col items-start justify-start border rounded border-white">
-              <input-datepicker
+              <input-datepicker-white
                 label={"Birthday"}
                 type={"datepicker"}
                 class="w-full "
                 floatingLabel={true}
                 clearButton={true}
                 required={true}
+                readonly={true}
                 inputStyle={{
                   color: "white",
                 }}
-                style={
-                  "color:white; background:transparent; border-radius: 5px !important; "
-                }
+                style={`color: white; 
+      background:transparent; 
+      border-radius: 5px !important;`}
                 calendarParams={{
                   openIn: "customModal",
                   header: true,
                   footer: true,
-                  dateFormat: "MM dd yyyy",
+                  dateFormat: "dd MM yyyy",
                 }}
-                readonly={true}
+                value={meta.user_birthday}
+                calendarChange={(e) => meta.onChange("user_birthday", e)}
               />
             </div>
             <div class="flex self-stretch flex-col items-start justify-start border rounded border-white">
-              <input-new
+              <input-new-white
                 label={"Password"}
                 type={"password"}
                 class="w-full "
                 floatingLabel={true}
-                clearButton={true}
                 required={true}
                 inputStyle={{
                   color: "white",
                 }}
-                style={
-                  "color:white; background:transparent; border-radius: 5px !important; "
-                }
+                style={`color: white; 
+      background:transparent; 
+      border-radius: 5px !important;`}
+                value={meta.user_password}
+                onChange={(e) => {
+                  meta.onChange("user_password", e);
+                }}
               />
             </div>
             <div class="flex self-stretch space-x-2.5 items-center justify-start">
@@ -160,6 +214,7 @@
                 class={`flex flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-amber-500 rounded rounded-md`}
                 style="height: 60px; min-height: 60px; max-height: 60px; background-color: #FF8F00"
                 type={"submit"}
+                onClick={meta.submit}
               >
                 Register
               </btn-primary>
@@ -177,7 +232,7 @@
               </div>
             </div>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   </div>
