@@ -1,6 +1,6 @@
 import find from 'lodash.find'
 import { waitUntil } from 'libs/src/wait-until'
-
+import get from 'lodash.get'
 export const prepareDBClient = (dbname: string) => {
   let proxy = new Proxy(
     {},
@@ -8,6 +8,7 @@ export const prepareDBClient = (dbname: string) => {
       get(_, name) {
         const post = async (params: any) => {
           const url = '/__data'
+
           const options = {
             method: 'POST',
             headers: {
@@ -92,7 +93,7 @@ export const prepareDBClient = (dbname: string) => {
                   w.tableDefinitions[key] = 'loading'
                 }
 
-                replaceNullWithUndefined(params)
+                // replaceNullWithUndefined(params)
                 const result = await post({
                   table: name,
                   db: dbname,

@@ -732,6 +732,7 @@ export const createFormContext = (
             })
 
             state.db.loading = false
+            render()
 
             const parent = state.tree.parent as ICRUDContext
 
@@ -902,11 +903,7 @@ export const createFormContext = (
               if (crud.tree.children && crud.tree.children.list) {
                 const list = crud.tree.children.list as IBaseListContext
                 if (list.db.list) {
-                  for (let [idx, row] of Object.entries(list.db.list) as any) {
-                    if (row[pk] === savedData[pk]) {
-                      weakUpdate(list.db.list[idx], state.db.data)
-                    }
-                  }
+                  await list.db.query()
                 }
               }
               crud.crud.setMode('list')

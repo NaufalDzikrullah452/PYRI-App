@@ -57,7 +57,7 @@ export const WFormWrapper = ({
   const render = useRender()
   useEffect(() => {
     if (window.platform === 'web' && !(window as any).iconInit) {
-      ;(window as any).iconInit = true
+      ; (window as any).iconInit = true
       initializeIcons()
     }
 
@@ -337,14 +337,14 @@ export const Actions = ({
                       className="delete"
                       key={name}
                       iconProps={{ iconName: 'Trash' }}
-                      onClick={() => {
+                      onClick={async () => {
                         const form: IBaseFormContext = state as any
                         if (form.db.save) {
-                          if (confirm('Are you sure ?')) {
-                          }
+                          await form.db.delete()
                         }
                       }}
                     >
+                      {/* {typeof result === 'string' ? result : 'Save'} */}
                       {meta.mode === 'dropdown' ? 'Delete' : undefined}
                     </DefaultButton>
                   )
@@ -410,9 +410,8 @@ export const Actions = ({
       `}
     >
       <div
-        className={`absolute  inset-0 overflow-x-auto overflow-y-hidden text-right ${
-          meta.mode === 'menu' ? 'opacity-1' : 'opacity-0 pointer-events-none'
-        }`}
+        className={`absolute  inset-0 overflow-x-auto overflow-y-hidden text-right ${meta.mode === 'menu' ? 'opacity-1' : 'opacity-0 pointer-events-none'
+          }`}
       >
         <div
           ref={(e) => {
@@ -515,9 +514,8 @@ export const Actions = ({
                 meta.callout = !meta.callout
                 render()
               }}
-              className={`flex whitespace-nowrap items-center px-2 cursor-pointer border bg-white border-gray-300 relative select-none ${
-                meta.callout ? 'active' : ''
-              }`}
+              className={`flex whitespace-nowrap items-center px-2 cursor-pointer border bg-white border-gray-300 relative select-none ${meta.callout ? 'active' : ''
+                }`}
               css={css`
                 border-right: 0px;
                 &:hover,

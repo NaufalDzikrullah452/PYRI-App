@@ -1,38 +1,24 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["orderByRelation"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://magang:magang123$%^@db.plansys.co:5432/magang4?schema=public"
+  url      = "postgresql://magang:magang123$%^@db.plansys.co:5432/demo_base?schema=public"
 }
 
-model albums {
-  AlbumId  Int     @id @default(autoincrement())
-  Title    String
-  ArtistId Int
-  artists  artists @relation(fields: [ArtistId], references: [ArtistId])
-  songs    songs[]
+model children {
+  id        Int    @id @default(autoincrement())
+  parent_id Int
+  sample_1  String @db.VarChar(255)
+  sample_2  String @db.VarChar(255)
+  parent    parent @relation(fields: [parent_id], references: [id])
 }
 
-model artists {
-  ArtistId   Int        @id @default(autoincrement())
-  Name       String
-  CoutriesId Int?
-  countries  countries? @relation(fields: [CoutriesId], references: [id])
-  albums     albums[]
-}
-
-model countries {
-  id      Int       @id @default(autoincrement())
-  name    String    @db.VarChar(45)
-  artists artists[]
-}
-
-model songs {
-  id       Int    @id @default(autoincrement())
-  song     String @db.VarChar(45)
-  albumsId Int
-  albums   albums @relation(fields: [albumsId], references: [AlbumId])
+model parent {
+  id       Int        @id @default(autoincrement())
+  sample_1 String     @db.VarChar(255)
+  sample_2 String?    @db.VarChar(255)
+  sample_3 String?    @db.VarChar(255)
+  children children[]
 }

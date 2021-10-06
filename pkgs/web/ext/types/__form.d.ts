@@ -44,6 +44,7 @@ export interface IBaseFieldContext {
   ) => void
   parent: IBaseFormContext | null
   items?: (string | { value: string; label: string })[]
+  fieldProps?: any
   customRender?: (props: {
     row: any
     state: IBaseFormContext

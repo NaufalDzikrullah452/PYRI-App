@@ -6,6 +6,7 @@ import { WText } from './WText'
 import { WUnknown } from './WUnknown'
 import { WSection } from './WSection'
 import { WBoolean } from './WBoolean'
+import { WFileUpload } from './WFileUpload'
 
 export default {
   number: WText,
@@ -21,4 +22,5 @@ export default {
   info: WInfo,
   section: WSection,
   decimal: WText,
+  file: WFileUpload
 }
