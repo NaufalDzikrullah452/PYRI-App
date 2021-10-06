@@ -1,5 +1,44 @@
 <>
-  <effect meta={{}} run={async () => {}} />
+  <effect
+    meta={{
+      regisURL: "/m/register",
+      forgotURL: "/m/forgot-password",
+      user_id: "",
+      user_name: "",
+      user_email: "",
+      user_password: "",
+      user_ver_password: "",
+      user_gender: "",
+      user_birthday: "",
+      user_forgot_token: "-",
+      user_membership_status: "NonActive",
+      user_level: false,
+      user_date_created: "",
+      user_note: null,
+
+      async onChange(key, e) {
+        let value = e.target.value;
+        runInAction(() => (this[key] = value));
+        console.log(key + " : " + value);
+      },
+
+      async submit() {
+        let res = {};
+
+        () => {
+          let users = {
+            user_password: this.user_password,
+            user_ver_password: this.user_ver_password,
+          }; // api("/api/create-user", { users }).then((res) => {
+          //   console.log(res);
+          // });
+
+          console.log(users);
+        };
+      },
+    }}
+    run={async () => {}}
+  />
   <div class="flex flex-col items-start justify-start bg-white">
     <div
       class="flex flex-1 self-stretch flex-col items-center justify-end"
@@ -30,35 +69,41 @@
             class={`flex self-stretch flex-col space-y-4 items-start justify-start list-none`}
           >
             <div class="flex self-stretch flex-col items-start justify-start border rounded border-white">
-              <input-new
-                label={"Password"}
+              <input-new-white
+                label={"New Password"}
                 type={"password"}
                 class="w-full "
                 floatingLabel={true}
-                clearButton={true}
                 required={true}
                 inputStyle={{
                   color: "white",
                 }}
-                style={
-                  "color:white; background:transparent; border-radius: 5px !important; "
-                }
+                style={`color: white; 
+      background:transparent; 
+      border-radius: 5px !important;`}
+                value={meta.user_password}
+                onChange={(e) => {
+                  meta.onChange("user_password", e);
+                }}
               />
             </div>
             <div class="flex self-stretch flex-col items-start justify-start border rounded border-white">
-              <input-new
+              <input-new-white
                 label={"Confirm New Password"}
                 type={"password"}
                 class="w-full "
                 floatingLabel={true}
-                clearButton={true}
                 required={true}
                 inputStyle={{
                   color: "white",
                 }}
-                style={
-                  "color:white; background:transparent; border-radius: 5px !important; "
-                }
+                style={`color: white; 
+      background:transparent; 
+      border-radius: 5px !important;`}
+                value={meta.user_ver_password}
+                onChange={(e) => {
+                  meta.onChange("user_ver_password", e);
+                }}
               />
             </div>
           </m-list>
