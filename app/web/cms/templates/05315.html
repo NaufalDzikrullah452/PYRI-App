@@ -98,7 +98,7 @@
       console.log(res);
     }}
   />
-  <div class="flex flex-col items-start justify-start bg-white">
+  <div class={`flex flex-col items-start justify-start bg-white`}>
     <div
       class={`flex flex-1 self-stretch flex-col items-center justify-center`}
       style={`height: 823px; min-height: 823px; max-height: 823px;background-image: url('/fimgs/bg-ff2b4084986bd7da53995b9a752b9e5665e21788');background-size:100% 100%;background-repeat:no-repeat;`}
@@ -134,7 +134,7 @@
               <input-new-white
                 label={"Full Name"}
                 type={"text"}
-                class="w-full "
+                class="[class] w-full "
                 floatingLabel={true}
                 required={true}
                 inputStyle={{
@@ -153,7 +153,7 @@
               <input-new-white
                 label={"Email"}
                 type={"email"}
-                class="w-full "
+                class="[class] w-full "
                 floatingLabel={true}
                 required={true}
                 inputStyle={{
@@ -189,9 +189,9 @@
             </div>
             <div class="flex self-stretch flex-col items-start justify-start border rounded border-white">
               <m-list-input
-                label={"Birthday"}
+                label={"Birth Date"}
                 type={"datepicker"}
-                class="w-full "
+                class="flex self-stretch flex-col items-start justify-center rounded w-full "
                 floatingLabel={true}
                 clearButton={true}
                 required={true}
