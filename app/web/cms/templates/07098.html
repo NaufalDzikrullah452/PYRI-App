@@ -40,14 +40,14 @@
                 user_password: encrypt(this.user_password),
               };
               console.log("here");
-              api("/api/login", {
-                auser: { ...attemptuser },
+              api("/api/crud-user", {
+                users: { ...attemptuser },
                 e: "Login",
               }).then((res) => {
                 if (res === null) {
                   window.mobileApp.app.dialog.alert(null, "Login Failed!");
                 } else {
-                  console.log(res);
+                  window.user = res.users;
                   navigate("/m/profile-page");
                 }
               });
@@ -103,7 +103,7 @@
                 <input-new-white
                   label={"Email"}
                   type={"email"}
-                  class="[class] w-full "
+                  class="w-full "
                   floatingLabel={true}
                   required={true}
                   inputStyle={{
@@ -122,7 +122,7 @@
                 <input-new-white
                   label={"Password"}
                   type={"password"}
-                  class="[class] w-full "
+                  class="w-full "
                   floatingLabel={true}
                   required={true}
                   inputStyle={{
