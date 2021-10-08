@@ -31,6 +31,26 @@ export const dateFormat = (
   }
 }
 
-export const _FormData = () => {
-  return new FormData();
+const encrypt = (value) => {
+  return md5(value)
+}
+const validateEmail = (value) => {
+  return validator.isEmail(value);
+}
+const validateDate = (value) => {
+  var validate = validator({ format: 'yyyy-mm-dd' });
+  return validate(value);
+}
+
+const validatePass = (value) => {
+  // Create a schema
+  var schema = new passwordValidator();
+  schema
+    .is().min(8)                                    // Minimum length 8
+    .is().max(16)                                  // Maximum length 100
+    .has().uppercase()                              // Must have uppercase letters
+    .has().lowercase()                            // Must have at least 2 digits
+    .has().not().spaces();                           // Should not have spaces
+
+  return schema.validate(value);
 }

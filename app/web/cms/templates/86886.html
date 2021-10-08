@@ -12,7 +12,16 @@
       user_level: false,
       user_date_created: "",
       user_note: null,
+      user_old_password: "",
       user: [],
+      pass_type: "password",
+      max_date: new Date(new Date().setFullYear(new Date().getFullYear() - 12)),
+
+      async showHidePass() {
+        this.pass_type === "password"
+          ? (this.pass_type = "text")
+          : (this.pass_type = "password");
+      },
 
       async onChange(key, e) {
         let value = e.target.value;
@@ -23,11 +32,80 @@
       async onChangeDate(key, value) {
         // let value = new Date(e);
         runInAction(() => (this[key] = value));
-        console.log("user_birthday : " + this.user_birthday);
+        console.log(key + " : " + value);
+      },
+
+      validation() {
+        let msg =
+          this.user_name === "" || this.user_name === null
+            ? "Name cant be empty!"
+            : this.user_email === "" || this.user_email === null
+            ? "Email cant be empty!"
+            : !validateEmail(this.user_email)
+            ? "Invalid email! (abc@xyz.com)"
+            : this.user_gender === "" || this.user_gender === null
+            ? "Please select your gender!"
+            : this.user_password === "" || this.user_password === null
+            ? "Enter your current password to confirm!"
+            : this.user_birthday == [] || this.user_birthday == null
+            ? "Please select your birthdate!"
+            : this.max_date <= new Date(this.user_birthday)
+            ? "Please reselect your birthdate! 12 Years old++."
+            : this.user_old_password !== encrypt(this.user_password)
+            ? "Your current password was entered incorrectly!"
+            : false; // console.log(msg);
+
+        return msg;
+      },
+
+      async submit() {
+        let updateuser = {};
+        let error_msg = this.validation();
+
+        if (error_msg) {
+          window.mobileApp.app.dialog.alert(null, error_msg);
+        } else {
+          window.mobileApp.app.dialog.confirm(
+            "Confirm Update ?",
+            "Alert",
+            () => {
+              updateuser = {
+                user_id: this.user_id,
+                user_name: this.user_name,
+                user_email: this.user_email,
+                user_password: encrypt(this.user_password),
+                user_gender: this.user_gender,
+                user_birthday: new Date(this.user_birthday),
+                user_forgot_token: this.user_forgot_token,
+                user_membership_status: this.user_membership_status,
+                user_level: this.user_level,
+                user_date_created: this.user_date_created,
+                user_note: this.user_note,
+              };
+              api("/api/crud-user", {
+                users: { ...updateuser },
+                e: "Update",
+              }).then((res) => {
+                if (res === null) {
+                  window.mobileApp.app.dialog.alert(
+                    null,
+                    "Database insert Failed!"
+                  );
+                } else {
+                  window.user = res.users;
+                  navigate("/m/edit-profile");
+                }
+              }); // console.log(updateuser);
+            }
+          );
+        }
       },
     }}
     run={async () => {
-      const res = await api("/api/users");
+      const res = await api("/api/crud-user", {
+        users: "ReadMany",
+        e: "ReadMany",
+      });
       runInAction(() => {
         user = window.user;
 
@@ -35,7 +113,7 @@
           meta.user_id = user.user_id;
           meta.user_name = user.user_name;
           meta.user_email = user.user_email;
-          meta.user_password = user.user_password;
+          meta.user_old_password = user.user_password;
           meta.user_gender = user.user_gender;
           meta.user_birthday = [user.user_birthday];
           meta.user_forgot_token = user.user_forgot_token;
@@ -46,6 +124,7 @@
         }
       });
       console.log(user);
+      console.log(res);
     }}
   />
   <div class="flex flex-col items-start justify-start bg-white">
@@ -144,25 +223,25 @@
                 calendarParams={{
                   openIn: "customModal",
                   closeOnSelect: true,
-                  // maxDate: new Date().setFullYear(new Date().getFullYear() - 17),
-                  // yearPickerMax: new Date().getFullYear() - 17,
+                  yearPickerMax: new Date().getFullYear() - 12,
+                  yearPickerMin: new Date().getFullYear() - 51,
+                  // maxDate: new Date().setFullYear(new Date().getFullYear() - 12),
                   dateFormat: "dd MM yyyy",
                   on: {
                     dayClick: function (calendar, dayEl, year, month, day) {
-                      var value = [year + "-" + month + "-" + day];
-                      meta.onChangeDate("user_birthday", value);
-                      console.log(validateDate(value));
+                      var value = [year + "-" + (month + 1) + "-" + (day + 1)];
+                      meta.onChangeDate("user_birthday", value); // console.log(validateDate(value));
                     },
                   },
                 }}
                 value={meta.user_birthday}
               />
             </div>
-            <div class="flex self-stretch flex-col items-start justify-start border border-gray-300">
+            <div class="flex self-stretch items-start justify-start border border-gray-300">
               <input-new
-                label={"Password"}
-                type={"password"}
-                class="[class] w-full "
+                label={"Current Password"}
+                type={meta.pass_type}
+                class="w-full "
                 floatingLabel={true}
                 required={true}
                 inputStyle={{
@@ -174,6 +253,19 @@
                 value={meta.user_password}
                 onChange={(e) => meta.onChange("user_password", e)}
               />
+              <div
+                class={`flex flex-1 self-stretch flex-col items-start justify-center pt-4`}
+                style={`width: 30px; min-width: 30px; max-width: 30px; height: 60px; min-height: 60px; max-height: 60px;`}
+              >
+                <img
+                  src="/fimgs/1080_185085.x1.svg"
+                  class={`flex flex-col items-center justify-center`}
+                  style={`width: 22px; min-width: 22px; max-width: 22px; height: 15px; min-height: 15px; max-height: 15px;`}
+                  onClick={() => {
+                    meta.showHidePass();
+                  }}
+                />
+              </div>
             </div>
           </m-list>
         </div>
@@ -181,9 +273,7 @@
           class={`flex self-stretch flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-amber-500 rounded rounded-md`}
           style="height: 60px; min-height: 60px; max-height: 60px; background-color: #FF8F00"
           type={"submit"}
-          onClick={() => {
-            navigate("/m/profile-page");
-          }}
+          onClick={meta.submit}
         >
           Save
         </btn-primary>
