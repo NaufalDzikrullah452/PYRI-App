@@ -78,9 +78,9 @@
                 user_date_created: this.user_date_created,
                 user_note: this.user_note,
               };
-              api("/api/create-user", {
+              api("/api/crud-user", {
                 users: { ...user },
-                e: "regis",
+                e: "Register",
               }).then((res) => {
                 if (res === null) {
                   window.mobileApp.app.dialog.alert(

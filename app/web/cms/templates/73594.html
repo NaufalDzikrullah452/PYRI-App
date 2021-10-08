@@ -6,9 +6,9 @@
     run={async () => {
       const res = await api("/api/users");
       runInAction(() => {
-        meta.user = res.user[0];
+        meta.user = window.user;
       });
-      console.log(meta.user);
+      console.log(window.user);
     }}
   />
   <div
