@@ -7,12 +7,19 @@
       user_email: "",
       user_password: "",
       user_gender: "",
-      user_birthday: null,
+      user_birthday: "",
       user_forgot_token: "-",
       user_membership_status: "NonActive",
       user_level: false,
-      user_date_created: now,
+      user_date_created: new Date().toJSON(),
       user_note: null,
+      pass_type: "password",
+
+      async showHidePass() {
+        this.pass_type === "password"
+          ? (this.pass_type = "text")
+          : (this.pass_type = "password");
+      },
 
       async onChange(key, e) {
         let value = e.target.value;
@@ -20,30 +27,70 @@
         console.log(key + " : " + value);
       },
 
+      async onChangeDate(key, value) {
+        // let value = new Date(e);
+        runInAction(() => (this[key] = value));
+        console.log("user_birthday : " + this.user_birthday);
+      },
+
+      validation() {
+        // var res = await api("/api/users");
+        // if(this.email)
+        let msg =
+          this.user_name === "" || this.user_name === null
+            ? "Name cant be empty!"
+            : this.user_email === "" || this.user_email === null
+            ? "Email cant be empty!"
+            : !validateEmail(this.user_email)
+            ? "Invalid email! (abc@xyz.com)"
+            : this.user_gender === "" || this.user_gender === null
+            ? "Please select your gender!"
+            : this.user_password === "" || this.user_password === null
+            ? "Password cant be empty!"
+            : !validatePass(this.user_password)
+            ? "Password length 8-16 <br/>Include Uppercase, Lowercase & No space"
+            : false; // console.log(msg);
+
+        return msg;
+      },
+
       async submit() {
         let users = {};
-        window.mobileApp.app.dialog.confirm(
-          "Apakah data yang anda masukkan sudah benar?",
-          "Alert",
-          () => {
-            users = {
-              user_name: this.user_name,
-              user_email: this.user_email,
-              user_password: encrypt(this.user_password),
-              user_gender: this.user_gender,
-              user_birthday: this.user_birthday,
-              user_forgot_token: this.user_forgot_token,
-              user_membership_status: this.user_membership_status,
-              user_level: this.user_level,
-              user_date_created: this.user_date_created,
-              user_note: this.user_note,
-            };
-            api("/api/create-user", { ...users }).then((res) => {
-              console.log(res);
-            });
-            navigate("/m/login");
-          }
-        ); // console.log(users);
+        let error_msg = this.validation();
+
+        if (error_msg) {
+          window.mobileApp.app.dialog.alert(null, error_msg);
+        } else {
+          window.mobileApp.app.dialog.confirm(
+            "Apakah data yang anda masukkan sudah benar?",
+            "Alert",
+            () => {
+              users = {
+                user_name: this.user_name,
+                user_email: this.user_email,
+                user_password: encrypt(this.user_password),
+                user_gender: this.user_gender,
+                user_birthday: new Date(this.user_birthday.toString()),
+                user_forgot_token: this.user_forgot_token,
+                user_membership_status: this.user_membership_status,
+                user_level: this.user_level,
+                user_date_created: this.user_date_created,
+                user_note: this.user_note,
+              };
+              api("/api/create-user", { ...users }).then((res) => {
+                if (res === null) {
+                  window.mobileApp.app.dialog.alert(
+                    null,
+                    "Database insert Failed!"
+                  );
+                } else {
+                  console.log(res);
+                  navigate("/m/login");
+                }
+              });
+            }
+          );
+        } // console.log(users);
       },
     }}
     run={async () => {
@@ -51,10 +98,10 @@
       console.log(res);
     }}
   />
-  <div class="flex flex-col items-start justify-start bg-white">
+  <div class={`flex flex-col items-start justify-start bg-white`}>
     <div
-      class="flex flex-1 self-stretch flex-col items-center justify-center"
-      style="height: 823px; min-height: 823px; max-height: 823px;background-image: url('/fimgs/bg-ff2b4084986bd7da53995b9a752b9e5665e21788');background-size:100% 100%;background-repeat:no-repeat;"
+      class={`flex flex-1 self-stretch flex-col items-center justify-center`}
+      style={`height: 823px; min-height: 823px; max-height: 823px;background-image: url('/fimgs/bg-ff2b4084986bd7da53995b9a752b9e5665e21788');background-size:100% 100%;background-repeat:no-repeat;`}
     >
       <div
         class={`flex flex-1 self-stretch flex-col space-y-9 items-center justify-center px-9 py-16 bg-black bg-opacity-50`}
@@ -81,11 +128,13 @@
           <m-list
             class={`flex self-stretch flex-col space-y-4 items-start justify-start list-none`}
           >
-            <div class="flex self-stretch flex-col items-start justify-start border rounded border-white">
+            <div
+              class={`flex self-stretch flex-col items-start justify-start border rounded border-white`}
+            >
               <input-new-white
                 label={"Full Name"}
                 type={"text"}
-                class="w-full "
+                class="[class] w-full "
                 floatingLabel={true}
                 required={true}
                 inputStyle={{
@@ -104,7 +153,7 @@
               <input-new-white
                 label={"Email"}
                 type={"email"}
-                class="w-full "
+                class="[class] w-full "
                 floatingLabel={true}
                 required={true}
                 inputStyle={{
@@ -139,14 +188,13 @@
               </input-dropdown-white>
             </div>
             <div class="flex self-stretch flex-col items-start justify-start border rounded border-white">
-              <input-datepicker-white
-                label={"Birthday"}
+              <m-list-input
+                label={"Birth Date"}
                 type={"datepicker"}
-                class="w-full "
+                class="flex self-stretch flex-col items-start justify-center rounded w-full "
                 floatingLabel={true}
                 clearButton={true}
                 required={true}
-                readonly={true}
                 inputStyle={{
                   color: "white",
                 }}
@@ -155,21 +203,28 @@
       border-radius: 5px !important;`}
                 calendarParams={{
                   openIn: "customModal",
-                  header: true,
-                  footer: true,
+                  closeOnSelect: true,
+                  // maxDate: new Date().setFullYear(new Date().getFullYear() - 17),
+                  // yearPickerMax: new Date().getFullYear() - 17,
                   dateFormat: "dd MM yyyy",
+                  on: {
+                    dayClick: function (calendar, dayEl, year, month, day) {
+                      var value = [year + "-" + month + "-" + day];
+                      meta.onChangeDate("user_birthday", value); // console.log("ymd : " + value);
+                    },
+                  },
                 }}
                 value={meta.user_birthday}
-                calendarChange={(e) => meta.onChange("user_birthday", e)}
               />
             </div>
-            <div class="flex self-stretch flex-col items-start justify-start border rounded border-white">
+            <div class="flex flex-1 self-stretch items-center justify-center border rounded border-white">
               <input-new-white
                 label={"Password"}
-                type={"password"}
+                type={meta.pass_type}
                 class="w-full "
                 floatingLabel={true}
                 required={true}
+                closeByBackdropClick={true}
                 inputStyle={{
                   color: "white",
                 }}
@@ -181,6 +236,19 @@
                   meta.onChange("user_password", e);
                 }}
               />
+              <div
+                class={`flex flex-1 self-stretch flex-col items-start justify-center pt-4`}
+                style={`width: 30px; min-width: 30px; max-width: 30px; height: 65px; min-height: 65px; max-height: 65px;`}
+              >
+                <img
+                  src="/fimgs/1014_15614.x1.svg"
+                  class={`flex flex-col items-center justify-center`}
+                  style={`width: 22px; min-width: 22px; max-width: 22px; height: 15px; min-height: 15px; max-height: 15px;`}
+                  onClick={() => {
+                    meta.showHidePass();
+                  }}
+                />
+              </div>
             </div>
             <div class="flex self-stretch space-x-2.5 items-center justify-start">
               <div class="flex items-center justify-center">
