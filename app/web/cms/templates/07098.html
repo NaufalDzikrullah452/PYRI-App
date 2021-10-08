@@ -20,8 +20,6 @@
             ? "Invalid email! (abc@xyz.com)"
             : this.user_password === "" || this.user_password === null
             ? "Password cant be empty!"
-            : !validatePass(this.user_password)
-            ? "Password length 8-16 <br/>Include Uppercase, Lowercase & No space"
             : false;
         return msg;
       },
@@ -41,11 +39,11 @@
                 user_email: this.user_email,
                 user_password: encrypt(this.user_password),
               };
-              e = {
-                event: "login",
-              };
               console.log("here");
-              api("/api/login", { ...attemptuser, ...e }).then((res) => {
+              api("/api/login", {
+                auser: { ...attemptuser },
+                e: "Login",
+              }).then((res) => {
                 if (res === null) {
                   window.mobileApp.app.dialog.alert(null, "Login Failed!");
                 } else {
@@ -92,7 +90,7 @@
             </div>
           </div>
         </div>
-        <form
+        <div
           class={`flex self-stretch flex-col space-y-8 items-start justify-start`}
           style={`height: 308px; min-height: 308px; max-height: 308px;`}
         >
@@ -176,7 +174,7 @@
               </a>
             </div>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   </div>

@@ -2,6 +2,7 @@ import { format as formatFNS, parseISO } from 'date-fns'
 const md5 = require('md5');
 var validator = require('validator');
 var passwordValidator = require('password-validator');
+const dateValidator = require('is-my-date-valid')
 
 const dateFormat = (
     value: any,
@@ -27,7 +28,10 @@ const encrypt = (value) => {
 const validateEmail = (value) => {
     return validator.isEmail(value);
 }
-
+const validateDate = (value) => {
+    var validate = validator({ format: 'YYYY-MM-DD' });
+    return validate(value);
+}
 
 const validatePass = (value) => {
     // Create a schema
@@ -45,5 +49,6 @@ export const globalVar = {
     dateFormat,
     encrypt,
     validateEmail,
-    validatePass
+    validatePass,
+    validateDate,
 }
