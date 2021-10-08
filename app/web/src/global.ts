@@ -29,7 +29,7 @@ const validateEmail = (value) => {
     return validator.isEmail(value);
 }
 const validateDate = (value) => {
-    var validate = validator({ format: 'YYYY-MM-DD' });
+    var validate = validator({ format: 'yyyy-mm-dd' });
     return validate(value);
 }
 

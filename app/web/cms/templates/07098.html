@@ -5,6 +5,13 @@
       forgotURL: "/m/forgot-password",
       user_email: "",
       user_password: "",
+      pass_type: "password",
+
+      async showHidePass() {
+        this.pass_type === "password"
+          ? (this.pass_type = "text")
+          : (this.pass_type = "password");
+      },
 
       async onChange(key, e) {
         let value = e.target.value;
@@ -31,35 +38,33 @@
         if (error_msg) {
           window.mobileApp.app.dialog.alert(null, error_msg);
         } else {
-          window.mobileApp.app.dialog.confirm(
-            "Apakah data yang anda masukkan sudah benar?",
-            "Alert",
-            () => {
-              attemptuser = {
-                user_email: this.user_email,
-                user_password: encrypt(this.user_password),
-              };
-              console.log("here");
-              api("/api/crud-user", {
-                users: { ...attemptuser },
-                e: "Login",
-              }).then((res) => {
-                if (res === null) {
-                  window.mobileApp.app.dialog.alert(null, "Login Failed!");
-                } else {
-                  window.user = res.users;
-                  navigate("/m/profile-page");
-                }
-              });
+          window.mobileApp.app.dialog.preloader();
+          setTimeout(function () {
+            window.mobileApp.app.dialog.close();
+          }, 1000);
+          attemptuser = {
+            user_email: this.user_email,
+            user_password: encrypt(this.user_password),
+          };
+          console.log("here");
+          api("/api/crud-user", {
+            users: { ...attemptuser },
+            e: "Login",
+          }).then((res) => {
+            if (res === null) {
+              window.mobileApp.app.dialog.alert(null, "Login Failed!");
+            } else {
+              window.user = res.users;
+              navigate("/m/profile-page");
             }
-          );
+          });
         }
       },
     }}
     run={async () => {}}
   />
   <div
-    class={`flex flex-col items-start justify-start bg-white`}
+    class={`flex self-stretch flex-col items-start justify-start bg-white`}
     style={`height: 823px; min-height: 823px; max-height: 823px;`}
   >
     <div
@@ -118,10 +123,10 @@
                   }}
                 />
               </div>
-              <div class="flex self-stretch flex-col items-start justify-start border rounded border-white">
+              <div class="flex self-stretch items-start justify-start border rounded border-white">
                 <input-new-white
                   label={"Password"}
-                  type={"password"}
+                  type={meta.pass_type}
                   class="w-full "
                   floatingLabel={true}
                   required={true}
@@ -136,6 +141,19 @@
                     meta.onChange("user_password", e);
                   }}
                 />
+                <div
+                  class={`flex flex-1 self-stretch flex-col items-start justify-center pt-4`}
+                  style={`width: 30px; min-width: 30px; max-width: 30px; height: 60px; min-height: 60px; max-height: 60px;`}
+                >
+                  <img
+                    src="/fimgs/1080_183347.x1.svg"
+                    class={`flex flex-col items-center justify-center`}
+                    style={`width: 22px; min-width: 22px; max-width: 22px; height: 15px; min-height: 15px; max-height: 15px;`}
+                    onClick={() => {
+                      meta.showHidePass();
+                    }}
+                  />
+                </div>
               </div>
             </m-list>
             <div class="flex self-stretch flex-col items-end justify-center">

@@ -14,6 +14,7 @@
       user_date_created: new Date().toJSON(),
       user_note: null,
       pass_type: "password",
+      max_date: new Date(new Date().setFullYear(new Date().getFullYear() - 12)),
 
       async showHidePass() {
         this.pass_type === "password"
@@ -29,9 +30,7 @@
       },
 
       async onChangeDate(key, value) {
-        // let value = new Date(e);
         runInAction(() => (this[key] = value));
-        console.log("user_birthday : " + this.user_birthday);
       },
 
       validation() {
@@ -44,10 +43,12 @@
             ? "Invalid email! (abc@xyz.com)"
             : this.user_gender === "" || this.user_gender === null
             ? "Please select your gender!"
-            : this.user_password === "" || this.user_password === null
-            ? "Password cant be empty!"
             : this.user_birthday == [] || this.user_birthday == null
             ? "Please select your birthdate!"
+            : this.max_date <= new Date(this.user_birthday)
+            ? "Please reselect your birthdate! 12 Years old++."
+            : this.user_password === "" || this.user_password === null
+            ? "Password cant be empty!"
             : !validatePass(this.user_password)
             ? "Password length 8-16 <br/>Include Uppercase, Lowercase & No space"
             : false; // console.log(msg);
@@ -98,7 +99,10 @@
       },
     }}
     run={async () => {
-      const res = await api("/api/users");
+      const res = await api("/api/crud-user", {
+        users: "ReadMany",
+        e: "ReadMany",
+      });
       console.log(res);
     }}
   />
@@ -208,14 +212,14 @@
                 calendarParams={{
                   openIn: "customModal",
                   closeOnSelect: true,
-                  // maxDate: new Date().setFullYear(new Date().getFullYear() - 17),
-                  // yearPickerMax: new Date().getFullYear() - 17,
+                  yearPickerMax: new Date().getFullYear() - 12,
+                  yearPickerMin: new Date().getFullYear() - 51,
+                  // maxDate: new Date().setFullYear(new Date().getFullYear() - 12),
                   dateFormat: "dd MM yyyy",
                   on: {
                     dayClick: function (calendar, dayEl, year, month, day) {
-                      var value = [year + "-" + month + "-" + day];
-                      meta.onChangeDate("user_birthday", value);
-                      console.log(validateDate(value));
+                      var value = [year + "-" + (month + 1) + "-" + (day + 1)];
+                      meta.onChangeDate("user_birthday", value); // console.log(validateDate(value));
                     },
                   },
                 }}
