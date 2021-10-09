@@ -54,7 +54,8 @@
             if (res === null) {
               window.mobileApp.app.dialog.alert(null, "Login Failed!");
             } else {
-              window.user = res.users;
+              // window.user = res.users;
+              console.log(res);
               navigate("/m/profile-page");
             }
           });
@@ -64,7 +65,7 @@
     run={async () => {}}
   />
   <div
-    class={`flex self-stretch flex-col items-start justify-start bg-white`}
+    class={`flex flex-col items-start justify-start bg-white`}
     style={`height: 823px; min-height: 823px; max-height: 823px;`}
   >
     <div
