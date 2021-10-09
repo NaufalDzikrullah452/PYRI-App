@@ -45,12 +45,12 @@
             ? "Invalid email! (abc@xyz.com)"
             : this.user_gender === "" || this.user_gender === null
             ? "Please select your gender!"
-            : this.user_password === "" || this.user_password === null
-            ? "Enter your current password to confirm!"
             : this.user_birthday == [] || this.user_birthday == null
             ? "Please select your birthdate!"
             : this.max_date <= new Date(this.user_birthday)
             ? "Please reselect your birthdate! 12 Years old++."
+            : this.user_password === "" || this.user_password === null
+            ? "Enter your current password to confirm!"
             : this.user_old_password !== encrypt(this.user_password)
             ? "Your current password was entered incorrectly!"
             : false; // console.log(msg);
@@ -92,6 +92,7 @@
                     "Database insert Failed!"
                   );
                 } else {
+                  console.log(res);
                   window.user = res.users;
                   navigate("/m/edit-profile");
                 }
@@ -107,7 +108,7 @@
         e: "ReadMany",
       });
       runInAction(() => {
-        user = window.user;
+        user = window.user.user;
 
         if (user.role !== "guest") {
           meta.user_id = user.user_id;
