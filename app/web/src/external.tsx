@@ -75,4 +75,24 @@ export default {
     import("./components/input-datepicker-white"),
     { c: "", s: "", h: "" },
   ],
+  "span-genres": () => [
+    import("./components/span-genres"),
+    { c: "", s: "", h: "" },
+  ],
+  "titlebar-left": () => [
+    import("./components/titlebar-left"),
+    { c: "", s: "", h: "" },
+  ],
+  "input-comment": () => [
+    import("./components/input-comment"),
+    { c: "", s: "", h: "" },
+  ],
+  "item-comment-active": () => [
+    import("./components/item-comment-active"),
+    { c: "", s: "", h: "" },
+  ],
+  "item-comment": () => [
+    import("./components/item-comment"),
+    { c: "", s: "", h: "" },
+  ],
 };
