@@ -59,7 +59,7 @@ export const WFormTab = ({ ctx }: { ctx: Context<IBaseFormContext> }) => {
                   onLoad: async (row, opt) => {
                     if (typeof row[toTable] !== 'object') row[toTable] = {}
                     row[toTable][to] = fromId
-                    row[from] = fromId
+                    // row[from] = fromId
                   },
                 },
                 list: {

@@ -27,4 +27,5 @@ export default {
     import("./components/sample-component"),
     { c: "", s: "", h: "" },
   ],
+  test: () => [import("./components/test"), { c: "", s: "", h: "" }],
 };

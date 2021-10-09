@@ -1,0 +1,35 @@
+<>
+  <admin
+    content={{
+      _parent: {
+        table: "parent",
+        form: {
+          alter: {
+            sample_2: {
+              type: "file",
+              required: true,
+              fieldProps: {
+                acceptFile: "asas",
+              },
+            },
+          },
+          layout: [
+            [
+              "sample_1",
+              "sample_3",
+              [
+                ({ layout, watch, row, state }) => {
+                  watch(["sample_1", "sample_2"]);
+                  if (!!row.sample_1) {
+                    return layout(["sample_2"]);
+                  }
+                  return <div>OK</div>;
+                },
+              ],
+            ],
+          ],
+        },
+      },
+    }}
+  />
+</>

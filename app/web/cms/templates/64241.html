@@ -1,0 +1,31 @@
+<>
+  <admin
+    content={{
+      sample: {
+        table: "children",
+        list: {
+          params: {
+            include: {
+              parent: true,
+            },
+          },
+          table: {
+            columns: [
+              ["sample_1", { title: "SAMPLE 1" }],
+              ["parent.sample_1", { title: "PARENT 1" }],
+            ],
+          },
+        },
+        form: {
+          alter: {
+            parent: {
+              type: "belongs-to",
+              title: "Parent",
+            },
+          },
+          layout: [["sample_1", "sample_2", "parent"]],
+        },
+      },
+    }}
+  />
+</>

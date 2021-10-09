@@ -809,6 +809,7 @@ export const createFormContext = (
           if (!data) {
             data = state.db.data.__meta.raw
           }
+
           let def = state.db.definition?.columns
           for (let [k, value] of Object.entries(data)) {
             if (
@@ -818,6 +819,8 @@ export const createFormContext = (
               delete data[k]
             }
             if(def && def[k] && typeof data[k] !== def[k].type){
+              console.log(JSON.stringify(data), 1)
+
               if(def[k].type === 'number'){
                 let cols = parseFloat(data[k])
                 set(state.db.data, k, cols)
@@ -836,6 +839,7 @@ export const createFormContext = (
               delete data[from]
 
               const m = data[v.modelClass]
+
               if (m) {
                 if (
                   m.disconnect ||
@@ -864,7 +868,15 @@ export const createFormContext = (
                     //     update: data[v.modelClass],
                     //   }
                     // }
+                  } else if (data[v.modelClass] && data[v.modelClass][from]) {
+                    data[v.modelClass] = {
+                      connect: {
+                        [to]: data[v.modelClass][from],
+                      },
+                    }
                   }
+
+                  // delete data[v.modelClass]
                 }
               }
             } else {
