@@ -59,4 +59,40 @@ export default {
     import("./components/input-new"),
     { c: "", s: "", h: "" },
   ],
+  "titlebar-back": () => [
+    import("./components/titlebar-back"),
+    { c: "", s: "", h: "" },
+  ],
+  "input-new-white": () => [
+    import("./components/input-new-white"),
+    { c: "", s: "", h: "" },
+  ],
+  "input-dropdown-white": () => [
+    import("./components/input-dropdown-white"),
+    { c: "", s: "", h: "" },
+  ],
+  "input-datepicker-white": () => [
+    import("./components/input-datepicker-white"),
+    { c: "", s: "", h: "" },
+  ],
+  "span-genres": () => [
+    import("./components/span-genres"),
+    { c: "", s: "", h: "" },
+  ],
+  "titlebar-left": () => [
+    import("./components/titlebar-left"),
+    { c: "", s: "", h: "" },
+  ],
+  "input-comment": () => [
+    import("./components/input-comment"),
+    { c: "", s: "", h: "" },
+  ],
+  "item-comment-active": () => [
+    import("./components/item-comment-active"),
+    { c: "", s: "", h: "" },
+  ],
+  "item-comment": () => [
+    import("./components/item-comment"),
+    { c: "", s: "", h: "" },
+  ],
 };
