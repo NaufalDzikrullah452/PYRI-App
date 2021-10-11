@@ -3,6 +3,7 @@ const md5 = require('md5');
 var validator = require('validator');
 var passwordValidator = require('password-validator');
 const dateValidator = require('is-my-date-valid')
+// var nodemailer = require('nodemailer');
 
 const dateFormat = (
     value: any,
@@ -45,10 +46,39 @@ const validatePass = (value) => {
 
     return schema.validate(value);
 }
+
+// const sendVerifCode = (email, value) => {
+//     var transporter = nodemailer.createTransport({
+//         service: 'gmail',
+//         auth: {
+//             user: 'pyri.app0@gmail.com', // fill your mail
+//             pass: 'pyriapp2021' // fill your password
+//         }
+//     });
+
+//     var mailOptions = {
+//         from: 'pyri.app@gmail.com', // fill your mail
+//         to: email,
+//         subject: 'Verification code PYRI-APP',
+//         text: 'Your Verification code : ' + value
+//     };
+
+//     transporter.sendMail(mailOptions, function (error, info) {
+//         if (error) {
+//             console.log(error);
+//             return false;
+//         } else {
+//             console.log('Email sent: ' + info.response);
+//             return true;
+//         }
+//     });
+// }
+
 export const globalVar = {
     dateFormat,
     encrypt,
     validateEmail,
     validatePass,
     validateDate,
+    // sendVerifCode
 }

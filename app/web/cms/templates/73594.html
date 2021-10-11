@@ -9,6 +9,9 @@
           e: "Logout",
         }).then((res) => {
           console.log(res);
+          window.user = {
+            role: "guest",
+          };
           navigate("/m/login");
         });
       },
