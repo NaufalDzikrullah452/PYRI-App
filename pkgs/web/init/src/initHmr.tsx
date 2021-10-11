@@ -32,7 +32,7 @@ export const initHmr = () => {
         break
       case 'hmr-reload-all':
         if (location.pathname !== '/dev') {
-          location.reload()
+          // location.reload()
         }
         break
       case 'component-reload':

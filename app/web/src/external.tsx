@@ -104,4 +104,16 @@ export default {
     import("./components/item-comment"),
     { c: "", s: "", h: "" },
   ],
+  "books-item01": () => [
+    import("./components/books-item01"),
+    { c: "", s: "", h: "" },
+  ],
+  "span-category": () => [
+    import("./components/span-category"),
+    { c: "", s: "", h: "" },
+  ],
+  "input-float-web": () => [
+    import("./components/input-float-web"),
+    { c: "", s: "", h: "" },
+  ],
 };

@@ -1,0 +1,135 @@
+<>
+  <effect
+    meta={{
+      username: "admin",
+      password: "admin",
+      pass_type: "password",
+
+      async showHidePass() {
+        this.pass_type === "password"
+          ? (this.pass_type = "text")
+          : (this.pass_type = "password");
+      },
+
+      async onChange(key, e) {
+        let value = e.target.value;
+        runInAction(() => (this[key] = value));
+        console.log(key + " : " + value);
+      },
+
+      validation() {
+        let msg =
+          this.username === "" || this.username === null
+            ? "Username cant be empty!"
+            : this.password === "" || this.password === null
+            ? "Password cant be empty!"
+            : false;
+        return msg;
+      },
+
+      async submit() {
+        let attemptuser = {};
+        let error_msg = this.validation();
+
+        if (error_msg) {
+          console.log(error_msg);
+        } else {
+        }
+      },
+    }}
+    run={async () => {}}
+  />
+  <div class={`w-full flex flex-col items-center justify-center`}>
+    <div
+      class={`flex flex-1 self-stretch items-center justify-center`}
+      style={`background-image: url('/fimgs/bg-18c5fcd54f9449e623ede0c45bbd079f07b14bc0');background-size:100% 100%;background-repeat:no-repeat;`}
+    >
+      <div class="flex flex-col space-y-9 items-start justify-start">
+        <div class="flex self-stretch items-center justify-center p-2.5">
+          <img
+            src="/fimgs/930_2305.x1.svg"
+            class="flex items-center justify-center p-2.5 bg-white rounded-full"
+            style="width: 76px; min-width: 76px; max-width: 76px; height: 76px; min-height: 76px; max-height: 76px;"
+          />
+        </div>
+        <div
+          class="flex flex-col items-center justify-center bg-gray-200 shadow rounded-lg"
+          style="width: 494px; min-width: 494px; max-width: 494px; height: 494px; min-height: 494px; max-height: 494px;"
+        >
+          <div class="flex self-stretch items-center justify-center p-6 bg-gray-500">
+            <div class="text-2xl font-bold leading-9 text-white">
+              LOGIN ADMINISTRATOR
+            </div>
+          </div>
+          <div class="flex self-stretch flex-col space-y-9 items-center justify-center px-9 py-16">
+            <div class="flex self-stretch flex-col space-y-4 items-start justify-start">
+              <div class="flex self-stretch flex-col space-y-4 items-start justify-start">
+                <div class="flex self-stretch flex-col items-start justify-start px-3 pt-2 pb-1.5 bg-gray-800 rounded">
+                  <input-float-web
+                    class={"w-full placeholder-white"}
+                    type={"text"}
+                    placeholder={"Username"}
+                    style={`height: 42px; min-height: 42px; max-height: 42px; 
+      color: white;
+      padding-left: 5px; 
+      background:transparent; 
+      border: none;
+      input::-webkit-input-placeholder
+       {
+	color:white;
+      }`}
+                  />
+                </div>
+                <div class="flex self-stretch flex-col items-start justify-start px-3 pt-2 pb-1.5 bg-gray-800 rounded">
+                  <input-float-web
+                    class={"w-full placeholder-white"}
+                    type={"password"}
+                    placeholder={"Password"}
+                    style={`height: 42px; min-height: 42px; max-height: 42px; 
+      color: white;
+      padding-left: 5px; 
+      background:transparent; 
+      border: none;
+      input::-webkit-input-placeholder
+       {
+	color:white;
+      }`}
+                  />
+                </div>
+              </div>
+              <div class="flex self-stretch space-x-2.5 items-center justify-start">
+                <div class={`flex items-center justify-center p-1`}>
+                  <input
+                    type="checkbox"
+                    class={`border rounded-sm border-gray-500`}
+                    style={`width: 20px; min-width: 20px; max-width: 20px; height: 20px; min-height: 20px; max-height: 20px;`}
+                  />
+                </div>
+                <div class="text-base leading-normal text-gray-900">
+                  Remember me
+                </div>
+              </div>
+            </div>
+            <button class="flex self-stretch flex-col items-center justify-center px-3 pt-2 pb-1.5 bg-amber-500 rounded">
+              <div class="flex self-stretch flex-col items-start justify-end">
+                <div class="flex self-stretch space-x-3 items-center justify-start">
+                  <div class="flex flex-1 space-x-2 items-center justify-start pl-1">
+                    <div class="flex flex-1 flex-col items-center justify-center">
+                      <div class="flex self-stretch flex-col items-center justify-center">
+                        <div class="flex items-center justify-start">
+                          <div class="text-xl font-bold leading-loose">
+                            Login
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</>
