@@ -26,6 +26,7 @@
         if (error_msg) {
           window.mobileApp.app.dialog.alert(null, error_msg);
         } else {
+          const random_token = Math.floor(100000 + Math.random() * 900000);
           user = {
             user_email: this.user_email,
           };
@@ -36,30 +37,25 @@
             if (res.users === null) {
               window.mobileApp.app.dialog.alert(null, "Email not registered!");
             } else {
-              const random_token = Math.floor(1000 + Math.random() * 9000);
-              user = {
-                id: res.users.user_id,
-                forgot_token: random_token.toString(),
-              };
               window.mobileApp.app.dialog.preloader(); // console.log(user);
 
+              user = {
+                user_id: res.users.user_id,
+                user_forgot_token: random_token.toString(),
+              };
               api("/api/crud-user", {
                 users: { ...user },
                 e: "SetForgotToken",
               }).then((res) => {
-                if (res.users === null) {
-                  window.mobileApp.app.dialog.alert(
-                    null,
-                    "Forgot token was not set successfully"
-                  );
-                } else {
-                  // sendVerifCode(res.users.user_email, random_token);
-                  setTimeout(function () {
-                    window.mobileApp.app.dialog.close();
-                  }, 1000);
-                  console.log(res);
-                  navigate("/m/verification-code");
-                }
+                console.log(res);
+                setTimeout(function () {
+                  window.mobileApp.app.dialog.close();
+                }, 1000);
+                window.user = {
+                  role: "guest",
+                  user: res.users,
+                };
+                navigate("/m/verification-code");
               });
             }
           });
