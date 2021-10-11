@@ -15,7 +15,9 @@
     "nodemailer": "^6.6.5",
     "password-validator": "^5.1.1",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "tailwind-float-label": "^2.1.0",
+    "validator": "^13.6.0"
   },
   "script": {
     "post-install": "patch-package"
