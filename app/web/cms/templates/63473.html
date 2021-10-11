@@ -1,20 +1,16 @@
 <>
   <effect
     meta={{
-      regisURL: "/m/register",
-      forgotURL: "/m/forgot-password",
-      user_id: "",
-      user_name: "",
-      user_email: "",
       user_password: "",
       user_ver_password: "",
-      user_gender: "",
-      user_birthday: "",
-      user_forgot_token: "-",
-      user_membership_status: "NonActive",
-      user_level: false,
-      user_date_created: "",
-      user_note: null,
+      pass_type_1: "password",
+      pass_type_2: "password",
+
+      async showHidePass(key) {
+        this[key] === "password"
+          ? (this[key] = "text")
+          : (this[key] = "password");
+      },
 
       async onChange(key, e) {
         let value = e.target.value;
@@ -22,19 +18,50 @@
         console.log(key + " : " + value);
       },
 
+      validation() {
+        let msg =
+          this.user_password === "" || this.user_password === null
+            ? "New password cant be empty!"
+            : !validatePass(this.user_password)
+            ? "Password length 8-16 <br/>Include Uppercase, Lowercase & No space"
+            : this.user_ver_password === "" || this.user_ver_password === null
+            ? "Confirm your new password!"
+            : this.user_password !== this.user_ver_password
+            ? "Password not same!"
+            : false; // console.log(msg);
+
+        return msg;
+      },
+
       async submit() {
-        let res = {};
+        let error_msg = this.validation();
+        let user = window.user.user || "";
 
-        () => {
-          let users = {
-            user_password: this.user_password,
-            user_ver_password: this.user_ver_password,
-          }; // api("/api/create-user", { users }).then((res) => {
-          //   console.log(res);
-          // });
-
-          console.log(users);
-        };
+        if (error_msg || user === "") {
+          window.mobileApp.app.dialog.alert(
+            null,
+            error_msg || "Email not entered before!"
+          );
+        } else {
+          user = {
+            user_id: user.user_id,
+            user_password: encrypt(this.user_password),
+          };
+          window.mobileApp.app.dialog.preloader("Password Changed!");
+          api("/api/crud-user", {
+            users: { ...user },
+            e: "UpdatePass",
+          }).then((res) => {
+            if (res.users === null) {
+              window.mobileApp.app.dialog.alert(null, "Database connect fail!");
+            } else {
+              setTimeout(function () {
+                window.mobileApp.app.dialog.close();
+              }, 1000);
+              navigate("/m/login"); // console.log(res);
+            }
+          });
+        }
       },
     }}
     run={async () => {}}
@@ -61,18 +88,17 @@
             pasword
           </div>
         </div>
-        <form
+        <div
           class={`flex self-stretch flex-col space-y-8 items-start justify-start`}
-          action={"/m/login"}
         >
           <m-list
-            class={`flex self-stretch flex-col space-y-4 items-start justify-start list-none`}
+            class={`flex flex-1 self-stretch flex-col space-y-4 items-start justify-start list-none`}
           >
-            <div class="flex self-stretch flex-col items-start justify-start border rounded border-white">
+            <div class="flex self-stretch space-x-2.5 items-start justify-start border rounded border-white">
               <input-new-white
                 label={"New Password"}
-                type={"password"}
-                class="[class] w-full "
+                type={meta.pass_type_1}
+                class="w-full "
                 floatingLabel={true}
                 required={true}
                 inputStyle={{
@@ -86,12 +112,25 @@
                   meta.onChange("user_password", e);
                 }}
               />
+              <div
+                class={`flex flex-1 self-stretch flex-col items-start justify-center pt-4`}
+                style={`width: 51px; min-width: 51px; max-width: 51px; height: 60px; min-height: 60px; max-height: 60px;`}
+              >
+                <img
+                  src="/fimgs/1142_112511.x1.svg"
+                  class={`flex flex-col items-center justify-center`}
+                  style={`width: 22px; min-width: 22px; max-width: 22px; height: 15px; min-height: 15px; max-height: 15px;`}
+                  onClick={() => {
+                    meta.showHidePass("pass_type_1");
+                  }}
+                />
+              </div>
             </div>
-            <div class="flex self-stretch flex-col items-start justify-start border rounded border-white">
+            <div class="flex self-stretch space-x-2.5 items-start justify-start border rounded border-white">
               <input-new-white
                 label={"Confirm New Password"}
-                type={"password"}
-                class="[class] w-full "
+                type={meta.pass_type_2}
+                class="w-full "
                 floatingLabel={true}
                 required={true}
                 inputStyle={{
@@ -105,16 +144,30 @@
                   meta.onChange("user_ver_password", e);
                 }}
               />
+              <div
+                class={`flex flex-1 self-stretch flex-col items-start justify-center pt-4`}
+                style={`width: 51px; min-width: 51px; max-width: 51px; height: 60px; min-height: 60px; max-height: 60px;`}
+              >
+                <img
+                  src="/fimgs/1142_112493.x1.svg"
+                  class={`flex flex-col items-center justify-center`}
+                  style={`width: 22px; min-width: 22px; max-width: 22px; height: 15px; min-height: 15px; max-height: 15px;`}
+                  onClick={() => {
+                    meta.showHidePass("pass_type_2");
+                  }}
+                />
+              </div>
             </div>
           </m-list>
           <btn-primary
-            class={`flex flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-amber-500 rounded rounded-md`}
+            onClick={meta.submit}
+            class={`flex self-stretch flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-amber-500 rounded rounded-md`}
             style="height: 60px; min-height: 60px; max-height: 60px; background-color: #FF8F00"
             type={"submit"}
           >
             Create
           </btn-primary>
-        </form>
+        </div>
       </div>
     </div>
   </div>
