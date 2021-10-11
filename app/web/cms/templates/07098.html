@@ -38,10 +38,6 @@
         if (error_msg) {
           window.mobileApp.app.dialog.alert(null, error_msg);
         } else {
-          window.mobileApp.app.dialog.preloader();
-          setTimeout(function () {
-            window.mobileApp.app.dialog.close();
-          }, 1000);
           attemptuser = {
             user_email: this.user_email,
             user_password: encrypt(this.user_password),
@@ -49,14 +45,32 @@
           console.log("here");
           api("/api/crud-user", {
             users: { ...attemptuser },
-            e: "Login",
+            e: "FindEmail",
           }).then((res) => {
-            if (res === null) {
-              window.mobileApp.app.dialog.alert(null, "Login Failed!");
+            console.log(res);
+
+            if (res.users === null) {
+              window.mobileApp.app.dialog.alert(null, "Email Not Found!");
             } else {
-              // window.user = res.users;
-              console.log(res);
-              navigate("/m/profile-page");
+              api("/api/crud-user", {
+                users: { ...attemptuser },
+                e: "Login",
+              }).then((res) => {
+                if (res.users === null) {
+                  window.mobileApp.app.dialog.alert(null, "Wrong Password!");
+                } else {
+                  window.mobileApp.app.dialog.preloader();
+                  setTimeout(function () {
+                    window.mobileApp.app.dialog.close();
+                  }, 1000);
+                  window.user = {
+                    role: "users",
+                    user: res.users,
+                  }; // console.log(res.users);
+
+                  navigate("/m/profile-page");
+                }
+              });
             }
           });
         }

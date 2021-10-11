@@ -93,7 +93,10 @@
                   );
                 } else {
                   console.log(res);
-                  window.user = res.users;
+                  window.user = {
+                    role: "users",
+                    user: res.users,
+                  };
                   navigate("/m/edit-profile");
                 }
               }); // console.log(updateuser);
@@ -103,12 +106,12 @@
       },
     }}
     run={async () => {
-      const res = await api("/api/crud-user", {
-        users: "ReadMany",
-        e: "ReadMany",
-      });
+      // const res = await api("/api/crud-user", {
+      //   users: "ReadMany",
+      //   e: "ReadMany",
+      // });
       runInAction(() => {
-        user = window.user.user;
+        user = window.user.user || [];
 
         if (user.role !== "guest") {
           meta.user_id = user.user_id;
@@ -116,7 +119,7 @@
           meta.user_email = user.user_email;
           meta.user_old_password = user.user_password;
           meta.user_gender = user.user_gender;
-          meta.user_birthday = [user.user_birthday];
+          meta.user_birthday = [user.user_birthday] || [];
           meta.user_forgot_token = user.user_forgot_token;
           meta.user_membership_status = user.user_membership_status;
           meta.user_level = user.user_level;
@@ -124,8 +127,7 @@
           meta.user_note = user.user_note;
         }
       });
-      console.log(user);
-      console.log(res);
+      console.log(user); // console.log(res);
     }}
   />
   <div class="flex flex-col items-start justify-start bg-white">
@@ -224,7 +226,7 @@
                 calendarParams={{
                   openIn: "customModal",
                   closeOnSelect: true,
-                  yearPickerMax: new Date().getFullYear() - 12,
+                  yearPickerMax: new Date().getFullYear(),
                   yearPickerMin: new Date().getFullYear() - 51,
                   // maxDate: new Date().setFullYear(new Date().getFullYear() - 12),
                   dateFormat: "dd MM yyyy",

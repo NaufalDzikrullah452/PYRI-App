@@ -26,11 +26,11 @@
         let value = e.target.value;
         runInAction(() => (this[key] = value));
         console.log(key + " : " + value);
-        console.log("user_birthday : " + this.user_birthday);
       },
 
       async onChangeDate(key, value) {
         runInAction(() => (this[key] = value));
+        console.log("user_birthday : " + this.user_birthday);
       },
 
       validation() {
@@ -63,38 +63,50 @@
         if (error_msg) {
           window.mobileApp.app.dialog.alert(null, error_msg);
         } else {
-          window.mobileApp.app.dialog.confirm(
-            "Apakah data yang anda masukkan sudah benar?",
-            "Alert",
-            () => {
-              user = {
-                user_name: this.user_name,
-                user_email: this.user_email,
-                user_password: encrypt(this.user_password),
-                user_gender: this.user_gender,
-                user_birthday: new Date(this.user_birthday.toString()),
-                user_forgot_token: this.user_forgot_token,
-                user_membership_status: this.user_membership_status,
-                user_level: this.user_level,
-                user_date_created: this.user_date_created,
-                user_note: this.user_note,
-              };
-              api("/api/crud-user", {
-                users: { ...user },
-                e: "Register",
-              }).then((res) => {
-                if (res === null) {
-                  window.mobileApp.app.dialog.alert(
-                    null,
-                    "Database insert Failed!"
-                  );
-                } else {
-                  console.log(res);
-                  navigate("/m/login");
+          let user = {
+            user_name: this.user_name,
+            user_email: this.user_email,
+            user_password: encrypt(this.user_password),
+            user_gender: this.user_gender,
+            user_birthday: new Date(this.user_birthday.toString()),
+            user_forgot_token: this.user_forgot_token,
+            user_membership_status: this.user_membership_status,
+            user_level: this.user_level,
+            user_date_created: this.user_date_created,
+            user_note: this.user_note,
+          };
+          api("/api/crud-user", {
+            users: { ...user },
+            e: "FindEmail",
+          }).then((res) => {
+            if (res.users !== null) {
+              window.mobileApp.app.dialog.alert(
+                null,
+                "Email Already Registered!"
+              );
+            } else {
+              window.mobileApp.app.dialog.confirm(
+                "Apakah data yang anda masukkan sudah benar?",
+                "Alert",
+                () => {
+                  api("/api/crud-user", {
+                    users: { ...user },
+                    e: "Register",
+                  }).then((res) => {
+                    if (res === null) {
+                      window.mobileApp.app.dialog.alert(
+                        null,
+                        "Database insert Failed!"
+                      );
+                    } else {
+                      console.log(res);
+                      navigate("/m/login");
+                    }
+                  });
                 }
-              });
+              );
             }
-          );
+          }); //
         } // console.log(users);
       },
     }}
@@ -142,7 +154,7 @@
               <input-new-white
                 label={"Full Name"}
                 type={"text"}
-                class="[class] w-full "
+                class="w-full "
                 floatingLabel={true}
                 required={true}
                 inputStyle={{
@@ -161,7 +173,7 @@
               <input-new-white
                 label={"Email"}
                 type={"email"}
-                class="[class] w-full "
+                class="w-full "
                 floatingLabel={true}
                 required={true}
                 inputStyle={{
@@ -246,8 +258,8 @@
                 }}
               />
               <div
-                class={`flex flex-1 self-stretch flex-col items-start justify-center pt-4`}
-                style={`width: 30px; min-width: 30px; max-width: 30px; height: 65px; min-height: 65px; max-height: 65px;`}
+                class={`flex self-stretch flex-col items-start justify-center pt-4`}
+                style={`width: 33px; min-width: 33px; max-width: 33px; height: 65px; min-height: 65px; max-height: 65px;`}
               >
                 <img
                   src="/fimgs/1014_15614.x1.svg"
@@ -292,10 +304,10 @@
           <div class="flex self-stretch flex-col items-start justify-start">
             <div class="flex self-stretch flex-col space-y-4 items-center justify-center">
               <btn-primary
-                class={`flex flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-amber-500 rounded rounded-md`}
-                style="height: 60px; min-height: 60px; max-height: 60px; background-color: #FF8F00"
                 type={"submit"}
                 onClick={meta.submit}
+                class={`flex flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-amber-500 rounded rounded-md`}
+                style="height: 60px; min-height: 60px; max-height: 60px; background-color: #FF8F00"
               >
                 Register
               </btn-primary>

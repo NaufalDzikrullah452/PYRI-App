@@ -1,19 +1,7 @@
 <>
   <effect
     meta={{
-      regisURL: "/m/register",
-      forgotURL: "/m/forgot-password",
-      user_id: "",
-      user_name: "",
       user_email: "",
-      user_password: "",
-      user_gender: "",
-      user_birthday: "",
-      user_forgot_token: "-",
-      user_membership_status: "NonActive",
-      user_level: false,
-      user_date_created: "",
-      user_note: null,
 
       async onChange(key, e) {
         let value = e.target.value;
@@ -21,18 +9,61 @@
         console.log(key + " : " + value);
       },
 
+      validation() {
+        let msg =
+          this.user_email === "" || this.user_email === null
+            ? "Email cant be empty!"
+            : !validateEmail(this.user_email)
+            ? "Invalid email! (abc@xyz.com)"
+            : false; // console.log(msg);
+
+        return msg;
+      },
+
       async submit() {
-        let res = {};
+        let error_msg = this.validation();
 
-        () => {
-          let users = {
+        if (error_msg) {
+          window.mobileApp.app.dialog.alert(null, error_msg);
+        } else {
+          user = {
             user_email: this.user_email,
-          }; // api("/api/create-user", { users }).then((res) => {
-          //   console.log(res);
-          // });
+          };
+          api("/api/crud-user", {
+            users: { ...user },
+            e: "FindEmail",
+          }).then((res) => {
+            if (res.users === null) {
+              window.mobileApp.app.dialog.alert(null, "Email not registered!");
+            } else {
+              const random_token = Math.floor(1000 + Math.random() * 9000);
+              user = {
+                id: res.users.user_id,
+                forgot_token: random_token.toString(),
+              };
+              window.mobileApp.app.dialog.preloader(); // console.log(user);
 
-          console.log(users);
-        };
+              api("/api/crud-user", {
+                users: { ...user },
+                e: "SetForgotToken",
+              }).then((res) => {
+                if (res.users === null) {
+                  window.mobileApp.app.dialog.alert(
+                    null,
+                    "Forgot token was not set successfully"
+                  );
+                } else {
+                  // sendVerifCode(res.users.user_email, random_token);
+                  setTimeout(function () {
+                    window.mobileApp.app.dialog.close();
+                  }, 1000);
+                  console.log(res);
+                  navigate("/m/verification-code");
+                }
+              });
+            }
+          });
+        }
       },
     }}
     run={async () => {}}
@@ -96,6 +127,7 @@
             class={`flex flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-amber-500 rounded rounded-md`}
             style="height: 60px; min-height: 60px; max-height: 60px; background-color: #FF8F00"
             type={"submit"}
+            onClick={meta.submit}
           >
             Confirm Mail
           </btn-primary>
