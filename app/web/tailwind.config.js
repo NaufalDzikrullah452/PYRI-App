@@ -996,7 +996,7 @@ module.exports = {
     placeContent: ['responsive'],
     placeItems: ['responsive'],
     placeSelf: ['responsive'],
-    placeholderColor: ['responsive', 'dark', 'white', 'focus'],
+    placeholderColor: ['responsive', 'dark', 'focus'],
     placeholderOpacity: ['responsive', 'dark', 'focus'],
     pointerEvents: ['responsive'],
     position: ['responsive'],
@@ -1056,5 +1056,5 @@ module.exports = {
     wordBreak: ['responsive'],
     zIndex: ['responsive', 'focus-within', 'focus'],
   },
-  plugins: [require('tailwind-float-label')],
+  plugins: [],
 }

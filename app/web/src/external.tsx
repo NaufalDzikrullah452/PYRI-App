@@ -83,6 +83,10 @@ export default {
     import("./components/titlebar-left"),
     { c: "", s: "", h: "" },
   ],
+  "input-float-web": () => [
+    import("./components/input-float-web"),
+    { c: "", s: "", h: "" },
+  ],
   "input-comment": () => [
     import("./components/input-comment"),
     { c: "", s: "", h: "" },
@@ -99,12 +103,12 @@ export default {
     import("./components/books-item01"),
     { c: "", s: "", h: "" },
   ],
-  "span-category": () => [
-    import("./components/span-category"),
+  "span-category-active": () => [
+    import("./components/span-category-active"),
     { c: "", s: "", h: "" },
   ],
-  "input-float-web": () => [
-    import("./components/input-float-web"),
+  "span-category": () => [
+    import("./components/span-category"),
     { c: "", s: "", h: "" },
   ],
 };
