@@ -67,67 +67,85 @@
         </div>
         <div
           class="flex flex-col items-center justify-center bg-gray-200 shadow rounded-lg"
-          style="width: 494px; min-width: 494px; max-width: 494px; height: 494px; min-height: 494px; max-height: 494px;"
+          style="width: 494px; min-width: 494px; max-width: 494px; height: 498px; min-height: 498px; max-height: 498px;"
         >
           <div class="flex self-stretch items-center justify-center p-6 bg-gray-500">
             <div class="text-2xl font-bold leading-9 text-white">
               LOGIN ADMINISTRATOR
             </div>
           </div>
-          <div class="flex self-stretch flex-col space-y-9 items-center justify-center px-9 py-16">
+          <div class="flex self-stretch flex-col space-y-9 items-center justify-center px-9 pt-9 pb-14">
             <div class="flex self-stretch flex-col space-y-4 items-start justify-start">
               <div class="flex self-stretch flex-col space-y-4 items-start justify-start">
-                <div class="flex self-stretch flex-col items-start justify-start px-3 pt-2 pb-1.5 bg-gray-800 rounded">
-                  <input-float-web
-                    class={"w-full placeholder-white"}
-                    type={"text"}
-                    placeholder={"Username"}
-                    style={`height: 42px; min-height: 42px; max-height: 42px; 
-      color: white;
-      padding-left: 5px; 
-      background:transparent; 
-      border: none;
-      input::-webkit-input-placeholder
-       {
-	color:white;
-      }`}
-                    value={meta.username}
-                    onChange={(e) => {
-                      meta.onChange("username", e);
-                    }}
-                  />
-                </div>
-                <div class="flex self-stretch space-x-2.5 items-start justify-start px-3 pt-2 pb-1.5 bg-gray-800 rounded">
-                  <input-float-web
-                    class={"w-full placeholder-white"}
-                    type={meta.pass_type}
-                    placeholder={"Password"}
-                    style={`height: 42px; min-height: 42px; max-height: 42px; 
-      color: white;
-      padding-left: 5px; 
-      background:transparent; 
-      border: none;
-      input::-webkit-input-placeholder
-       {
-	color:white;
-      }`}
-                    value={meta.password}
-                    onChange={(e) => {
-                      meta.onChange("password", e);
-                    }}
-                  />
+                <div class="flex self-stretch flex-col space-y-1 items-start justify-start">
+                  <div class="flex items-start justify-start">
+                    <div class="text-base leading-normal">Username</div>
+                  </div>
                   <div
-                    class={`flex self-stretch flex-col items-start justify-center`}
-                    style={`width: 22px; min-width: 22px; max-width: 22px; height: 42px; min-height: 42px; max-height: 42px;`}
+                    class={`w-full flex items-start justify-start px-3 pt-2 pb-1.5 bg-gray-800 rounded`}
                   >
                     <img
-                      src="/fimgs/1167_5735.x1.svg"
-                      class={`flex flex-col items-center justify-center`}
-                      style={`width: 22px; min-width: 22px; max-width: 22px; height: 15px; min-height: 15px; max-height: 15px;`}
-                      onClick={() => {
-                        meta.showHidePass();
+                      src="/fimgs/1193_5317.x1.svg"
+                      class="flex self-stretch items-center justify-center"
+                      style="width: 24px; min-width: 24px; max-width: 24px; height: 42px; min-height: 42px; max-height: 42px;"
+                    />
+                    <input-float-web
+                      class={"w-full placeholder-white"}
+                      type={"text"}
+                      placeholder={"username"}
+                      style={`height: 42px; min-height: 42px; max-height: 42px; 
+      color: white;
+      padding-left: 5px; 
+      background:transparent; 
+      border: none;`}
+                      value={meta.username}
+                      onChange={(e) => {
+                        meta.onChange("username", e);
                       }}
                     />
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch flex-col space-y-1 items-start justify-start`}
+                >
+                  <div class="flex items-start justify-start">
+                    <div class="text-base leading-normal">Password</div>
+                  </div>
+                  <div
+                    class={`w-full flex items-start justify-start px-3 pt-2 pb-1.5 bg-gray-800 rounded`}
+                  >
+                    <img
+                      src="/fimgs/1193_5325.x1.svg"
+                      class="flex self-stretch items-center justify-start"
+                      style="width: 24px; min-width: 24px; max-width: 24px; height: 42px; min-height: 42px; max-height: 42px;"
+                    />
+                    <input-float-web
+                      class={"w-full placeholder-white"}
+                      type={meta.pass_type}
+                      placeholder={"password"}
+                      style={`height: 42px; min-height: 42px; max-height: 42px; 
+      color: white;
+      padding-left: 5px; 
+      background:transparent; 
+      border: none;`}
+                      value={meta.password}
+                      onChange={(e) => {
+                        meta.onChange("password", e);
+                      }}
+                    />
+                    <div
+                      class={`flex self-stretch flex-col items-start justify-center`}
+                      style={`width: 22px; min-width: 22px; max-width: 22px; height: 42px; min-height: 42px; max-height: 42px;`}
+                    >
+                      <img
+                        src="/fimgs/1167_5735.x1.svg"
+                        class={`flex flex-col items-center justify-center`}
+                        style={`width: 22px; min-width: 22px; max-width: 22px; height: 15px; min-height: 15px; max-height: 15px;`}
+                        onClick={() => {
+                          meta.showHidePass();
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
