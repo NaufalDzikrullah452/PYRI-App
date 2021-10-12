@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {},
   "dependencies": {
-    "nodemailer": "^6.6.5"
+    "nodemailer": "^6.7.0"
   },
   "types": "./src/index.ts",
   "main": "./build/index.js"
