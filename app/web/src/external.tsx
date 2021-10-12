@@ -120,4 +120,8 @@ export default {
     import("./components/span-category"),
     { c: "", s: "", h: "" },
   ],
+  "books-item02": () => [
+    import("./components/books-item02"),
+    { c: "", s: "", h: "" },
+  ],
 };

@@ -134,7 +134,9 @@
     <div class="flex self-stretch flex-col space-y-8 items-start justify-start">
       <titlebar-back
         class={`flex self-stretch flex-col items-start justify-start px-6 pt-9 pb-4 bg-white shadow`}
-      />
+      >
+        Title
+      </titlebar-back>
       <div class="flex self-stretch flex-col space-y-8 items-start justify-start px-6">
         <div class="flex self-stretch flex-col space-y-2.5 items-center justify-center py-2">
           <img src="/fimgs/855_10873.x1.svg" />
@@ -158,9 +160,10 @@
               <input-new
                 label={"Full Name"}
                 type={"text"}
-                class="[class] w-full "
+                class="w-full "
                 floatingLabel={true}
                 required={true}
+                disabled={false}
                 inputStyle={{
                   color: "white",
                 }}
@@ -177,9 +180,10 @@
               <input-new
                 label={"Email"}
                 type={"email"}
-                class="[class] w-full "
+                class="w-full "
                 floatingLabel={true}
                 required={true}
+                disabled={true}
                 inputStyle={{
                   color: "white",
                 }}
@@ -247,6 +251,7 @@
                 class="w-full "
                 floatingLabel={true}
                 required={true}
+                disabled={false}
                 inputStyle={{
                   color: "white",
                 }}

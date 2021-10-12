@@ -1,14 +1,5 @@
 <>
-  <effect
-    meta={{}}
-    run={async () => {
-      meta.action = {
-        toLogin: () => {
-          location.href = "/m/login";
-        },
-      };
-    }}
-  />
+  <effect meta={{}} run={async () => {}} />
   <div
     class={`flex flex-col items-start justify-start bg-white`}
     style={`height: 823px; min-height: 823px; max-height: 823px;`}
@@ -71,7 +62,7 @@
               class={`flex flex-col items-center justify-center border rounded border-white`}
               style={`width: 113px; min-width: 113px; max-width: 113px; height: 60px; min-height: 60px; max-height: 60px;`}
               onClick={() => {
-                navigate("/m/login");
+                navigate("/m/home-guest");
               }}
             >
               Skip

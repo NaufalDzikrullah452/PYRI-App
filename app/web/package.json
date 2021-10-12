@@ -13,7 +13,6 @@
     "jquery": "^3.6.0",
     "@fluentui/react": "^8.36.0",
     "date-fns": "^2.24.0",
-    "is-my-date-valid": "^0.1.1",
     "md5": "^2.3.0",
     "mobx": "^6.1.8",
     "mobx-react-lite": "^3.2.0",
@@ -22,7 +21,6 @@
     "password-validator": "^5.1.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "tailwind-float-label": "^2.1.0",
     "validator": "^13.6.0"
   },
   "script": {
