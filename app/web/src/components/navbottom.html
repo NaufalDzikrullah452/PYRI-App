@@ -1,12 +1,15 @@
 <div
-  class={`flex self-stretch flex-col items-center justify-center bg-white bg-opacity-70 shadow border border-coolGray-200`}
+  class={`flex self-stretch flex-col items-center justify-center bg-white bg-opacity-70 shadow border border-coolGray-200 fixed w-full bottom-0`}
   style={`height: 60px; min-height: 60px; max-height: 60px;`}
 >
   <div class="flex flex-1 self-stretch items-center justify-center">
     <img
       src="/fimgs/100_940.x1.svg"
-      class="flex flex-1 flex-col items-center justify-center"
-      style="width: 94.75px; min-width: 94.75px; max-width: 94.75px; height: 60px; min-height: 60px; max-height: 60px;"
+      class={`flex flex-1 flex-col items-center justify-center`}
+      style={`width: 94.75px; min-width: 94.75px; max-width: 94.75px; height: 60px; min-height: 60px; max-height: 60px;`}
+      onClick={(e) => {
+        navigate("/m/home-guest");
+      }}
     />
     <img
       src="/fimgs/100_946.x1.svg"

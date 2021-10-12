@@ -1,8 +1,12 @@
 <>
   <effect
     meta={{
-      username: "admin",
-      password: "admin",
+      username: "",
+      password: "",
+      admin: {
+        username: "admin",
+        password: "admin",
+      },
       pass_type: "password",
 
       async showHidePass() {
@@ -32,8 +36,17 @@
         let error_msg = this.validation();
 
         if (error_msg) {
-          console.log(error_msg);
+          alert(error_msg);
         } else {
+          if (this.username === this.admin.username) {
+            if (this.password === this.admin.password) {
+              alert("Login success");
+            } else {
+              alert("Password wrong!");
+            }
+          } else {
+            alert("Username wrong!");
+          }
         }
       },
     }}
@@ -78,12 +91,16 @@
        {
 	color:white;
       }`}
+                    value={meta.username}
+                    onChange={(e) => {
+                      meta.onChange("username", e);
+                    }}
                   />
                 </div>
-                <div class="flex self-stretch flex-col items-start justify-start px-3 pt-2 pb-1.5 bg-gray-800 rounded">
+                <div class="flex self-stretch space-x-2.5 items-start justify-start px-3 pt-2 pb-1.5 bg-gray-800 rounded">
                   <input-float-web
                     class={"w-full placeholder-white"}
-                    type={"password"}
+                    type={meta.pass_type}
                     placeholder={"Password"}
                     style={`height: 42px; min-height: 42px; max-height: 42px; 
       color: white;
@@ -94,7 +111,24 @@
        {
 	color:white;
       }`}
+                    value={meta.password}
+                    onChange={(e) => {
+                      meta.onChange("password", e);
+                    }}
                   />
+                  <div
+                    class={`flex self-stretch flex-col items-start justify-center`}
+                    style={`width: 22px; min-width: 22px; max-width: 22px; height: 42px; min-height: 42px; max-height: 42px;`}
+                  >
+                    <img
+                      src="/fimgs/1167_5735.x1.svg"
+                      class={`flex flex-col items-center justify-center`}
+                      style={`width: 22px; min-width: 22px; max-width: 22px; height: 15px; min-height: 15px; max-height: 15px;`}
+                      onClick={() => {
+                        meta.showHidePass();
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
               <div class="flex self-stretch space-x-2.5 items-center justify-start">
@@ -110,7 +144,10 @@
                 </div>
               </div>
             </div>
-            <button class="flex self-stretch flex-col items-center justify-center px-3 pt-2 pb-1.5 bg-amber-500 rounded">
+            <button
+              class={`flex self-stretch flex-col items-center justify-center px-3 pt-2 pb-1.5 bg-amber-500 rounded`}
+              onClick={meta.submit}
+            >
               <div class="flex self-stretch flex-col items-start justify-end">
                 <div class="flex self-stretch space-x-3 items-center justify-start">
                   <div class="flex flex-1 space-x-2 items-center justify-start pl-1">

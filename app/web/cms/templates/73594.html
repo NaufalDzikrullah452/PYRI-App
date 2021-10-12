@@ -12,7 +12,7 @@
           window.user = {
             role: "guest",
           };
-          navigate("/m/login");
+          navigate("/m/home-guest");
         });
       },
     }}
@@ -25,7 +25,7 @@
     }}
   />
   <div
-    class={`flex flex-col items-start justify-start relative overflow-y-auto bg-gradient-to-b from-white to-white`}
+    class={`flex self-stretch flex-col items-start justify-start relative overflow-y-auto bg-gradient-to-b from-white to-white`}
   >
     <div
       class="flex flex-1 self-stretch flex-col items-center justify-end relative overflow-y-auto"
@@ -204,16 +204,65 @@
             </div>
           </div>
         </div>
-        <btnlogout
-          class={`flex self-stretch flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-red-600 shadow rounded`}
-          style={`background: #FF1000`}
-          onClick={meta.logout}
-        />
+        <div class={`flex self-stretch flex-col items-start justify-start`}>
+          {window.user.role !== "guest" ? (
+            <btnlogout
+              class={`flex flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-red-600 shadow rounded`}
+              style={`background: #FF1000`}
+              onClick={meta.logout}
+            />
+          ) : null}
+        </div>
       </div>
-      <navbottom
-        class={`flex self-stretch flex-col items-center justify-center bg-white bg-opacity-70 shadow border border-coolGray-200`}
+      <div
+        class={`flex self-stretch flex-col items-center justify-center bg-white bg-opacity-70 shadow border border-coolGray-200 fixed w-full bottom-0`}
         style={`height: 60px; min-height: 60px; max-height: 60px;`}
-      />
+      >
+        <div class="flex self-stretch items-center justify-center">
+          <div
+            src="/fimgs/100_940.x1.svg"
+            class={`flex flex-1 flex-col items-center justify-center`}
+            onClick={(e) => {
+              navigate("/m/home-guest");
+            }}
+          >
+            <div class="flex items-start justify-start p-0.5">
+              <img
+                src="/fimgs/1198_278910.x1.svg"
+                style="width: 20px; min-width: 20px; max-width: 20px; height: 20px; min-height: 20px; max-height: 20px;"
+              />
+            </div>
+            <div class="text-xs font-bold leading-none text-center">Home</div>
+          </div>
+          <div class="flex flex-1 flex-col items-center justify-center">
+            <div class="flex items-start justify-start px-0.5 py-0.5">
+              <img
+                src="/fimgs/1198_278916.x1.svg"
+                style="width: 18px; min-width: 18px; max-width: 18px; height: 20px; min-height: 20px; max-height: 20px;"
+              />
+            </div>
+            <div class="text-xs font-bold leading-none text-center">
+              Pyri List
+            </div>
+          </div>
+          <div class="flex flex-1 flex-col items-center justify-center">
+            <div class="flex items-start justify-start p-0.5">
+              <img
+                src="/fimgs/1198_278922.x1.svg"
+                style="width: 18px; min-width: 18px; max-width: 18px; height: 18px; min-height: 18px; max-height: 18px;"
+              />
+            </div>
+            <div class="text-xs font-bold leading-none text-center">
+              Explore
+            </div>
+          </div>
+          <img
+            src="/fimgs/1198_278931.x1.svg"
+            class="flex flex-1 flex-col items-center justify-center"
+            style="width: 94.75px; min-width: 94.75px; max-width: 94.75px; height: 60px; min-height: 60px; max-height: 60px;"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </>
