@@ -127,4 +127,12 @@ export default {
     import("./components/w-add-btn"),
     { c: "", s: "", h: "" },
   ],
+  "readbar-book": () => [
+    import("./components/readbar-book"),
+    { c: "", s: "", h: "" },
+  ],
+  "titlebar-book": () => [
+    import("./components/titlebar-book"),
+    { c: "", s: "", h: "" },
+  ],
 };
