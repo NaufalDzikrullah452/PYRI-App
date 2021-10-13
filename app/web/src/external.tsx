@@ -83,6 +83,10 @@ export default {
     import("./components/titlebar-left"),
     { c: "", s: "", h: "" },
   ],
+  "input-float-web": () => [
+    import("./components/input-float-web"),
+    { c: "", s: "", h: "" },
+  ],
   "input-comment": () => [
     import("./components/input-comment"),
     { c: "", s: "", h: "" },
@@ -93,6 +97,34 @@ export default {
   ],
   "item-comment": () => [
     import("./components/item-comment"),
+    { c: "", s: "", h: "" },
+  ],
+  "books-item01": () => [
+    import("./components/books-item01"),
+    { c: "", s: "", h: "" },
+  ],
+  "span-category-active": () => [
+    import("./components/span-category-active"),
+    { c: "", s: "", h: "" },
+  ],
+  "span-category": () => [
+    import("./components/span-category"),
+    { c: "", s: "", h: "" },
+  ],
+  "books-item02": () => [
+    import("./components/books-item02"),
+    { c: "", s: "", h: "" },
+  ],
+  "w-profile-admin": () => [
+    import("./components/w-profile-admin"),
+    { c: "", s: "", h: "" },
+  ],
+  "w-sidebar": () => [
+    import("./components/w-sidebar"),
+    { c: "", s: "", h: "" },
+  ],
+  "w-add-btn": () => [
+    import("./components/w-add-btn"),
     { c: "", s: "", h: "" },
   ],
 };
