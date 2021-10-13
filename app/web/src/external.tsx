@@ -124,4 +124,16 @@ export default {
     import("./components/books-item02"),
     { c: "", s: "", h: "" },
   ],
+  "w-profile-admin": () => [
+    import("./components/w-profile-admin"),
+    { c: "", s: "", h: "" },
+  ],
+  "w-sidebar": () => [
+    import("./components/w-sidebar"),
+    { c: "", s: "", h: "" },
+  ],
+  "w-add-btn": () => [
+    import("./components/w-add-btn"),
+    { c: "", s: "", h: "" },
+  ],
 };
