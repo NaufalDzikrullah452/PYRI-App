@@ -1,83 +1,531 @@
-<div
-  class="h-screen pb-14 bg-right bg-cover"
-  style="background-image:url('/fimgs/bg.x1.svg');"
->
-  <div class="w-full container mx-auto p-6">
-    <div class="w-full flex items-center justify-between">
-      <a
-        class="flex items-center text-red-700 no-underline hover:no-underline font-bold text-2xl lg:text-4xl"
-        href="#"
+<>
+  <effect
+    meta={{
+      tabActive: "home",
+      tabLink: "",
+      user: [],
+
+      onClickTab(tab) {
+        // this.tabActive = tab;
+        // console.log(this.tabActive);
+        if (window.user.role === "guest" && tab === "profile") {
+          window.mobileApp.app.dialog.confirm(
+            "direct to login page?",
+            "You are not logged in!",
+            () => {
+              navigate("/m/login");
+            }
+          );
+        } else {
+          this.tabActive = tab;
+        }
+      },
+
+      async logout() {
+        await api("/api/crud-user", {
+          users: "Logout",
+          e: "Logout",
+        }).then((res) => {
+          console.log(res);
+          window.user = {
+            role: "guest",
+          };
+          navigate("/m/");
+        });
+      },
+    }}
+    run={async () => {
+      runInAction(() => {
+        meta.user = window.user.user || [];
+      });
+    }}
+  />
+  <div class="flex items-end justify-center bg-white">
+    <div
+      class={`flex flex-1 flex-col space-y-5 items-center justify-start bg-gradient-to-b from-white to-white w-full`}
+    >
+      <div class="flex self-stretch flex-col items-start justify-start bg-orange-100">
+        <div
+          class={`flex self-stretch space-x-2.5 items-center justify-center px-6 pt-9 pb-4 bg-white shadow rounded-bl-2xl rounded-br-2xl fixed w-full z-10`}
+        >
+          <img
+            src="/fimgs/I991_7169_991_7165.x1.svg"
+            style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
+          />
+          <div class="flex items-start justify-start">
+            <div class="text-xl font-bold leading-loose">PYRI</div>
+          </div>
+        </div>
+        <div style={`height:85px`} />
+        <div class={`flex self-stretch flex-col items-start justify-start`}>
+          {window.user.role === "guest" && meta.tabActive === "home" && (
+            <div
+              class={`flex self-stretch space-x-2 items-center justify-start p-4 bg-orange-50`}
+            >
+              <img
+                src="/fimgs/1198_41628.x1.svg"
+                class="flex flex-col items-start justify-start"
+                style="width: 108.21px; min-width: 108.21px; max-width: 108.21px; height: 100px; min-height: 100px; max-height: 100px;"
+              />
+              <div class="flex flex-1 self-stretch flex-col space-y-4 items-start justify-center">
+                <div class="flex self-stretch items-start justify-start">
+                  <div class="text-xl font-bold leading-loose">
+                    Login dulu kuy!
+                  </div>
+                </div>
+                <div class="flex self-stretch flex-col items-start justify-center">
+                  <button
+                    class={`flex items-center justify-center px-4 py-1 bg-amber-500 rounded`}
+                    style={`width: 61px; min-width: 61px; max-width: 61px; height: 26px; min-height: 26px; max-height: 26px;`}
+                    onClick={(e) => {
+                      navigate("/m/login");
+                    }}
+                  >
+                    <div class="text-xs font-bold leading-none text-white">
+                      Login
+                    </div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+      <m-tabs
+        class={`flex self-stretch flex-col space-y-2.5 items-start justify-start w-full`}
+        swipeable={true}
       >
-        <svg
-          class="h-8 fill-current text-red-600 pr-2"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
+        <m-tab
+          class={`flex self-stretch flex-col space-y-9 items-start justify-start`}
+          id="home"
         >
-          <path d="M10 20a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm-5.6-4.29a9.95 9.95 0 0 1 11.2 0 8 8 0 1 0-11.2 0zm6.12-7.64l3.02-3.02 1.41 1.41-3.02 3.02a2 2 0 1 1-1.41-1.41z" />
-        </svg>{" "}
-        BASE
-      </a>
-
-      <div class="flex w-1/2 justify-end content-center">
-        <a
-          class="inline-block text-blue-300 no-underline hover:text-indigo-800 hover:text-underline text-center h-10 p-2 md:h-auto md:p-4"
-          data-tippy-content="@twitter_handle"
-          href="#"
+          <div class="flex flex-col space-y-2 items-start justify-start px-6">
+            <div class="flex self-stretch space-x-2.5 items-end justify-start">
+              <div class="flex flex-1 items-center justify-start">
+                <div class="text-xl font-bold leading-loose">Top </div>
+              </div>
+              <div class="flex self-stretch items-center justify-start">
+                <div class="text-base font-bold leading-normal text-amber-500">
+                  See more
+                </div>
+              </div>
+            </div>
+            <div class="flex self-stretch items-start justify-start">
+              <div
+                class={`flex flex-1 self-stretch flex-col space-y-2 items-start justify-start w-full`}
+              >
+                <div
+                  class={`flex self-stretch space-x-2 items-center justify-start p-1 bg-white shadow rounded w-full`}
+                >
+                  <img
+                    src="/fimgs/I1198_91024_1198_48342.x1.png"
+                    class="flex items-start justify-start"
+                    style="width: 36.40px; min-width: 36.40px; max-width: 36.40px; height: 52px; min-height: 52px; max-height: 52px;"
+                  />
+                  <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
+                    <div class="flex self-stretch items-start justify-start">
+                      <div class="text-base font-semibold leading-none">
+                        Judul
+                      </div>
+                    </div>
+                    <div class="flex self-stretch items-start justify-start">
+                      <div class="flex flex-1 self-stretch items-start justify-start">
+                        <div class="text-xs font-bold leading-none text-gray-500">
+                          Kategori Buku
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch space-x-2 items-center justify-start p-1 bg-white shadow rounded w-full`}
+                >
+                  <img
+                    src="/fimgs/I1198_91025_1198_48342.x1.png"
+                    class="flex items-start justify-start"
+                    style="width: 36.40px; min-width: 36.40px; max-width: 36.40px; height: 52px; min-height: 52px; max-height: 52px;"
+                  />
+                  <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
+                    <div class="flex self-stretch items-start justify-start">
+                      <div class="text-base font-semibold leading-none">
+                        Judul
+                      </div>
+                    </div>
+                    <div class="flex self-stretch items-start justify-start">
+                      <div class="flex flex-1 self-stretch items-start justify-start">
+                        <div class="text-xs font-bold leading-none text-gray-500">
+                          Kategori Buku
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch space-x-2 items-center justify-start p-1 bg-white shadow rounded w-full`}
+                >
+                  <img
+                    src="/fimgs/I1198_91026_1198_48342.x1.png"
+                    class="flex items-start justify-start"
+                    style="width: 36.40px; min-width: 36.40px; max-width: 36.40px; height: 52px; min-height: 52px; max-height: 52px;"
+                  />
+                  <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
+                    <div class="flex self-stretch items-start justify-start">
+                      <div class="text-base font-semibold leading-none">
+                        Judul
+                      </div>
+                    </div>
+                    <div class="flex self-stretch items-start justify-start">
+                      <div class="flex flex-1 self-stretch items-start justify-start">
+                        <div class="text-xs font-bold leading-none text-gray-500">
+                          Kategori Buku
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch space-x-2 items-center justify-start p-1 bg-white shadow rounded w-full`}
+                >
+                  <img
+                    src="/fimgs/I1198_91027_1198_48342.x1.png"
+                    class="flex items-start justify-start"
+                    style="width: 36.40px; min-width: 36.40px; max-width: 36.40px; height: 52px; min-height: 52px; max-height: 52px;"
+                  />
+                  <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
+                    <div class="flex self-stretch items-start justify-start">
+                      <div class="text-base font-semibold leading-none">
+                        Judul
+                      </div>
+                    </div>
+                    <div class="flex self-stretch items-start justify-start">
+                      <div class="flex flex-1 self-stretch items-start justify-start">
+                        <div class="text-xs font-bold leading-none text-gray-500">
+                          Kategori Buku
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch space-x-2 items-center justify-start p-1 bg-white shadow rounded w-full`}
+                >
+                  <img
+                    src="/fimgs/I1198_91028_1198_48342.x1.png"
+                    class="flex items-start justify-start"
+                    style="width: 36.40px; min-width: 36.40px; max-width: 36.40px; height: 52px; min-height: 52px; max-height: 52px;"
+                  />
+                  <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
+                    <div class="flex self-stretch items-start justify-start">
+                      <div class="text-base font-semibold leading-none">
+                        Judul
+                      </div>
+                    </div>
+                    <div class="flex self-stretch items-start justify-start">
+                      <div class="flex flex-1 self-stretch items-start justify-start">
+                        <div class="text-xs font-bold leading-none text-gray-500">
+                          Kategori Buku
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-col space-y-2 items-start justify-start px-6">
+            <div class="flex self-stretch space-x-2.5 items-end justify-start">
+              <div class="flex flex-1 items-center justify-start">
+                <div class="text-xl font-bold leading-loose">Just Released</div>
+              </div>
+              <div class="flex self-stretch items-center justify-start">
+                <div class="text-base font-bold leading-normal text-amber-500">
+                  See more
+                </div>
+              </div>
+            </div>
+            <div
+              class={`flex flex-1 self-stretch space-x-1 items-start justify-start overflow-x-auto`}
+            >
+              <books-item02 />
+              <books-item02 />
+              <books-item02 />
+              <books-item02 />
+            </div>
+          </div>
+        </m-tab>
+        <m-tab
+          class={`flex self-stretch flex-col space-y-2.5 items-start justify-start px-6 pt-2`}
+          id="profile"
         >
-          <svg
-            class="fill-current h-6"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 32 32"
+          <div class="flex self-stretch space-x-2.5 items-center justify-start">
+            <div
+              src="/fimgs/1228_38484.x1.svg"
+              class={`flex flex-col items-start justify-start`}
+            >
+              <img src="/fimgs/855_10601.x1.svg" />
+            </div>
+            <div class="flex flex-1 self-stretch flex-col items-start justify-center p-4">
+              <div class={`text-2xl font-bold leading-9`}>
+                {meta.user.user_name || "Username"}
+              </div>
+              {(meta.user.user_membership_status === undefined ||
+                meta.user.user_membership_status === "NonActive") && (
+                <div
+                  class={`flex items-center justify-center px-4 py-0.5 bg-gray-500 border rounded border-gray-500`}
+                >
+                  <div class="text-xs font-bold leading-none text-center text-white">
+                    FREE
+                  </div>
+                </div>
+              )}
+              {meta.user.user_membership_status === "Active" && (
+                <div
+                  class={`flex items-center justify-center px-2.5 py-0.5 border rounded`}
+                >
+                  <div class="text-xs font-bold leading-none text-center">
+                    PRO
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+          <div
+            class={`flex self-stretch flex-col space-y-4 items-start justify-start px-4 py-4 bg-gray-50 border rounded-lg border-gray-200`}
+            onClick={() => {
+              navigate("/m/edit-profile");
+            }}
           >
-            <path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"></path>
-          </svg>
-        </a>
-        <a
-          class="inline-block text-blue-300 no-underline hover:text-indigo-800 hover:text-underline text-center h-10 p-2 md:h-auto md:p-4 "
-          data-tippy-content="#facebook_id"
-          href="#"
-        >
-          <svg
-            class="fill-current h-6"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 32 32"
+            <div class="flex self-stretch flex-col items-start justify-start">
+              <div class="flex self-stretch items-center justify-center">
+                <div class="flex flex-1 items-start justify-start">
+                  <div class="text-base font-bold leading-normal">
+                    Pyri Account
+                  </div>
+                </div>
+                <img
+                  src="/fimgs/1228_38497.x1.svg"
+                  class="flex flex-col items-start justify-start bg-gray-50"
+                  style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
+                />
+              </div>
+            </div>
+            <div class="flex self-stretch items-center justify-center">
+              <div class="flex flex-1 flex-col items-start justify-center">
+                <div class="text-base font-bold leading-normal text-gray-500">
+                  Full Name
+                </div>
+                <div class={`text-base font-bold leading-normal text-gray-900`}>
+                  {meta.user.user_name || "Your Name"}
+                </div>
+              </div>
+            </div>
+            <div class="flex self-stretch items-center justify-center">
+              <div class="flex flex-1 flex-col items-start justify-center">
+                <div class="text-base font-bold leading-normal text-gray-500">
+                  Email
+                </div>
+                <div class={`text-base font-bold leading-normal text-gray-900`}>
+                  {meta.user.user_email || "Your Email"}
+                </div>
+              </div>
+            </div>
+            <div class="flex self-stretch items-center justify-center">
+              <div class="flex flex-1 flex-col items-start justify-center">
+                <div class="text-base font-bold leading-normal text-gray-500">
+                  Birthday
+                </div>
+                <div class={`text-base font-bold leading-normal text-gray-900`}>
+                  {dateFormat(
+                    new Date(meta.user.user_birthday),
+                    "dd MMMM yyyy"
+                  ) || "Your Birthday"}
+                </div>
+              </div>
+            </div>
+            <div class="flex self-stretch items-center justify-center">
+              <div class="flex flex-1 flex-col items-start justify-center">
+                <div class="text-base font-bold leading-normal text-gray-500">
+                  Gender
+                </div>
+                <div class={`text-base font-bold leading-normal text-gray-900`}>
+                  {meta.user["user_gender"] || "Your Gender"}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex self-stretch flex-col items-start justify-start px-4 py-4 bg-gray-50 border rounded-lg border-gray-200">
+            <div class="flex self-stretch space-x-2.5 items-center justify-start">
+              <div class="flex flex-1 flex-col items-start justify-center">
+                <div class="text-base font-bold leading-normal text-gray-500">
+                  Subcription
+                </div>
+                {(meta.user.user_membership_status === undefined ||
+                  meta.user.user_membership_status === "NonActive") && (
+                  <div
+                    class={`text-base font-bold leading-normal text-gray-900`}
+                  >
+                    User Free
+                  </div>
+                )}
+                {meta.user.user_membership_status === "Active" && (
+                  <div class={`text-base font-bold leading-normal`}>
+                    User Pro
+                  </div>
+                )}
+              </div>
+              <div class={`flex flex-col items-end justify-start`}>
+                {(meta.user.user_membership_status === undefined ||
+                  meta.user.user_membership_status === "NonActive") && (
+                  <div
+                    class={`flex items-start justify-start px-2.5 py-0.5 bg-gradient-to-r from-red-600 to-yellow-400 shadow rounded`}
+                  >
+                    <div
+                      class={`text-base font-bold leading-normal text-white`}
+                    >
+                      Upgrade to Pro
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          <div class="flex self-stretch flex-col items-start justify-start px-4 py-4 bg-gray-50 border rounded-lg border-gray-200">
+            <div class="flex self-stretch items-center justify-start">
+              <div class="flex flex-1 flex-col space-y-1.5 items-start justify-center">
+                <div class="flex self-stretch space-x-2.5 items-center justify-center">
+                  <div class="text-base font-bold leading-normal">
+                    Your Interest
+                  </div>
+                  <div class="flex flex-1 flex-col items-end justify-start bg-gray-50">
+                    <img
+                      src="/fimgs/1228_38530.x1.svg"
+                      style="width: 24px; min-width: 24px; max-width: 24px; height: 11.98px; min-height: 11.98px; max-height: 11.98px;"
+                    />
+                  </div>
+                </div>
+                <div class="flex self-stretch flex-col items-start justify-start">
+                  <div class="flex self-stretch space-x-1 items-start justify-start">
+                    <div class="flex flex-1 items-center justify-center px-2.5 py-0.5 bg-gray-200 rounded">
+                      <div class="text-xs font-bold leading-none text-gray-700">
+                        Mistery
+                      </div>
+                    </div>
+                    <div class="flex flex-1 items-center justify-center px-2.5 py-0.5 bg-gray-200 rounded">
+                      <div class="text-xs font-bold leading-none text-gray-700">
+                        Comedy
+                      </div>
+                    </div>
+                    <div class="flex flex-1 items-center justify-center px-2.5 py-0.5 bg-gray-200 rounded">
+                      <div class="text-xs font-bold leading-none text-gray-700">
+                        Horor
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {window.user.role !== "guest" && (
+            <div class={`flex self-stretch flex-col items-start justify-start`}>
+              <btnlogout
+                class={`flex flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-red-600 shadow rounded`}
+                style={`background: #FF1000`}
+                onClick={meta.logout}
+              />
+            </div>
+          )}
+        </m-tab>
+      </m-tabs>
+      <div
+        class={`flex self-stretch flex-col items-center justify-start pt-2 pb-4 bg-white bg-opacity-50 shadow-inner fixed w-full bottom-0`}
+      >
+        <div class="flex self-stretch items-center justify-center shadow">
+          <m-link
+            class={`flex flex-1 flex-col space-y-2.5 items-start justify-start`}
+            tabLink="#home"
+            onClick={(e) => meta.onClickTab("home")}
+            tabLinkActive={meta.tabActive === "home"}
           >
-            <path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"></path>
-          </svg>
-        </a>
+            {meta.tabActive === "home" && (
+              <img
+                src="/fimgs/1237_94968.x1.svg"
+                class={`flex flex-col items-center justify-center rounded-full`}
+                style={`width: 94.75px; min-width: 94.75px; max-width: 94.75px; height: 42px; min-height: 42px; max-height: 42px;`}
+              />
+            )}
+            {meta.tabActive !== "home" && (
+              <img
+                src="/fimgs/1235_12411.x1.svg"
+                class={`flex flex-col items-center justify-center rounded-full`}
+                style={`width: 94.75px; min-width: 94.75px; max-width: 94.75px; height: 42px; min-height: 42px; max-height: 42px;`}
+              />
+            )}
+          </m-link>
+          <m-link
+            class={`flex flex-1 flex-col space-y-2.5 items-start justify-start`}
+            tabLink="#pyriList"
+            onClick={(e) => meta.onClickTab("pyriList")}
+            tabLinkActive={meta.tabActive === "pyriList"}
+          >
+            {meta.tabActive === "pyriList" && (
+              <img
+                src="/fimgs/711_3304.x1.svg"
+                class={`flex flex-col items-center justify-center`}
+                style={`width: 94.75px; min-width: 94.75px; max-width: 94.75px; height: 42px; min-height: 42px; max-height: 42px;`}
+              />
+            )}
+            {meta.tabActive !== "pyriList" && (
+              <img
+                src="/fimgs/1235_12460.x1.svg"
+                class={`flex flex-col items-center justify-center`}
+                style={`width: 94.75px; min-width: 94.75px; max-width: 94.75px; height: 42px; min-height: 42px; max-height: 42px;`}
+              />
+            )}
+          </m-link>
+          <m-link
+            class={`flex flex-1 flex-col space-y-2.5 items-start justify-start`}
+            tabLink="#explore"
+            onClick={(e) => meta.onClickTab("explore")}
+            tabLinkActive={meta.tabActive === "explore"}
+          >
+            {meta.tabActive === "explore" && (
+              <img
+                src="/fimgs/1235_12502.x1.svg"
+                class={`flex self-stretch flex-col items-center justify-center`}
+                style={`width: 94.75px; min-width: 94.75px; max-width: 94.75px; height: 42px; min-height: 42px; max-height: 42px;`}
+              />
+            )}
+            {meta.tabActive !== "explore" && (
+              <img
+                src="/fimgs/711_3309.x1.svg"
+                class={`flex self-stretch flex-col items-center justify-center`}
+                style={`width: 94.75px; min-width: 94.75px; max-width: 94.75px; height: 42px; min-height: 42px; max-height: 42px;`}
+              />
+            )}
+          </m-link>
+          <m-link
+            class={`flex flex-1 flex-col items-center justify-center`}
+            tabLink={window.user.role === "guest" ? "#null" : "#profile"}
+            tabLinkActive={meta.tabActive === "profile"}
+            onClick={(e) => meta.onClickTab("profile")}
+          >
+            {meta.tabActive === "profile" && (
+              <img
+                src="/fimgs/711_3314.x1.svg"
+                class={`flex flex-col items-center justify-center rounded-full`}
+                style={`width: 94.75px; min-width: 94.75px; max-width: 94.75px; height: 42px; min-height: 42px; max-height: 42px;`}
+              />
+            )}
+            {meta.tabActive !== "profile" && (
+              <img
+                src="/fimgs/1237_46216.x1.svg"
+                class={`flex flex-col items-center justify-center rounded-full`}
+                style={`width: 63.17px; min-width: 63.17px; max-width: 63.17px; height: 42px; min-height: 42px; max-height: 42px;`}
+              />
+            )}
+          </m-link>
+        </div>
       </div>
     </div>
   </div>
-
-  <div class="container pt-24 px-6 mx-auto flex flex-wrap flex-col md:flex-row items-center">
-    <div class="flex flex-col w-full justify-center lg:items-start overflow-y-hidden">
-      <h1 class="my-4 text-3xl md:text-5xl text-red-500 font-bold leading-tight text-center md:text-left slide-in-bottom-h1">
-        Main Hero Message to sell your app
-      </h1>
-      <p class="leading-normal text-base md:text-2xl mb-8 text-center md:text-left slide-in-bottom-subtitle">
-        Sub-hero message, not too long and not too short. Make it just right!
-      </p>
-
-      <p class="text-red-400 font-bold pb-8 lg:pb-6 text-center md:text-left fade-in">
-        Download our app:
-      </p>
-      <div class="flex w-full justify-center md:justify-start pb-24 lg:pb-0 fade-in">
-        <img src="/fimgs/app_store.x1.svg" class="h-12 pr-4 bounce-top-icons" />
-        <img src="/fimgs/play_store.x1.svg" class="h-12 bounce-top-icons" />
-      </div>
-    </div>
-
-    <div class="w-full xl:w-3/5 py-6 overflow-y-hidden">
-      <img
-        class="w-5/6 mx-auto lg:mr-0 slide-in-bottom"
-        src="/fimgs/devices.x1.svg"
-      />
-    </div>
-
-    <div class="w-full pt-16 pb-6 text-sm text-center md:text-left fade-in">
-      <a class="text-gray-500 no-underline hover:no-underline" href="#">
-        &copy; BASE 2021
-      </a>
-    </div>
-  </div>
-</div>
+</>
