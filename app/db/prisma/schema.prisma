@@ -24,9 +24,10 @@ model category {
 }
 
 model tags {
-  tag_id      Int    @id @default(autoincrement())
-  tag_name    String @db.VarChar(50)
-  tag_picture String @db.VarChar(100)
+  tag_id      Int         @id @default(autoincrement())
+  tag_name    String      @db.VarChar(50)
+  tag_picture String      @db.VarChar(100)
+  interests   interests[]
 }
 
 model users {
@@ -41,6 +42,15 @@ model users {
   user_level             Boolean
   user_date_created      DateTime?       @default(now()) @db.Timestamp(6)
   user_note              String?
+  interests              interests[]
+}
+
+model interests {
+  interest_id Int   @id @default(autoincrement())
+  user_id     Int
+  tag_id      Int
+  tags        tags  @relation(fields: [tag_id], references: [tag_id])
+  users       users @relation(fields: [user_id], references: [user_id])
 }
 
 enum user_gender {
