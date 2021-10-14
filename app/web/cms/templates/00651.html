@@ -40,7 +40,15 @@
         } else {
           if (this.username === this.admin.username) {
             if (this.password === this.admin.password) {
-              alert("Login success");
+              // alert("Login success");
+              const res = api("/api/authors", {
+                authors: " ",
+                e: "ReadAll",
+              }).then((res) => {
+                console.log(res);
+                window.authors = res.authors;
+                navigate("/w-master-author");
+              });
             } else {
               alert("Password wrong!");
             }

@@ -82,7 +82,7 @@
                 user_date_created: this.user_date_created,
                 user_note: this.user_note,
               };
-              api("/api/crud-user", {
+              api("/api/api-users", {
                 users: { ...updateuser },
                 e: "Update",
               }).then((res) => {
@@ -106,7 +106,7 @@
       },
     }}
     run={async () => {
-      // const res = await api("/api/crud-user", {
+      // const res = await api("/api/api-users", {
       //   users: "ReadMany",
       //   e: "ReadMany",
       // });
@@ -132,14 +132,31 @@
   />
   <div class="flex flex-col items-start justify-start bg-white">
     <div class="flex self-stretch flex-col space-y-8 items-start justify-start">
-      <titlebar-back
+      <div
         class={`flex self-stretch flex-col items-start justify-start px-6 pt-9 pb-4 bg-white shadow`}
       >
-        Title
-      </titlebar-back>
+        <div class="flex self-stretch space-x-4 items-center justify-start">
+          <div class="flex self-stretch items-center justify-start">
+            <img
+              src="/fimgs/1255_80657.x1.svg"
+              class={`flex self-stretch items-center justify-start`}
+              style={`width: 24px; min-width: 24px; max-width: 24px; height: 30px; min-height: 30px; max-height: 30px;`}
+              onClick={(e) => {
+                navigate("/m/");
+              }}
+            />
+          </div>
+          <div class="flex flex-1 items-center justify-center">
+            <div class={`text-xl font-bold leading-loose text-center`}>
+              {children || "Edit Profile"}
+            </div>
+          </div>
+          <div />
+        </div>
+      </div>
       <div class="flex self-stretch flex-col space-y-8 items-start justify-start px-6">
         <div class="flex self-stretch flex-col space-y-2.5 items-center justify-center py-2">
-          <img src="/fimgs/855_10873.x1.svg" />
+          <img src="/fimgs/1255_50620.x1.svg" />
           <div class="flex items-start justify-start px-2 py-0.5 border rounded border-trueGray-600">
             <div class="text-xs font-medium leading-none text-center text-trueGray-600">
               Change photo

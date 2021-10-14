@@ -1,5 +1,43 @@
 <>
-  <effect meta={{}} run={async () => {}} />
+  <effect
+    meta={{
+      authorName: "",
+
+      async onChange(e) {
+        let value = e.target.value;
+        runInAction(() => (this.authorName = value));
+        console.log("authorName  : " + value);
+      },
+
+      validation() {
+        let msg =
+          this.authorName === "" || this.authorName === null
+            ? "Name cant be empty!"
+            : false;
+        return msg;
+      },
+
+      async submit() {
+        let error_msg = this.validation();
+
+        if (error_msg) {
+          alert(error_msg);
+        } else {
+          let authors = api("/api/authors", {
+            authors: {
+              author_name: this.authorName,
+            },
+            e: "Create",
+          }).then((res) => {
+            console.log(res);
+            alert(res.res);
+            navigate("/w-master-author");
+          });
+        }
+      },
+    }}
+    run={async () => {}}
+  />
   <div class={`w-full flex self-stretch items-start justify-start`}>
     <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
       <w-sidebar
@@ -44,13 +82,16 @@
                   class={`flex flex-1 items-start justify-start px-4 py-2 border rounded border-black`}
                 >
                   <input
-                    class={"w-full"}
+                    class={"w-full placeholder-grey"}
                     type="text"
                     placeholder="masukkan nama author"
-                    style={`color: gray;
-      padding-left: 5px; 
+                    style={`padding-left: 5px; 
       background:transparent; 
       outline: none;`}
+                    value={meta.authorName}
+                    onChange={(e) => {
+                      meta.onChange(e);
+                    }}
                   />
                 </div>
               </div>
@@ -62,12 +103,18 @@
                 <button
                   class={`flex items-start justify-start px-4 py-2 bg-blue-600 rounded`}
                   style={"background-color: #3B82F6;"}
+                  onClick={meta.submit}
                 >
                   <div class="text-base font-bold leading-normal text-white">
                     Tambah
                   </div>
                 </button>
-                <button class="flex items-start justify-start px-4 py-2 bg-red-600 rounded">
+                <button
+                  class={`flex items-start justify-start px-4 py-2 bg-red-600 rounded`}
+                  onClick={() => {
+                    navigate("/w-master-author");
+                  }}
+                >
                   <div class="text-base font-bold leading-normal text-white">
                     Batal
                   </div>

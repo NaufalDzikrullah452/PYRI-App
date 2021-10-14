@@ -30,7 +30,7 @@
           user = {
             user_email: this.user_email,
           };
-          api("/api/crud-user", {
+          api("/api/api-users", {
             users: { ...user },
             e: "FindEmail",
           }).then((res) => {
@@ -43,7 +43,7 @@
                 user_id: res.users.user_id,
                 user_forgot_token: random_token.toString(),
               };
-              api("/api/crud-user", {
+              api("/api/api-users", {
                 users: { ...user },
                 e: "SetForgotToken",
               }).then((res) => {

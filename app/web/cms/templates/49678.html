@@ -22,7 +22,7 @@
       },
 
       async logout() {
-        await api("/api/crud-user", {
+        await api("/api/api-users", {
           users: "Logout",
           e: "Logout",
         }).then((res) => {
@@ -34,7 +34,7 @@
         });
       },
     }}
-    run={async () => {
+    run={async ({}) => {
       runInAction(() => {
         meta.user = window.user.user || [];
       });
@@ -438,8 +438,9 @@
       </m-tabs>
       <div
         class={`flex self-stretch flex-col items-center justify-start pt-2 pb-4 bg-white bg-opacity-50 shadow-inner fixed w-full bottom-0`}
+        style={"backdrop-filter : blur(70px);"}
       >
-        <div class="flex self-stretch items-center justify-center shadow">
+        <div class="flex self-stretch items-center justify-center">
           <m-link
             class={`flex flex-1 flex-col space-y-2.5 items-start justify-start`}
             tabLink="#home"

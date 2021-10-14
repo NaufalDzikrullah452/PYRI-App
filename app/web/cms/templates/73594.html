@@ -4,7 +4,7 @@
       user: [],
 
       async logout() {
-        await api("/api/crud-user", {
+        await api("/api/api-users", {
           users: "Logout",
           e: "Logout",
         }).then((res) => {
@@ -19,7 +19,7 @@
       interests: [],
     }}
     run={async () => {
-      // const res = await api("/api/crud-user", { users: "ReadMany", e: "RefreshAPI" });
+      // const res = await api("/api/api-users", { users: "ReadMany", e: "RefreshAPI" });
       const tag = await api("/api/interests", {
         e: "show",
         user_id: 1,

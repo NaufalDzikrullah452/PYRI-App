@@ -43,7 +43,7 @@
             user_password: encrypt(this.user_password),
           };
           console.log("here");
-          api("/api/crud-user", {
+          api("/api/api-users", {
             users: { ...attemptuser },
             e: "FindEmail",
           }).then((res) => {
@@ -52,14 +52,17 @@
             if (res.users === null) {
               window.mobileApp.app.dialog.alert(null, "Email Not Found!");
             } else {
-              api("/api/crud-user", {
+              window.mobileApp.app.dialog.preloader();
+              api("/api/api-users", {
                 users: { ...attemptuser },
                 e: "Login",
               }).then((res) => {
                 if (res.users === null) {
+                  setTimeout(function () {
+                    window.mobileApp.app.dialog.close();
+                  }, 1000);
                   window.mobileApp.app.dialog.alert(null, "Wrong Password!");
                 } else {
-                  window.mobileApp.app.dialog.preloader();
                   setTimeout(function () {
                     window.mobileApp.app.dialog.close();
                   }, 1000);
@@ -78,10 +81,7 @@
     }}
     run={async () => {}}
   />
-  <div
-    class={`flex flex-col items-start justify-start bg-white`}
-    style={`height: 823px; min-height: 823px; max-height: 823px;`}
-  >
+  <div class={`flex flex-col items-start justify-start bg-white h-full`}>
     <div
       class="flex flex-1 self-stretch flex-col items-center justify-start"
       style="background-image: url('/fimgs/bg-e7b6df6c58bc28f2de4151141a2d2fc9fc5e4526');background-size:100% 100%;background-repeat:no-repeat;"
@@ -119,11 +119,13 @@
               class={`flex self-stretch flex-col space-y-4 items-start justify-start list-none`}
               noHairlinesMd={true}
             >
-              <div class="flex self-stretch flex-col items-start justify-start border rounded border-white">
+              <div
+                class={`flex self-stretch flex-col items-start justify-start border rounded border-white email-input`}
+              >
                 <input-new-white
                   label={"Email"}
                   type={"email"}
-                  class="w-full "
+                  class={"w-full"}
                   floatingLabel={true}
                   required={true}
                   inputStyle={{
@@ -142,7 +144,7 @@
                 <input-new-white
                   label={"Password"}
                   type={meta.pass_type}
-                  class="w-full "
+                  class={"w-full"}
                   floatingLabel={true}
                   required={true}
                   inputStyle={{

@@ -1,5 +1,22 @@
 <>
-  <effect meta={{}} run={async () => {}} />
+  <effect
+    meta={{
+      authors: [],
+    }}
+    run={async () => {
+      let author = window.authors;
+      await api("/api/authors", {
+        authors: " ",
+        e: "ReadAll",
+      }).then((res) => {
+        window.authors = res.authors;
+      });
+      runInAction(() => {
+        meta.authors = window.authors;
+      });
+      console.log(meta.authors);
+    }}
+  />
   <div class={`w-full flex items-start justify-start`}>
     <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
       <w-sidebar
@@ -28,7 +45,12 @@
             </div>
             <div class="flex self-stretch flex-col space-y-4 items-start justify-start px-6 pb-6">
               <div class="flex self-stretch flex-col items-start justify-start">
-                <w-add-btn />
+                <w-add-btn
+                  class={`flex space-x-2.5 items-start justify-start px-4 py-2 bg-amber-500 shadow rounded`}
+                  onClick={(e) => {
+                    navigate("/w-master-author/add");
+                  }}
+                />
               </div>
               <div class="flex self-stretch flex-col items-start justify-start">
                 <div class="flex self-stretch space-x-4 items-center justify-start">
@@ -78,162 +100,42 @@
                       </th>
                     </tr>
                   </thead>
-                  <tbody class="flex flex-col items-start justify-start">
-                    <tr class={`w-full flex items-start justify-start`}>
-                      <td
-                        class={`flex flex-col items-center justify-start pl-2.5`}
-                        style={"border: 1px solid #ddd; padding: 8px;"}
-                      >
-                        <div class="text-base leading-normal">1</div>
-                      </td>
-                      <td
-                        class={`flex flex-1 self-stretch items-center justify-start`}
-                        style={"border: 1px solid #ddd; padding: 8px;"}
-                      >
-                        <div class="text-base leading-normal">
-                          Fitra Rahmani Kasyah
-                        </div>
-                      </td>
-                      <td
-                        class={`flex space-x-6 items-center justify-center pr-2.5`}
-                        style={"border: 1px solid #ddd;"}
-                      >
-                        <img
-                          src="/fimgs/I1013_7111_1243_24468.x1.svg"
-                          class="flex items-start justify-start p-2.5"
-                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
-                        />
-                        <img
-                          src="/fimgs/I1013_7111_1243_24137.x1.svg"
-                          class="flex items-start justify-start p-2.5"
-                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
-                        />
-                      </td>
-                    </tr>
-                    <tr class={`w-full flex items-start justify-start`}>
-                      <td
-                        class={`flex flex-col items-center justify-start pl-2.5`}
-                        style={"border: 1px solid #ddd; padding: 8px;"}
-                      >
-                        <div class="text-base leading-normal">2</div>
-                      </td>
-                      <td
-                        class={`flex flex-1 self-stretch items-center justify-start`}
-                        style={"border: 1px solid #ddd; padding: 8px;"}
-                      >
-                        <div class="text-base leading-normal">
-                          May Fransisca
-                        </div>
-                      </td>
-                      <td
-                        class={`flex space-x-6 items-center justify-center pr-2.5`}
-                        style={"border: 1px solid #ddd;"}
-                      >
-                        <img
-                          src="/fimgs/I1013_7094_1243_24468.x1.svg"
-                          class="flex items-start justify-start p-2.5"
-                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
-                        />
-                        <img
-                          src="/fimgs/I1013_7094_1243_24137.x1.svg"
-                          class="flex items-start justify-start p-2.5"
-                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
-                        />
-                      </td>
-                    </tr>
-                    <tr class={`w-full flex items-start justify-start`}>
-                      <td
-                        class={`flex flex-col items-center justify-start pl-2.5`}
-                        style={"border: 1px solid #ddd; padding: 8px;"}
-                      >
-                        <div class="text-base leading-normal">3</div>
-                      </td>
-                      <td
-                        class={`flex flex-1 self-stretch items-center justify-start`}
-                        style={"border: 1px solid #ddd; padding: 8px;"}
-                      >
-                        <div class="text-base leading-normal">
-                          Muhammad Arif Saputra
-                        </div>
-                      </td>
-                      <td
-                        class={`flex space-x-6 items-center justify-center pr-2.5`}
-                        style={"border: 1px solid #ddd;"}
-                      >
-                        <img
-                          src="/fimgs/I1013_7162_1243_24468.x1.svg"
-                          class="flex items-start justify-start p-2.5"
-                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
-                        />
-                        <img
-                          src="/fimgs/I1013_7162_1243_24137.x1.svg"
-                          class="flex items-start justify-start p-2.5"
-                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
-                        />
-                      </td>
-                    </tr>
-                    <tr class={`w-full flex items-start justify-start`}>
-                      <td
-                        class={`flex flex-col items-center justify-start pl-2.5`}
-                        style={"border: 1px solid #ddd; padding: 8px;"}
-                      >
-                        <div class="text-base leading-normal">4</div>
-                      </td>
-                      <td
-                        class={`flex flex-1 self-stretch items-center justify-start`}
-                        style={"border: 1px solid #ddd; padding: 8px;"}
-                      >
-                        <div class="text-base leading-normal">
-                          Muhammad Naufal Dzikrullah
-                        </div>
-                      </td>
-                      <td
-                        class={`flex space-x-6 items-center justify-center pr-2.5`}
-                        style={"border: 1px solid #ddd;"}
-                      >
-                        <img
-                          src="/fimgs/I1013_7145_1243_24468.x1.svg"
-                          class="flex items-start justify-start p-2.5"
-                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
-                        />
-                        <img
-                          src="/fimgs/I1013_7145_1243_24137.x1.svg"
-                          class="flex items-start justify-start p-2.5"
-                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
-                        />
-                      </td>
-                    </tr>
-                    <tr class={`w-full flex items-start justify-start`}>
-                      <td
-                        class={`flex flex-col items-center justify-start pl-2.5`}
-                        style={"border: 1px solid #ddd; padding: 8px;"}
-                      >
-                        <div class="text-base leading-normal">5</div>
-                      </td>
-                      <td
-                        class={`flex flex-1 self-stretch items-center justify-start`}
-                        style={"border: 1px solid #ddd; padding: 8px;"}
-                      >
-                        <div class="text-base leading-normal">
-                          Nillasanti Puspita Ning Tyas
-                        </div>
-                      </td>
-                      <td
-                        class={`flex space-x-6 items-center justify-center pr-2.5`}
-                        style={"border: 1px solid #ddd;"}
-                      >
-                        <img
-                          src="/fimgs/I1013_7128_1243_24468.x1.svg"
-                          class="flex items-start justify-start p-2.5"
-                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
-                        />
-                        <img
-                          src="/fimgs/I1013_7128_1243_24137.x1.svg"
-                          class="flex items-start justify-start p-2.5"
-                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
-                        />
-                      </td>
-                    </tr>
+                  <tbody class={`flex flex-col items-start justify-start`}>
+                    {meta.authors?.map((numList, i) => (
+                      <tr class={`w-full flex items-start justify-start`}>
+                        <td
+                          class={`flex flex-col items-center justify-start pl-2.5`}
+                          style={"border: 1px solid #ddd; padding: 8px;"}
+                        >
+                          <div class={`text-base leading-normal`}>
+                            {numList.author_id || "-"}
+                          </div>
+                        </td>
+                        <td
+                          class={`flex flex-1 self-stretch items-center justify-start`}
+                          style={"border: 1px solid #ddd; padding: 8px;"}
+                        >
+                          <div class={`text-base leading-normal`}>
+                            {numList.author_name || "Author Name"}
+                          </div>
+                        </td>
+                        <td
+                          class={`flex space-x-6 items-center justify-center pr-2.5`}
+                          style={"border: 1px solid #ddd;"}
+                        >
+                          <img
+                            src="/fimgs/I1013_7111_1243_24468.x1.svg"
+                            class="flex items-start justify-start p-2.5"
+                            style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
+                          />
+                          <img
+                            src="/fimgs/I1013_7111_1243_24137.x1.svg"
+                            class="flex items-start justify-start p-2.5"
+                            style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
+                          />
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
                 <div class="flex self-stretch space-x-2.5 items-center justify-start bg-white">
