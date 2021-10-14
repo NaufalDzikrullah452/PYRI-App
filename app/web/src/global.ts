@@ -3,7 +3,6 @@ import * as locales from 'date-fns/locale';
 const md5 = require('md5');
 var validator = require('validator');
 var passwordValidator = require('password-validator');
-const dateValidator = require('is-my-date-valid')
 
 export const globalVar = {}
 

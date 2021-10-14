@@ -48,7 +48,7 @@
             user_password: encrypt(this.user_password),
           };
           window.mobileApp.app.dialog.preloader("Password Changed!");
-          api("/api/crud-user", {
+          api("/api/api-users", {
             users: { ...user },
             e: "UpdatePass",
           }).then((res) => {

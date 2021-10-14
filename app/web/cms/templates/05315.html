@@ -75,7 +75,7 @@
             user_date_created: this.user_date_created,
             user_note: this.user_note,
           };
-          api("/api/crud-user", {
+          api("/api/api-users", {
             users: { ...user },
             e: "FindEmail",
           }).then((res) => {
@@ -89,7 +89,7 @@
                 "Apakah data yang anda masukkan sudah benar?",
                 "Alert",
                 () => {
-                  api("/api/crud-user", {
+                  api("/api/api-users", {
                     users: { ...user },
                     e: "Register",
                   }).then((res) => {
@@ -111,17 +111,17 @@
       },
     }}
     run={async () => {
-      const res = await api("/api/crud-user", {
+      const res = await api("/api/api-users", {
         users: "ReadMany",
         e: "ReadMany",
       });
       console.log(res);
     }}
   />
-  <div class={`flex flex-col items-start justify-start bg-white`}>
+  <div class={`flex flex-col items-start justify-start bg-white w-full h-full`}>
     <div
       class={`flex flex-1 self-stretch flex-col items-center justify-center`}
-      style={`height: 823px; min-height: 823px; max-height: 823px;background-image: url('/fimgs/bg-ff2b4084986bd7da53995b9a752b9e5665e21788');background-size:100% 100%;background-repeat:no-repeat;`}
+      style={`background-image: url('/fimgs/bg-ff2b4084986bd7da53995b9a752b9e5665e21788');background-size:100% 100%;background-repeat:no-repeat;`}
     >
       <div
         class={`flex flex-1 self-stretch flex-col space-y-9 items-center justify-center px-9 py-16 bg-black bg-opacity-50`}
@@ -146,10 +146,10 @@
           class={`flex self-stretch flex-col space-y-8 items-start justify-start`}
         >
           <m-list
-            class={`flex self-stretch flex-col space-y-4 items-start justify-start list-none`}
+            class={`flex flex-1 self-stretch flex-col space-y-4 items-start justify-start list-none`}
           >
             <div
-              class={`flex self-stretch flex-col items-start justify-start border rounded border-white`}
+              class={`flex flex-1 self-stretch flex-col items-start justify-start border rounded border-white`}
             >
               <input-new-white
                 label={"Full Name"}
@@ -169,7 +169,7 @@
                 }}
               />
             </div>
-            <div class="flex self-stretch flex-col items-start justify-start border rounded border-white">
+            <div class="flex flex-1 self-stretch flex-col items-start justify-start border rounded border-white">
               <input-new-white
                 label={"Email"}
                 type={"email"}
@@ -207,7 +207,7 @@
                 option
               </input-dropdown-white>
             </div>
-            <div class="flex self-stretch flex-col items-start justify-start border rounded border-white">
+            <div class="flex flex-1 self-stretch flex-col items-start justify-start border rounded border-white">
               <m-list-input
                 label={"Birth Date"}
                 type={"datepicker"}
@@ -259,7 +259,7 @@
               />
               <div
                 class={`flex self-stretch flex-col items-start justify-center pt-4`}
-                style={`width: 33px; min-width: 33px; max-width: 33px; height: 65px; min-height: 65px; max-height: 65px;`}
+                style={`width: 33px; min-width: 33px; max-width: 33px; height: 61.25px; min-height: 61.25px; max-height: 61.25px;`}
               >
                 <img
                   src="/fimgs/1014_15614.x1.svg"
