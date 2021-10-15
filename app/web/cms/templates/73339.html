@@ -39,22 +39,32 @@
       },
     }}
     run={async () => {
+      let author = "";
+
       if (window.user.role !== "admin") {
         navigate("/login-admin");
+      } else if (params.id) {
+        await api("/api/authors", {
+          authors: {
+            author_id: parseInt(params.id),
+          },
+          e: "ReadById",
+        }).then((res) => {
+          if (res.authors !== null) {
+            author = res.authors;
+          } else {
+            navigate("/w-master-author");
+          }
+        });
+      } else {
+        navigate("/w-master-author");
       }
 
-      let author = "";
-      await api("/api/authors", {
-        authors: {
-          author_id: parseInt(params.id),
-        },
-        e: "ReadById",
-      }).then((res) => {
-        author = res.authors;
-      });
       runInAction(() => {
-        meta.author_id = author.author_id;
-        meta.author_name = author.author_name;
+        if (author !== "") {
+          meta.author_id = author.author_id;
+          meta.author_name = author.author_name;
+        }
       }); // console.log(author);
     }}
   />

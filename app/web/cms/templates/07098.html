@@ -71,7 +71,16 @@
                     user: res.users,
                   }; // console.log(res.users);
 
-                  navigate("/m/");
+                  const getInterest = api("/api/interests", {
+                    user_id: res.users.user_id,
+                    e: "show",
+                  }).then((res) => {
+                    if (res.result.length === 0) {
+                      navigate("/m/interest-page");
+                    } else {
+                      navigate("/m/");
+                    }
+                  });
                 }
               });
             }

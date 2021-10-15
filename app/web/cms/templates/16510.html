@@ -12,11 +12,11 @@
           console.log("Success");
           await api("/api/interests", {
             e: "post",
-            user_id: 1,
+            user_id: this.user.user_id,
             tags_id: this.user.interests,
           }).then((res) => {
             console.log(res);
-            navigate("/m/profile-page");
+            navigate("/m/");
             location.reload();
           });
         } else {
@@ -26,7 +26,7 @@
       },
     }}
     run={async () => {
-      // const res = await api("/api/crud-user", { users: "ReadMany", e: "RefreshAPI" });
+      // const res = await api("/api/api-users", { users: "ReadMany", e: "RefreshAPI" });
       const tags = await api("/api/interests", {
         e: "index",
       });
