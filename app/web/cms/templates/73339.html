@@ -1,5 +1,63 @@
 <>
-  <effect meta={{}} run={async () => {}} />
+  <effect
+    meta={{
+      author_id: "",
+      author_name: "",
+
+      async onChange(e) {
+        let value = e.target.value;
+        runInAction(() => (this.author_name = value));
+        console.log("authorName  : " + value);
+      },
+
+      validation() {
+        let msg =
+          this.author_name === "" || this.author_name === null
+            ? "Name cant be empty!"
+            : false;
+        return msg;
+      },
+
+      async submit() {
+        let error_msg = this.validation();
+
+        if (error_msg) {
+          alert(error_msg);
+        } else {
+          await api("/api/authors", {
+            authors: {
+              author_name: this.author_name,
+              author_id: this.author_id,
+            },
+            e: "Update",
+          }).then((res) => {
+            console.log(res);
+            alert(res.res);
+            navigate("/w-master-author");
+          });
+        }
+      },
+    }}
+    run={async () => {
+      if (window.user.role !== "admin") {
+        navigate("/login-admin");
+      }
+
+      let author = "";
+      await api("/api/authors", {
+        authors: {
+          author_id: parseInt(params.id),
+        },
+        e: "ReadById",
+      }).then((res) => {
+        author = res.authors;
+      });
+      runInAction(() => {
+        meta.author_id = author.author_id;
+        meta.author_name = author.author_name;
+      }); // console.log(author);
+    }}
+  />
   <div class={`w-full flex items-start justify-start`}>
     <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
       <w-sidebar
@@ -47,10 +105,14 @@
                     class={"w-full"}
                     type="text"
                     placeholder="masukkan nama author"
-                    style={`color: gray;
+                    style={`color: black;
       padding-left: 5px; 
       background:transparent; 
       outline: none;`}
+                    value={meta.author_name}
+                    onChange={(e) => {
+                      meta.onChange(e);
+                    }}
                   />
                 </div>
               </div>
@@ -62,12 +124,18 @@
                 <button
                   class={`flex items-start justify-start px-4 py-2 bg-blue-600 rounded`}
                   style={"background-color: #3B82F6;"}
+                  onClick={meta.submit}
                 >
                   <div class="text-base font-bold leading-normal text-white">
-                    Tambah
+                    Simpan
                   </div>
                 </button>
-                <button class="flex items-start justify-start px-4 py-2 bg-red-600 rounded">
+                <button
+                  class={`flex items-start justify-start px-4 py-2 bg-red-600 rounded`}
+                  onClick={() => {
+                    navigate("/w-master-author");
+                  }}
+                >
                   <div class="text-base font-bold leading-normal text-white">
                     Batal
                   </div>

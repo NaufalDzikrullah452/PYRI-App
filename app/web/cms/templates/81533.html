@@ -36,9 +36,13 @@
         }
       },
     }}
-    run={async () => {}}
+    run={async () => {
+      if (window.user.role !== "admin") {
+        navigate("/login-admin");
+      }
+    }}
   />
-  <div class={`w-full flex self-stretch items-start justify-start`}>
+  <div class={`w-full flex items-start justify-start`}>
     <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
       <w-sidebar
         class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900`}

@@ -42,11 +42,11 @@
   />
   <div class="flex items-end justify-center bg-white">
     <div
-      class={`flex flex-1 flex-col space-y-5 items-center justify-start bg-gradient-to-b from-white to-white w-full`}
+      class={`flex flex-1 self-stretch flex-col space-y-5 items-center justify-start bg-gradient-to-b from-white to-white w-full`}
     >
       <div class="flex self-stretch flex-col items-start justify-start bg-orange-100">
         <div
-          class={`flex self-stretch space-x-2.5 items-center justify-center px-6 pt-9 pb-4 bg-white shadow rounded-bl-2xl rounded-br-2xl fixed w-full z-10`}
+          class={`flex flex-1 self-stretch space-x-2.5 items-center justify-center px-6 pt-9 pb-4 bg-white shadow rounded-bl-2xl rounded-br-2xl fixed w-full z-10`}
         >
           <img
             src="/fimgs/I991_7169_991_7165.x1.svg"
@@ -92,12 +92,13 @@
         </div>
       </div>
       <m-tabs
-        class={`flex self-stretch flex-col space-y-2.5 items-start justify-start w-full`}
+        class={`flex flex-1 self-stretch flex-col space-y-2.5 items-start justify-start w-full`}
         swipeable={true}
       >
         <m-tab
           class={`flex self-stretch flex-col space-y-9 items-start justify-start`}
           id="home"
+          style="height: 800px; min-height: 800px; max-height: 800px;"
         >
           <div class="flex flex-col space-y-2 items-start justify-start px-6">
             <div class="flex self-stretch space-x-2.5 items-end justify-start">
@@ -256,6 +257,7 @@
         <m-tab
           class={`flex self-stretch flex-col space-y-2.5 items-start justify-start px-6 pt-2`}
           id="profile"
+          style="height: 800px; min-height: 800px; max-height: 800px;"
         >
           <div class="flex self-stretch space-x-2.5 items-center justify-start">
             <div

@@ -40,14 +40,21 @@
         } else {
           if (this.username === this.admin.username) {
             if (this.password === this.admin.password) {
-              // alert("Login success");
-              const res = api("/api/authors", {
-                authors: " ",
-                e: "ReadAll",
+              await api("/api/admin", {
+                data: {
+                  username: this.username,
+                  password: this.password,
+                },
+                event: "Login",
               }).then((res) => {
-                console.log(res);
-                window.authors = res.authors;
-                navigate("/w-master-author");
+                alert(res.res);
+
+                if (res.value === true) {
+                  window.user = {
+                    role: "admin",
+                  };
+                  navigate("/w-master-author");
+                }
               });
             } else {
               alert("Password wrong!");
@@ -58,7 +65,21 @@
         }
       },
     }}
-    run={async () => {}}
+    run={async () => {
+      if (window.user.role === "admin") {
+        await api("/api/admin", {
+          data: " ",
+          event: "Logout",
+        }).then((res) => {
+          console.log(res);
+          window.user = {
+            role: "guest",
+          };
+        });
+      }
+
+      runInAction(() => {});
+    }}
   />
   <div class={`w-full flex flex-col items-center justify-center`}>
     <div
