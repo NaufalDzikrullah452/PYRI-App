@@ -4,6 +4,7 @@
       tabActive: "home",
       tabLink: "",
       user: [],
+      interest: [],
 
       onClickTab(tab) {
         // this.tabActive = tab;
@@ -16,7 +17,30 @@
               navigate("/m/login");
             }
           );
-        } else {
+        } else if (tab === "profile" && this.tabActive !== tab) {
+          // window.mobileApp.app.dialog.preloader();
+          api("/api/interests", {
+            e: "show",
+            user_id: this.user.user_id,
+          }).then((res) => {
+            console.log(res.result);
+            document.getElementById("kotak").className =
+              "flex self-stretch items-start justify-start space-x-1.5"; // membuat div interest
+
+            for (let index = 0; index < res.result.length; index++) {
+              let mainDiv = document.createElement("div");
+              mainDiv.className =
+                "flex flex-1 items-center justify-center px-2.5 py-0.5 bg-gray-200 rounded";
+              document.getElementById("kotak").appendChild(mainDiv);
+              let textDiv = document.createElement("div");
+              textDiv.className =
+                "text-xs font-bold leading-none text-gray-700";
+              textDiv.innerHTML = res.result[index].tags.tag_name;
+              mainDiv.appendChild(textDiv);
+              this.tabActive = tab;
+            } // window.mobileApp.app.dialog.close();
+          }); // console.log(tag.result)
+        } else if (this.tabActive !== tab) {
           this.tabActive = tab;
         }
       },
@@ -35,6 +59,18 @@
       },
     }}
     run={async ({}) => {
+      if (window.user.role === "admin") {
+        await api("/api/api-users", {
+          users: "Logout",
+          e: "Logout",
+        }).then((res) => {
+          console.log(res);
+          window.user = {
+            role: "guest",
+          };
+        });
+      }
+
       runInAction(() => {
         meta.user = window.user.user || [];
       });
@@ -46,7 +82,7 @@
     >
       <div class="flex self-stretch flex-col items-start justify-start bg-orange-100">
         <div
-          class={`flex flex-1 self-stretch space-x-2.5 items-center justify-center px-6 pt-9 pb-4 bg-white shadow rounded-bl-2xl rounded-br-2xl fixed w-full z-10`}
+          class={`flex self-stretch space-x-2.5 items-center justify-center px-6 pt-9 pb-4 bg-white shadow rounded-bl-2xl rounded-br-2xl`}
         >
           <img
             src="/fimgs/I991_7169_991_7165.x1.svg"
@@ -56,7 +92,6 @@
             <div class="text-xl font-bold leading-loose">PYRI</div>
           </div>
         </div>
-        <div style={`height:85px`} />
         <div class={`flex self-stretch flex-col items-start justify-start`}>
           {window.user.role === "guest" && meta.tabActive === "home" && (
             <div
@@ -254,6 +289,8 @@
             </div>
           </div>
         </m-tab>
+        <m-tab id="explore" />
+        <m-tab id="pyriList" />
         <m-tab
           class={`flex self-stretch flex-col space-y-2.5 items-start justify-start px-6 pt-2`}
           id="profile"
@@ -400,29 +437,13 @@
                   </div>
                   <div class="flex flex-1 flex-col items-end justify-start bg-gray-50">
                     <img
-                      src="/fimgs/1228_38530.x1.svg"
+                      src="/fimgs/1437_6937.x1.svg"
                       style="width: 24px; min-width: 24px; max-width: 24px; height: 11.98px; min-height: 11.98px; max-height: 11.98px;"
                     />
                   </div>
                 </div>
                 <div class="flex self-stretch flex-col items-start justify-start">
-                  <div class="flex self-stretch space-x-1 items-start justify-start">
-                    <div class="flex flex-1 items-center justify-center px-2.5 py-0.5 bg-gray-200 rounded">
-                      <div class="text-xs font-bold leading-none text-gray-700">
-                        Mistery
-                      </div>
-                    </div>
-                    <div class="flex flex-1 items-center justify-center px-2.5 py-0.5 bg-gray-200 rounded">
-                      <div class="text-xs font-bold leading-none text-gray-700">
-                        Comedy
-                      </div>
-                    </div>
-                    <div class="flex flex-1 items-center justify-center px-2.5 py-0.5 bg-gray-200 rounded">
-                      <div class="text-xs font-bold leading-none text-gray-700">
-                        Horor
-                      </div>
-                    </div>
-                  </div>
+                  <div id="kotak" />
                 </div>
               </div>
             </div>

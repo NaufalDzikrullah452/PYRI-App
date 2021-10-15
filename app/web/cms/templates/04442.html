@@ -22,7 +22,9 @@
       },
     }}
     run={async () => {
-      if (window.user.role !== "admin") {
+      var author = "";
+
+      if (window.user.roleAdmin !== "admin") {
         navigate("/login-admin");
       }
 
@@ -30,10 +32,10 @@
         authors: " ",
         e: "ReadAll",
       }).then((res) => {
-        window.authors = res.authors;
+        author = res.authors;
       });
       runInAction(() => {
-        meta.authors = window.authors;
+        meta.authors = author;
       }); // console.log(meta.authors);
     }}
   />

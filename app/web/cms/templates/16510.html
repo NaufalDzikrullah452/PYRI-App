@@ -10,6 +10,7 @@
 
         if (count <= 3 && count > 0) {
           console.log("Success");
+          window.mobileApp.app.dialog.preloader();
           await api("/api/interests", {
             e: "post",
             user_id: this.user.user_id,
@@ -17,12 +18,15 @@
           }).then((res) => {
             console.log(res);
             navigate("/m/");
+            window.mobileApp.app.dialog.close();
             location.reload();
           });
         } else {
           console.log("Fail");
           console.log(meta.interest);
         }
+
+        window.mobileApp.app.dialog.close();
       },
     }}
     run={async () => {

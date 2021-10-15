@@ -41,7 +41,7 @@
     run={async () => {
       let author = "";
 
-      if (window.user.role !== "admin") {
+      if (window.user.roleAdmin !== "admin") {
         navigate("/login-admin");
       } else if (params.id) {
         await api("/api/authors", {

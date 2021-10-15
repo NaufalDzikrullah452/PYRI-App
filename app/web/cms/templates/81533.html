@@ -37,7 +37,7 @@
       },
     }}
     run={async () => {
-      if (window.user.role !== "admin") {
+      if (window.user.roleAdmin !== "admin") {
         navigate("/login-admin");
       }
     }}

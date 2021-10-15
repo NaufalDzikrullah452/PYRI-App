@@ -51,7 +51,8 @@
 
                 if (res.value === true) {
                   window.user = {
-                    role: "admin",
+                    role: window.user.role,
+                    roleAdmin: "admin",
                   };
                   navigate("/w-master-author");
                 }
@@ -66,14 +67,15 @@
       },
     }}
     run={async () => {
-      if (window.user.role === "admin") {
+      if (window.user.roleAdmin === "admin") {
         await api("/api/admin", {
           data: " ",
           event: "Logout",
         }).then((res) => {
           console.log(res);
           window.user = {
-            role: "guest",
+            role: window.user.role,
+            roleAdmin: "guest",
           };
         });
       }
@@ -81,7 +83,7 @@
       runInAction(() => {});
     }}
   />
-  <div class={`w-full flex flex-col items-center justify-center`}>
+  <div class={`w-full flex self-stretch flex-col items-center justify-center`}>
     <div
       class={`flex flex-1 self-stretch items-center justify-center`}
       style={`background-image: url('/fimgs/bg-18c5fcd54f9449e623ede0c45bbd079f07b14bc0');background-size:100% 100%;background-repeat:no-repeat;`}
@@ -96,9 +98,12 @@
         </div>
         <div
           class="flex flex-col items-center justify-center bg-gray-200 shadow rounded-lg"
-          style="width: 494px; min-width: 494px; max-width: 494px; height: 498px; min-height: 498px; max-height: 498px;"
+          style="width: 494px; min-width: 494px; max-width: 494px; height: 452px; min-height: 452px; max-height: 452px;"
         >
-          <div class="flex self-stretch items-center justify-center p-6 bg-gray-500">
+          <div
+            class={`flex flex-1 self-stretch items-center justify-center p-6 bg-gray-500 rounded-tl-lg rounded-tr-lg`}
+            style={`border-radius: 5px 5px 0px 0px;`}
+          >
             <div class="text-2xl font-bold leading-9 text-white">
               LOGIN ADMINISTRATOR
             </div>
@@ -176,18 +181,6 @@
                       />
                     </div>
                   </div>
-                </div>
-              </div>
-              <div class="flex self-stretch space-x-2.5 items-center justify-start">
-                <div class={`flex items-center justify-center p-1`}>
-                  <input
-                    type="checkbox"
-                    class={`border rounded-sm border-gray-500`}
-                    style={`width: 20px; min-width: 20px; max-width: 20px; height: 20px; min-height: 20px; max-height: 20px;`}
-                  />
-                </div>
-                <div class="text-base leading-normal text-gray-900">
-                  Remember me
                 </div>
               </div>
             </div>
