@@ -64,6 +64,11 @@
               window.mobileApp.app.dialog.close();
             }, 1000);
             navigate("/m/create-new-password");
+          } else {
+            window.mobileApp.app.dialog.alert(
+              "Please check your Email!</br>" + user.user_email,
+              "Wrong code"
+            );
           }
         }
       },

@@ -14,6 +14,7 @@
       user_date_created: new Date().toJSON(),
       user_note: null,
       pass_type: "password",
+      term: "",
       max_date: new Date(new Date().setFullYear(new Date().getFullYear() - 12)),
 
       async showHidePass() {
@@ -24,8 +25,14 @@
 
       async onChange(key, e) {
         let value = e.target.value;
-        runInAction(() => (this[key] = value));
-        console.log(key + " : " + value);
+
+        if (key === "term") {
+          this[key] === "on" ? (this[key] = "off") : (this[key] = value);
+          console.log(key + " : " + this[key]);
+        } else {
+          runInAction(() => (this[key] = value));
+          console.log(key + " : " + value);
+        }
       },
 
       async onChangeDate(key, value) {
@@ -51,6 +58,8 @@
             ? "Password cant be empty!"
             : !validatePass(this.user_password)
             ? "Password length 8-16 <br/>Include Uppercase, Lowercase & No space"
+            : this.term === "" || this.term === "off"
+            ? "Please Check the term & conditions!"
             : false; // console.log(msg);
 
         return msg;
@@ -111,11 +120,11 @@
       },
     }}
     run={async () => {
-      const res = await api("/api/api-users", {
-        users: "ReadMany",
-        e: "ReadMany",
-      });
-      console.log(res);
+      // const res = await api("/api/api-users", {
+      //   users: "ReadMany",
+      //   e: "ReadMany",
+      // });
+      // console.log(res);
     }}
   />
   <div class={`flex flex-col items-start justify-start bg-white w-full h-full`}>
@@ -280,6 +289,9 @@
   border:2px solid #ffffff !important;
   border-radius:3px`}
                   required={true}
+                  onChange={(e) => {
+                    meta.onChange("term", e);
+                  }}
                 />
               </div>
               <div class="flex space-x-1 items-start justify-start">
