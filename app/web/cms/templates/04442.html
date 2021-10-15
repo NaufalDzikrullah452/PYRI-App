@@ -2,9 +2,30 @@
   <effect
     meta={{
       authors: [],
+
+      async editAuthor(id) {
+        navigate("/w-master-author/edit/" + id);
+      },
+
+      async deleteAuthor(id) {
+        console.log(id);
+        confirm("Confrim Delete") &&
+          (await api("/api/authors", {
+            authors: {
+              author_id: id,
+            },
+            e: "Delete",
+          }).then((res) => {
+            alert(res.res);
+            navigate("/w-master-author");
+          }));
+      },
     }}
     run={async () => {
-      let author = window.authors;
+      if (window.user.role !== "admin") {
+        navigate("/login-admin");
+      }
+
       await api("/api/authors", {
         authors: " ",
         e: "ReadAll",
@@ -13,8 +34,7 @@
       });
       runInAction(() => {
         meta.authors = window.authors;
-      });
-      console.log(meta.authors);
+      }); // console.log(meta.authors);
     }}
   />
   <div class={`w-full flex items-start justify-start`}>
@@ -102,13 +122,15 @@
                   </thead>
                   <tbody class={`flex flex-col items-start justify-start`}>
                     {meta.authors?.map((numList, i) => (
-                      <tr class={`w-full flex items-start justify-start`}>
+                      <tr
+                        class={`w-full flex flex-1 self-stretch items-start justify-start`}
+                      >
                         <td
-                          class={`flex flex-col items-center justify-start pl-2.5`}
+                          class={`flex self-stretch flex-col items-start justify-start pl-2.5`}
                           style={"border: 1px solid #ddd; padding: 8px;"}
                         >
                           <div class={`text-base leading-normal`}>
-                            {numList.author_id || "-"}
+                            {i + 1 || "-"}
                           </div>
                         </td>
                         <td
@@ -125,13 +147,19 @@
                         >
                           <img
                             src="/fimgs/I1013_7111_1243_24468.x1.svg"
-                            class="flex items-start justify-start p-2.5"
-                            style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
+                            class={`flex items-start justify-start p-2.5`}
+                            style={`width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;`}
+                            onClick={() => {
+                              meta.deleteAuthor(numList.author_id);
+                            }}
                           />
                           <img
                             src="/fimgs/I1013_7111_1243_24137.x1.svg"
-                            class="flex items-start justify-start p-2.5"
-                            style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
+                            class={`flex items-start justify-start p-2.5`}
+                            style={`width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;`}
+                            onClick={() => {
+                              meta.editAuthor(numList.author_id);
+                            }}
                           />
                         </td>
                       </tr>
