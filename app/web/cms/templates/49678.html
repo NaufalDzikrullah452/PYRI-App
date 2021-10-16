@@ -3,12 +3,13 @@
     meta={{
       tabActive: "home",
       tabLink: "",
+      tabProfile: true,
       user: [],
       interest: [],
 
       onClickTab(tab) {
-        // this.tabActive = tab;
-        // console.log(this.tabActive);
+        this.tabActive = tab; // console.log(tab);
+
         if (window.user.role === "guest" && tab === "profile") {
           window.mobileApp.app.dialog.confirm(
             "direct to login page?",
@@ -17,13 +18,14 @@
               navigate("/m/login");
             }
           );
-        } else if (tab === "profile" && this.tabActive !== tab) {
-          // window.mobileApp.app.dialog.preloader();
+        } else if (tab === "profile" && this.tabProfile) {
+          this.tabProfile = false; // window.mobileApp.app.dialog.preloader();
+
           api("/api/interests", {
             e: "show",
             user_id: this.user.user_id,
           }).then((res) => {
-            console.log(res.result);
+            // console.log(res.result)
             document.getElementById("kotak").className =
               "flex self-stretch items-start justify-start space-x-1.5"; // membuat div interest
 
@@ -40,21 +42,27 @@
               this.tabActive = tab;
             } // window.mobileApp.app.dialog.close();
           }); // console.log(tag.result)
-        } else if (this.tabActive !== tab) {
-          this.tabActive = tab;
+        } else if (tab !== "profile") {
+          this.tabProfile = true;
         }
       },
 
       async logout() {
-        await api("/api/api-users", {
-          users: "Logout",
-          e: "Logout",
-        }).then((res) => {
-          console.log(res);
-          window.user = {
-            role: "guest",
-          };
-          navigate("/m/");
+        window.mobileApp.app.dialog.confirm(null, "Logout of PyriApp?", () => {
+          window.mobileApp.app.dialog.preloader();
+          setTimeout(function () {
+            api("/api/api-users", {
+              users: "Logout",
+              e: "Logout",
+            }).then((res) => {
+              console.log(res);
+              window.user = {
+                role: "guest",
+              };
+              window.mobileApp.app.dialog.close();
+              navigate("/m/");
+            });
+          }, 1000);
         });
       },
     }}

@@ -130,7 +130,7 @@
       console.log(user); // console.log(res);
     }}
   />
-  <div class="flex flex-col items-start justify-start bg-white">
+  <div class={`flex flex-col items-start justify-start bg-white`}>
     <div class="flex self-stretch flex-col space-y-8 items-start justify-start">
       <div
         class={`flex self-stretch flex-col items-start justify-start px-6 pt-9 pb-4 bg-white shadow`}
@@ -262,35 +262,17 @@
               />
             </div>
             <div class="flex self-stretch items-start justify-start border border-gray-300">
-              <input-new
-                label={"Current Password"}
-                type={meta.pass_type}
-                class="w-full "
-                floatingLabel={true}
-                required={true}
-                disabled={false}
-                inputStyle={{
-                  color: "white",
+              <button
+                class={`flex flex-1 self-stretch flex-col items-start justify-center py-1.5 pl-4 pr-6 bg-white border rounded border-gray-300`}
+                style={`height: 60px`}
+                onClick={() => {
+                  meta.changePass();
                 }}
-                style={`color:white; 
-    background:transparent; 
-    border-radius: 5px !important;`}
-                value={meta.user_password}
-                onChange={(e) => meta.onChange("user_password", e)}
-              />
-              <div
-                class={`flex flex-1 self-stretch flex-col items-start justify-center pt-4`}
-                style={`width: 30px; min-width: 30px; max-width: 30px; height: 60px; min-height: 60px; max-height: 60px;`}
               >
-                <img
-                  src="/fimgs/1080_185085.x1.svg"
-                  class={`flex flex-col items-center justify-center`}
-                  style={`width: 22px; min-width: 22px; max-width: 22px; height: 15px; min-height: 15px; max-height: 15px;`}
-                  onClick={() => {
-                    meta.showHidePass();
-                  }}
-                />
-              </div>
+                <div class="flex self-stretch items-start justify-start">
+                  <div class="text-base leading-normal">Change password</div>
+                </div>
+              </button>
             </div>
           </m-list>
         </div>
