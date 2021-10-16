@@ -20,6 +20,16 @@
             navigate("/w-master-author");
           }));
       },
+
+      async logout() {
+        confirm("Logout of admin?") &&
+          (await api("/api/admin", {
+            data: "",
+            event: "Logout",
+          }).then((res) => {
+            navigate("/login-admin");
+          }));
+      },
     }}
     run={async () => {
       var author = "";
@@ -36,153 +46,164 @@
       });
       runInAction(() => {
         meta.authors = author;
-      }); // console.log(meta.authors);
+      });
+      console.log(meta.authors);
     }}
   />
   <div class={`w-full flex items-start justify-start`}>
-    <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
-      <w-sidebar
-        class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900`}
-        style={"background-color: black"}
-      />
-      <div
-        class={`w-full flex flex-1 self-stretch flex-col items-start justify-start pt-9 pb-8 bg-gray-100`}
-      >
+    {window.user.roleAdmin === "admin" && (
+      <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
+        <w-sidebar
+          class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900`}
+          style={"background-color: black"}
+        />
         <div
-          class={`w-full flex flex-1 self-stretch flex-col space-y-9 items-start justify-start px-9`}
+          class={`w-full flex flex-1 self-stretch flex-col items-start justify-start pt-9 pb-8 bg-gray-100`}
         >
-          <div class="flex self-stretch space-x-2.5 items-center justify-start">
-            <div class="flex flex-1 items-start justify-start">
-              <div class="text-3xl font-bold leading-10">Data Author</div>
-            </div>
-            <w-profile-admin />
-          </div>
           <div
-            class={`w-full flex self-stretch flex-col space-y-9 items-start justify-start bg-white rounded`}
+            class={`w-full flex flex-1 self-stretch flex-col space-y-9 items-start justify-start px-9`}
           >
-            <div class="flex self-stretch items-start justify-start p-6 bg-orange-300">
-              <div class="text-base font-bold leading-normal text-gray-900">
-                DATA AUTHOR
+            <div class="flex self-stretch space-x-2.5 items-center justify-start">
+              <div class="flex flex-1 items-start justify-start">
+                <div class="text-3xl font-bold leading-10">Data Author</div>
               </div>
+              <w-profile-admin />
             </div>
-            <div class="flex self-stretch flex-col space-y-4 items-start justify-start px-6 pb-6">
-              <div class="flex self-stretch flex-col items-start justify-start">
-                <w-add-btn
-                  class={`flex space-x-2.5 items-start justify-start px-4 py-2 bg-amber-500 shadow rounded`}
-                  onClick={(e) => {
-                    navigate("/w-master-author/add");
-                  }}
-                />
+            <div
+              class={`w-full flex self-stretch flex-col space-y-9 items-start justify-start bg-white rounded`}
+            >
+              <div class="flex self-stretch items-start justify-start p-6 bg-orange-300">
+                <div class="text-base font-bold leading-normal text-gray-900">
+                  DATA AUTHOR
+                </div>
               </div>
-              <div class="flex self-stretch flex-col items-start justify-start">
-                <div class="flex self-stretch space-x-4 items-center justify-start">
-                  <div class="flex items-start justify-start">
-                    <div class="text-base leading-normal">Show</div>
-                  </div>
-                  <div class="flex space-x-2 items-center justify-start">
-                    <div class="flex space-x-2.5 items-center justify-start px-6 py-1 bg-white border border-gray-500">
-                      <div class="text-base leading-normal text-gray-500">
-                        10
-                      </div>
-                      <div />
-                    </div>
+              <div class="flex self-stretch flex-col space-y-4 items-start justify-start px-6 pb-6">
+                <div class="flex self-stretch flex-col items-start justify-center">
+                  <w-add-btn
+                    class={`flex space-x-1 items-start justify-start px-4 py-2 bg-amber-500 shadow rounded`}
+                    onClick={(e) => {
+                      navigate("/w-master-author/add");
+                    }}
+                  />
+                </div>
+                <div class="flex self-stretch flex-col items-start justify-start">
+                  <div class="flex self-stretch space-x-4 items-center justify-start">
                     <div class="flex items-start justify-start">
-                      <div class="text-base leading-normal">entries</div>
+                      <div class="text-base leading-normal">Show</div>
+                    </div>
+                    <div class="flex space-x-2 items-center justify-start">
+                      <div class="flex space-x-2.5 items-center justify-start px-6 py-1 bg-white border border-gray-500">
+                        <div class="text-base leading-normal text-gray-500">
+                          10
+                        </div>
+                        <div />
+                      </div>
+                      <div class="flex items-start justify-start">
+                        <div class="text-base leading-normal">entries</div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div class="flex self-stretch flex-col space-y-4 items-start justify-start">
-                <table
-                  class={`table-auto borderflex self-stretch flex-col items-start justify-start border border-gray-300`}
-                >
-                  <thead
-                    class={`w-full flex self-stretch items-center justify-start py-1 pl-1 pr-2.5 bg-gray-300`}
+                <div class="flex self-stretch flex-col space-y-4 items-start justify-start">
+                  <table
+                    class={`table-auto borderflex self-stretch flex-col items-start justify-start border border-gray-300`}
                   >
-                    <tr
-                      class={`w-full flex flex-1 self-stretch space-x-6 items-start justify-start`}
+                    <thead
+                      class={`w-full flex self-stretch items-center justify-start py-1 pl-1 pr-2.5 bg-gray-300`}
                     >
-                      <th class="flex self-stretch flex-col items-start justify-center">
-                        <div class="text-base font-bold leading-normal">
-                          No.
-                        </div>
-                      </th>
-                      <th
-                        class={`flex flex-1 self-stretch items-center justify-start`}
-                        style={"margin-left:20px;"}
-                      >
-                        <div class="text-base font-bold leading-normal">
-                          Nama Author
-                        </div>
-                      </th>
-                      <th class={`flex items-center justify-center px-2.5`}>
-                        <div class="text-base font-bold leading-normal">
-                          Aksi
-                        </div>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody class={`flex flex-col items-start justify-start`}>
-                    {meta.authors?.map((numList, i) => (
                       <tr
-                        class={`w-full flex flex-1 self-stretch items-start justify-start`}
+                        class={`w-full flex flex-1 self-stretch space-x-6 items-start justify-start`}
                       >
-                        <td
-                          class={`flex self-stretch flex-col items-start justify-start pl-2.5`}
-                          style={"border: 1px solid #ddd; padding: 8px;"}
-                        >
-                          <div class={`text-base leading-normal`}>
-                            {i + 1 || "-"}
+                        <th class="flex self-stretch flex-col items-start justify-center">
+                          <div class="text-base font-bold leading-normal">
+                            No.
                           </div>
-                        </td>
-                        <td
+                        </th>
+                        <th
                           class={`flex flex-1 self-stretch items-center justify-start`}
-                          style={"border: 1px solid #ddd; padding: 8px;"}
+                          style={"margin-left:20px;"}
                         >
-                          <div class={`text-base leading-normal`}>
-                            {numList.author_name || "Author Name"}
+                          <div class="text-base font-bold leading-normal">
+                            Nama Author
                           </div>
-                        </td>
-                        <td
-                          class={`flex space-x-6 items-center justify-center pr-2.5`}
-                          style={"border: 1px solid #ddd;"}
-                        >
-                          <img
-                            src="/fimgs/I1013_7111_1243_24468.x1.svg"
-                            class={`flex items-start justify-start p-2.5`}
-                            style={`width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;`}
-                            onClick={() => {
-                              meta.deleteAuthor(numList.author_id);
-                            }}
-                          />
-                          <img
-                            src="/fimgs/I1013_7111_1243_24137.x1.svg"
-                            class={`flex items-start justify-start p-2.5`}
-                            style={`width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;`}
-                            onClick={() => {
-                              meta.editAuthor(numList.author_id);
-                            }}
-                          />
-                        </td>
+                        </th>
+                        <th class={`flex items-center justify-center px-2.5`}>
+                          <div class="text-base font-bold leading-normal">
+                            Aksi
+                          </div>
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-                <div class="flex self-stretch space-x-2.5 items-center justify-start bg-white">
-                  <div class="flex flex-1 items-start justify-start">
-                    <div class="text-base leading-normal">
-                      Showing 1 to 5 of 5 entries
+                    </thead>
+                    <tbody class={`flex flex-col items-start justify-start`}>
+                      {meta.authors?.map((numList, i) => (
+                        <tr
+                          class={`w-full flex flex-1 self-stretch items-start justify-start`}
+                        >
+                          <td
+                            class={`flex self-stretch flex-col items-start justify-start pl-2.5`}
+                            style={"border: 1px solid #ddd; padding: 8px;"}
+                          >
+                            <div class={`text-base leading-normal`}>
+                              {i + 1 || "-"}
+                            </div>
+                          </td>
+                          <td
+                            class={`flex flex-1 self-stretch items-center justify-start`}
+                            style={"border: 1px solid #ddd; padding: 8px;"}
+                          >
+                            <div class={`text-base leading-normal`}>
+                              {numList.author_name || "Author Name"}
+                            </div>
+                          </td>
+                          <td
+                            class={`flex self-stretch space-x-6 items-center justify-center pr-2.5`}
+                            style={"border: 1px solid #ddd;"}
+                          >
+                            <button
+                              class={`flex items-start justify-start p-2.5`}
+                              onClick={() => {
+                                meta.deleteAuthor(numList.author_id);
+                              }}
+                            >
+                              <img
+                                class={`flex items-start justify-start px-0.5`}
+                                style="width: 20px; min-width: 20px; max-width: 20px; height: 20px; min-height: 20px; max-height: 20px;"
+                                src="/fimgs/I1013_7111_1477_38212.x1.svg"
+                              />
+                            </button>
+                            <button
+                              class={`flex items-start justify-start p-2.5`}
+                              onClick={() => {
+                                meta.editAuthor(numList.author_id);
+                              }}
+                            >
+                              <img
+                                class={`flex items-start justify-start`}
+                                style="width: 20px; min-width: 20px; max-width: 20px; height: 20px; min-height: 20px; max-height: 20px;"
+                                src="/fimgs/I1013_7111_1477_38347.x1.svg"
+                              />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <div class="flex self-stretch space-x-2.5 items-center justify-start bg-white">
+                    <div class="flex flex-1 items-start justify-start">
+                      <div class="text-base leading-normal">
+                        Showing 1 to 5 of 5 entries
+                      </div>
                     </div>
-                  </div>
-                  <div class="flex items-start justify-start">
-                    <div class="flex items-start justify-start px-3 py-1 bg-white border border-gray-400">
-                      <div class="text-base leading-normal">Previous</div>
-                    </div>
-                    <div class="flex flex-col items-start justify-start px-2.5 py-1 bg-amber-500">
-                      <div class="text-base leading-normal">1</div>
-                    </div>
-                    <div class="flex items-start justify-start px-3 py-1 bg-white border border-gray-400">
-                      <div class="text-base leading-normal">Next</div>
+                    <div class="flex items-start justify-start">
+                      <div class="flex items-start justify-start px-3 py-1 bg-white border border-gray-400">
+                        <div class="text-base leading-normal">Previous</div>
+                      </div>
+                      <div class="flex flex-col items-start justify-start px-2.5 py-1 bg-amber-500">
+                        <div class="text-base leading-normal">1</div>
+                      </div>
+                      <div class="flex items-start justify-start px-3 py-1 bg-white border border-gray-400">
+                        <div class="text-base leading-normal">Next</div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -191,6 +212,6 @@
           </div>
         </div>
       </div>
-    </div>
+    )}
   </div>
 </>

@@ -43,6 +43,7 @@
             user_password: encrypt(this.user_password),
           };
           console.log("here");
+          window.mobileApp.app.dialog.preloader();
           api("/api/api-users", {
             users: { ...attemptuser },
             e: "FindEmail",
@@ -52,7 +53,6 @@
             if (res.users === null) {
               window.mobileApp.app.dialog.alert(null, "Email Not Found!");
             } else {
-              window.mobileApp.app.dialog.preloader();
               api("/api/api-users", {
                 users: { ...attemptuser },
                 e: "Login",
