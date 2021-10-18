@@ -8,8 +8,7 @@
       interest: [],
 
       onClickTab(tab) {
-        this.tabActive = tab; // console.log(tab);
-
+        // console.log(tab);
         if (window.user.role === "guest" && tab === "profile") {
           window.mobileApp.app.dialog.confirm(
             "direct to login page?",
@@ -19,6 +18,7 @@
             }
           );
         } else if (tab === "profile" && this.tabProfile) {
+          this.tabActive = tab;
           this.tabProfile = false; // window.mobileApp.app.dialog.preloader();
 
           api("/api/interests", {
@@ -39,11 +39,11 @@
                 "text-xs font-bold leading-none text-gray-700";
               textDiv.innerHTML = res.result[index].tags.tag_name;
               mainDiv.appendChild(textDiv);
-              this.tabActive = tab;
             } // window.mobileApp.app.dialog.close();
           }); // console.log(tag.result)
         } else if (tab !== "profile") {
           this.tabProfile = true;
+          this.tabActive = tab;
         }
       },
 
@@ -86,11 +86,11 @@
   />
   <div class="flex items-end justify-center bg-white">
     <div
-      class={`flex flex-1 self-stretch flex-col space-y-5 items-center justify-start bg-gradient-to-b from-white to-white w-full`}
+      class={`flex flex-1 self-stretch flex-col items-center justify-start bg-gradient-to-b from-white to-white w-full`}
     >
       <div class="flex self-stretch flex-col items-start justify-start bg-orange-100">
         <div
-          class={`flex self-stretch space-x-2.5 items-center justify-center px-6 pt-9 pb-4 bg-white shadow rounded-bl-2xl rounded-br-2xl`}
+          class={`flex self-stretch space-x-2.5 items-center justify-center px-6 py-4 bg-white shadow`}
         >
           <img
             src="/fimgs/I991_7169_991_7165.x1.svg"
@@ -135,165 +135,337 @@
         </div>
       </div>
       <m-tabs
-        class={`flex flex-1 self-stretch flex-col space-y-2.5 items-start justify-start w-full`}
+        class={`flex flex-1 self-stretch flex-col items-start justify-start w-full`}
         swipeable={true}
       >
         <m-tab
-          class={`flex self-stretch flex-col space-y-9 items-start justify-start`}
+          class={`flex self-stretch flex-col items-start justify-start`}
           id="home"
-          style="height: 800px; min-height: 800px; max-height: 800px;"
         >
-          <div class="flex flex-col space-y-2 items-start justify-start px-6">
-            <div class="flex self-stretch space-x-2.5 items-end justify-start">
-              <div class="flex flex-1 items-center justify-start">
-                <div class="text-xl font-bold leading-loose">Top </div>
-              </div>
-              <div class="flex self-stretch items-center justify-start">
-                <div class="text-base font-bold leading-normal text-amber-500">
-                  See more
-                </div>
-              </div>
-            </div>
-            <div class="flex self-stretch items-start justify-start">
+          {window.user.role !== "guest" && meta.tabActive === "home" && (
+            <div
+              class={`flex self-stretch flex-col items-start justify-start p-6`}
+            >
               <div
-                class={`flex flex-1 self-stretch flex-col space-y-2 items-start justify-start w-full`}
+                class="flex self-stretch flex-col items-start justify-start p-4 shadow rounded"
+                style="background-image: url('/fimgs/bg-8d8ddb80570065b889eef54faf9c419dd251956e');background-size:100% 100%;background-repeat:no-repeat;"
               >
-                <div
-                  class={`flex self-stretch space-x-2 items-center justify-start p-1 bg-white shadow rounded w-full`}
-                >
-                  <img
-                    src="/fimgs/I1198_91024_1198_48342.x1.png"
-                    class="flex items-start justify-start"
-                    style="width: 36.40px; min-width: 36.40px; max-width: 36.40px; height: 52px; min-height: 52px; max-height: 52px;"
-                  />
-                  <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
-                    <div class="flex self-stretch items-start justify-start">
-                      <div class="text-base font-semibold leading-none">
-                        Judul
+                <div class="flex self-stretch space-x-2 items-center justify-start rounded">
+                  <img src="/fimgs/733_4437.x1.png" />
+                  <div class="flex flex-1 space-x-0.5 items-center justify-center px-2">
+                    <div class="flex flex-1 self-stretch flex-col space-y-0.5 items-start justify-start">
+                      <div class="flex self-stretch items-start justify-start">
+                        <div class="text-base font-bold leading-normal">
+                          Continue Reading
+                        </div>
                       </div>
-                    </div>
-                    <div class="flex self-stretch items-start justify-start">
-                      <div class="flex flex-1 self-stretch items-start justify-start">
-                        <div class="text-xs font-bold leading-none text-gray-500">
-                          Kategori Buku
+                      <div class="flex self-stretch items-start justify-start">
+                        <div class="text-xs font-medium leading-none">
+                          Judul buku
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div
-                  class={`flex self-stretch space-x-2 items-center justify-start p-1 bg-white shadow rounded w-full`}
-                >
-                  <img
-                    src="/fimgs/I1198_91025_1198_48342.x1.png"
-                    class="flex items-start justify-start"
-                    style="width: 36.40px; min-width: 36.40px; max-width: 36.40px; height: 52px; min-height: 52px; max-height: 52px;"
-                  />
-                  <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
-                    <div class="flex self-stretch items-start justify-start">
-                      <div class="text-base font-semibold leading-none">
-                        Judul
-                      </div>
-                    </div>
-                    <div class="flex self-stretch items-start justify-start">
-                      <div class="flex flex-1 self-stretch items-start justify-start">
-                        <div class="text-xs font-bold leading-none text-gray-500">
-                          Kategori Buku
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  class={`flex self-stretch space-x-2 items-center justify-start p-1 bg-white shadow rounded w-full`}
-                >
-                  <img
-                    src="/fimgs/I1198_91026_1198_48342.x1.png"
-                    class="flex items-start justify-start"
-                    style="width: 36.40px; min-width: 36.40px; max-width: 36.40px; height: 52px; min-height: 52px; max-height: 52px;"
-                  />
-                  <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
-                    <div class="flex self-stretch items-start justify-start">
-                      <div class="text-base font-semibold leading-none">
-                        Judul
-                      </div>
-                    </div>
-                    <div class="flex self-stretch items-start justify-start">
-                      <div class="flex flex-1 self-stretch items-start justify-start">
-                        <div class="text-xs font-bold leading-none text-gray-500">
-                          Kategori Buku
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  class={`flex self-stretch space-x-2 items-center justify-start p-1 bg-white shadow rounded w-full`}
-                >
-                  <img
-                    src="/fimgs/I1198_91027_1198_48342.x1.png"
-                    class="flex items-start justify-start"
-                    style="width: 36.40px; min-width: 36.40px; max-width: 36.40px; height: 52px; min-height: 52px; max-height: 52px;"
-                  />
-                  <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
-                    <div class="flex self-stretch items-start justify-start">
-                      <div class="text-base font-semibold leading-none">
-                        Judul
-                      </div>
-                    </div>
-                    <div class="flex self-stretch items-start justify-start">
-                      <div class="flex flex-1 self-stretch items-start justify-start">
-                        <div class="text-xs font-bold leading-none text-gray-500">
-                          Kategori Buku
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  class={`flex self-stretch space-x-2 items-center justify-start p-1 bg-white shadow rounded w-full`}
-                >
-                  <img
-                    src="/fimgs/I1198_91028_1198_48342.x1.png"
-                    class="flex items-start justify-start"
-                    style="width: 36.40px; min-width: 36.40px; max-width: 36.40px; height: 52px; min-height: 52px; max-height: 52px;"
-                  />
-                  <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
-                    <div class="flex self-stretch items-start justify-start">
-                      <div class="text-base font-semibold leading-none">
-                        Judul
-                      </div>
-                    </div>
-                    <div class="flex self-stretch items-start justify-start">
-                      <div class="flex flex-1 self-stretch items-start justify-start">
-                        <div class="text-xs font-bold leading-none text-gray-500">
-                          Kategori Buku
-                        </div>
-                      </div>
+                  <div class="flex items-start justify-start px-4 py-0.5 bg-amber-500 shadow rounded">
+                    <div class="text-xs font-bold leading-none text-white">
+                      Continue
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="flex flex-col space-y-2 items-start justify-start px-6">
-            <div class="flex self-stretch space-x-2.5 items-end justify-start">
-              <div class="flex flex-1 items-center justify-start">
-                <div class="text-xl font-bold leading-loose">Just Released</div>
+          )}
+          {window.user.role !== "guest" && meta.tabActive === "home" && (
+            <div
+              class={`flex self-stretch flex-col space-y-2 items-start justify-start py-6 bg-orange-50`}
+            >
+              <div class="flex self-stretch space-x-2.5 items-end justify-start px-6">
+                <div class="flex flex-1 items-center justify-start">
+                  <div class="text-xl font-bold leading-loose">
+                    Recommend for you
+                  </div>
+                </div>
+                <div class="flex self-stretch items-center justify-end">
+                  <div class="text-base font-bold leading-normal text-right text-amber-500">
+                    See more
+                  </div>
+                </div>
               </div>
-              <div class="flex self-stretch items-center justify-start">
+              <div class="flex self-stretch items-start justify-center px-6">
+                <div class="flex flex-1 flex-col space-y-2 items-center justify-end">
+                  <div
+                    class={`flex self-stretch space-x-4 items-start justify-start p-4 bg-white shadow rounded`}
+                    onClick={() => {
+                      navigate("/m/detail-book-page");
+                    }}
+                  >
+                    <img
+                      src="/fimgs/I1545_47723_1554_248390.x1.svg"
+                      style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;"
+                    />
+                    <div class="flex flex-1 self-stretch flex-col items-start justify-center">
+                      <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
+                        <div class="flex self-stretch flex-col items-start justify-start">
+                          <div class="flex self-stretch space-x-2 items-start justify-start">
+                            <div class="text-base font-bold leading-normal">
+                              Judul Buku{" "}
+                            </div>
+                            <div class="flex self-stretch items-center justify-start">
+                              <div class="text-sm font-medium leading-tight text-amber-500">
+                                {" "}
+                                4.5
+                              </div>
+                            </div>
+                          </div>
+                          <div class="flex self-stretch items-center justify-start">
+                            <div class="flex space-x-2 items-start justify-start">
+                              <div class="flex items-center justify-center rounded-full">
+                                <div class="text-xs font-medium leading-none text-center text-gray-500">
+                                  Genre
+                                </div>
+                              </div>
+                              <div class="flex items-center justify-center rounded-full">
+                                <div class="text-xs font-medium leading-none text-center text-gray-500">
+                                  Genre
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="flex self-stretch items-start justify-start">
+                          <div class="text-sm font-medium leading-tight text-gray-600">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing
+                            elit. In...
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex flex-col items-start justify-start">
+                    <div class="flex space-x-1.5 justify-center">
+                      <div class="bg-amber-500 rounded-full" />
+                      <div class="bg-warmGray-300 rounded-full" />
+                      <div class="bg-warmGray-300 rounded-full" />
+                      <div class="bg-warmGray-300 rounded-full" />
+                      <div class="bg-warmGray-300 rounded-full" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          <div
+            class={`flex self-stretch flex-col space-y-2 items-start justify-start p-6 bg-gray-50`}
+          >
+            <div class="flex self-stretch space-x-2.5 items-end justify-start rounded-lg">
+              <div class="flex flex-1 items-center justify-start">
+                <div
+                  class={`text-xl font-bold leading-loose`}
+                  onClick={() => {
+                    navigate("/m/popular-page");
+                  }}
+                >
+                  Popular
+                </div>
+              </div>
+              <div
+                class={`flex self-stretch items-center justify-start`}
+                onClick={() => {
+                  navigate("/m/popular-page");
+                }}
+              >
                 <div class="text-base font-bold leading-normal text-amber-500">
                   See more
                 </div>
               </div>
             </div>
             <div
-              class={`flex flex-1 self-stretch space-x-1 items-start justify-start overflow-x-auto`}
+              class={`flex self-stretch space-x-3 items-start justify-start overflow-x-auto`}
             >
-              <books-item02 />
-              <books-item02 />
-              <books-item02 />
-              <books-item02 />
+              <books-item01
+                class={`flex self-stretch flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded`}
+                onClick={() => {
+                  navigate("/m/detail-book-page");
+                }}
+              />
+              <books-item01
+                class={`flex flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded`}
+                onClick={() => {
+                  navigate("/m/detail-book-page");
+                }}
+              />
+              <books-item01
+                class={`flex flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded`}
+                onClick={() => {
+                  navigate("/m/detail-book-page");
+                }}
+              />
+              <books-item01
+                class={`flex flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded`}
+                onClick={() => {
+                  navigate("/m/detail-book-page");
+                }}
+              />
+              <books-item01 />
+            </div>
+          </div>
+          <div class="flex self-stretch flex-col space-y-2 items-start justify-start p-6 bg-orange-50">
+            <div class="flex self-stretch space-x-2.5 items-end justify-start">
+              <div class="flex flex-1 items-center justify-start">
+                <div class="text-xl font-bold leading-loose">New Releases</div>
+              </div>
+              <div class="flex flex-1 self-stretch items-center justify-end">
+                <div class="text-base font-bold leading-normal text-right text-amber-500">
+                  See more
+                </div>
+              </div>
+            </div>
+            <div class="flex self-stretch flex-col space-y-2.5 items-start justify-start">
+              <div
+                class={`flex self-stretch space-x-2 items-center justify-start p-2 bg-white rounded`}
+                onClick={() => {
+                  navigate("/m/detail-book-page");
+                }}
+              >
+                <img src="/fimgs/733_4437.x1.png" />
+                <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
+                  <div class="flex self-stretch items-start justify-start">
+                    <div class="text-base font-bold leading-normal">Judul</div>
+                  </div>
+                  <div class="flex self-stretch space-x-2 items-center justify-start">
+                    <div class="flex self-stretch items-start justify-start">
+                      <div class="flex items-center justify-center rounded-full">
+                        <div class="text-xs font-medium leading-none text-center text-gray-500">
+                          Kategori
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex self-stretch items-start justify-start rounded-full">
+                      <div class="flex items-center justify-center rounded-full">
+                        <div class="text-xs font-medium leading-none text-center text-gray-500">
+                          Genre
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class={`flex self-stretch space-x-2 items-center justify-start p-2 bg-white rounded`}
+                onClick={() => {
+                  navigate("/m/detail-book-page");
+                }}
+              >
+                <img src="/fimgs/733_4437.x1.png" />
+                <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
+                  <div class="flex self-stretch items-start justify-start">
+                    <div class="text-base font-bold leading-normal">Judul</div>
+                  </div>
+                  <div class="flex self-stretch space-x-2 items-center justify-start">
+                    <div class="flex self-stretch items-start justify-start">
+                      <div class="flex items-center justify-center rounded-full">
+                        <div class="text-xs font-medium leading-none text-center text-gray-500">
+                          Kategori
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex self-stretch items-start justify-start rounded-full">
+                      <div class="flex items-center justify-center rounded-full">
+                        <div class="text-xs font-medium leading-none text-center text-gray-500">
+                          Genre
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class={`flex self-stretch space-x-2 items-center justify-start p-2 bg-white rounded`}
+                onClick={() => {
+                  navigate("/m/detail-book-page");
+                }}
+              >
+                <img src="/fimgs/733_4437.x1.png" />
+                <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
+                  <div class="flex self-stretch items-start justify-start">
+                    <div class="text-base font-bold leading-normal">Judul</div>
+                  </div>
+                  <div class="flex self-stretch space-x-2 items-center justify-start">
+                    <div class="flex self-stretch items-start justify-start">
+                      <div class="flex items-center justify-center rounded-full">
+                        <div class="text-xs font-medium leading-none text-center text-gray-500">
+                          Kategori
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex self-stretch items-start justify-start rounded-full">
+                      <div class="flex items-center justify-center rounded-full">
+                        <div class="text-xs font-medium leading-none text-center text-gray-500">
+                          Genre
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class={`flex self-stretch space-x-2 items-center justify-start p-2 bg-white rounded`}
+                onClick={() => {
+                  navigate("/m/detail-book-page");
+                }}
+              >
+                <img src="/fimgs/733_4437.x1.png" />
+                <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
+                  <div class="flex self-stretch items-start justify-start">
+                    <div class="text-base font-bold leading-normal">Judul</div>
+                  </div>
+                  <div class="flex self-stretch space-x-2 items-center justify-start">
+                    <div class="flex self-stretch items-start justify-start">
+                      <div class="flex items-center justify-center rounded-full">
+                        <div class="text-xs font-medium leading-none text-center text-gray-500">
+                          Kategori
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex self-stretch items-start justify-start rounded-full">
+                      <div class="flex items-center justify-center rounded-full">
+                        <div class="text-xs font-medium leading-none text-center text-gray-500">
+                          Genre
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                class={`flex self-stretch space-x-2 items-center justify-start p-2 bg-white rounded`}
+                onClick={() => {
+                  navigate("/m/detail-book-page");
+                }}
+              >
+                <img src="/fimgs/733_4437.x1.png" />
+                <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
+                  <div class="flex self-stretch items-start justify-start">
+                    <div class="text-base font-bold leading-normal">Judul</div>
+                  </div>
+                  <div class="flex self-stretch space-x-2 items-center justify-start">
+                    <div class="flex self-stretch items-start justify-start">
+                      <div class="flex items-center justify-center rounded-full">
+                        <div class="text-xs font-medium leading-none text-center text-gray-500">
+                          Kategori
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex self-stretch items-start justify-start rounded-full">
+                      <div class="flex items-center justify-center rounded-full">
+                        <div class="text-xs font-medium leading-none text-center text-gray-500">
+                          Genre
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </m-tab>
@@ -473,7 +645,7 @@
       >
         <div class="flex self-stretch items-center justify-center">
           <m-link
-            class={`flex flex-1 flex-col space-y-2.5 items-start justify-start`}
+            class={`flex flex-1 flex-col space-y-2.5 items-center justify-center`}
             tabLink="#home"
             onClick={(e) => meta.onClickTab("home")}
             tabLinkActive={meta.tabActive === "home"}

@@ -1,12 +1,32 @@
 <>
-  <effect meta={{}} run={async () => {}} />
+  <effect
+    meta={{
+      async back() {
+        navigate("/m/detail-book-page");
+      },
+    }}
+    run={async () => {}}
+  />
   <div class="flex flex-col items-start justify-start bg-white">
     <div class="flex flex-1 self-stretch flex-col space-y-1 items-start justify-start">
-      <titlebar-left
+      <div
         class={`flex self-stretch flex-col items-start justify-center px-6 pt-9 pb-4 bg-white shadow`}
       >
-        Komentar (20)
-      </titlebar-left>
+        <div class="flex self-stretch space-x-4 items-center justify-start">
+          <div class="flex self-stretch items-center justify-start">
+            <img
+              src="/fimgs/1554_540928.x1.svg"
+              class={`flex self-stretch items-center justify-start`}
+              style={`width: 24px; min-width: 24px; max-width: 24px; height: 40px; min-height: 40px; max-height: 40px;`}
+              onClick={meta.back}
+            />
+          </div>
+          <div class="flex flex-1 items-center justify-start pb-2.5">
+            <div class={`text-xl font-bold leading-loose`}>Komentar (20)</div>
+          </div>
+          <div />
+        </div>
+      </div>
       <div class="flex flex-1 self-stretch flex-col space-y-4 items-start justify-start px-6 pt-4">
         <input-comment />
         <div class="flex flex-1 self-stretch flex-col space-y-2 items-start justify-start">
