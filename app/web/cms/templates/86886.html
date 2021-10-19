@@ -49,10 +49,6 @@
             ? "Please select your birthdate!"
             : this.max_date <= new Date(this.user_birthday)
             ? "Please reselect your birthdate! 12 Years old++."
-            : this.user_password === "" || this.user_password === null
-            ? "Enter your current password to confirm!"
-            : this.user_old_password !== encrypt(this.user_password)
-            ? "Your current password was entered incorrectly!"
             : false; // console.log(msg);
 
         return msg;
@@ -69,6 +65,7 @@
             "Confirm Update ?",
             "Alert",
             () => {
+              window.mobileApp.app.dialog.preloader();
               updateuser = {
                 user_id: this.user_id,
                 user_name: this.user_name,
@@ -87,19 +84,36 @@
                 e: "Update",
               }).then((res) => {
                 if (res === null) {
+                  window.mobileApp.app.dialog.close();
                   window.mobileApp.app.dialog.alert(
                     null,
                     "Database insert Failed!"
                   );
                 } else {
                   console.log(res);
+                  window.mobileApp.app.dialog.close();
+                  window.mobileApp.app.dialog.alert(null, res.res);
                   window.user = {
                     role: "users",
                     user: res.users,
                   };
-                  navigate("/m/edit-profile");
+                  runInAction(() => {
+                    this.user_id = res.users.user_id;
+                    this.user_name = res.users.user_name;
+                    this.user_email = res.users.user_email;
+                    this.user_old_password = res.users.user_password;
+                    this.user_gender = res.users.user_gender;
+                    this.user_birthday = [res.users.user_birthday] || [];
+                    this.user_forgot_token = res.users.user_forgot_token;
+                    this.user_membership_status =
+                      res.users.user_membership_status;
+                    this.user_level = res.users.user_level;
+                    this.user_date_created = res.users.user_date_created;
+                    this.user_note = res.users.user_note;
+                  }); // navigate("/m/edit-profile");
                 }
-              }); // console.log(updateuser);
+              });
+              window.mobileApp.app.dialog.close(); // console.log(updateuser);
             }
           );
         }
@@ -117,7 +131,7 @@
           meta.user_id = user.user_id;
           meta.user_name = user.user_name;
           meta.user_email = user.user_email;
-          meta.user_old_password = user.user_password;
+          meta.user_password = user.user_password;
           meta.user_gender = user.user_gender;
           meta.user_birthday = [user.user_birthday] || [];
           meta.user_forgot_token = user.user_forgot_token;
@@ -265,9 +279,6 @@
               <button
                 class={`flex flex-1 self-stretch flex-col items-start justify-center py-1.5 pl-4 pr-6 bg-white border rounded border-gray-300`}
                 style={`height: 60px`}
-                onClick={() => {
-                  meta.changePass();
-                }}
               >
                 <div class="flex self-stretch items-start justify-start">
                   <div class="text-base leading-normal">Change password</div>

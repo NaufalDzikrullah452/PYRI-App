@@ -108,20 +108,12 @@ export default {
     import("./components/item-comment"),
     { c: "", s: "", h: "" },
   ],
-  "books-item01": () => [
-    import("./components/books-item01"),
-    { c: "", s: "", h: "" },
-  ],
   "span-category-active": () => [
     import("./components/span-category-active"),
     { c: "", s: "", h: "" },
   ],
   "span-category": () => [
     import("./components/span-category"),
-    { c: "", s: "", h: "" },
-  ],
-  "books-item02": () => [
-    import("./components/books-item02"),
     { c: "", s: "", h: "" },
   ],
   "w-profile-admin": () => [
@@ -142,6 +134,10 @@ export default {
   ],
   "titlebar-book": () => [
     import("./components/titlebar-book"),
+    { c: "", s: "", h: "" },
+  ],
+  "books-item02": () => [
+    import("./components/books-item02"),
     { c: "", s: "", h: "" },
   ],
 };
