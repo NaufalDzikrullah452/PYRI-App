@@ -67,7 +67,55 @@
               <div class="flex flex-1 items-start justify-start">
                 <div class="text-3xl font-bold leading-10">Data Author</div>
               </div>
-              <w-profile-admin />
+              <div class="flex flex-col items-end justify-start px-4">
+                <div
+                  class={`flex items-center justify-start`}
+                  style={"hover display: block; "}
+                  onClick={meta.logout}
+                >
+                  <img
+                    src="/fimgs/1711_17001.x1.svg"
+                    class="flex items-start justify-start p-2.5"
+                    style="width: 60px; min-width: 60px; max-width: 60px; height: 60px; min-height: 60px; max-height: 60px;"
+                  />
+                  <div
+                    class={`flex space-x-2.5 items-center justify-center`}
+                    style={
+                      "padding: 16px; font-size: 16px; border: none; cursor: pointer;"
+                    }
+                  >
+                    <div class="flex items-start justify-start">
+                      <div class="text-base font-medium leading-normal text-gray-700">
+                        Nama admin
+                      </div>
+                    </div>
+                    <img
+                      src="/fimgs/1711_17005.x1.svg"
+                      style="width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px;"
+                    />
+                    <div
+                      class={`flex flex-col space-y-1 items-start justify-start px-8 py-4 bg-white rounded`}
+                      style={
+                        "display: none; position: absolute; background-color: #f9f9f9 min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1;"
+                      }
+                    >
+                      <li class="flex items-center justify-center">
+                        <div class="text-base font-medium leading-normal text-gray-900">
+                          Edit Profile
+                        </div>
+                      </li>
+                      <li class="flex space-x-2.5 items-center justify-center">
+                        <div class="text-base font-medium leading-normal text-gray-900">
+                          Logout
+                        </div>
+                        <div class="flex items-start justify-start px-0.5 py-0.5">
+                          <div />
+                        </div>
+                      </li>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
             <div
               class={`w-full flex self-stretch flex-col space-y-9 items-start justify-start bg-white rounded`}
@@ -96,7 +144,10 @@
                         <div class="text-base leading-normal text-gray-500">
                           10
                         </div>
-                        <div />
+                        <img
+                          src="/fimgs/1706_10100.x1.svg"
+                          style="width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px;"
+                        />
                       </div>
                       <div class="flex items-start justify-start">
                         <div class="text-base leading-normal">entries</div>
