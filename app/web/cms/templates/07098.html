@@ -48,7 +48,9 @@
             users: { ...attemptuser },
             e: "FindEmail",
           }).then((res) => {
-            console.log(res);
+            if (res === null) {
+              window.mobileApp.app.dialog.alert(null, "Database error!");
+            }
 
             if (res.users === null) {
               window.mobileApp.app.dialog.alert(null, "Email Not Found!");
