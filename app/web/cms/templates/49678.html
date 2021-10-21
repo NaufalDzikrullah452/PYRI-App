@@ -208,11 +208,15 @@
                       navigate("/m/detail-book-page");
                     }}
                   >
-                    <img
+                    <div
                       src="/fimgs/I1545_47723_1718_147206.x1.png"
-                      class="flex items-start justify-start"
-                      style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;"
-                    />
+                      class={`flex items-start justify-start`}
+                    >
+                      <img
+                        src="/fimgs/I1545_47723_1812_36071.x1.png"
+                        style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;"
+                      />
+                    </div>
                     <div class="flex flex-1 self-stretch flex-col items-start justify-center">
                       <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
                         <div class="flex self-stretch flex-col items-start justify-start">
@@ -528,9 +532,8 @@
                 }}
               >
                 <img
-                  src="/fimgs/I1545_47739_1718_263052.x1.png"
-                  class="flex items-start justify-start"
-                  style="width: 36.40px; min-width: 36.40px; max-width: 36.40px; height: 52px; min-height: 52px; max-height: 52px;"
+                  src="/fimgs/1718_263052.x1.png"
+                  class={`flex items-start justify-start`}
                 />
                 <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
                   <div class="flex self-stretch items-start justify-start">
@@ -563,9 +566,8 @@
                 }}
               >
                 <img
-                  src="/fimgs/I1545_47740_1718_263052.x1.png"
-                  class="flex items-start justify-start"
-                  style="width: 36.40px; min-width: 36.40px; max-width: 36.40px; height: 52px; min-height: 52px; max-height: 52px;"
+                  src="/fimgs/1718_263052.x1.png"
+                  class={`flex items-start justify-start`}
                 />
                 <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
                   <div class="flex self-stretch items-start justify-start">
@@ -598,9 +600,8 @@
                 }}
               >
                 <img
-                  src="/fimgs/I1545_47741_1718_263052.x1.png"
-                  class="flex items-start justify-start"
-                  style="width: 36.40px; min-width: 36.40px; max-width: 36.40px; height: 52px; min-height: 52px; max-height: 52px;"
+                  src="/fimgs/1718_263052.x1.png"
+                  class={`flex items-start justify-start`}
                 />
                 <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
                   <div class="flex self-stretch items-start justify-start">
@@ -633,9 +634,8 @@
                 }}
               >
                 <img
-                  src="/fimgs/I1545_47742_1718_263052.x1.png"
-                  class="flex items-start justify-start"
-                  style="width: 36.40px; min-width: 36.40px; max-width: 36.40px; height: 52px; min-height: 52px; max-height: 52px;"
+                  src="/fimgs/1718_263052.x1.png"
+                  class={`flex items-start justify-start`}
                 />
                 <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
                   <div class="flex self-stretch items-start justify-start">
@@ -668,9 +668,8 @@
                 }}
               >
                 <img
-                  src="/fimgs/I1545_47743_1718_263052.x1.png"
-                  class="flex items-start justify-start"
-                  style="width: 36.40px; min-width: 36.40px; max-width: 36.40px; height: 52px; min-height: 52px; max-height: 52px;"
+                  src="/fimgs/1718_263052.x1.png"
+                  class={`flex items-start justify-start`}
                 />
                 <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
                   <div class="flex self-stretch items-start justify-start">
@@ -839,7 +838,12 @@
             </div>
           </div>
           <div class="flex self-stretch flex-col items-start justify-start px-4 py-4 bg-gray-50 border rounded-lg border-gray-200">
-            <div class="flex self-stretch items-center justify-start">
+            <div
+              class={`flex self-stretch items-center justify-start`}
+              onClick={() => {
+                navigate("/m/change-interest");
+              }}
+            >
               <div class="flex flex-1 flex-col space-y-1.5 items-start justify-center">
                 <div class="flex self-stretch space-x-2.5 items-center justify-center">
                   <div class="text-base font-bold leading-normal">

@@ -21,15 +21,15 @@
       user: [],
       pass_type: "password",
       underline: "underline",
-      style_change_pass: "display: none!important",
+      style_change_pass: "display:none!important",
       max_date: new Date(new Date().setFullYear(new Date().getFullYear() - 12)),
 
       async styleChangePass() {
-        if (this.style_change_pass === "display: none!important") {
+        if (this.style_change_pass === "display:none!important") {
           this.style_change_pass = "";
           this.underline = "";
         } else {
-          this.style_change_pass = "display: none!important";
+          this.style_change_pass = "display:none!important";
           this.underline = "underline";
         }
       },
@@ -123,7 +123,7 @@
               window.mobileApp.app.dialog.preloader();
               let updateuser = {};
 
-              if (this.user_password === "") {
+              if (this.style_change_pass === "display: none!important") {
                 updateuser = {
                   user_id: this.user_id,
                   user_name: this.user_name,
@@ -354,7 +354,9 @@
               />
             </div>
           </m-list>
-          <div class="flex self-stretch flex-col space-y-4 items-start justify-start">
+          <div
+            class={`flex self-stretch flex-col space-y-4 items-start justify-start`}
+          >
             <div
               class={`flex items-start justify-start`}
               style={"margin-bottom: 10px"}
@@ -368,7 +370,8 @@
             </div>
             <m-list
               class={`flex self-stretch flex-col space-y-2 items-start justify-start list-none`}
-              style={meta.style_change_pass}
+              style={`transition: opacity 150ms ease-in-out;
+  ${meta.style_change_pass}`}
             >
               <div
                 class={`flex self-stretch space-x-2.5 items-start justify-start border border-gray-300`}
@@ -473,7 +476,7 @@
           </div>
         </div>
         <btn-primary
-          class={`flex self-stretch flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-amber-500 rounded rounded-md`}
+          class={`flex flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-amber-500 rounded rounded-md`}
           style="height: 60px; min-height: 60px; max-height: 60px; background-color: #FF8F00"
           type={"submit"}
           onClick={meta.submit}
