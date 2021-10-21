@@ -46,7 +46,7 @@
         meta.user = window.user.user || [];
         meta.user.interests = [];
       });
-      document.getElementById("kotak").className =
+      document.getElementById("kotakk").className =
         "flex flex-1 self-stretch flex-col space-y-2.5 items-start justify-start"; // membuat row flex yang bisa contain 1-3 input interest
 
       for (let row = 0; row < tags.result.length / 3; row++) {
@@ -54,7 +54,7 @@
         containerDiv.className =
           "flex self-stretch space-x-2.5 items-start justify-start";
         containerDiv.setAttribute("id", `row${row}`);
-        document.getElementById("kotak").appendChild(containerDiv);
+        document.getElementById("kotakk").appendChild(containerDiv);
       } // membuat input interest
 
       for (let index = 0; index < tags.result.length; index++) {
@@ -118,7 +118,7 @@
       </div>
       <div
         style={`height: 477px; min-height: 477px; max-height: 477px;`}
-        id="kotak"
+        id="kotakk"
       />
       <div
         class={`flex self-stretch flex-col items-center justify-center`}

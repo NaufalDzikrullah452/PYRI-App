@@ -109,7 +109,10 @@
       </div>
       <div class="flex self-stretch flex-col space-y-4 items-start justify-start px-6">
         <div class="flex self-stretch space-x-2.5 items-start justify-start">
-          <div class="flex flex-1 items-center justify-start">
+          <div
+            class={`flex flex-1 items-center justify-start`}
+            onClick={meta.aboutPage}
+          >
             <div class="text-xl font-bold leading-loose">About</div>
           </div>
           <img
@@ -120,7 +123,10 @@
           />
         </div>
         <div class="flex self-stretch flex-col space-y-4 items-start justify-start">
-          <div class="flex self-stretch items-start justify-start">
+          <div
+            class={`flex self-stretch items-start justify-start`}
+            onClick={meta.aboutPage}
+          >
             <div class="text-sm font-medium leading-tight text-gray-600">
               Glendi Adijunior adalah seadanya. Jaera Nindya adalah seadainya.
               Di permainan ini ...
@@ -140,10 +146,16 @@
       </div>
       <div class="flex self-stretch flex-col space-y-4 items-start justify-start px-6">
         <div class="flex self-stretch space-x-2.5 items-center justify-start">
-          <div class="flex self-stretch items-center justify-start">
+          <div
+            class={`flex self-stretch items-center justify-start`}
+            onClick={meta.commentPage}
+          >
             <div class="text-xl font-bold leading-loose">Comment</div>
           </div>
-          <div class="flex flex-1 self-stretch items-center justify-start">
+          <div
+            class={`flex flex-1 self-stretch items-center justify-start`}
+            onClick={meta.commentPage}
+          >
             <div class="text-xs font-bold leading-none">19 People</div>
           </div>
           <div class="flex self-stretch items-center justify-center">
