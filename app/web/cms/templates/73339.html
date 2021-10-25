@@ -1,68 +1,142 @@
 <>
-  <effect meta={{}} run={async () => {}} />
-  <div class={`w-full flex items-start justify-start bg-white`}>
-    <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
-      <w-sidebar
-        class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900`}
-        style={"background-color: black"}
-      />
+  <effect
+    meta={{
+      author_id: "",
+      author_name: "",
+
+      async onChange(e) {
+        let value = e.target.value;
+        runInAction(() => (this.author_name = value));
+        console.log("authorName  : " + value);
+      },
+
+      validation() {
+        let msg =
+          this.author_name === "" || this.author_name === null
+            ? "Name cant be empty!"
+            : false;
+        return msg;
+      },
+
+      async submit() {
+        let error_msg = this.validation();
+
+        if (error_msg) {
+          alert(error_msg);
+        } else {
+          await api("/api/authors", {
+            authors: {
+              author_name: this.author_name,
+              author_id: this.author_id,
+            },
+            e: "Update",
+          }).then((res) => {
+            console.log(res);
+            alert(res.res);
+            navigate("/w-master-author");
+          });
+        }
+      },
+    }}
+    run={async () => {
+      let author = "";
+
+      if (window.user.roleAdmin !== "admin") {
+        navigate("/login-admin");
+      } else if (params.id) {
+        await api("/api/authors", {
+          authors: {
+            author_id: parseInt(params.id),
+          },
+          e: "ReadById",
+        }).then((res) => {
+          if (res.authors !== null) {
+            author = res.authors;
+          } else {
+            navigate("/w-master-author");
+          }
+        });
+      } else {
+        navigate("/w-master-author");
+      }
+
+      runInAction(() => {
+        if (author !== "") {
+          meta.author_id = author.author_id;
+          meta.author_name = author.author_name;
+        }
+      }); // console.log(author);
+    }}
+  />
+  <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
+    <w-sidebar
+      class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900`}
+      style={"background-color: black"}
+    />
+    <div
+      class={`w-full flex flex-1 self-stretch flex-col space-y-9 items-start justify-start bg-gray-100`}
+    >
+      <div class="flex self-stretch flex-col items-start justify-center p-9 bg-white">
+        <div class="flex self-stretch space-x-2.5 items-center justify-start">
+          <div class="flex flex-1 items-start justify-start">
+            <div class="text-3xl font-bold leading-10">Author</div>
+          </div>
+          <w-profile-admin />
+        </div>
+      </div>
       <div
-        class={`w-full flex flex-1 self-stretch flex-col space-y-9 items-start justify-start bg-gray-100`}
+        class={`w-full flex self-stretch flex-col items-start justify-start px-9 rounded`}
       >
-        <div class="flex self-stretch flex-col items-start justify-center p-9 bg-white">
-          <div class="flex self-stretch space-x-2.5 items-center justify-start">
-            <div class="flex flex-1 items-start justify-start">
-              <div class="text-3xl font-bold leading-10">Author</div>
+        <div class="flex self-stretch flex-col items-start justify-start p-6 bg-gray-900 rounded-tl-lg rounded-tr-lg">
+          <div class="flex flex-1 self-stretch items-center justify-start">
+            <div class="text-base font-bold leading-normal text-white">
+              EDIT AUTHOR
             </div>
-            <w-profile-admin />
           </div>
         </div>
-        <div
-          class={`w-full flex self-stretch flex-col items-start justify-start px-9 rounded`}
-        >
-          <div class="flex self-stretch flex-col items-start justify-start p-6 bg-gray-900 rounded-tl-lg rounded-tr-lg">
-            <div class="flex flex-1 self-stretch items-center justify-start">
-              <div class="text-xl font-bold leading-loose text-white">
-                EDIT AUTHOR
-              </div>
-            </div>
-          </div>
-          <div class="flex self-stretch flex-col items-start justify-start p-6 bg-white rounded-bl-lg rounded-br-lg">
-            <div class="flex self-stretch flex-col space-y-6 items-start justify-start bg-white rounded-lg">
-              <div class="flex self-stretch space-x-4 items-center justify-start">
-                <div class="flex items-start justify-start">
-                  <div class="text-base font-bold leading-normal">
-                    Nama Author
-                  </div>
+        <div class="flex self-stretch flex-col items-start justify-start p-6 bg-white rounded-bl-lg rounded-br-lg">
+          <div class="flex self-stretch flex-col space-y-6 items-start justify-start bg-white rounded-lg">
+            <div class="flex self-stretch space-x-4 items-center justify-start">
+              <div class="flex items-start justify-start">
+                <div class="text-base font-bold leading-normal">
+                  Nama Author
                 </div>
-                <div class="flex flex-1 items-start justify-start px-4 py-2 border rounded border-gray-400">
-                  <input
-                    type="text"
-                    placeholder="masukkan nama author"
-                    style={`color: gray;
-      padding-left: 5px; 
+              </div>
+              <div class="flex flex-1 items-start justify-start px-4 py-2 border rounded border-gray-400">
+                <input
+                  class={"w-full"}
+                  type="text"
+                  placeholder="masukkan nama author"
+                  style={`color: black;
       background:transparent; 
       outline: none;`}
-                    class="flex flex-1 items-center justify-start p-1"
-                  />
-                </div>
+                  value={meta.author_name}
+                  onChange={(e) => {
+                    meta.onChange(e);
+                  }}
+                />
               </div>
-              <div
-                class={`flex self-stretch space-x-4 items-start justify-start`}
-                style={"margin-left:95px;"}
+            </div>
+            <div class="flex self-stretch space-x-4 items-start justify-start">
+              <div />
+              <button
+                class={`flex items-start justify-start px-4 py-2 bg-amber-500 rounded`}
+                onClick={meta.submit}
               >
-                <div />
-                <button class="flex items-start justify-start px-4 py-2 bg-amber-500 rounded">
-                  <div class="text-base font-bold leading-normal text-white">
-                    Simpan
-                  </div>
-                </button>
-                <button class="flex items-start justify-start px-4 py-2 border rounded border-gray-400">
-                  <div class="text-base font-bold leading-normal text-amber-500">
-                    Batal
-                  </div>
-                </button>
-              </div>
+                <div class="text-base font-bold leading-normal text-white">
+                  Simpan
+                </div>
+              </button>
+              <button
+                class={`flex items-start justify-start px-4 py-2 border rounded border-gray-400`}
+                onClick={() => {
+                  navigate("/w-master-author");
+                }}
+              >
+                <div class="text-base font-bold leading-normal text-amber-500">
+                  Batal
+                </div>
+              </button>
             </div>
           </div>
         </div>

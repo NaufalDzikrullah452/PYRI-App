@@ -1,17 +1,18 @@
 <>
   <effect
     meta={{
-      publisherName: "",
+      publisher_id: "",
+      publisher_name: "",
 
       async onChange(e) {
         let value = e.target.value;
-        runInAction(() => (this.publisherName = value));
+        runInAction(() => (this.publisher_name = value));
         console.log("publisherName  : " + value);
       },
 
       validation() {
         let msg =
-          this.publisherName === "" || this.publisherName === null
+          this.publisher_name === "" || this.publisher_name === null
             ? "Name cant be empty!"
             : false;
         return msg;
@@ -23,12 +24,13 @@
         if (error_msg) {
           alert(error_msg);
         } else {
-          let publisher = api("/api/publisher", {
+          await api("/api/publisher", {
             publisher: {
-              publisher_name: this.publisherName,
+              publisher_name: this.publisher_name,
+              publisher_id: this.publisher_id,
               publisher_date_updated: new Date(),
             },
-            e: "Create",
+            e: "Update",
           }).then((res) => {
             console.log(res);
             alert(res.res);
@@ -38,9 +40,33 @@
       },
     }}
     run={async () => {
+      let publisher = "";
+
       if (window.user.roleAdmin !== "admin") {
         navigate("/login-admin");
+      } else if (params.id) {
+        await api("/api/publisher", {
+          publisher: {
+            publisher_id: parseInt(params.id),
+          },
+          e: "ReadById",
+        }).then((res) => {
+          if (res.publisher !== null) {
+            publisher = res.publisher;
+          } else {
+            navigate("/w-master-publisher");
+          }
+        });
+      } else {
+        navigate("/w-master-publisher");
       }
+
+      runInAction(() => {
+        if (publisher !== "") {
+          meta.publisher_id = publisher.publisher_id;
+          meta.publisher_name = publisher.publisher_name;
+        }
+      }); // console.log(publisher);
     }}
   />
   <div class={`w-full flex items-start justify-start bg-white`}>
@@ -66,7 +92,7 @@
           <div class="flex self-stretch flex-col items-start justify-start p-6 bg-gray-900 rounded-tl-lg rounded-tr-lg">
             <div class="flex flex-1 self-stretch items-center justify-start">
               <div class="text-xl font-bold leading-loose text-white">
-                TAMBAH PUBLISHER
+                EDIT PUBLISHER
               </div>
             </div>
           </div>
@@ -82,12 +108,13 @@
                   class={`flex flex-1 self-stretch items-start justify-start px-4 py-2 border rounded border-gray-400`}
                 >
                   <input
-                    class={"w-full placeholder-grey"}
+                    class={"w-full"}
                     type="text"
-                    placeholder="masukkan nama publisher"
-                    style={`background:transparent; 
+                    placeholder="masukkan nama author"
+                    style={`color: black;
+      background:transparent; 
       outline: none;`}
-                    value={meta.publisherName}
+                    value={meta.publisher_name}
                     onChange={(e) => {
                       meta.onChange(e);
                     }}
