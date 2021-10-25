@@ -1,137 +1,72 @@
 <>
-  <effect
-    meta={{
-      authorName: "",
-
-      async onChange(e) {
-        let value = e.target.value;
-        runInAction(() => (this.authorName = value));
-        console.log("authorName  : " + value);
-      },
-
-      validation() {
-        let msg =
-          this.authorName === "" || this.authorName === null
-            ? "Name cant be empty!"
-            : false;
-        return msg;
-      },
-
-      async submit() {
-        let error_msg = this.validation();
-
-        if (error_msg) {
-          alert(error_msg);
-        } else {
-          let authors = api("/api/authors", {
-            authors: {
-              author_name: this.authorName,
-            },
-            e: "Create",
-          }).then((res) => {
-            console.log(res);
-            alert(res.res);
-            navigate("/w-master-author");
-          });
-        }
-      },
-    }}
-    run={async () => {
-      if (window.user.roleAdmin !== "admin") {
-        navigate("/login-admin");
-      }
-    }}
-  />
-  <div class={`w-full flex items-start justify-start`}>
-    {window.user.roleAdmin === "admin" && (
-      <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
-        <w-sidebar
-          class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900`}
-          style={"background-color: black"}
-        />
-        <div
-          class={`w-full flex flex-1 self-stretch flex-col items-start justify-start pt-9 pb-8 bg-gray-100`}
-        >
-          <div
-            class={`w-full flex flex-1 self-stretch flex-col space-y-9 items-start justify-start px-9`}
-          >
-            <div
-              class={`flex self-stretch space-x-2.5 items-center justify-start`}
-            >
-              <div class="flex flex-1 items-start justify-start">
-                <div class="text-3xl font-bold leading-10">Data Author</div>
-              </div>
-              <w-profile-admin />
+  <effect meta={{}} run={async () => {}} />
+  <div class={`w-full flex items-start justify-start bg-white`}>
+    <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
+      <w-sidebar
+        class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900`}
+        style={"background-color: black"}
+      />
+      <div
+        class={`w-full flex flex-1 self-stretch flex-col space-y-9 items-start justify-start bg-gray-100`}
+      >
+        <div class="flex self-stretch flex-col items-start justify-center p-9 bg-white">
+          <div class="flex self-stretch space-x-2.5 items-center justify-start">
+            <div class="flex flex-1 items-start justify-start">
+              <div class="text-3xl font-bold leading-10">Author</div>
             </div>
-            <div
-              class={`w-full flex self-stretch flex-col space-y-6 items-start justify-start bg-white rounded`}
-            >
-              <div class="flex self-stretch items-start justify-start p-6 bg-orange-300">
-                <div class="text-base font-bold leading-normal text-gray-900">
-                  TAMBAH AUTHOR
+            <w-profile-admin />
+          </div>
+        </div>
+        <div
+          class={`w-full flex self-stretch flex-col items-start justify-start px-9 rounded`}
+        >
+          <div class="flex self-stretch flex-col items-start justify-start p-6 bg-gray-900 rounded-tl-lg rounded-tr-lg">
+            <div class="flex flex-1 self-stretch items-center justify-start">
+              <div class="text-xl font-bold leading-loose text-white">
+                TAMBAH AUTHOR
+              </div>
+            </div>
+          </div>
+          <div class="flex self-stretch flex-col items-start justify-start p-6 bg-white rounded-bl-lg rounded-br-lg">
+            <div class="flex self-stretch flex-col space-y-6 items-start justify-start bg-white rounded-lg">
+              <div class="flex self-stretch space-x-4 items-center justify-start">
+                <div class="flex items-start justify-start">
+                  <div class="text-base font-bold leading-normal">
+                    Nama Author
+                  </div>
+                </div>
+                <div class="flex flex-1 items-start justify-start px-4 py-2 border rounded border-gray-400">
+                  <input
+                    type="text"
+                    placeholder="masukkan nama author"
+                    style={`color: gray;
+      padding-left: 5px; 
+      background:transparent; 
+      outline: none;`}
+                    class="flex flex-1 items-center justify-start p-1"
+                  />
                 </div>
               </div>
               <div
-                class={`w-full flex self-stretch flex-col space-y-6 items-start justify-start pl-16 pr-6 pb-6`}
+                class={`flex self-stretch space-x-4 items-start justify-start`}
+                style={"margin-left:95px;"}
               >
-                <div
-                  class={`flex self-stretch space-x-4 items-center justify-start`}
-                  style={
-                    "margin-left:50px; margin-top:50px; margin-bottom:30px;"
-                  }
-                >
-                  <div class="flex items-start justify-start">
-                    <div class="text-base font-bold leading-normal">
-                      Nama Author
-                    </div>
+                <div />
+                <button class="flex items-start justify-start px-4 py-2 bg-amber-500 rounded">
+                  <div class="text-base font-bold leading-normal text-white">
+                    Tambah
                   </div>
-                  <div
-                    class={`flex flex-1 items-start justify-start px-4 py-2 border rounded border-black`}
-                  >
-                    <input
-                      class={"w-full placeholder-grey"}
-                      type="text"
-                      placeholder="masukkan nama author"
-                      style={`padding-left: 5px; 
-      background:transparent; 
-      outline: none;`}
-                      value={meta.authorName}
-                      onChange={(e) => {
-                        meta.onChange(e);
-                      }}
-                    />
+                </button>
+                <button class="flex items-start justify-start px-4 py-2 border rounded border-gray-400">
+                  <div class="text-base font-bold leading-normal text-amber-500">
+                    Batal
                   </div>
-                </div>
-                <div
-                  class={`flex self-stretch space-x-4 items-center justify-start`}
-                  style={"margin-left:145px;"}
-                >
-                  <div />
-                  <button
-                    class={`flex items-start justify-start px-4 py-2 bg-blue-600 rounded`}
-                    style={"background-color: #3B82F6;"}
-                    onClick={meta.submit}
-                  >
-                    <div class="text-base font-bold leading-normal text-white">
-                      Tambah
-                    </div>
-                  </button>
-                  <button
-                    class={`flex items-start justify-start px-4 py-2 bg-red-600 rounded`}
-                    onClick={() => {
-                      navigate("/w-master-author");
-                    }}
-                  >
-                    <div class="text-base font-bold leading-normal text-white">
-                      Batal
-                    </div>
-                  </button>
-                </div>
+                </button>
               </div>
             </div>
           </div>
         </div>
       </div>
-    )}
+    </div>
   </div>
 </>
