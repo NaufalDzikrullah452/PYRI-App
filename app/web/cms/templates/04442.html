@@ -1,5 +1,55 @@
 <>
-  <effect meta={{}} run={async () => {}} />
+  <effect
+    meta={{
+      authors: [],
+
+      async editAuthor(id) {
+        navigate("/w-master-author/edit/" + id);
+      },
+
+      async deleteAuthor(id) {
+        console.log(id);
+        confirm("Confrim Delete") &&
+          (await api("/api/authors", {
+            authors: {
+              author_id: id,
+            },
+            e: "Delete",
+          }).then((res) => {
+            alert(res.res);
+            navigate("/w-master-author");
+          }));
+      },
+
+      async logout() {
+        confirm("Logout of admin?") &&
+          (await api("/api/admin", {
+            data: "",
+            event: "Logout",
+          }).then((res) => {
+            navigate("/login-admin");
+          }));
+      },
+    }}
+    run={async () => {
+      var author = "";
+
+      if (window.user.roleAdmin !== "admin") {
+        navigate("/login-admin");
+      }
+
+      await api("/api/authors", {
+        authors: " ",
+        e: "ReadAll",
+      }).then((res) => {
+        author = res.authors;
+      });
+      runInAction(() => {
+        meta.authors = author;
+      });
+      console.log(meta.authors);
+    }}
+  />
   <div class={`w-full flex items-start justify-start bg-white`}>
     <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
       <w-sidebar
@@ -18,10 +68,10 @@
           </div>
         </div>
         <div
-          class={`w-full flex self-stretch flex-col items-start justify-start px-9 rounded`}
+          class={`w-full flex flex-1 self-stretch flex-col items-start justify-start px-9 rounded`}
         >
-          <div class="flex self-stretch flex-col space-y-4 items-start justify-start p-6 bg-white rounded-lg">
-            <div class="flex flex-1 self-stretch items-center justify-start">
+          <div class="flex flex-1 self-stretch flex-col space-y-4 items-start justify-start p-6 bg-white rounded-lg">
+            <div class="flex self-stretch items-center justify-start">
               <div class="text-2xl font-bold leading-9 text-gray-900">
                 DATA AUTHOR
               </div>
@@ -49,246 +99,97 @@
                 </div>
                 <w-add-btn
                   class={`flex space-x-1 items-start justify-start px-4 py-2 bg-amber-500 shadow rounded`}
-                  onClick={onClick}
+                  onClick={(e) => {
+                    navigate("/w-master-author/add");
+                  }}
                 />
               </div>
             </div>
             <div class="flex self-stretch flex-col space-y-6 items-start justify-start">
               <table
-                class={`table-auto flex self-stretch flex-col items-start justify-start`}
+                class={`table-auto borderflex self-stretch flex-col items-start justify-start`}
               >
                 <thead
                   class={`w-full flex self-stretch items-center justify-start px-4 py-3 bg-gray-900 rounded`}
                 >
-                  <div
-                    class={`flex self-stretch flex-col items-start justify-center`}
-                  >
-                    <div class="text-base font-bold leading-normal text-white">
-                      NO
-                    </div>
-                  </div>
-                  <div
-                    class={`flex flex-1 self-stretch items-center justify-start`}
-                    style={"margin-left:20px;"}
-                  >
-                    <div class="text-base font-bold leading-normal text-white">
-                      NAMA AUTHOR
-                    </div>
-                  </div>
-                  <th
-                    class={`flex items-center justify-center`}
-                    style={"margin-right:10px;"}
-                  >
-                    <div class="text-base font-bold leading-normal text-white">
-                      AKSI
-                    </div>
-                  </th>
+                  <tr class="flex flex-1 self-stretch items-start justify-start">
+                    <th class={`flex flex-col items-start justify-center`}>
+                      <div class="text-base font-bold leading-normal text-white">
+                        NO
+                      </div>
+                    </th>
+                    <th
+                      class={`flex flex-1 items-center justify-start`}
+                      style={"margin-left:20px;"}
+                    >
+                      <div class="text-base font-bold leading-normal text-white">
+                        NAMA AUTHOR
+                      </div>
+                    </th>
+                    <th
+                      class={`flex items-center justify-center`}
+                      style={"margin-right:10px;"}
+                    >
+                      <div class="text-base font-bold leading-normal text-white">
+                        AKSI
+                      </div>
+                    </th>
+                  </tr>
                 </thead>
                 <tbody class="flex self-stretch flex-col items-start justify-start">
-                  <tr
-                    class={`w-full flex self-stretch items-center justify-start px-4 py-3 bg-white rounded`}
-                    style={":hover {background-color: #ffbe76;"}
-                  >
-                    <div
-                      class={`flex flex-col items-center justify-start`}
-                      style={"padding-left: 8px"}
-                    >
-                      <div class="text-base leading-normal">1</div>
-                    </div>
-                    <div
-                      class={`flex flex-1 self-stretch items-center justify-start`}
-                      style={"padding-left:27px;"}
-                    >
-                      <div class="text-base leading-normal">Bessie Cooper</div>
-                    </div>
-                    <div
-                      class={`flex self-stretch space-x-6 items-center justify-center`}
-                      style={""}
-                    >
-                      <div class="flex self-stretch items-center justify-center rounded">
-                        <img
-                          src="/fimgs/I1909_12215_1644_9573.x1.svg"
-                          style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
-                        />
-                      </div>
-                      <img
-                        src="/fimgs/I1909_12215_1412_7140.x1.svg"
-                        class={`flex self-stretch items-center justify-center rounded`}
-                        style={`width: 20px; min-width: 20px; max-width: 20px; height: 24px; min-height: 24px; max-height: 24px; margin-top:3px;`}
-                      />
-                    </div>
-                  </tr>
-                  <tr
-                    class={`w-full flex self-stretch items-center justify-start px-4 py-3 bg-orange-100 rounded`}
-                    style={":hover {background-color: #ffbe76;"}
-                  >
-                    <div
-                      class={`flex flex-col items-center justify-start`}
-                      style={"padding-left: 8px"}
-                    >
-                      <div class="text-base leading-normal">2</div>
-                    </div>
-                    <div
-                      class={`flex flex-1 self-stretch items-center justify-start`}
-                      style={"padding-left:27px;"}
-                    >
-                      <div class="text-base leading-normal">
-                        Fitra Rahmani Kasyah
-                      </div>
-                    </div>
-                    <div
-                      class={`flex self-stretch space-x-6 items-center justify-center`}
-                      style={""}
-                    >
-                      <div class="flex self-stretch items-center justify-center rounded">
-                        <img
-                          src="/fimgs/I1936_16147_1936_16105.x1.svg"
-                          style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
-                        />
-                      </div>
-                      <img
-                        src="/fimgs/I1936_16147_1936_16106.x1.svg"
-                        class={`flex self-stretch items-center justify-center rounded`}
-                        style={`width: 20px; min-width: 20px; max-width: 20px; height: 24px; min-height: 24px; max-height: 24px;  margin-top:3px;`}
-                      />
-                    </div>
-                  </tr>
-                  <tr
-                    class={`w-full flex self-stretch items-center justify-start px-4 py-3 bg-white rounded`}
-                    style={":hover {background-color: #ffbe76;"}
-                  >
-                    <div
-                      class={`flex flex-col items-center justify-start`}
-                      style={"padding-left: 8px"}
-                    >
-                      <div class="text-base leading-normal">3</div>
-                    </div>
-                    <div
-                      class={`flex flex-1 self-stretch items-center justify-start`}
-                      style={"padding-left:27px;"}
-                    >
-                      <div class="text-base leading-normal">Floyd Miles</div>
-                    </div>
-                    <div
-                      class={`flex self-stretch space-x-6 items-center justify-center`}
-                      style={""}
-                    >
-                      <div class="flex self-stretch items-center justify-center rounded">
-                        <img
-                          src="/fimgs/I1909_12217_1644_9573.x1.svg"
-                          style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
-                        />
-                      </div>
-                      <img
-                        src="/fimgs/I1909_12217_1412_7140.x1.svg"
-                        class={`flex self-stretch items-center justify-center rounded`}
-                        style={`width: 20px; min-width: 20px; max-width: 20px; height: 24px; min-height: 24px; max-height: 24px; margin-top:3px;`}
-                      />
-                    </div>
-                  </tr>
-                  <tr
-                    class={`w-full flex self-stretch items-center justify-start px-4 py-3 bg-orange-100 rounded`}
-                    style={":hover {background-color: #ffbe76;"}
-                  >
-                    <div
-                      class={`flex flex-col items-center justify-start`}
-                      style={"padding-left: 8px"}
-                    >
-                      <div class="text-base leading-normal">4</div>
-                    </div>
-                    <div
-                      class={`flex flex-1 self-stretch items-center justify-start`}
-                      style={"padding-left:27px;"}
-                    >
-                      <div class="text-base leading-normal">
-                        Fitra Rahmani Kasyah
-                      </div>
-                    </div>
-                    <div
-                      class={`flex self-stretch space-x-6 items-center justify-center`}
-                      style={""}
-                    >
-                      <div class="flex self-stretch items-center justify-center rounded">
-                        <img
-                          src="/fimgs/I1936_16131_1936_16105.x1.svg"
-                          style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
-                        />
-                      </div>
-                      <img
-                        src="/fimgs/I1936_16131_1936_16106.x1.svg"
-                        class={`flex self-stretch items-center justify-center rounded`}
-                        style={`width: 20px; min-width: 20px; max-width: 20px; height: 24px; min-height: 24px; max-height: 24px; margin-top:3px;`}
-                      />
-                    </div>
-                  </tr>
-                  <tr
-                    class={`w-full flex self-stretch items-center justify-start px-4 py-3 bg-white rounded`}
-                    style={":hover {background-color: #ffbe76;"}
-                  >
-                    <div
-                      class={`flex flex-col items-center justify-start`}
-                      style={"padding-left: 8px;"}
-                    >
-                      <div class="text-base leading-normal">5</div>
-                    </div>
-                    <div
-                      class={`flex flex-1 self-stretch items-center justify-start`}
-                      style={"padding-left:27px;"}
-                    >
-                      <div class="text-base leading-normal">Robert Fox</div>
-                    </div>
-                    <div
-                      class={`flex self-stretch space-x-6 items-center justify-center`}
-                      style={""}
-                    >
-                      <div class="flex self-stretch items-center justify-center rounded">
-                        <img
-                          src="/fimgs/I1909_12219_1644_9573.x1.svg"
-                          style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
-                        />
-                      </div>
-                      <img
-                        src="/fimgs/I1909_12219_1412_7140.x1.svg"
-                        class={`flex self-stretch items-center justify-center rounded`}
-                        style={`width: 20px; min-width: 20px; max-width: 20px; height: 24px; min-height: 24px; max-height: 24px; margin-top:3px;`}
-                      />
-                    </div>
-                  </tr>
-                  <tr
-                    class={`w-full flex self-stretch items-center justify-start px-4 py-3 bg-orange-100 rounded`}
-                    style={":hover {background-color: #ffbe76;"}
-                  >
-                    <div
-                      class={`flex flex-col items-center justify-start`}
-                      style={"padding-left: 8px"}
-                    >
-                      <div class="text-base leading-normal">6</div>
-                    </div>
-                    <div
-                      class={`flex flex-1 self-stretch items-center justify-start`}
-                      style={"padding-left:27px;"}
-                    >
-                      <div class="text-base leading-normal">
-                        Fitra Rahmani Kasyah
-                      </div>
-                    </div>
-                    <div
-                      class={`flex self-stretch space-x-6 items-center justify-center`}
-                      style={""}
-                    >
-                      <div class="flex self-stretch items-center justify-center rounded">
-                        <img
-                          src="/fimgs/I1936_16115_1936_16105.x1.svg"
-                          style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
-                        />
-                      </div>
-                      <img
-                        src="/fimgs/I1936_16115_1936_16106.x1.svg"
-                        class={`flex self-stretch items-center justify-center rounded`}
-                        style={`width: 20px; min-width: 20px; max-width: 20px; height: 24px; min-height: 24px; max-height: 24px; margin-top:3px;`}
-                      />
-                    </div>
-                  </tr>
+                  {meta.authors.map((numList, i) => {
+                    var odd = (i + 1) % 2;
+                    return (
+                      <tr
+                        class={`w-full flex self-stretch items-center justify-start px-4 py-3 bg-white rounded ${
+                          odd === 0 ? "bg-orange-100" : "bg-white"
+                        }`}
+                        style={":hover {background-color: #ffbe76;"}
+                      >
+                        <td
+                          class={`flex flex-col items-center justify-start`}
+                          style={"padding-left: 8px"}
+                        >
+                          <div class={`text-base leading-normal`}>
+                            {i + 1 || children}
+                          </div>
+                        </td>
+                        <td
+                          class={`flex flex-1 self-stretch items-center justify-start`}
+                          style={"padding-left:27px;"}
+                        >
+                          <div class={`text-base leading-normal`}>
+                            {numList.author_name || children}
+                          </div>
+                        </td>
+                        <td
+                          class={`flex self-stretch space-x-6 items-center justify-center`}
+                          style={""}
+                        >
+                          <div
+                            class={`flex self-stretch items-center justify-center rounded`}
+                            style={`cursor: pointer`}
+                            onClick={() => {
+                              meta.editAuthor(numList.author_id);
+                            }}
+                          >
+                            <img
+                              src="/fimgs/I1936_16252_1644_9573.x1.svg"
+                              style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
+                            />
+                          </div>
+                          <img
+                            src="/fimgs/I1936_16252_1412_7140.x1.svg"
+                            class={`flex self-stretch items-center justify-center rounded`}
+                            style={`cursor: pointer`}
+                            onClick={() => {
+                              meta.deleteAuthor(numList.author_id);
+                            }}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
               <div class="flex self-stretch space-x-2.5 items-center justify-start bg-white">
@@ -300,7 +201,7 @@
                 <div class="flex space-x-2 items-start justify-start">
                   <div class="flex self-stretch flex-col items-center justify-center px-2 bg-white rounded">
                     <img
-                      src="/fimgs/I1936_15506_2069_35620.x1.svg"
+                      src="/fimgs/I1936_16261_2069_35620.x1.svg"
                       style="width: 18px; min-width: 18px; max-width: 18px; height: 14px; min-height: 14px; max-height: 14px;"
                     />
                   </div>
@@ -312,7 +213,7 @@
                   </div>
                   <div class="flex self-stretch flex-col items-center justify-center px-2 bg-white rounded">
                     <img
-                      src="/fimgs/I1936_15506_2069_36428.x1.svg"
+                      src="/fimgs/I1936_16261_2069_36428.x1.svg"
                       style="width: 18px; min-width: 18px; max-width: 18px; height: 14px; min-height: 14px; max-height: 14px;"
                     />
                   </div>

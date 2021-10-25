@@ -20,10 +20,12 @@ model category {
 }
 
 model tags {
-  tag_id      Int         @id @default(autoincrement())
-  tag_name    String      @db.VarChar(50)
-  tag_picture String      @db.VarChar(100)
-  interests   interests[]
+  tag_id           Int         @id @default(autoincrement())
+  tag_name         String      @db.VarChar(50)
+  tag_picture      String      @db.VarChar(100)
+  tag_date_created DateTime?   @default(now()) @db.Timestamp(6)
+  tag_date_updated DateTime?   @db.Timestamp(6)
+  interests        interests[]
 }
 
 model users {
@@ -47,6 +49,14 @@ model interests {
   tag_id      Int
   tags        tags  @relation(fields: [tag_id], references: [tag_id])
   users       users @relation(fields: [user_id], references: [user_id])
+}
+
+model publisher {
+  publisher_id           Int      @id @default(autoincrement())
+  publisher_name         String   @db.VarChar(50)
+  publisher_date_created DateTime @default(now()) @db.Timestamp(6)
+  publisher_date_updated DateTime @db.Timestamp(6)
+  publisher_note         String?
 }
 
 enum user_gender {
