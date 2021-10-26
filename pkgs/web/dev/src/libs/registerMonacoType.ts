@@ -156,7 +156,7 @@ declare global {
     log: any;
     ext: any;
     isDev: boolean;
-    db:prisma.PrismaClient;
+    db:NonFunctionProperties<prisma.PrismaClient>;
     api: (
       url: string,
       body?: any,

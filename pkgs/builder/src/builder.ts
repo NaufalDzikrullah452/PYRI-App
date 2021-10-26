@@ -66,27 +66,42 @@ export class Builder {
     if (Array.isArray(this.external) && this.external.indexOf('...deps')) {
       this.external.splice(this.external.indexOf('...deps'), 1, ...external)
     }
+    const finalExternal = [
+      ...(this.external !== undefined ? this.external : external),
+    ]
+    const entry = Array.isArray(this.in) ? this.in : [this.in]
 
+    const buildOpt = {
+      entryPoints: entry,
+      outfile: this.out,
+      platform: this.platform,
+      logLevel: 'silent',
+      loader: {
+        '.node': 'binary',
+      },
+      plugins: this.plugins,
+      bundle: true,
+      define: {
+        'process.env.NODE_ENV':
+          global.mode === 'dev' ? '"development"' : '"production"',
+      },
+      external: finalExternal,
+      nodePaths: [join(dirs.root, 'node_modules')],
+      format: this.platform === 'node' ? 'cjs' : 'esm',
+    } as any
+
+    // const nodeInSub = join(dirname(entry[0]), '..', 'node_modules')
+    // if (await pathExists(nodeInSub)) {
+    //   buildOpt.nodePaths.unshift(nodeInSub)
+    // }
+
+    if (this.buildOptions) {
+      for (let [k, v] of Object.entries(this.buildOptions)) {
+        buildOpt[k] = v
+      }
+    }
     try {
-      this.process = build({
-        entryPoints: Array.isArray(this.in) ? this.in : [this.in],
-        outfile: this.out,
-        platform: this.platform,
-        logLevel: 'silent',
-        loader: {
-          '.node': 'binary',
-        },
-        plugins: this.plugins,
-        bundle: true,
-        define: {
-          'process.env.NODE_ENV':
-            global.mode === 'dev' ? '"development"' : '"production"',
-        },
-        external: [...(this.external !== undefined ? this.external : external)],
-        nodePaths: [join(dirs.root, 'node_modules')],
-        format: this.platform === 'node' ? 'cjs' : 'esm',
-        ...this.buildOptions,
-      })
+      this.process = build(buildOpt)
       const result = await this.process
 
       if (this.onBuilt) {

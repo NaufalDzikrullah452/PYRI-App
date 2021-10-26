@@ -4,7 +4,7 @@ import { Context, Fragment, ReactElement } from 'react'
 import type { BaseWindow } from 'web.init/src/window'
 import { useRender } from 'web.utils/src/useRender'
 import { BaseField } from './BaseField'
-import { weakUpdate } from './BaseForm'
+import { generateFieldsForLayout, weakUpdate } from './BaseForm'
 import type { IBaseFormContext, IFormLayout } from '../../../ext/types/__form'
 
 declare const window: BaseWindow
@@ -23,12 +23,19 @@ export const RecursiveLayout = (props: {
     if (typeof s === 'string') {
       let colName = s
       let overrideTitle = ''
-      if (!s.startsWith('::') && s.indexOf(':') > 0) {
-        colName = s.split(':').shift()
-        overrideTitle = s.split(':').pop()
+      if (!!s && !s.startsWith('::') && s.indexOf(':') > 0) {
+        colName = s.split(':').shift() || ''
+        overrideTitle = s.split(':').pop() || ''
       }
 
       const field = state.config.fields[colName]
+
+      if (!field) {
+        generateFieldsForLayout(layout, state, ctx).then(() => {
+          state.component.render()
+        })
+        return null
+      }
 
       if (field) {
         if (overrideTitle) field.state.title = overrideTitle
@@ -160,7 +167,7 @@ export const extractColFromLayout = async (props: {
   ctx: Context<IBaseFormContext>
 }): Promise<string[]> => {
   const { layout, state, ctx } = props
-  const cols = []
+  const cols: string[] = []
 
   for (let s of layout) {
     if (typeof s === 'string') {

@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { css, jsx } from '@emotion/react'
 import type { BaseWindow } from 'web.init/src/window'
-import { Label } from '@fluentui/react'
+import { Icon, Label } from '@fluentui/react'
 import { useRef, useEffect } from 'react'
 import { useRender } from 'web.utils/src/useRender'
 
@@ -128,53 +128,67 @@ export const MenuSingle = ({
     }
   }, [isParentActive])
 
+  let isMenuActive =
+    meta.active.length >= level && meta.active[level] === idx && isParentActive
+
+  let icon = isMenuActive ? 'ChevronDownSmall' : 'ChevronRightSmall'
+
+  let color = isMenuActive ? 'red' : 'grey'
+
   return (
-    <div
-      className={`menu-item flex flex-col cursor-pointer ${
-        meta.active.length >= level &&
-        meta.active[level] === idx &&
-        isParentActive
-          ? 'active'
-          : ''
-      } ${current.collapsed ? 'collapsed' : ''}`}
-      onClick={(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        if (menu.children) {
-          current.collapsed = !current.collapsed
-          render()
-        } else if (menu.url) {
-          meta.active = []
-          activateParent()
-          meta.active.push(idx || 0)
-          render()
-          window.navigate(menu.url)
-        }
-      }}
-    >
-      <Text
-        className="menu-title cursor-pointer"
-        css={css`
-          margin: 0px;
-          padding: 0px;
-        `}
+    <div className={`flex my-1`}>
+      {menu.children && (
+        <Icon iconName={icon} style={{ color: color, paddingRight: 5 }} />
+      )}
+      <div
+        className={`menu-item flex flex-col cursor-pointer ${
+          isMenuActive ? 'active' : ''
+        } ${current.collapsed ? 'collapsed' : ''}`}
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          if (menu.children) {
+            current.collapsed = !current.collapsed
+            render()
+          } else if (menu.url) {
+            meta.active = []
+            activateParent()
+            meta.active.push(idx || 0)
+            render()
+            window.navigate(menu.url)
+          }
+        }}
       >
-        {menu.title}
-      </Text>
-      <div className={`${!internal.collapsed ? 'flex' : 'hidden'} flex-col`}>
-        {menu.children && (
-          <MenuTree
-            menus={menu.children}
-            meta={meta}
-            parent={menu}
-            level={level + 1}
-            isParentActive={meta.active[level] === idx}
-            activateParent={() => {
-              meta.active.push(idx)
-              render()
-            }}
-          />
-        )}
+        <div className={'flex flex-row'}>
+          {isMenuActive && !menu.children && (
+            <div className={'border-l-2 border-red-500 mr-3'}></div>
+          )}
+          <Text
+            className="menu-title cursor-pointer"
+            style={{ color: color }}
+            css={css`
+              margin: 0px;
+              padding: 0px;
+            `}
+          >
+            {menu.title}
+          </Text>
+        </div>
+        <div className={`${!internal.collapsed ? 'flex' : 'hidden'} flex-col`}>
+          {menu.children && (
+            <MenuTree
+              menus={menu.children}
+              meta={meta}
+              parent={menu}
+              level={level + 1}
+              isParentActive={meta.active[level] === idx}
+              activateParent={() => {
+                meta.active.push(idx)
+                render()
+              }}
+            />
+          )}
+        </div>
       </div>
     </div>
   )

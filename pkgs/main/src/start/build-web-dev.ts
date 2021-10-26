@@ -34,27 +34,6 @@ export const buildWebDev = async (
       tstamp: new Date().getTime(),
     }
     const startWatcher = async () => {
-      // const hmrDirs = [join(dirs.app.web, 'src')]
-
-      // for (const e of await readdir(dirs.pkgs.web)) {
-      //   if (await pathExists(join(dirs.pkgs.web, e, 'package.json'))) {
-      //     for (const d of await readdir(join(dirs.pkgs.web, e))) {
-      //       const dir = join(dirs.pkgs.web, e, d)
-      //       if ((await stat(dir)).isDirectory()) {
-      //         if (d !== 'node_modules' && d !== 'build') {
-      //           hmrDirs.push(dir)
-      //         }
-      //       }
-      //     }
-      //   }
-      // }
-
-      // new Watcher(hmrDirs, async (event, path) => {
-      //   changed.src = path.substr(1)
-      //   changed.type = event
-      //   changed.tstamp = new Date().getTime()
-      // })
-
       new Watcher([join(dirs.app.web, 'public')], async (event, path) => {
         if (event !== 'delete') {
           const file = path.substr(join(dirs.app.web, 'public').length + 1)
@@ -73,29 +52,11 @@ export const buildWebDev = async (
       pkgs: webPkgs,
     })
 
-    let external: string[] = []
     if (await pathExists(join(dirs.app.web, 'build', 'deps.json'))) {
       await readJSON(join(dirs.app.web, 'build', 'deps.json'))
     }
 
     const ins = [join(dirs.app.web, 'src', 'index.tsx')]
-    // const inshmr = [
-    //   join(dirs.pkgs.web, 'init', 'src', 'hmr-runtime.ts'),
-    //   join(dirs.pkgs.web, 'init', 'src', 'dev-runtime.ts'),
-    // ]
-    // await pool.add('hmr', {
-    //   root: dirs.app.web,
-    //   platform: 'browser',
-    //   in: inshmr,
-    //   buildOptions: {
-    //     bundle: true,
-    //     external: ['react', 'react-dom'],
-    //     logLevel: 'silent',
-    //     outdir: join(dirs.app.web, 'build', 'web', 'hmr'),
-    //     target: 'es6',
-    //   },
-    // })
-
     await pool.add('web', {
       root: dirs.app.web,
       platform: 'browser',
@@ -108,7 +69,7 @@ export const buildWebDev = async (
         treeShaking: true,
         metafile: true,
         outdir: join(dirs.app.web, 'build', 'web'),
-        external,
+        external: [],
         target: 'es6',
         watch:
           mode === 'dev'

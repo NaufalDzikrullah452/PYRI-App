@@ -10,6 +10,7 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
+    "@fluentui/react": "^8.36.3",
     "lodash.get": "^4.4.2"
   }
 }

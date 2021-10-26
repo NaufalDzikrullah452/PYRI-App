@@ -69,7 +69,6 @@ export const BaseField = (props: IBaseFieldMainProps) => {
     }
 
     render()
-
     if (parent.config.watches[state.name]) {
       parent.config.watches[state.name].forEach((renderField) => {
         renderField()

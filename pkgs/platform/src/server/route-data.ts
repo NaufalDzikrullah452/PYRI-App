@@ -203,7 +203,7 @@ type DBTables = ${tables.join(' | ')}
                       const rel = foreign.fields.find(
                         (f) => f.relationName === e.relationName
                       )
-                      relations[e.type] = {
+                      relations[e.name] = {
                         relation: 'Model.BelongsToOneRelation',
                         modelClass: e.type,
                         join: {

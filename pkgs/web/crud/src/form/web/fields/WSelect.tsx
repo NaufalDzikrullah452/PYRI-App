@@ -318,6 +318,7 @@ export const PureSelect = (props: {
             `}
           >
             <BaseList
+              filter={false}
               columns={({ row, index }) => {
                 return (
                   <Label

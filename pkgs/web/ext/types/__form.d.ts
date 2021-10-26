@@ -44,13 +44,13 @@ export interface IBaseFieldContext {
   ) => void
   parent: IBaseFormContext | null
   items?: (string | { value: string; label: string })[]
-  fieldProps?: any
   customRender?: (props: {
     row: any
     state: IBaseFormContext
     Component?: React.FC<IBaseFieldMainProps>
     props?: IBaseFieldMainProps
   }) => React.ReactElement
+  fieldProps: any
 }
 
 type IFormTabs = (
@@ -172,7 +172,7 @@ export type IFormLayout = (
       row: any
       watch: (fields: string[]) => void
       update: (row: any) => void
-      layout: (layout: any) => React.ReactElement
+      layout: (layout: any) => React.ReactElement | null
       state: IBaseFormContext
     }) => React.ReactElement)
   | IFormLayout

@@ -274,7 +274,7 @@ export const WFileUpload = (props: IBaseFieldProps) => {
             type="file"
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
             onChange={_onChange}
-            accept={fieldProps.acceptFile}
+            accept={!!fieldProps ? fieldProps.acceptFile : null}
           />
         </div>
 

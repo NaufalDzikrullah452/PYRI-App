@@ -132,18 +132,16 @@ export const WBelongsTo = (props: IBaseFieldProps) => {
           if (!state.value) {
             state.value = {}
           }
-
           if (typeof state.onChange === 'function')
             state.onChange(value, {
               state: form,
               row: form.db.data,
               col: props.name,
             })
-
           if (typeof form.db.data[relName] === 'object') {
             for (let row of meta.rawItems) {
               if (row[to] === value) {
-                form.db.data[relName] = row;
+                form.db.data[relName] = row
               }
             }
           }
