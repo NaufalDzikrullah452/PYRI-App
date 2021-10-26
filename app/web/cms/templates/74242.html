@@ -43,85 +43,87 @@
       }
     }}
   />
-  <div class={`w-full flex items-start justify-start bg-white`}>
-    <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
-      <w-sidebar
-        class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900`}
-        style={"background-color: black"}
-      />
-      <div
-        class={`w-full flex flex-1 self-stretch flex-col space-y-9 items-start justify-start bg-gray-100`}
-      >
-        <div class="flex self-stretch flex-col items-start justify-center p-9 bg-white">
-          <div class="flex self-stretch space-x-2.5 items-center justify-start">
-            <div class="flex flex-1 items-start justify-start">
-              <div class="text-3xl font-bold leading-10">Publisher</div>
-            </div>
-            <w-profile-admin />
-          </div>
-        </div>
+  {window.user.roleAdmin === "admin" && (
+    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
+      <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
+        <w-sidebar
+          class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900`}
+          style={"background-color: black"}
+        />
         <div
-          class={`w-full flex self-stretch flex-col items-start justify-start px-9 rounded`}
+          class={`w-full flex flex-1 self-stretch flex-col space-y-9 items-start justify-start bg-gray-100`}
         >
-          <div class="flex self-stretch flex-col items-start justify-start p-6 bg-gray-900 rounded-tl-lg rounded-tr-lg">
-            <div class="flex flex-1 self-stretch items-center justify-start">
-              <div class="text-xl font-bold leading-loose text-white">
-                TAMBAH PUBLISHER
+          <div class="flex self-stretch flex-col items-start justify-center p-9 bg-white">
+            <div class="flex self-stretch space-x-2.5 items-center justify-start">
+              <div class="flex flex-1 items-start justify-start">
+                <div class="text-3xl font-bold leading-10">Publisher</div>
+              </div>
+              <w-profile-admin />
+            </div>
+          </div>
+          <div
+            class={`w-full flex self-stretch flex-col items-start justify-start px-9 rounded`}
+          >
+            <div class="flex self-stretch flex-col items-start justify-start p-6 bg-gray-900 rounded-tl-lg rounded-tr-lg">
+              <div class="flex flex-1 self-stretch items-center justify-start">
+                <div class="text-xl font-bold leading-loose text-white">
+                  TAMBAH PUBLISHER
+                </div>
               </div>
             </div>
-          </div>
-          <div class="flex self-stretch flex-col items-start justify-start p-6 bg-white rounded-bl-lg rounded-br-lg">
-            <div class="flex self-stretch flex-col space-y-6 items-start justify-start bg-white rounded-lg">
-              <div class="flex self-stretch space-x-4 items-center justify-start">
-                <div class="flex items-start justify-start">
-                  <div class="text-base font-bold leading-normal">
-                    Nama Publisher
+            <div class="flex self-stretch flex-col items-start justify-start p-6 bg-white rounded-bl-lg rounded-br-lg">
+              <div class="flex self-stretch flex-col space-y-6 items-start justify-start bg-white rounded-lg">
+                <div class="flex self-stretch space-x-4 items-center justify-start">
+                  <div class="flex items-start justify-start">
+                    <div class="text-base font-bold leading-normal">
+                      Nama Publisher
+                    </div>
+                  </div>
+                  <div
+                    class={`flex flex-1 self-stretch items-start justify-start px-4 py-2 border rounded border-gray-400`}
+                  >
+                    <input
+                      class={"w-full placeholder-grey"}
+                      type="text"
+                      placeholder="Masukkan nama publisher"
+                      style={`background:transparent; 
+      outline: none;`}
+                      value={meta.publisherName}
+                      onChange={(e) => {
+                        meta.onChange(e);
+                      }}
+                    />
                   </div>
                 </div>
                 <div
-                  class={`flex flex-1 self-stretch items-start justify-start px-4 py-2 border rounded border-gray-400`}
+                  class={`flex self-stretch space-x-4 items-start justify-start`}
+                  style={"margin-left:114px;"}
                 >
-                  <input
-                    class={"w-full placeholder-grey"}
-                    type="text"
-                    placeholder="masukkan nama publisher"
-                    style={`background:transparent; 
-      outline: none;`}
-                    value={meta.publisherName}
-                    onChange={(e) => {
-                      meta.onChange(e);
+                  <div />
+                  <button
+                    class={`flex items-start justify-start px-4 py-2 bg-amber-500 rounded`}
+                    onClick={meta.submit}
+                  >
+                    <div class="text-base font-bold leading-normal text-white">
+                      Tambah
+                    </div>
+                  </button>
+                  <button
+                    class={`flex items-start justify-start px-4 py-2 border rounded border-gray-400`}
+                    onClick={() => {
+                      navigate("/w-master-publisher");
                     }}
-                  />
+                  >
+                    <div class="text-base font-bold leading-normal text-amber-500">
+                      Batal
+                    </div>
+                  </button>
                 </div>
-              </div>
-              <div
-                class={`flex self-stretch space-x-4 items-start justify-start`}
-                style={"margin-left:114px;"}
-              >
-                <div />
-                <button
-                  class={`flex items-start justify-start px-4 py-2 bg-amber-500 rounded`}
-                  onClick={meta.submit}
-                >
-                  <div class="text-base font-bold leading-normal text-white">
-                    Tambah
-                  </div>
-                </button>
-                <button
-                  class={`flex items-start justify-start px-4 py-2 border rounded border-gray-400`}
-                  onClick={() => {
-                    navigate("/w-master-publisher");
-                  }}
-                >
-                  <div class="text-base font-bold leading-normal text-amber-500">
-                    Batal
-                  </div>
-                </button>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  )}
 </>
