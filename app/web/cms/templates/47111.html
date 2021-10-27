@@ -1,304 +1,13 @@
 <>
-  <effect
-    meta={{
-      showProfile: false,
-      showMasterData: false,
-      showManagement: false,
-      changeProfile: (open) => {},
-      changeManagement: (open) => {},
-      changeMasterData: (open) => {},
-      tags: [],
-
-      async editTag(id) {
-        navigate("/w-master-genre/edit/" + id);
-      },
-
-      async deleteTag(id) {
-        console.log(id);
-
-        try {
-          confirm("Confrim Delete") &&
-            (await api("/api/tags", {
-              tags: {
-                tag_id: id,
-              },
-              e: "Delete",
-            }).then((res) => {
-              navigate("/w-master-genre");
-            }));
-        } catch (e) {
-          alert("Can't delete genre, because related with interest user");
-          console.log(e);
-        }
-      },
-
-      async logout() {
-        confirm("Logout of admin?") &&
-          (await api("/api/admin", {
-            data: "",
-            event: "Logout",
-          }).then((res) => {
-            navigate("/login-admin");
-          }));
-      },
-    }}
-    run={async () => {
-      meta.action = {
-        changeMasterData: (open) => {
-          meta.showMasterData = open;
-          let img = document.getElementById("chevron-master");
-
-          if (open == true) {
-            img.setAttribute("style", "transform: rotate(0deg);");
-          } else {
-            img.setAttribute("style", "transform: rotate(180deg);");
-          }
-        },
-        changeManagement: (open) => {
-          meta.showManagement = open;
-          let img = document.getElementById("chevron-management");
-
-          if (open == true) {
-            img.setAttribute("style", "transform: rotate(0deg);");
-          } else {
-            img.setAttribute("style", "transform: rotate(180deg);");
-          }
-        },
-        changeProfile: (open) => {
-          meta.showProfile = open;
-        },
-      };
-      var tags = "";
-
-      if (window.user.roleAdmin !== "admin") {
-        navigate("/login-admin");
-      }
-
-      await api("/api/tags", {
-        tags: " ",
-        e: "ReadAll",
-      }).then((res) => {
-        tags = res.tags;
-      });
-      runInAction(() => {
-        meta.tags = tags;
-      });
-      console.log(meta.tags);
-    }}
-  />
-  <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
+  <effect meta={{}} run={async () => {}} />
+  <div class={`w-full flex items-start justify-start bg-white`}>
     <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
-      <div
-        class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
+      <w-sidebar
+        class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900`}
         style={"background-color: black"}
-      >
-        <div
-          class={`flex self-stretch space-x-8 items-center justify-start px-9 pt-8`}
-          style={"margin-top:35px;"}
-        >
-          <img
-            src="/fimgs/2325_18637.x1.svg"
-            style="width: 36px; min-width: 36px; max-width: 36px; height: 36px; min-height: 36px; max-height: 36px;"
-          />
-          <div
-            class={`text-3xl font-bold leading-10 text-white`}
-            style={"margin-left:20px;"}
-          >
-            PYRI
-          </div>
-        </div>
-        <div
-          class={`text-white flex flex-1 flex-col space-y-1 items-start justify-start px-2.5`}
-          style={"margin-top:50px;"}
-        >
-          <div
-            class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-            style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
-          >
-            <img
-              src="/fimgs/2325_18641.x1.svg"
-              style="width: 16px; min-width: 16px; max-width: 16px; height: 16px; min-height: 16px; max-height: 16px;"
-            />
-            <div class="flex flex-1 items-center justify-start">
-              <div class="text-base font-bold leading-normal text-gray-50">
-                Dashboard
-              </div>
-            </div>
-          </div>
-          <div
-            class={`flex self-stretch space-x-2.5 items-center justify-center py-3 pl-9 pr-3 rounded-2xl`}
-            style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
-            onClick={() => {
-              if (meta.showMasterData == false) {
-                meta.action.changeMasterData(true);
-                meta.action.changeManagement(false);
-              } else {
-                meta.action.changeMasterData(false);
-                meta.action.changeManagement(false);
-              }
-            }}
-          >
-            <img
-              src="/fimgs/2325_18646.x1.svg"
-              style="width: 14.70px; min-width: 14.70px; max-width: 14.70px; height: 16px; min-height: 16px; max-height: 16px;"
-            />
-            <div class="flex flex-1 items-center justify-center">
-              <div class="flex flex-1 items-start justify-start">
-                <div class="text-base font-bold leading-normal text-gray-50">
-                  Master Data
-                </div>
-              </div>
-            </div>
-            <img
-              src="/fimgs/2325_18651.x1.svg"
-              class={`transform rotate-180`}
-              id="chevron-master"
-              style={`width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px; margin-right:25px !important;`}
-            />
-          </div>
-          {meta.showMasterData && (
-            <div
-              class={`flex self-stretch flex-col space-y-1 items-start justify-start`}
-            >
-              <div
-                class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
-                onClick={() => {
-                  navigate("/w-master-kategori");
-                }}
-              >
-                <div />
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-base font-bold leading-normal text-gray-50">
-                    Kategori Buku
-                  </div>
-                </div>
-              </div>
-              <div
-                class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
-                onClick={() => {
-                  navigate("/w-master-genre");
-                }}
-              >
-                <div />
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-base font-bold leading-normal text-gray-50">
-                    Genre Buku
-                  </div>
-                </div>
-              </div>
-              <div
-                class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
-                onClick={() => {
-                  navigate("/w-master-author");
-                }}
-              >
-                <div />
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-base font-bold leading-normal text-white">
-                    Author{" "}
-                  </div>
-                </div>
-              </div>
-              <div
-                class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
-                onClick={() => {
-                  navigate("/w-master-publisher");
-                }}
-              >
-                <div />
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-base font-bold leading-normal text-gray-50">
-                    Publisher
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-          <div
-            class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-            style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
-            onClick={() => {
-              if (meta.showManagement == false) {
-                meta.action.changeMasterData(false);
-                meta.action.changeManagement(true);
-              } else {
-                meta.action.changeMasterData(false);
-                meta.action.changeManagement(false);
-              }
-            }}
-          >
-            <img
-              src="/fimgs/2325_18671.x1.svg"
-              class="flex items-start justify-start"
-              style="width: 15.75px; min-width: 15.75px; max-width: 15.75px; height: 18px; min-height: 18px; max-height: 18px;"
-            />
-            <div class="text-base font-bold leading-normal text-gray-50">
-              User Management
-            </div>
-            <img
-              src="/fimgs/2325_18676.x1.svg"
-              id="chevron-management"
-              class={`transform rotate-180`}
-              style={`width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px;`}
-            />
-          </div>
-          {meta.showManagement && (
-            <div
-              class={`flex self-stretch flex-col space-y-1 items-start justify-start`}
-            >
-              <div
-                class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
-              >
-                <div />
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-base font-bold leading-normal text-gray-50">
-                    Data User
-                  </div>
-                </div>
-              </div>
-              <div
-                class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
-              >
-                <div />
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-base font-bold leading-normal text-gray-50">
-                    Subcription
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-          <div
-            class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-            style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
-          >
-            <img
-              src="/fimgs/2325_18688.x1.svg"
-              style="width: 14.40px; min-width: 14.40px; max-width: 14.40px; height: 16px; min-height: 16px; max-height: 16px;"
-            />
-            <div class="flex flex-1 items-start justify-start">
-              <div class="text-base font-bold leading-normal text-gray-50">
-                Buku
-              </div>
-            </div>
-          </div>
-          <div />
-        </div>
-        <div class="flex self-stretch items-center justify-center">
-          <div class="text-base leading-normal text-center text-gray-500">
-            Copyright © 2021 Pyri
-          </div>
-        </div>
-      </div>
+      />
       <div
         class={`w-full flex flex-1 self-stretch flex-col space-y-9 items-start justify-start relative overflow-y-auto bg-gray-100`}
-        style={"margin-left:254px;"}
       >
         <div class="flex self-stretch flex-col items-start justify-center p-9 bg-white">
           <div class="flex self-stretch space-x-2.5 items-center justify-start">
@@ -353,9 +62,7 @@
               <button
                 class={`flex space-x-1 items-start justify-start px-4 py-2 bg-amber-500 shadow rounded`}
                 style={`style={'margin-left: 10px;'}`}
-                onClick={() => {
-                  navigate("/w-master-genre/add");
-                }}
+                onClick={onClick}
               >
                 <img
                   src="/fimgs/2159_99166.x1.svg"
@@ -364,7 +71,7 @@
                 />
                 <div class={`flex self-stretch items-start justify-start`}>
                   <div class={`text-base font-bold leading-normal text-white`}>
-                    {children || "Tambah Genre"}
+                    {children || "Tambah Genre Buku"}
                   </div>
                 </div>
               </button>
@@ -373,112 +80,169 @@
               <table
                 class={`table-autoflex self-stretch flex-col items-start justify-start`}
               >
-                <thead class="flex self-stretch flex-col items-start justify-start">
-                  <tr
-                    class={`w-full flex items-center justify-start p-4 bg-gray-900 rounded`}
+                <tr
+                  class={`w-full flex self-stretch items-center justify-start p-4 bg-gray-900 rounded`}
+                >
+                  <th class="flex self-stretch flex-col items-start justify-center">
+                    <div class="text-base font-bold leading-normal text-white">
+                      NO
+                    </div>
+                  </th>
+                  <th
+                    class={`flex self-stretch items-center justify-start pr-6`}
+                    style={"margin-left:40px;"}
                   >
-                    <th class="flex self-stretch flex-col items-start justify-center">
-                      <div class="text-base font-bold leading-normal text-white">
-                        NO
-                      </div>
-                    </th>
-                    <th
-                      class={`flex self-stretch items-center justify-start pr-6`}
-                      style={"margin-left:40px;"}
-                    >
-                      <div class="text-base font-bold leading-normal text-white">
-                        IKON GENRE
-                      </div>
-                    </th>
-                    <th
-                      class={`flex flex-1 self-stretch items-center justify-start`}
-                      style={"margin-left:40px;"}
-                    >
-                      <div class="text-base font-bold leading-normal text-white">
-                        NAMA GENRE
-                      </div>
-                    </th>
-                    <th
-                      class={`flex items-center justify-center`}
-                      style={"margin-right: 15px;"}
-                    >
-                      <div class="text-base font-bold leading-normal text-white">
-                        AKSI
-                      </div>
-                    </th>
-                  </tr>
-                </thead>
+                    <div class="text-base font-bold leading-normal text-white">
+                      IKON GENRE
+                    </div>
+                  </th>
+                  <th
+                    class={`flex flex-1 self-stretch items-center justify-start`}
+                    style={"margin-left:40px;"}
+                  >
+                    <div class="text-base font-bold leading-normal text-white">
+                      NAMA GENRE
+                    </div>
+                  </th>
+                  <th
+                    class={`flex items-center justify-center`}
+                    style={"margin-right: 15px;"}
+                  >
+                    <div class="text-base font-bold leading-normal text-white">
+                      AKSI
+                    </div>
+                  </th>
+                </tr>
                 <tbody class="flex self-stretch flex-col items-start justify-start">
-                  {meta.tags.map((numList, i) => {
-                    var odd = (i + 1) % 2;
-                    return (
-                      <tr
-                        class={`w-full flex self-stretch items-center justify-start px-4 py-3 bg-white rounded ${
-                          odd === 0 ? "bg-orange-100" : "bg-white"
-                        }`}
-                        style={":hover {background-color: #ffbe76;"}
-                      >
-                        <td
-                          class={`flex flex-col items-center justify-center`}
-                          style={"padding: 10px"}
-                        >
-                          <div class={`text-base leading-normal`}>{i + 1}</div>
-                        </td>
-                        <td
-                          class={`flex self-stretch space-x-2.5 items-center justify-center`}
-                          style={"margin-left:67px; margin-right:67px;"}
-                        >
-                          {numList.tag_picture === "-" && (
-                            <img
-                              src="/fimgs/2232_368894.x1.svg"
-                              class={`flex items-center justify-center`}
-                              style={`width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;`}
-                            />
-                          )}
-                          {numList.tag_picture !== "-" && (
-                            <img
-                              src={`/upload/${numList.tag_picture}`}
-                              class={`flex items-center justify-center`}
-                              style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
-                            />
-                          )}
-                        </td>
-                        <td
-                          class={`flex flex-1 self-stretch items-center justify-start`}
-                          style={"padding-left: 35px;"}
-                        >
-                          <div class={`text-base leading-normal`}>
-                            {numList.tag_name || "Nama Genre"}
-                          </div>
-                        </td>
-                        <td
-                          class={`flex self-stretch space-x-6 items-center justify-center`}
-                          style={""}
-                        >
-                          <div
-                            class={`flex self-stretch items-center justify-center rounded`}
-                            style={`cursor: pointer`}
-                            onClick={() => {
-                              meta.editTag(numList.tag_id);
-                            }}
-                          >
-                            <img
-                              src="/fimgs/2232_368912.x1.svg"
-                              style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
-                            />
-                          </div>
-                          <img
-                            src="/fimgs/2232_368913.x1.svg"
-                            class={`flex self-stretch items-center justify-center rounded`}
-                            style={`cursor: pointer`}
-                            onClick={() => {
-                              meta.deleteTag(numList.tag_id);
-                            }}
-                          />
-                        </td>
-                      </tr>
-                    );
-                  })}
+                  <tr
+                    class={`w-full flex self-stretch items-center justify-start px-4 py-3 bg-white rounded`}
+                    style={":hover {background-color: #ffbe76;"}
+                  >
+                    <td
+                      class={`flex flex-col items-center justify-center`}
+                      style={"padding: 10px"}
+                    >
+                      <div class="text-base leading-normal">1</div>
+                    </td>
+                    <td
+                      class={`flex self-stretch items-center justify-center`}
+                      style={"margin-left:67px; margin-right:67px;"}
+                    >
+                      <img
+                        src="/fimgs/I2038_13675_2159_32249.x1.svg"
+                        class="flex items-center justify-center"
+                        style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
+                      />
+                    </td>
+                    <td
+                      class={`flex flex-1 self-stretch items-center justify-start`}
+                      style={"padding-left: 35px;"}
+                    >
+                      <div class="text-base leading-normal">Mystery</div>
+                    </td>
+                    <td
+                      class={`flex self-stretch space-x-6 items-center justify-center`}
+                      style={""}
+                    >
+                      <div class="flex self-stretch items-center justify-center rounded">
+                        <img
+                          src="/fimgs/I2038_13675_2038_13615.x1.svg"
+                          style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
+                        />
+                      </div>
+                      <img
+                        src="/fimgs/I2038_13675_2038_13616.x1.svg"
+                        class="flex self-stretch items-center justify-center rounded"
+                        style="width: 20px; min-width: 20px; max-width: 20px; height: 40px; min-height: 40px; max-height: 40px;"
+                      />
+                    </td>
+                  </tr>
+                  <tr
+                    class={`w-full flex self-stretch items-center justify-start px-4 py-3 bg-orange-100 rounded`}
+                    style={":hover {background-color: #ffbe76;"}
+                  >
+                    <td
+                      class={`flex flex-col items-center justify-start`}
+                      style={"padding: 10px;"}
+                    >
+                      <div class="text-base leading-normal">2</div>
+                    </td>
+                    <td
+                      class={`flex self-stretch items-center justify-center`}
+                      style={"margin-left:67px; margin-right:67px;"}
+                    >
+                      <img
+                        src="/fimgs/I2038_13705_2159_73791.x1.svg"
+                        class="flex items-start justify-start"
+                        style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
+                      />
+                    </td>
+                    <td
+                      class={`flex flex-1 self-stretch items-center justify-start`}
+                      style={"padding-left: 35px;"}
+                    >
+                      <div class="text-base leading-normal">Science</div>
+                    </td>
+                    <td
+                      class={`flex self-stretch space-x-6 items-center justify-center`}
+                      style={""}
+                    >
+                      <div class="flex self-stretch items-center justify-center rounded">
+                        <img
+                          src="/fimgs/I2038_13705_2038_13645.x1.svg"
+                          style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
+                        />
+                      </div>
+                      <img
+                        src="/fimgs/I2038_13705_2038_13646.x1.svg"
+                        class="flex self-stretch items-center justify-center rounded"
+                        style="width: 20px; min-width: 20px; max-width: 20px; height: 40px; min-height: 40px; max-height: 40px;"
+                      />
+                    </td>
+                  </tr>
+                  <tr
+                    class={`w-full flex self-stretch items-center justify-start px-4 py-3 bg-white rounded`}
+                    style={":hover {background-color: #ffbe76;"}
+                  >
+                    <td
+                      class={`flex flex-col items-center justify-center`}
+                      style={"padding: 10px"}
+                    >
+                      <div class="text-base leading-normal">1</div>
+                    </td>
+                    <td
+                      class={`flex self-stretch items-center justify-center`}
+                      style={"margin-left:67px; margin-right:67px;"}
+                    >
+                      <img
+                        src="/fimgs/I2038_13795_2159_32249.x1.svg"
+                        class="flex items-center justify-center"
+                        style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
+                      />
+                    </td>
+                    <td
+                      class={`flex flex-1 self-stretch items-center justify-start`}
+                      style={"padding-left: 35px;"}
+                    >
+                      <div class="text-base leading-normal">Mystery</div>
+                    </td>
+                    <td
+                      class={`flex self-stretch space-x-6 items-center justify-center`}
+                      style={""}
+                    >
+                      <div class="flex self-stretch items-center justify-center rounded">
+                        <img
+                          src="/fimgs/I2038_13795_2038_13615.x1.svg"
+                          style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
+                        />
+                      </div>
+                      <img
+                        src="/fimgs/I2038_13795_2038_13616.x1.svg"
+                        class="flex self-stretch items-center justify-center rounded"
+                        style="width: 20px; min-width: 20px; max-width: 20px; height: 40px; min-height: 40px; max-height: 40px;"
+                      />
+                    </td>
+                  </tr>
                 </tbody>
               </table>
               <div class="flex self-stretch space-x-2.5 items-center justify-start bg-white">
