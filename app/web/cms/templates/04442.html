@@ -1,26 +1,91 @@
 <>
-  <effect meta={{}} run={async () => {}} />
-  <div class={`w-full flex items-start justify-start`}>
-    <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
-      <w-sidebar
-        class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900`}
-        style={"background-color: black"}
-      />
-      <div
-        class={`w-full flex flex-1 self-stretch flex-col items-start justify-start pt-9 pb-8 bg-gray-100`}
-      >
-        <div
-          class={`w-full flex flex-1 self-stretch flex-col space-y-9 items-start justify-start px-9`}
-        >
+  <effect meta={{ showProfile: false, showMasterData: false, showManagement: false, changeProfile: (open)=> {},
+    changeManagement: (open) => {},
+    changeMasterData: (open) => {},
+    authors: [],
+
+    async editAuthor(id) {
+    navigate("/w-master-author/edit/" + id);
+    },
+
+    async deleteAuthor(id) {
+    console.log(id);
+    confirm("Confrim Delete") &&
+    (await api("/api/authors", {
+    authors: {
+    author_id: id,
+    },
+    e: "Delete",
+    }).then((res) => {
+    navigate("/w-master-author");
+    }));
+    },
+
+    async logout() {
+    confirm("Logout of admin?") &&
+    (await api("/api/admin", {
+    data: "",
+    event: "Logout",
+    }).then((res) => {
+    navigate("/login-admin");
+    }));
+    },
+    }}
+    run={async () => {
+    meta.action = {
+    changeMasterData: (open) => {
+    meta.showMasterData = open;
+    let img = document.getElementById("chevron-master");
+
+    if (open == true) {
+    img.setAttribute("style", "transform: rotate(0deg);");
+    } else {
+    img.setAttribute("style", "transform: rotate(180deg);");
+    }
+    },
+    changeManagement: (open) => {
+    meta.showManagement = open;
+    let img = document.getElementById("chevron-management");
+
+    if (open == true) {
+    img.setAttribute("style", "transform: rotate(0deg);");
+    } else {
+    img.setAttribute("style", "transform: rotate(180deg);");
+    }
+    },
+    changeProfile: (open) => {
+    meta.showProfile = open;
+    },
+    };
+    var author = "";
+
+    if (window.user.roleAdmin !== "admin") {
+    navigate("/login-admin");
+    }
+
+    await api("/api/authors", {
+    authors: " ",
+    e: "ReadAll",
+    }).then((res) => {
+    author = res.authors;
+    });
+    runInAction(() => {
+    meta.authors = author;
+    });
+    console.log(meta.authors);
+    }}
+    />
+    {window.user.roleAdmin === "admin" && (
+    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
+      <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
+        <div class={`w-full flex flex-1 self-stretch flex-col space-y-9 items-start justify-start px-9`}>
           <div class="flex self-stretch space-x-2.5 items-center justify-start">
             <div class="flex flex-1 items-start justify-start">
               <div class="text-3xl font-bold leading-10">Data Author</div>
             </div>
             <w-profile-admin />
           </div>
-          <div
-            class={`w-full flex self-stretch flex-col space-y-9 items-start justify-start bg-white rounded`}
-          >
+          <div class={`w-full flex self-stretch flex-col space-y-9 items-start justify-start bg-white rounded`}>
             <div class="flex self-stretch items-start justify-start p-6 bg-orange-300">
               <div class="text-base font-bold leading-normal text-gray-900">
                 DATA AUTHOR
@@ -49,24 +114,16 @@
                 </div>
               </div>
               <div class="flex self-stretch flex-col space-y-4 items-start justify-start">
-                <table
-                  class={`table-auto borderflex self-stretch flex-col items-start justify-start border border-gray-300`}
-                >
-                  <thead
-                    class={`w-full flex self-stretch items-center justify-start py-1 pl-1 pr-2.5 bg-gray-300`}
-                  >
-                    <tr
-                      class={`w-full flex flex-1 self-stretch space-x-6 items-start justify-start`}
-                    >
+                <table class={`table-auto borderflex self-stretch flex-col items-start justify-start border
+                  border-gray-300`}>
+                  <thead class={`w-full flex self-stretch items-center justify-start py-1 pl-1 pr-2.5 bg-gray-300`}>
+                    <tr class={`w-full flex flex-1 self-stretch space-x-6 items-start justify-start`}>
                       <th class="flex self-stretch flex-col items-start justify-center">
                         <div class="text-base font-bold leading-normal">
                           No.
                         </div>
                       </th>
-                      <th
-                        class={`flex flex-1 self-stretch items-center justify-start`}
-                        style={"margin-left:20px;"}
-                      >
+                      <th class={`flex flex-1 self-stretch items-center justify-start`} style={"margin-left:20px;"}>
                         <div class="text-base font-bold leading-normal">
                           Nama Author
                         </div>
@@ -80,158 +137,93 @@
                   </thead>
                   <tbody class="flex flex-col items-start justify-start">
                     <tr class={`w-full flex items-start justify-start`}>
-                      <td
-                        class={`flex flex-col items-center justify-start pl-2.5`}
-                        style={"border: 1px solid #ddd; padding: 8px;"}
-                      >
+                      <td class={`flex flex-col items-center justify-start pl-2.5`} style={"border: 1px solid #ddd;
+                        padding: 8px;"}>
                         <div class="text-base leading-normal">1</div>
                       </td>
-                      <td
-                        class={`flex flex-1 self-stretch items-center justify-start`}
-                        style={"border: 1px solid #ddd; padding: 8px;"}
-                      >
+                      <td class={`flex flex-1 self-stretch items-center justify-start`} style={"border: 1px solid #ddd;
+                        padding: 8px;"}>
                         <div class="text-base leading-normal">
                           Fitra Rahmani Kasyah
                         </div>
                       </td>
-                      <td
-                        class={`flex space-x-6 items-center justify-center pr-2.5`}
-                        style={"border: 1px solid #ddd;"}
-                      >
-                        <img
-                          src="/fimgs/I1013_7111_1243_24468.x1.svg"
-                          class="flex items-start justify-start p-2.5"
-                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
-                        />
-                        <img
-                          src="/fimgs/I1013_7111_1243_24137.x1.svg"
-                          class="flex items-start justify-start p-2.5"
-                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
-                        />
+                      <td class={`flex space-x-6 items-center justify-center pr-2.5`} style={"border: 1px solid #ddd;"}>
+                        <img src="/fimgs/I1013_7111_1243_24468.x1.svg" class="flex items-start justify-start p-2.5"
+                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;" />
+                        <img src="/fimgs/I1013_7111_1243_24137.x1.svg" class="flex items-start justify-start p-2.5"
+                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;" />
                       </td>
                     </tr>
                     <tr class={`w-full flex items-start justify-start`}>
-                      <td
-                        class={`flex flex-col items-center justify-start pl-2.5`}
-                        style={"border: 1px solid #ddd; padding: 8px;"}
-                      >
+                      <td class={`flex flex-col items-center justify-start pl-2.5`} style={"border: 1px solid #ddd;
+                        padding: 8px;"}>
                         <div class="text-base leading-normal">2</div>
                       </td>
-                      <td
-                        class={`flex flex-1 self-stretch items-center justify-start`}
-                        style={"border: 1px solid #ddd; padding: 8px;"}
-                      >
+                      <td class={`flex flex-1 self-stretch items-center justify-start`} style={"border: 1px solid #ddd;
+                        padding: 8px;"}>
                         <div class="text-base leading-normal">
                           May Fransisca
                         </div>
                       </td>
-                      <td
-                        class={`flex space-x-6 items-center justify-center pr-2.5`}
-                        style={"border: 1px solid #ddd;"}
-                      >
-                        <img
-                          src="/fimgs/I1013_7094_1243_24468.x1.svg"
-                          class="flex items-start justify-start p-2.5"
-                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
-                        />
-                        <img
-                          src="/fimgs/I1013_7094_1243_24137.x1.svg"
-                          class="flex items-start justify-start p-2.5"
-                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
-                        />
+                      <td class={`flex space-x-6 items-center justify-center pr-2.5`} style={"border: 1px solid #ddd;"}>
+                        <img src="/fimgs/I1013_7094_1243_24468.x1.svg" class="flex items-start justify-start p-2.5"
+                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;" />
+                        <img src="/fimgs/I1013_7094_1243_24137.x1.svg" class="flex items-start justify-start p-2.5"
+                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;" />
                       </td>
                     </tr>
                     <tr class={`w-full flex items-start justify-start`}>
-                      <td
-                        class={`flex flex-col items-center justify-start pl-2.5`}
-                        style={"border: 1px solid #ddd; padding: 8px;"}
-                      >
+                      <td class={`flex flex-col items-center justify-start pl-2.5`} style={"border: 1px solid #ddd;
+                        padding: 8px;"}>
                         <div class="text-base leading-normal">3</div>
                       </td>
-                      <td
-                        class={`flex flex-1 self-stretch items-center justify-start`}
-                        style={"border: 1px solid #ddd; padding: 8px;"}
-                      >
+                      <td class={`flex flex-1 self-stretch items-center justify-start`} style={"border: 1px solid #ddd;
+                        padding: 8px;"}>
                         <div class="text-base leading-normal">
                           Muhammad Arif Saputra
                         </div>
                       </td>
-                      <td
-                        class={`flex space-x-6 items-center justify-center pr-2.5`}
-                        style={"border: 1px solid #ddd;"}
-                      >
-                        <img
-                          src="/fimgs/I1013_7162_1243_24468.x1.svg"
-                          class="flex items-start justify-start p-2.5"
-                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
-                        />
-                        <img
-                          src="/fimgs/I1013_7162_1243_24137.x1.svg"
-                          class="flex items-start justify-start p-2.5"
-                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
-                        />
+                      <td class={`flex space-x-6 items-center justify-center pr-2.5`} style={"border: 1px solid #ddd;"}>
+                        <img src="/fimgs/I1013_7162_1243_24468.x1.svg" class="flex items-start justify-start p-2.5"
+                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;" />
+                        <img src="/fimgs/I1013_7162_1243_24137.x1.svg" class="flex items-start justify-start p-2.5"
+                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;" />
                       </td>
                     </tr>
                     <tr class={`w-full flex items-start justify-start`}>
-                      <td
-                        class={`flex flex-col items-center justify-start pl-2.5`}
-                        style={"border: 1px solid #ddd; padding: 8px;"}
-                      >
+                      <td class={`flex flex-col items-center justify-start pl-2.5`} style={"border: 1px solid #ddd;
+                        padding: 8px;"}>
                         <div class="text-base leading-normal">4</div>
                       </td>
-                      <td
-                        class={`flex flex-1 self-stretch items-center justify-start`}
-                        style={"border: 1px solid #ddd; padding: 8px;"}
-                      >
+                      <td class={`flex flex-1 self-stretch items-center justify-start`} style={"border: 1px solid #ddd;
+                        padding: 8px;"}>
                         <div class="text-base leading-normal">
                           Muhammad Naufal Dzikrullah
                         </div>
                       </td>
-                      <td
-                        class={`flex space-x-6 items-center justify-center pr-2.5`}
-                        style={"border: 1px solid #ddd;"}
-                      >
-                        <img
-                          src="/fimgs/I1013_7145_1243_24468.x1.svg"
-                          class="flex items-start justify-start p-2.5"
-                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
-                        />
-                        <img
-                          src="/fimgs/I1013_7145_1243_24137.x1.svg"
-                          class="flex items-start justify-start p-2.5"
-                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
-                        />
+                      <td class={`flex space-x-6 items-center justify-center pr-2.5`} style={"border: 1px solid #ddd;"}>
+                        <img src="/fimgs/I1013_7145_1243_24468.x1.svg" class="flex items-start justify-start p-2.5"
+                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;" />
+                        <img src="/fimgs/I1013_7145_1243_24137.x1.svg" class="flex items-start justify-start p-2.5"
+                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;" />
                       </td>
                     </tr>
                     <tr class={`w-full flex items-start justify-start`}>
-                      <td
-                        class={`flex flex-col items-center justify-start pl-2.5`}
-                        style={"border: 1px solid #ddd; padding: 8px;"}
-                      >
+                      <td class={`flex flex-col items-center justify-start pl-2.5`} style={"border: 1px solid #ddd;
+                        padding: 8px;"}>
                         <div class="text-base leading-normal">5</div>
                       </td>
-                      <td
-                        class={`flex flex-1 self-stretch items-center justify-start`}
-                        style={"border: 1px solid #ddd; padding: 8px;"}
-                      >
+                      <td class={`flex flex-1 self-stretch items-center justify-start`} style={"border: 1px solid #ddd;
+                        padding: 8px;"}>
                         <div class="text-base leading-normal">
                           Nillasanti Puspita Ning Tyas
                         </div>
                       </td>
-                      <td
-                        class={`flex space-x-6 items-center justify-center pr-2.5`}
-                        style={"border: 1px solid #ddd;"}
-                      >
-                        <img
-                          src="/fimgs/I1013_7128_1243_24468.x1.svg"
-                          class="flex items-start justify-start p-2.5"
-                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
-                        />
-                        <img
-                          src="/fimgs/I1013_7128_1243_24137.x1.svg"
-                          class="flex items-start justify-start p-2.5"
-                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
-                        />
+                      <td class={`flex space-x-6 items-center justify-center pr-2.5`} style={"border: 1px solid #ddd;"}>
+                        <img src="/fimgs/I1013_7128_1243_24468.x1.svg" class="flex items-start justify-start p-2.5"
+                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;" />
+                        <img src="/fimgs/I1013_7128_1243_24137.x1.svg" class="flex items-start justify-start p-2.5"
+                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;" />
                       </td>
                     </tr>
                   </tbody>
@@ -260,5 +252,5 @@
         </div>
       </div>
     </div>
-  </div>
+    </div>
 </>

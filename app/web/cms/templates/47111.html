@@ -1,5 +1,60 @@
 <>
-  <effect meta={{}} run={async () => {}} />
+  <effect
+    meta={{
+      tags: [],
+
+      async editTag(id) {
+        navigate("/w-master-genre/edit/" + id);
+      },
+
+      async deleteTag(id) {
+        console.log(id);
+
+        try {
+          confirm("Confrim Delete") &&
+            (await api("/api/tags", {
+              tags: {
+                tag_id: id,
+              },
+              e: "Delete",
+            }).then((res) => {
+              navigate("/w-master-genre");
+            }));
+        } catch (e) {
+          alert("Can't delete genre, because related with interest user");
+          console.log(e);
+        }
+      },
+
+      async logout() {
+        confirm("Logout of admin?") &&
+          (await api("/api/admin", {
+            data: "",
+            event: "Logout",
+          }).then((res) => {
+            navigate("/login-admin");
+          }));
+      },
+    }}
+    run={async () => {
+      var tags = "";
+
+      if (window.user.roleAdmin !== "admin") {
+        navigate("/login-admin");
+      }
+
+      await api("/api/tags", {
+        tags: " ",
+        e: "ReadAll",
+      }).then((res) => {
+        tags = res.tags;
+      });
+      runInAction(() => {
+        meta.tags = tags;
+      });
+      console.log(meta.tags);
+    }}
+  />
   <div class={`w-full flex items-start justify-start bg-white`}>
     <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
       <w-sidebar
@@ -62,7 +117,9 @@
               <button
                 class={`flex space-x-1 items-start justify-start px-4 py-2 bg-amber-500 shadow rounded`}
                 style={`style={'margin-left: 10px;'}`}
-                onClick={onClick}
+                onClick={() => {
+                  navigate("/w-master-genre/add");
+                }}
               >
                 <img
                   src="/fimgs/2159_99166.x1.svg"
@@ -71,7 +128,7 @@
                 />
                 <div class={`flex self-stretch items-start justify-start`}>
                   <div class={`text-base font-bold leading-normal text-white`}>
-                    {children || "Tambah Genre Buku"}
+                    {children || "Tambah Genre"}
                   </div>
                 </div>
               </button>
@@ -80,169 +137,111 @@
               <table
                 class={`table-autoflex self-stretch flex-col items-start justify-start`}
               >
-                <tr
-                  class={`w-full flex self-stretch items-center justify-start p-4 bg-gray-900 rounded`}
-                >
-                  <th class="flex self-stretch flex-col items-start justify-center">
-                    <div class="text-base font-bold leading-normal text-white">
-                      NO
-                    </div>
-                  </th>
-                  <th
-                    class={`flex self-stretch items-center justify-start pr-6`}
-                    style={"margin-left:40px;"}
+                <thead class="flex self-stretch flex-col items-start justify-start">
+                  <tr
+                    class={`w-full flex items-center justify-start p-4 bg-gray-900 rounded`}
                   >
-                    <div class="text-base font-bold leading-normal text-white">
-                      IKON GENRE
-                    </div>
-                  </th>
-                  <th
-                    class={`flex flex-1 self-stretch items-center justify-start`}
-                    style={"margin-left:40px;"}
-                  >
-                    <div class="text-base font-bold leading-normal text-white">
-                      NAMA GENRE
-                    </div>
-                  </th>
-                  <th
-                    class={`flex items-center justify-center`}
-                    style={"margin-right: 15px;"}
-                  >
-                    <div class="text-base font-bold leading-normal text-white">
-                      AKSI
-                    </div>
-                  </th>
-                </tr>
+                    <th class="flex self-stretch flex-col items-start justify-center">
+                      <div class="text-base font-bold leading-normal text-white">
+                        NO
+                      </div>
+                    </th>
+                    <th
+                      class={`flex self-stretch items-center justify-start pr-6`}
+                      style={"margin-left:40px;"}
+                    >
+                      <div class="text-base font-bold leading-normal text-white">
+                        IKON GENRE
+                      </div>
+                    </th>
+                    <th
+                      class={`flex flex-1 self-stretch items-center justify-start`}
+                      style={"margin-left:40px;"}
+                    >
+                      <div class="text-base font-bold leading-normal text-white">
+                        NAMA GENRE
+                      </div>
+                    </th>
+                    <th
+                      class={`flex items-center justify-center`}
+                      style={"margin-right: 15px;"}
+                    >
+                      <div class="text-base font-bold leading-normal text-white">
+                        AKSI
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
                 <tbody class="flex self-stretch flex-col items-start justify-start">
-                  <tr
-                    class={`w-full flex self-stretch items-center justify-start px-4 py-3 bg-white rounded`}
-                    style={":hover {background-color: #ffbe76;"}
-                  >
-                    <td
-                      class={`flex flex-col items-center justify-center`}
-                      style={"padding: 10px"}
-                    >
-                      <div class="text-base leading-normal">1</div>
-                    </td>
-                    <td
-                      class={`flex self-stretch items-center justify-center`}
-                      style={"margin-left:67px; margin-right:67px;"}
-                    >
-                      <img
-                        src="/fimgs/I2038_13675_2159_32249.x1.svg"
-                        class="flex items-center justify-center"
-                        style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
-                      />
-                    </td>
-                    <td
-                      class={`flex flex-1 self-stretch items-center justify-start`}
-                      style={"padding-left: 35px;"}
-                    >
-                      <div class="text-base leading-normal">Mystery</div>
-                    </td>
-                    <td
-                      class={`flex self-stretch space-x-6 items-center justify-center`}
-                      style={""}
-                    >
-                      <div class="flex self-stretch items-center justify-center rounded">
-                        <img
-                          src="/fimgs/I2038_13675_2038_13615.x1.svg"
-                          style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
-                        />
-                      </div>
-                      <img
-                        src="/fimgs/I2038_13675_2038_13616.x1.svg"
-                        class="flex self-stretch items-center justify-center rounded"
-                        style="width: 20px; min-width: 20px; max-width: 20px; height: 40px; min-height: 40px; max-height: 40px;"
-                      />
-                    </td>
-                  </tr>
-                  <tr
-                    class={`w-full flex self-stretch items-center justify-start px-4 py-3 bg-orange-100 rounded`}
-                    style={":hover {background-color: #ffbe76;"}
-                  >
-                    <td
-                      class={`flex flex-col items-center justify-start`}
-                      style={"padding: 10px;"}
-                    >
-                      <div class="text-base leading-normal">2</div>
-                    </td>
-                    <td
-                      class={`flex self-stretch items-center justify-center`}
-                      style={"margin-left:67px; margin-right:67px;"}
-                    >
-                      <img
-                        src="/fimgs/I2038_13705_2159_73791.x1.svg"
-                        class="flex items-start justify-start"
-                        style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
-                      />
-                    </td>
-                    <td
-                      class={`flex flex-1 self-stretch items-center justify-start`}
-                      style={"padding-left: 35px;"}
-                    >
-                      <div class="text-base leading-normal">Science</div>
-                    </td>
-                    <td
-                      class={`flex self-stretch space-x-6 items-center justify-center`}
-                      style={""}
-                    >
-                      <div class="flex self-stretch items-center justify-center rounded">
-                        <img
-                          src="/fimgs/I2038_13705_2038_13645.x1.svg"
-                          style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
-                        />
-                      </div>
-                      <img
-                        src="/fimgs/I2038_13705_2038_13646.x1.svg"
-                        class="flex self-stretch items-center justify-center rounded"
-                        style="width: 20px; min-width: 20px; max-width: 20px; height: 40px; min-height: 40px; max-height: 40px;"
-                      />
-                    </td>
-                  </tr>
-                  <tr
-                    class={`w-full flex self-stretch items-center justify-start px-4 py-3 bg-white rounded`}
-                    style={":hover {background-color: #ffbe76;"}
-                  >
-                    <td
-                      class={`flex flex-col items-center justify-center`}
-                      style={"padding: 10px"}
-                    >
-                      <div class="text-base leading-normal">1</div>
-                    </td>
-                    <td
-                      class={`flex self-stretch items-center justify-center`}
-                      style={"margin-left:67px; margin-right:67px;"}
-                    >
-                      <img
-                        src="/fimgs/I2038_13795_2159_32249.x1.svg"
-                        class="flex items-center justify-center"
-                        style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
-                      />
-                    </td>
-                    <td
-                      class={`flex flex-1 self-stretch items-center justify-start`}
-                      style={"padding-left: 35px;"}
-                    >
-                      <div class="text-base leading-normal">Mystery</div>
-                    </td>
-                    <td
-                      class={`flex self-stretch space-x-6 items-center justify-center`}
-                      style={""}
-                    >
-                      <div class="flex self-stretch items-center justify-center rounded">
-                        <img
-                          src="/fimgs/I2038_13795_2038_13615.x1.svg"
-                          style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
-                        />
-                      </div>
-                      <img
-                        src="/fimgs/I2038_13795_2038_13616.x1.svg"
-                        class="flex self-stretch items-center justify-center rounded"
-                        style="width: 20px; min-width: 20px; max-width: 20px; height: 40px; min-height: 40px; max-height: 40px;"
-                      />
-                    </td>
-                  </tr>
+                  {meta.tags.map((numList, i) => {
+                    var odd = (i + 1) % 2;
+                    return (
+                      <tr
+                        class={`w-full flex self-stretch items-center justify-start px-4 py-3 bg-white rounded ${
+                          odd === 0 ? "bg-orange-100" : "bg-white"
+                        }`}
+                        style={":hover {background-color: #ffbe76;"}
+                      >
+                        <td
+                          class={`flex flex-col items-center justify-center`}
+                          style={"padding: 10px"}
+                        >
+                          <div class={`text-base leading-normal`}>{i + 1}</div>
+                        </td>
+                        <td
+                          class={`flex self-stretch space-x-2.5 items-center justify-center`}
+                          style={"margin-left:67px; margin-right:67px;"}
+                        >
+                          {numList.tag_picture === "-" && (
+                            <img
+                              src="/fimgs/2232_368894.x1.svg"
+                              class={`flex items-center justify-center`}
+                              style={`width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;`}
+                            />
+                          )}
+                          {numList.tag_picture !== "-" && (
+                            <img
+                              src={numList.tag_picture}
+                              class={`flex items-center justify-center`}
+                            />
+                          )}
+                        </td>
+                        <td
+                          class={`flex flex-1 self-stretch items-center justify-start`}
+                          style={"padding-left: 35px;"}
+                        >
+                          <div class={`text-base leading-normal`}>
+                            {numList.tag_name || "Nama Genre"}
+                          </div>
+                        </td>
+                        <td
+                          class={`flex self-stretch space-x-6 items-center justify-center`}
+                          style={""}
+                        >
+                          <div
+                            class={`flex self-stretch items-center justify-center rounded`}
+                            style={`cursor: pointer`}
+                            onClick={() => {
+                              meta.editTag(numList.tag_id);
+                            }}
+                          >
+                            <img
+                              src="/fimgs/2232_368912.x1.svg"
+                              style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
+                            />
+                          </div>
+                          <img
+                            src="/fimgs/2232_368913.x1.svg"
+                            class={`flex self-stretch items-center justify-center rounded`}
+                            style={`cursor: pointer`}
+                            onClick={() => {
+                              meta.deleteTag(numList.tag_id);
+                            }}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
               <div class="flex self-stretch space-x-2.5 items-center justify-start bg-white">
