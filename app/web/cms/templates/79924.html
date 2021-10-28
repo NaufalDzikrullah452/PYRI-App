@@ -1,6 +1,58 @@
 <>
-  <effect meta={{}} run={async () => {}} />
-  <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
+  <effect
+    meta={{
+      tag_name: "",
+      tag_picture: "-",
+
+      async onChange(key, e) {
+        let value = e.target.value;
+
+        if (key === "tag_picture") {
+          let image = value;
+          let split = image.split("\\");
+          console.log(split);
+        } else {
+          runInAction(() => (this[key] = value));
+        }
+
+        console.log(key + " : " + value);
+      },
+
+      validation() {
+        let msg =
+          this.tag_name === "" || this.tag_name === null
+            ? "Name cant be empty!"
+            : false;
+        return msg;
+      },
+
+      async submit() {
+        let error_msg = this.validation();
+
+        if (error_msg) {
+          alert(error_msg);
+        } else {
+          let tag = api("/api/tags", {
+            tags: {
+              tag_name: this.tag_name,
+              tag_date_updated: new Date(),
+              tag_picture: this.tag_picture,
+            },
+            e: "Create",
+          }).then((res) => {
+            console.log(res);
+            navigate("/w-master-genre");
+          });
+        }
+      },
+    }}
+    run={async () => {
+      if (window.user.roleAdmin !== "admin") {
+        navigate("/login-admin");
+      }
+    }}
+  />
+  <div class={`w-full flex items-start justify-start bg-white`}>
     <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
       <w-sidebar
         class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900`}
@@ -46,18 +98,25 @@
               </div>
             </div>
           </div>
-          <div class="flex self-stretch flex-col items-start justify-start p-9 bg-white rounded-bl-lg rounded-br-lg">
-            <div class="flex flex-col space-y-3 items-start justify-start">
+          <div class="flex self-stretch flex-col space-y-6 items-start justify-start p-9 bg-white rounded-bl-lg rounded-br-lg">
+            <div
+              class={`flex flex-col space-y-3 items-start justify-start w-full`}
+              style={`max-width:567px`}
+            >
               <div
-                class={`flex flex-col space-y-3 items-start justify-start`}
+                class={`flex self-stretch flex-col space-y-3 items-start justify-start`}
                 style={"margin-bottom: 15px;"}
               >
                 <div class="flex items-start justify-start">
                   <div class="text-base font-bold leading-normal">Ikon</div>
                 </div>
-                <div
-                  class="flex flex-col space-y-2.5 items-center justify-center p-4 bg-white border rounded border-gray-400"
-                  style="width: 567px; min-width: 567px; max-width: 567px; height: 210px; min-height: 210px; max-height: 210px;"
+                <input
+                  type={`file`}
+                  class={`flex self-stretch flex-col space-y-2.5 items-center justify-center p-4 bg-white border rounded border-gray-400 dropify`}
+                  style={`height: 210px; min-height: 210px; max-height: 210px;`}
+                  onChange={(e) => {
+                    meta.onChange("tag_picture", e);
+                  }}
                 />
               </div>
               <div class="flex items-start justify-start">
@@ -65,34 +124,48 @@
               </div>
               <div
                 class="flex self-stretch items-start justify-start px-4 py-2 border rounded border-gray-400"
-                style="width: 567px; min-width: 567px; max-width: 567px; height: 40px; min-height: 40px; max-height: 40px;"
+                style="height: 40px; min-height: 40px; max-height: 40px;"
               >
                 <input
                   class={"w-full"}
                   type="text"
-                  placeholder="masukkan nama author"
+                  placeholder="Masukkan nama genre"
                   style={`color: black;
       background:transparent; 
       outline: none;`}
-                  value={meta.publisher_name}
+                  value={meta.tag_name}
                   onChange={(e) => {
-                    meta.onChange(e);
+                    meta.onChange("tag_name", e);
                   }}
                 />
               </div>
               <div class="flex space-x-3 items-end justify-start pt-9">
-                <button class="flex items-start justify-start px-4 py-2 bg-amber-500 rounded">
+                <button
+                  class={`flex items-start justify-start px-4 py-2 bg-amber-500 rounded`}
+                  onClick={meta.submit}
+                >
                   <div class="text-base font-bold leading-normal text-white">
                     Tambah
                   </div>
                 </button>
-                <button class="flex items-start justify-start px-4 py-2 border rounded border-gray-400">
+                <button
+                  class={`flex items-start justify-start px-4 py-2 border rounded border-gray-400`}
+                  onClick={() => {
+                    navigate("/w-master-genre");
+                  }}
+                >
                   <div class="text-base font-bold leading-normal text-amber-500">
                     Batal
                   </div>
                 </button>
               </div>
             </div>
+            {meta.tag_picture !== "-" && (
+              <img
+                src={meta.tag_picture}
+                style={`width: 1042px; min-width: 1042px; max-width: 1042px; height: 40px; min-height: 40px; max-height: 40px;`}
+              />
+            )}
           </div>
         </div>
       </div>
