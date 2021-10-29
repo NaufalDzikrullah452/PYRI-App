@@ -1,0 +1,32 @@
+<>
+  <effect
+    meta={{
+      responseUpload: "",
+      upload: async (file) => {
+        const formData = _FormData();
+
+        formData.append("path", "custom-path");
+        formData.append("file", file);
+
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        return await response.json();
+      },
+    }}
+    run={() => {}}
+  />
+
+  <input
+    type="file"
+    onChange={(e) => {
+      runInAction(async () => {
+        const upload = await meta.upload(e.target.files[0]);
+        meta.responseUpload = upload;
+      });
+    }}
+  />
+  {meta.responseUpload}
+</>

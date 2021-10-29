@@ -1,3 +1,6 @@
+import fs from 'fs'
+import path from 'path'
+
 const CryptoJS = require("crypto-js");
 
 // Encrypt
@@ -9,6 +12,11 @@ const decrypt = (val) => {
     return bytes.toString(CryptoJS.enc.Utf8);
 }
 
+
+const { pipeline } = require('stream')
+const util = require('util')
+const pump = util.promisify(pipeline)
+
 export const ext = {
-    encrypt, decrypt
+    encrypt, decrypt, pump, fs, path
 }

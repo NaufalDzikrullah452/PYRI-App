@@ -30,3 +30,7 @@ export const dateFormat = (
     return ''
   }
 }
+
+export const _FormData = () => {
+  return new FormData();
+}
