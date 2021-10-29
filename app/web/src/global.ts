@@ -4,7 +4,6 @@ const md5 = require('md5');
 var validator = require('validator');
 var passwordValidator = require('password-validator');
 
-export const globalVar = {}
 
 export const formatSeparatorDec = (value: any, decimal?: number) => {
   if (decimal || decimal === 0) value = Number(value).toFixed(decimal)
@@ -57,7 +56,9 @@ const validatePass = (value) => {
 
   return schema.validate(value);
 }
-
+const _FormData = () => {
+  return new FormData();
+}
 
 export const globalVar = {
   dateFormat,
@@ -65,4 +66,5 @@ export const globalVar = {
   validateEmail,
   validatePass,
   validateDate,
+  _FormData
 }

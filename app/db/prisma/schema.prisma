@@ -1,10 +1,6 @@
 generator client {
-  <<<<<<< HEAD
-  provider        = "prisma-client-js"
-  =======
   provider        = "prisma-client-js"
   previewFeatures = ["orderByRelation"]
-  >>>>>>> ec4bdd6 (initial commit)
 }
 
 datasource db {

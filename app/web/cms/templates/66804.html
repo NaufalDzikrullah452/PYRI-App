@@ -1,21 +1,12 @@
 <>
   <effect
     meta={{
-      tag_id: "",
       tag_name: "",
-      tag_picture: "-",
+      tag_picture: "",
 
       async onChange(key, e) {
         let value = e.target.value;
-
-        if (key === "tag_picture") {
-          let image = value;
-          let split = image.split("\\");
-          console.log(split);
-        } else {
-          runInAction(() => (this[key] = value));
-        }
-
+        runInAction(() => (this[key] = value));
         console.log(key + " : " + value);
       },
 
@@ -33,12 +24,18 @@
         if (error_msg) {
           alert(error_msg);
         } else {
-          await api("/api/tags", {
+          // const response = await fetch("/api/upload", {
+          //   method: "POST",
+          //   body: this.form_data,
+          // });
+          // let res = await response.json();
+          // this.tag_picture = res.path;
+          let tag = api("/api/tags", {
             tags: {
-              tag_name: this.tag_name,
               tag_id: this.tag_id,
-              tag_picture: this.tag_picture,
+              tag_name: this.tag_name,
               tag_date_updated: new Date(),
+              tag_picture: this.tag_picture,
             },
             e: "Update",
           }).then((res) => {
@@ -46,6 +43,25 @@
             navigate("/w-master-genre");
           });
         }
+      },
+
+      // async setFile(formData) {
+      //   runInAction(() => {
+      //     this.form_data = formData;
+      //   })
+      //   console.log(this.form_data);
+      // },
+      async upload(file) {
+        const formData = _FormData();
+
+        formData.append("path", "img");
+        formData.append("file", file); // this.setFile(formData);
+
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+        return await response.json();
       },
     }}
     run={async () => {
@@ -74,11 +90,12 @@
         if (tag !== "") {
           meta.tag_id = tag.tag_id;
           meta.tag_name = tag.tag_name;
+          meta.tag_picture = tag.tag_picture;
         }
       }); // console.log(tag);
     }}
   />
-  <div class={`w-full flex items-start justify-start bg-white`}>
+  <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
     <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
       <w-sidebar
         class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900`}
@@ -141,7 +158,10 @@
                   class={`flex self-stretch flex-col space-y-2.5 items-center justify-center p-4 bg-white border rounded border-gray-400 dropify`}
                   style={`height: 210px; min-height: 210px; max-height: 210px;`}
                   onChange={(e) => {
-                    meta.onChange("tag_picture", e);
+                    runInAction(async () => {
+                      const upload = await meta.upload(e.target.files[0]);
+                      meta.tag_picture = upload.path;
+                    });
                   }}
                 />
               </div>

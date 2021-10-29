@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {},
   "dependencies": {
+    "crypto-js": "^4.1.1",
     "nodemailer": "^6.7.0"
   },
   "types": "./src/index.ts",

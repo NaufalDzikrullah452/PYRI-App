@@ -1,4 +1,22 @@
 var nodemailer = require('nodemailer');
+import fs from 'fs'
+import path from 'path'
+
+const CryptoJS = require("crypto-js");
+
+// Encrypt
+const encrypto = (val) => { return CryptoJS.AES.encrypt(val, 'secret key 123').toString() };
+
+// Decrypt
+const decrypto = (val) => {
+    var bytes = CryptoJS.AES.decrypt(val, 'secret key 123');
+    return bytes.toString(CryptoJS.enc.Utf8);
+}
+
+
+const { pipeline } = require('stream')
+const util = require('util')
+const pump = util.promisify(pipeline)
 
 const sendVerifCode = (email, value) => {
     var transporter = nodemailer.createTransport({
@@ -26,4 +44,4 @@ const sendVerifCode = (email, value) => {
         }
     });
 }
-export const ext = { sendVerifCode }
+export const ext = { sendVerifCode, encrypto, decrypto, pump, fs, path }

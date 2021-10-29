@@ -201,8 +201,9 @@
                           )}
                           {numList.tag_picture !== "-" && (
                             <img
-                              src={numList.tag_picture}
+                              src={`/upload/${numList.tag_picture}`}
                               class={`flex items-center justify-center`}
+                              style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
                             />
                           )}
                         </td>
