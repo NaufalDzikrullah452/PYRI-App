@@ -1,180 +1,212 @@
 <>
-  <effect meta={{ showProfile: false, showMasterData: false, showManagement: false, changeProfile: (open)=> {},
-    changeManagement: (open) => {},
-    changeMasterData: (open) => {},
-    tag_name: "",
-    tag_picture: "",
+  <effect
+    meta={{
+      showProfile: false,
+      showMasterData: false,
+      showManagement: false,
+      changeProfile: (open) => {},
+      changeManagement: (open) => {},
+      changeMasterData: (open) => {},
+      tag_name: "",
+      tag_picture: "",
 
-    async onChange(key, e) {
-    let value = e.target.value;
-    runInAction(() => (this[key] = value));
-    console.log(key + " : " + value);
-    },
+      async onChange(key, e) {
+        let value = e.target.value;
+        runInAction(() => (this[key] = value));
+        console.log(key + " : " + value);
+      },
 
-    validation() {
-    let msg =
-    this.tag_name === "" || this.tag_name === null
-    ? "Name cant be empty!"
-    : false;
-    return msg;
-    },
+      validation() {
+        let msg =
+          this.tag_name === "" || this.tag_name === null
+            ? "Name cant be empty!"
+            : false;
+        return msg;
+      },
 
-    async submit() {
-    let error_msg = this.validation();
+      async submit() {
+        let error_msg = this.validation();
 
-    if (error_msg) {
-    alert(error_msg);
-    } else {
-    // const response = await fetch("/api/upload", {
-    // method: "POST",
-    // body: this.form_data,
-    // });
-    // let res = await response.json();
-    // this.tag_picture = res.path;
-    let tag = api("/api/tags", {
-    tags: {
-    tag_id: this.tag_id,
-    tag_name: this.tag_name,
-    tag_date_updated: new Date(),
-    tag_picture: this.tag_picture,
-    },
-    e: "Update",
-    }).then((res) => {
-    console.log(res);
-    navigate("/w-master-genre");
-    });
-    }
-    },
+        if (error_msg) {
+          alert(error_msg);
+        } else {
+          // const response = await fetch("/api/upload", {
+          //   method: "POST",
+          //   body: this.form_data,
+          // });
+          // let res = await response.json();
+          // this.tag_picture = res.path;
+          let tag = api("/api/tags", {
+            tags: {
+              tag_id: this.tag_id,
+              tag_name: this.tag_name,
+              tag_date_updated: new Date(),
+              tag_picture: this.tag_picture,
+            },
+            e: "Update",
+          }).then((res) => {
+            console.log(res);
+            navigate("/w-master-genre");
+          });
+        }
+      },
 
-    // async setFile(formData) {
-    // runInAction(() => {
-    // this.form_data = formData;
-    // })
-    // console.log(this.form_data);
-    // },
-    async upload(file) {
-    const formData = _FormData();
+      // async setFile(formData) {
+      //   runInAction(() => {
+      //     this.form_data = formData;
+      //   })
+      //   console.log(this.form_data);
+      // },
+      async upload(file) {
+        const formData = _FormData();
 
-    formData.append("path", "img");
-    formData.append("file", file); // this.setFile(formData);
+        formData.append("path", "img");
+        formData.append("file", file); // this.setFile(formData);
 
-    const response = await fetch("/api/upload", {
-    method: "POST",
-    body: formData,
-    });
-    return await response.json();
-    },
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+        return await response.json();
+      },
     }}
     run={async () => {
-    meta.action = {
-    changeMasterData: (open) => {
-    meta.showMasterData = open;
-    let img = document.getElementById("chevron-master");
+      meta.action = {
+        changeMasterData: (open) => {
+          meta.showMasterData = open;
+          let img = document.getElementById("chevron-master");
 
-    if (open == true) {
-    img.setAttribute("style", "transform: rotate(0deg);");
-    } else {
-    img.setAttribute("style", "transform: rotate(180deg);");
-    }
-    },
-    changeManagement: (open) => {
-    meta.showManagement = open;
-    let img = document.getElementById("chevron-management");
+          if (open == true) {
+            img.setAttribute("style", "transform: rotate(0deg);");
+          } else {
+            img.setAttribute("style", "transform: rotate(180deg);");
+          }
+        },
+        changeManagement: (open) => {
+          meta.showManagement = open;
+          let img = document.getElementById("chevron-management");
 
-    if (open == true) {
-    img.setAttribute("style", "transform: rotate(0deg);");
-    } else {
-    img.setAttribute("style", "transform: rotate(180deg);");
-    }
-    },
-    changeProfile: (open) => {
-    meta.showProfile = open;
-    },
-    };
-    let tag = "";
+          if (open == true) {
+            img.setAttribute("style", "transform: rotate(0deg);");
+          } else {
+            img.setAttribute("style", "transform: rotate(180deg);");
+          }
+        },
+        changeProfile: (open) => {
+          meta.showProfile = open;
+        },
+      };
+      let tag = "";
 
-    if (window.user.roleAdmin !== "admin") {
-    navigate("/login-admin");
-    } else if (params.id) {
-    await api("/api/tags", {
-    tags: {
-    tag_id: parseInt(params.id),
-    },
-    e: "ReadById",
-    }).then((res) => {
-    if (res.tags !== null) {
-    tag = res.tags;
-    } else {
-    navigate("/w-master-genre");
-    }
-    });
-    } else {
-    navigate("/w-master-genre");
-    }
+      if (window.user.roleAdmin !== "admin") {
+        navigate("/login-admin");
+      } else if (params.id) {
+        await api("/api/tags", {
+          tags: {
+            tag_id: parseInt(params.id),
+          },
+          e: "ReadById",
+        }).then((res) => {
+          if (res.tags !== null) {
+            tag = res.tags;
+          } else {
+            navigate("/w-master-genre");
+          }
+        });
+      } else {
+        navigate("/w-master-genre");
+      }
 
-    runInAction(() => {
-    if (tag !== "") {
-    meta.tag_id = tag.tag_id;
-    meta.tag_name = tag.tag_name;
-    meta.tag_picture = tag.tag_picture;
-    }
-    }); // console.log(tag);
+      runInAction(() => {
+        if (tag !== "") {
+          meta.tag_id = tag.tag_id;
+          meta.tag_name = tag.tag_name;
+          meta.tag_picture = tag.tag_picture;
+        }
+      }); // console.log(tag);
     }}
-    />
-    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
-      <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
-        <div class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full
-          overflow-y-auto`} style={"background-color: black"}>
-          <div class={`flex self-stretch space-x-8 items-center justify-start px-9 pt-8`} style={"margin-top:35px;"}>
-            <img src="/fimgs/2325_18991.x1.svg"
-              style="width: 36px; min-width: 36px; max-width: 36px; height: 36px; min-height: 36px; max-height: 36px;" />
-            <div class={`text-3xl font-bold leading-10 text-white`} style={"margin-left:20px;"}>
-              PYRI
+  />
+  <div class={`w-full flex items-start justify-start bg-white`}>
+    <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
+      <div
+        class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
+        style={"background-color: black"}
+      >
+        <div
+          class={`flex self-stretch space-x-8 items-center justify-start px-9 pt-8`}
+          style={"margin-top:35px;"}
+        >
+          <img
+            src="/fimgs/2325_18991.x1.svg"
+            style="width: 36px; min-width: 36px; max-width: 36px; height: 36px; min-height: 36px; max-height: 36px;"
+          />
+          <div
+            class={`text-3xl font-bold leading-10 text-white`}
+            style={"margin-left:20px;"}
+          >
+            PYRI
+          </div>
+        </div>
+        <div
+          class={`text-white flex flex-1 flex-col space-y-1 items-start justify-start px-2.5`}
+          style={"margin-top:50px;"}
+        >
+          <div
+            class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+            style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+          >
+            <img
+              src="/fimgs/2325_18995.x1.svg"
+              style="width: 16px; min-width: 16px; max-width: 16px; height: 16px; min-height: 16px; max-height: 16px;"
+            />
+            <div class="flex flex-1 items-center justify-start">
+              <div class="text-base font-bold leading-normal text-gray-50">
+                Dashboard
+              </div>
             </div>
           </div>
-          <div class={`text-white flex flex-1 flex-col space-y-1 items-start justify-start px-2.5`}
-            style={"margin-top:50px;"}>
-            <div class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-              style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}">
-              <img src="/fimgs/2325_18995.x1.svg"
-                style="width: 16px; min-width: 16px; max-width: 16px; height: 16px; min-height: 16px; max-height: 16px;" />
-              <div class="flex flex-1 items-center justify-start">
-                <div class="text-base font-bold leading-normal text-gray-50">
-                  Dashboard
-                </div>
-              </div>
-            </div>
-            <div class={`flex self-stretch space-x-2.5 items-center justify-center py-3 pl-9 pr-3 rounded-2xl`}
-              style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}" onClick={()=> {
+          <div
+            class={`flex self-stretch space-x-2.5 items-center justify-center py-3 pl-9 pr-3 rounded-2xl`}
+            style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+            onClick={() => {
               if (meta.showMasterData == false) {
-              meta.action.changeMasterData(true);
-              meta.action.changeManagement(false);
+                meta.action.changeMasterData(true);
+                meta.action.changeManagement(false);
               } else {
-              meta.action.changeMasterData(false);
-              meta.action.changeManagement(false);
+                meta.action.changeMasterData(false);
+                meta.action.changeManagement(false);
               }
-              }}
-              >
-              <img src="/fimgs/2325_19000.x1.svg"
-                style="width: 14.70px; min-width: 14.70px; max-width: 14.70px; height: 16px; min-height: 16px; max-height: 16px;" />
-              <div class="flex flex-1 items-center justify-center">
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-base font-bold leading-normal text-gray-50">
-                    Master Data
-                  </div>
+            }}
+          >
+            <img
+              src="/fimgs/2325_19000.x1.svg"
+              style="width: 14.70px; min-width: 14.70px; max-width: 14.70px; height: 16px; min-height: 16px; max-height: 16px;"
+            />
+            <div class="flex flex-1 items-center justify-center">
+              <div class="flex flex-1 items-start justify-start">
+                <div class="text-base font-bold leading-normal text-gray-50">
+                  Master Data
                 </div>
               </div>
-              <img src="/fimgs/2325_19005.x1.svg" class={`transform rotate-180`} id="chevron-master" style={`width:
-                18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height:
-                18.43px; margin-right:25px !important;`} />
             </div>
-            {meta.showMasterData && (
-            <div class={`flex self-stretch flex-col space-y-1 items-start justify-start`}>
-              <div class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}" onClick={()=> {
-                navigate("/w-master-kategori");
+            <img
+              src="/fimgs/2325_19005.x1.svg"
+              class={`transform rotate-180`}
+              id="chevron-master"
+              style={`width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px; margin-right:25px !important;`}
+            />
+          </div>
+          {meta.showMasterData && (
+            <div
+              class={`flex self-stretch flex-col space-y-1 items-start justify-start`}
+            >
+              <div
+                class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+                onClick={() => {
+                  navigate("/w-master-kategori");
                 }}
-                >
+              >
                 <div />
                 <div class="flex flex-1 items-start justify-start">
                   <div class="text-base font-bold leading-normal text-gray-50">
@@ -182,11 +214,13 @@
                   </div>
                 </div>
               </div>
-              <div class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}" onClick={()=> {
-                navigate("/w-master-genre");
+              <div
+                class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+                onClick={() => {
+                  navigate("/w-master-genre");
                 }}
-                >
+              >
                 <div />
                 <div class="flex flex-1 items-start justify-start">
                   <div class="text-base font-bold leading-normal text-gray-50">
@@ -194,11 +228,13 @@
                   </div>
                 </div>
               </div>
-              <div class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}" onClick={()=> {
-                navigate("/w-master-author");
+              <div
+                class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+                onClick={() => {
+                  navigate("/w-master-author");
                 }}
-                >
+              >
                 <div />
                 <div class="flex flex-1 items-start justify-start">
                   <div class="text-base font-bold leading-normal text-white">
@@ -206,11 +242,13 @@
                   </div>
                 </div>
               </div>
-              <div class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}" onClick={()=> {
-                navigate("/w-master-publisher");
+              <div
+                class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+                onClick={() => {
+                  navigate("/w-master-publisher");
                 }}
-                >
+              >
                 <div />
                 <div class="flex flex-1 items-start justify-start">
                   <div class="text-base font-bold leading-normal text-gray-50">
@@ -219,31 +257,43 @@
                 </div>
               </div>
             </div>
-            )}
-            <div class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-              style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}" onClick={()=> {
+          )}
+          <div
+            class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+            style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+            onClick={() => {
               if (meta.showManagement == false) {
-              meta.action.changeMasterData(false);
-              meta.action.changeManagement(true);
+                meta.action.changeMasterData(false);
+                meta.action.changeManagement(true);
               } else {
-              meta.action.changeMasterData(false);
-              meta.action.changeManagement(false);
+                meta.action.changeMasterData(false);
+                meta.action.changeManagement(false);
               }
-              }}
-              >
-              <img src="/fimgs/2325_19025.x1.svg" class="flex items-start justify-start"
-                style="width: 15.75px; min-width: 15.75px; max-width: 15.75px; height: 18px; min-height: 18px; max-height: 18px;" />
-              <div class="text-base font-bold leading-normal text-gray-50">
-                User Management
-              </div>
-              <img src="/fimgs/2325_19030.x1.svg" id="chevron-management" class={`transform rotate-180`} style={`width:
-                18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height:
-                18.43px;`} />
+            }}
+          >
+            <img
+              src="/fimgs/2325_19025.x1.svg"
+              class="flex items-start justify-start"
+              style="width: 15.75px; min-width: 15.75px; max-width: 15.75px; height: 18px; min-height: 18px; max-height: 18px;"
+            />
+            <div class="text-base font-bold leading-normal text-gray-50">
+              User Management
             </div>
-            {meta.showManagement && (
-            <div class={`flex self-stretch flex-col space-y-1 items-start justify-start`}>
-              <div class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}">
+            <img
+              src="/fimgs/2325_19030.x1.svg"
+              id="chevron-management"
+              class={`transform rotate-180`}
+              style={`width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px;`}
+            />
+          </div>
+          {meta.showManagement && (
+            <div
+              class={`flex self-stretch flex-col space-y-1 items-start justify-start`}
+            >
+              <div
+                class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+              >
                 <div />
                 <div class="flex flex-1 items-start justify-start">
                   <div class="text-base font-bold leading-normal text-gray-50">
@@ -251,8 +301,10 @@
                   </div>
                 </div>
               </div>
-              <div class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}">
+              <div
+                class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+              >
                 <div />
                 <div class="flex flex-1 items-start justify-start">
                   <div class="text-base font-bold leading-normal text-gray-50">
@@ -261,109 +313,138 @@
                 </div>
               </div>
             </div>
-            )}
-            <div class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-              style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}">
-              <img src="/fimgs/2325_19042.x1.svg"
-                style="width: 14.40px; min-width: 14.40px; max-width: 14.40px; height: 16px; min-height: 16px; max-height: 16px;" />
-              <div class="flex flex-1 items-start justify-start">
-                <div class="text-base font-bold leading-normal text-gray-50">
-                  Buku
-                </div>
+          )}
+          <div
+            class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+            style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+          >
+            <img
+              src="/fimgs/2325_19042.x1.svg"
+              style="width: 14.40px; min-width: 14.40px; max-width: 14.40px; height: 16px; min-height: 16px; max-height: 16px;"
+            />
+            <div class="flex flex-1 items-start justify-start">
+              <div class="text-base font-bold leading-normal text-gray-50">
+                Buku
               </div>
             </div>
-            <div />
           </div>
-          <div class="flex self-stretch items-center justify-center">
-            <div class="text-base leading-normal text-center text-gray-500">
-              Copyright © 2021 Pyri
+          <div />
+        </div>
+        <div class="flex self-stretch items-center justify-center">
+          <div class="text-base leading-normal text-center text-gray-500">
+            Copyright © 2021 Pyri
+          </div>
+        </div>
+      </div>
+      <div
+        class={`w-full flex flex-1 self-stretch flex-col space-y-9 items-start justify-start bg-gray-100`}
+        style={"margin-left:254px;"}
+      >
+        <div class="flex self-stretch flex-col items-start justify-center py-9 bg-white">
+          <div class="flex self-stretch flex-col items-start justify-start px-9">
+            <div class="flex self-stretch space-x-2.5 items-center justify-start">
+              <div class="flex flex-1 items-start justify-start">
+                <div class="text-3xl font-bold leading-10">Genre Buku</div>
+              </div>
+              <div class="flex space-x-2.5 items-center justify-end px-4">
+                <img
+                  src="/fimgs/2196_16932.x1.png"
+                  class="flex items-start justify-start p-2.5"
+                  style="width: 60px; min-width: 60px; max-width: 60px; height: 60px; min-height: 60px; max-height: 60px;"
+                />
+                <div class="flex items-start justify-start">
+                  <div class="text-base font-medium leading-normal text-gray-700">
+                    Savannah Nguyen
+                  </div>
+                </div>
+                <img
+                  src="/fimgs/2196_16936.x1.svg"
+                  style="width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px;"
+                />
+              </div>
             </div>
           </div>
         </div>
-        <div class={`w-full flex flex-1 self-stretch flex-col space-y-9 items-start justify-start bg-gray-100`}
-          style={"margin-left:254px;"}>
-          <div class="flex self-stretch flex-col items-start justify-center py-9 bg-white">
-            <div class="flex self-stretch flex-col items-start justify-start px-9">
-              <div class="flex self-stretch space-x-2.5 items-center justify-start">
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-3xl font-bold leading-10">Genre Buku</div>
-                </div>
-                <div class="flex space-x-2.5 items-center justify-end px-4">
-                  <img src="/fimgs/2196_16932.x1.png" class="flex items-start justify-start p-2.5"
-                    style="width: 60px; min-width: 60px; max-width: 60px; height: 60px; min-height: 60px; max-height: 60px;" />
-                  <div class="flex items-start justify-start">
-                    <div class="text-base font-medium leading-normal text-gray-700">
-                      Savannah Nguyen
-                    </div>
-                  </div>
-                  <img src="/fimgs/2196_16936.x1.svg"
-                    style="width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px;" />
+        <div
+          class={`w-full flex self-stretch flex-col items-start justify-start px-9 rounded`}
+        >
+          <div class="flex self-stretch flex-col items-center justify-start p-6 bg-gray-900 rounded-tl-lg rounded-tr-lg">
+            <div class="flex self-stretch items-start justify-start">
+              <div class="flex flex-1 self-stretch items-center justify-start">
+                <div class="text-base font-bold leading-normal text-white">
+                  EDIT GENRE BUKU
                 </div>
               </div>
             </div>
           </div>
-          <div class={`w-full flex self-stretch flex-col items-start justify-start px-9 rounded`}>
+          <div class="flex self-stretch flex-col items-start justify-start p-9 bg-white rounded-bl-lg rounded-br-lg">
             <div
-              class="flex self-stretch flex-col items-center justify-start p-6 bg-gray-900 rounded-tl-lg rounded-tr-lg">
-              <div class="flex self-stretch items-start justify-start">
-                <div class="flex flex-1 self-stretch items-center justify-start">
-                  <div class="text-base font-bold leading-normal text-white">
-                    EDIT GENRE BUKU
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="flex self-stretch flex-col items-start justify-start p-9 bg-white rounded-bl-lg rounded-br-lg">
-              <div class={`flex flex-col space-y-3 items-start justify-start w-full`} style={`max-width:567px`}>
-                <div class={`flex self-stretch flex-col space-y-3 items-start justify-start`} style={"margin-bottom:
-                  15px;"}>
-                  <div class="flex items-start justify-start">
-                    <div class="text-base font-bold leading-normal">Ikon</div>
-                  </div>
-                  <input type={`file`} class={`flex self-stretch flex-col space-y-2.5 items-center justify-center p-4
-                    bg-white border rounded border-gray-400 dropify`} style={`height: 210px; min-height: 210px;
-                    max-height: 210px;`} onChange={(e)=> {
-                  <<<<<<< HEAD runInAction(async ()=> {
-                    const upload = await meta.upload(e.target.files[0]);
-                    meta.tag_picture = upload.path;
-                    });
-                    =======
-                    meta.onChange("tag_picture", e);
-                    >>>>>>> c7bedd7 (crud genre/tag (upload image not yet))
-                    }}
-                    />
-                </div>
+              class={`flex flex-col space-y-3 items-start justify-start w-full`}
+              style={`max-width:567px`}
+            >
+              <div
+                class={`flex self-stretch flex-col space-y-3 items-start justify-start`}
+                style={"margin-bottom: 15px;"}
+              >
                 <div class="flex items-start justify-start">
-                  <div class="text-base font-bold leading-normal">Nama Genre</div>
+                  <div class="text-base font-bold leading-normal">Ikon</div>
                 </div>
-                <div class="flex self-stretch items-start justify-start px-4 py-2 border rounded border-gray-400"
-                  style="height: 40px; min-height: 40px; max-height: 40px;">
-                  <input class={"w-full"} type="text" placeholder="Masukkan nama genre" style={`color: black;
-                    background:transparent; outline: none;`} value={meta.tag_name} onChange={(e)=> {
-                  meta.onChange("tag_name", e);
+                <input
+                  type={`file`}
+                  class={`flex self-stretch flex-col space-y-2.5 items-center justify-center p-4 bg-white border rounded border-gray-400 dropify`}
+                  style={`height: 210px; min-height: 210px; max-height: 210px;`}
+                  onChange={(e) => {
+                    runInAction(async () => {
+                      const upload = await meta.upload(e.target.files[0]);
+                      meta.tag_picture = upload.path;
+                    });
                   }}
-                  />
-                </div>
-                <div class="flex space-x-3 items-end justify-start pt-9">
-                  <button class={`flex items-start justify-start px-4 py-2 bg-amber-500 rounded`} onClick={meta.submit}>
-                    <div class="text-base font-bold leading-normal text-white">
-                      Simpan
-                    </div>
-                  </button>
-                  <button class={`flex items-start justify-start px-4 py-2 border rounded border-gray-400`}
-                    onClick={()=> {
+                />
+              </div>
+              <div class="flex items-start justify-start">
+                <div class="text-base font-bold leading-normal">Nama Genre</div>
+              </div>
+              <div
+                class="flex self-stretch items-start justify-start px-4 py-2 border rounded border-gray-400"
+                style="height: 40px; min-height: 40px; max-height: 40px;"
+              >
+                <input
+                  class={"w-full"}
+                  type="text"
+                  placeholder="Masukkan nama genre"
+                  style={`color: black;
+      background:transparent; 
+      outline: none;`}
+                  value={meta.tag_name}
+                  onChange={(e) => {
+                    meta.onChange("tag_name", e);
+                  }}
+                />
+              </div>
+              <div class="flex space-x-3 items-end justify-start pt-9">
+                <button
+                  class={`flex items-start justify-start px-4 py-2 bg-amber-500 rounded`}
+                  onClick={meta.submit}
+                >
+                  <div class="text-base font-bold leading-normal text-white">
+                    Simpan
+                  </div>
+                </button>
+                <button
+                  class={`flex items-start justify-start px-4 py-2 border rounded border-gray-400`}
+                  onClick={() => {
                     navigate("/w-master-genre");
-                    }}
-                    >
-                    <div class="text-base font-bold leading-normal text-amber-500">
-                      Batal
-                    </div>
-                  </button>
-                </div>
+                  }}
+                >
+                  <div class="text-base font-bold leading-normal text-amber-500">
+                    Batal
+                  </div>
+                </button>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 </>

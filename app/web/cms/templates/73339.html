@@ -1,138 +1,160 @@
 <>
-  <effect meta={{ showProfile: false, showMasterData: false, showManagement: false, changeProfile: (open)=> {},
-    changeManagement: (open) => {},
-    changeMasterData: (open) => {},
-    author_id: "",
-    author_name: "",
+  <effect
+    meta={{
+      showProfile: false,
+      showMasterData: false,
+      showManagement: false,
+      changeProfile: (open) => {},
+      changeManagement: (open) => {},
+      changeMasterData: (open) => {},
+      author_id: "",
+      author_name: "",
 
-    async onChange(e) {
-    let value = e.target.value;
-    runInAction(() => (this.author_name = value));
-    console.log("authorName : " + value);
-    },
+      async onChange(e) {
+        let value = e.target.value;
+        runInAction(() => (this.author_name = value));
+        console.log("authorName  : " + value);
+      },
 
-    validation() {
-    let msg =
-    this.author_name === "" || this.author_name === null
-    ? "Name cant be empty!"
-    : false;
-    return msg;
-    },
+      validation() {
+        let msg =
+          this.author_name === "" || this.author_name === null
+            ? "Name cant be empty!"
+            : false;
+        return msg;
+      },
 
-    async submit() {
-    let error_msg = this.validation();
+      async submit() {
+        let error_msg = this.validation();
 
-    if (error_msg) {
-    alert(error_msg);
-    } else {
-    await api("/api/authors", {
-    authors: {
-    author_name: this.author_name,
-    author_id: this.author_id,
-    },
-    e: "Update",
-    }).then((res) => {
-    console.log(res);
-    navigate("/w-master-author");
-    });
-    }
-    },
+        if (error_msg) {
+          alert(error_msg);
+        } else {
+          await api("/api/authors", {
+            authors: {
+              author_name: this.author_name,
+              author_id: this.author_id,
+            },
+            e: "Update",
+          }).then((res) => {
+            console.log(res);
+            navigate("/w-master-author");
+          });
+        }
+      },
     }}
     run={async () => {
-    meta.action = {
-    changeMasterData: (open) => {
-    meta.showMasterData = open;
-    let img = document.getElementById("chevron-master");
+      meta.action = {
+        changeMasterData: (open) => {
+          meta.showMasterData = open;
+          let img = document.getElementById("chevron-master");
 
-    if (open == true) {
-    img.setAttribute("style", "transform: rotate(0deg);");
-    } else {
-    img.setAttribute("style", "transform: rotate(180deg);");
-    }
-    },
-    changeManagement: (open) => {
-    meta.showManagement = open;
-    let img = document.getElementById("chevron-management");
+          if (open == true) {
+            img.setAttribute("style", "transform: rotate(0deg);");
+          } else {
+            img.setAttribute("style", "transform: rotate(180deg);");
+          }
+        },
+        changeManagement: (open) => {
+          meta.showManagement = open;
+          let img = document.getElementById("chevron-management");
 
-    if (open == true) {
-    img.setAttribute("style", "transform: rotate(0deg);");
-    } else {
-    img.setAttribute("style", "transform: rotate(180deg);");
-    }
-    },
-    changeProfile: (open) => {
-    meta.showProfile = open;
-    },
-    };
-    let author = "";
+          if (open == true) {
+            img.setAttribute("style", "transform: rotate(0deg);");
+          } else {
+            img.setAttribute("style", "transform: rotate(180deg);");
+          }
+        },
+        changeProfile: (open) => {
+          meta.showProfile = open;
+        },
+      };
+      let author = "";
 
-    if (window.user.roleAdmin !== "admin") {
-    navigate("/login-admin");
-    } else if (params.id) {
-    await api("/api/authors", {
-    authors: {
-    author_id: parseInt(params.id),
-    },
-    e: "ReadById",
-    }).then((res) => {
-    if (res.authors !== null) {
-    author = res.authors;
-    } else {
-    navigate("/w-master-author");
-    }
-    });
-    } else {
-    navigate("/w-master-author");
-    }
+      if (window.user.roleAdmin !== "admin") {
+        navigate("/login-admin");
+      } else if (params.id) {
+        await api("/api/authors", {
+          authors: {
+            author_id: parseInt(params.id),
+          },
+          e: "ReadById",
+        }).then((res) => {
+          if (res.authors !== null) {
+            author = res.authors;
+          } else {
+            navigate("/w-master-author");
+          }
+        });
+      } else {
+        navigate("/w-master-author");
+      }
 
-    runInAction(() => {
-    if (author !== "") {
-    meta.author_id = author.author_id;
-    meta.author_name = author.author_name;
-    }
-    }); // console.log(author);
+      runInAction(() => {
+        if (author !== "") {
+          meta.author_id = author.author_id;
+          meta.author_name = author.author_name;
+        }
+      }); // console.log(author);
     }}
-    />
-    {window.user.roleAdmin === "admin" && (
+  />
+  {window.user.roleAdmin === "admin" && (
     <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
       <div class="flex flex-1 self-stretch items-start justify-start">
-        <div class={`flex flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
-          style={"background-color: black"}>
-          <div class={`flex self-stretch space-x-8 items-center justify-start px-9 pt-8`} style={"margin-top:35px;"}>
-            <img src="/fimgs/2259_108756.x1.svg"
-              style="width: 36px; min-width: 36px; max-width: 36px; height: 36px; min-height: 36px; max-height: 36px;" />
-            <div class={`text-3xl font-bold leading-10 text-white`} style={"margin-left:20px;"}>
+        <div
+          class={`flex flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
+          style={"background-color: black"}
+        >
+          <div
+            class={`flex self-stretch space-x-8 items-center justify-start px-9 pt-8`}
+            style={"margin-top:35px;"}
+          >
+            <img
+              src="/fimgs/2259_108756.x1.svg"
+              style="width: 36px; min-width: 36px; max-width: 36px; height: 36px; min-height: 36px; max-height: 36px;"
+            />
+            <div
+              class={`text-3xl font-bold leading-10 text-white`}
+              style={"margin-left:20px;"}
+            >
               PYRI
             </div>
           </div>
-          <div class={`text-white flex flex-1 flex-col space-y-1 items-start justify-start px-2.5`}
-            style={"margin-top:50px;"}>
-            <div class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-              style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}">
-              <img src="/fimgs/2259_108760.x1.svg"
-                style="width: 16px; min-width: 16px; max-width: 16px; height: 16px; min-height: 16px; max-height: 16px;" />
+          <div
+            class={`text-white flex flex-1 flex-col space-y-1 items-start justify-start px-2.5`}
+            style={"margin-top:50px;"}
+          >
+            <div
+              class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+              style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+            >
+              <img
+                src="/fimgs/2259_108760.x1.svg"
+                style="width: 16px; min-width: 16px; max-width: 16px; height: 16px; min-height: 16px; max-height: 16px;"
+              />
               <div class="flex flex-1 items-center justify-start">
                 <div class="text-base font-bold leading-normal text-gray-50">
                   Dashboard
                 </div>
               </div>
-              <img src="/fimgs/2259_108770.x1.svg" class={`transform rotate-180`} id="chevron-master" style={`width:
-                18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height:
-                18.43px; margin-right:25px !important;`} />
             </div>
-            <div class={`flex self-stretch space-x-2.5 items-center justify-center py-3 pl-9 pr-3 rounded-2xl`}
-              style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}" onClick={()=> {
-              if (meta.showMasterData == false) {
-              meta.action.changeMasterData(true);
-              meta.action.changeManagement(false);
-              } else {
-              meta.action.changeMasterData(false);
-              meta.action.changeManagement(false);
-              }
+            <div
+              class={`flex self-stretch space-x-2.5 items-center justify-center py-3 pl-9 pr-3 rounded-2xl`}
+              style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+              onClick={() => {
+                if (meta.showMasterData == false) {
+                  meta.action.changeMasterData(true);
+                  meta.action.changeManagement(false);
+                } else {
+                  meta.action.changeMasterData(false);
+                  meta.action.changeManagement(false);
+                }
               }}
-              >
-              <img src="/fimgs/2259_108765.x1.svg"
-                style="width: 14.70px; min-width: 14.70px; max-width: 14.70px; height: 16px; min-height: 16px; max-height: 16px;" />
+            >
+              <img
+                src="/fimgs/2259_108765.x1.svg"
+                style="width: 14.70px; min-width: 14.70px; max-width: 14.70px; height: 16px; min-height: 16px; max-height: 16px;"
+              />
               <div class="flex flex-1 items-center justify-center">
                 <div class="flex flex-1 items-start justify-start">
                   <div class="text-base font-bold leading-normal text-gray-50">
@@ -140,105 +162,139 @@
                   </div>
                 </div>
               </div>
-              <img src="/fimgs/2259_108770.x1.svg" class={`transform rotate-180`} id="chevron-master" style={`width:
-                18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height:
-                18.43px; margin-right:25px !important;`} />
+              <img
+                src="/fimgs/2259_108770.x1.svg"
+                class={`transform rotate-180`}
+                id="chevron-master"
+                style={`width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px; margin-right:25px !important;`}
+              />
             </div>
             {meta.showMasterData && (
-            <div class={`flex self-stretch flex-col space-y-1 items-start justify-start`}>
-              <div class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}">
-                <div />
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-base font-bold leading-normal text-gray-50">
-                    Kategori Buku
-                  </div>
-                </div>
-              </div>
-              <div class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}">
-                <div />
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-base font-bold leading-normal text-gray-50">
-                    Genre Buku
-                  </div>
-                </div>
-              </div>
-              <div class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}" onClick={()=> {
-                navigate("/w-master-author");
-                }}
-                >
-                <div />
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-base font-bold leading-normal text-white">
-                    Author{" "}
-                  </div>
-                </div>
-              </div>
-              <div class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}" onClick={()=> {
-                navigate("/w-master-publisher");
-                }}
-                >
-                <div />
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-base font-bold leading-normal text-gray-50">
-                    Publisher
-                  </div>
-                </div>
-              </div>
-              <img src="/fimgs/2259_108795.x1.svg" id="chevron-management" class={`transform rotate-180`} style={`width:
-                18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height:
-                18.43px;`} />
-            </div>
-            )}
-            <div class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-              style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}" onClick={()=> {
-              if (meta.showManagement == false) {
-              meta.action.changeMasterData(false);
-              meta.action.changeManagement(true);
-              } else {
-              meta.action.changeMasterData(false);
-              meta.action.changeManagement(false);
-              }
-              }}
+              <div
+                class={`flex self-stretch flex-col space-y-1 items-start justify-start`}
               >
-              <img src="/fimgs/2259_108790.x1.svg" class="flex items-start justify-start"
-                style="width: 15.75px; min-width: 15.75px; max-width: 15.75px; height: 18px; min-height: 18px; max-height: 18px;" />
+                <div
+                  class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+                  onClick={() => {
+                    navigate("/w-master-kategori");
+                  }}
+                >
+                  <div />
+                  <div class="flex flex-1 items-start justify-start">
+                    <div class="text-base font-bold leading-normal text-gray-50">
+                      Kategori Buku
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+                  onClick={() => {
+                    navigate("/w-master-genre");
+                  }}
+                >
+                  <div />
+                  <div class="flex flex-1 items-start justify-start">
+                    <div class="text-base font-bold leading-normal text-gray-50">
+                      Genre Buku
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+                  onClick={() => {
+                    navigate("/w-master-author");
+                  }}
+                >
+                  <div />
+                  <div class="flex flex-1 items-start justify-start">
+                    <div class="text-base font-bold leading-normal text-white">
+                      Author{" "}
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+                  onClick={() => {
+                    navigate("/w-master-publisher");
+                  }}
+                >
+                  <div />
+                  <div class="flex flex-1 items-start justify-start">
+                    <div class="text-base font-bold leading-normal text-gray-50">
+                      Publisher
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            <div
+              class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+              style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+              onClick={() => {
+                if (meta.showManagement == false) {
+                  meta.action.changeMasterData(false);
+                  meta.action.changeManagement(true);
+                } else {
+                  meta.action.changeMasterData(false);
+                  meta.action.changeManagement(false);
+                }
+              }}
+            >
+              <img
+                src="/fimgs/2259_108790.x1.svg"
+                class="flex items-start justify-start"
+                style="width: 15.75px; min-width: 15.75px; max-width: 15.75px; height: 18px; min-height: 18px; max-height: 18px;"
+              />
               <div class="text-base font-bold leading-normal text-gray-50">
                 User Management
               </div>
-              <img src="/fimgs/2259_108795.x1.svg" id="chevron-management" class={`transform rotate-180`} style={`width:
-                18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height:
-                18.43px;`} />
+              <img
+                src="/fimgs/2259_108795.x1.svg"
+                id="chevron-management"
+                class={`transform rotate-180`}
+                style={`width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px;`}
+              />
             </div>
             {meta.showManagement && (
-            <div class={`flex self-stretch flex-col space-y-1 items-start justify-start`}>
-              <div class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}">
-                <div />
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-base font-bold leading-normal text-gray-50">
-                    Data User
+              <div
+                class={`flex self-stretch flex-col space-y-1 items-start justify-start`}
+              >
+                <div
+                  class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+                >
+                  <div />
+                  <div class="flex flex-1 items-start justify-start">
+                    <div class="text-base font-bold leading-normal text-gray-50">
+                      Data User
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+                >
+                  <div />
+                  <div class="flex flex-1 items-start justify-start">
+                    <div class="text-base font-bold leading-normal text-gray-50">
+                      Subcription
+                    </div>
                   </div>
                 </div>
               </div>
-              <div class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}">
-                <div />
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-base font-bold leading-normal text-gray-50">
-                    Subcription
-                  </div>
-                </div>
-              </div>
-            </div>
             )}
-            <div class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-              style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}">
-              <img src="/fimgs/2259_108807.x1.svg"
-                style="width: 14.40px; min-width: 14.40px; max-width: 14.40px; height: 16px; min-height: 16px; max-height: 16px;" />
+            <div
+              class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+              style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+            >
+              <img
+                src="/fimgs/2259_108807.x1.svg"
+                style="width: 14.40px; min-width: 14.40px; max-width: 14.40px; height: 16px; min-height: 16px; max-height: 16px;"
+              />
               <div class="flex flex-1 items-start justify-start">
                 <div class="text-base font-bold leading-normal text-gray-50">
                   Buku
@@ -253,64 +309,84 @@
             </div>
           </div>
         </div>
-        <div class={`w-full flex flex-col space-y-9 items-start justify-start bg-gray-100`}
-          style={"margin-left:254px;"}>
-          <div class={`flex self-stretch flex-col items-start justify-center p-9 bg-white`}>
+        <div
+          class={`w-full flex flex-col space-y-9 items-start justify-start bg-gray-100`}
+          style={"margin-left:254px;"}
+        >
+          <div
+            class={`flex self-stretch flex-col items-start justify-center p-9 bg-white`}
+          >
             <div class="flex self-stretch space-x-2.5 items-center justify-start">
               <div class="flex flex-1 items-start justify-start">
                 <div class="text-3xl font-bold leading-10">Author</div>
               </div>
               <div class="flex flex-col items-end justify-end">
                 <div class="flex items-center justify-end px-4">
-                  <div class={`flex space-x-2.5 items-center justify-center`} onClick={()=> {
-                    if (meta.showProfile == false) {
-                    meta.action.changeProfile(true);
-                    } else {
-                    meta.action.changeProfile(false);
-                    }
+                  <div
+                    class={`flex space-x-2.5 items-center justify-center`}
+                    onClick={() => {
+                      if (meta.showProfile == false) {
+                        meta.action.changeProfile(true);
+                      } else {
+                        meta.action.changeProfile(false);
+                      }
                     }}
-                    >
-                    <img src="/fimgs/2259_108817.x1.png" class="flex items-start justify-start p-2.5"
-                      style="width: 60px; min-width: 60px; max-width: 60px; height: 60px; min-height: 60px; max-height: 60px;" />
+                  >
+                    <img
+                      src="/fimgs/2259_108817.x1.png"
+                      class="flex items-start justify-start p-2.5"
+                      style="width: 60px; min-width: 60px; max-width: 60px; height: 60px; min-height: 60px; max-height: 60px;"
+                    />
                     <div class="flex items-start justify-start">
                       <div class="text-base font-medium leading-normal text-gray-700">
                         Savannah Nguyen
                       </div>
                     </div>
-                    <img src="/fimgs/2259_108821.x1.svg"
-                      style="width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px;" />
+                    <img
+                      src="/fimgs/2259_108821.x1.svg"
+                      style="width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px;"
+                    />
                   </div>
                 </div>
                 {meta.showProfile && (
-                <div class={`flex flex-col items-center justify-end px-4 absolute`} style={"top: 98px;"}>
-                  <div class={`flex flex-1 flex-col space-y-1 items-center justify-start px-8 py-4 bg-white shadow
-                    rounded`} style={`width: 142px; min-width: 142px; max-width: 142px; height: 84px; min-height: 84px;
-                    max-height: 84px;`}>
-                    <div class={`flex self-stretch items-center justify-center`}>
-                      <div class="text-base font-medium leading-normal text-gray-900">
-                        Edit Profile
+                  <div
+                    class={`flex flex-col items-center justify-end px-4 absolute`}
+                    style={"top: 98px;"}
+                  >
+                    <div
+                      class={`flex flex-1 flex-col space-y-1 items-center justify-start px-8 py-4 bg-white shadow rounded`}
+                      style={`width: 142px; min-width: 142px; max-width: 142px; height: 84px; min-height: 84px; max-height: 84px;`}
+                    >
+                      <div
+                        class={`flex self-stretch items-center justify-center`}
+                      >
+                        <div class="text-base font-medium leading-normal text-gray-900">
+                          Edit Profile
+                        </div>
                       </div>
-                    </div>
-                    <div class={`flex self-stretch space-x-2.5 items-center justify-center`} onClick={meta.logout}>
-                      <div class="text-base font-medium leading-normal text-gray-900">
-                        Logout
+                      <div
+                        class={`flex self-stretch space-x-2.5 items-center justify-center`}
+                        onClick={meta.logout}
+                      >
+                        <div class="text-base font-medium leading-normal text-gray-900">
+                          Logout
+                        </div>
+                        <img
+                          src="/fimgs/I2259_108824_1048_3884.x1.svg"
+                          class={`flex items-start justify-start`}
+                          style={`width: 18px; min-width: 18px; max-width: 18px; height: 18px; min-height: 18px; max-height: 18px;`}
+                        />
                       </div>
-                      <img src="/fimgs/I2259_108824_1048_3884.x1.svg" class={`flex items-start justify-start`}
-                        style={`width: 18px; min-width: 18px; max-width: 18px; height: 18px; min-height: 18px;
-                        max-height: 18px;`} />
                     </div>
                   </div>
-                  <img src="/fimgs/I2259_108824_1048_3884.x1.svg" class={`flex items-start justify-start`}
-                    style={`width: 18px; min-width: 18px; max-width: 18px; height: 18px; min-height: 18px; max-height:
-                    18px;`} />
-                </div>
                 )}
               </div>
             </div>
           </div>
-          <div class={`w-full flex self-stretch flex-col items-start justify-start px-9 rounded`}>
-            <div
-              class="flex self-stretch flex-col items-start justify-start p-6 bg-gray-900 rounded-tl-lg rounded-tr-lg">
+          <div
+            class={`w-full flex self-stretch flex-col items-start justify-start px-9 rounded`}
+          >
+            <div class="flex self-stretch flex-col items-start justify-start p-6 bg-gray-900 rounded-tl-lg rounded-tr-lg">
               <div class="flex flex-1 self-stretch items-center justify-start">
                 <div class="text-base font-bold leading-normal text-white">
                   EDIT AUTHOR
@@ -326,25 +402,39 @@
                     </div>
                   </div>
                   <div class="flex flex-1 items-start justify-start px-4 py-2 border rounded border-gray-400">
-                    <input class={"w-full"} type="text" placeholder="masukkan nama author" style={`color: black;
-                      background:transparent; outline: none;`} value={meta.author_name} onChange={(e)=> {
-                    meta.onChange(e);
-                    }}
+                    <input
+                      class={"w-full"}
+                      type="text"
+                      placeholder="masukkan nama author"
+                      style={`color: black;
+      background:transparent; 
+      outline: none;`}
+                      value={meta.author_name}
+                      onChange={(e) => {
+                        meta.onChange(e);
+                      }}
                     />
                   </div>
                 </div>
-                <div class={`flex self-stretch space-x-4 items-start justify-start`} style={"margin-left:95px;"}>
+                <div
+                  class={`flex self-stretch space-x-4 items-start justify-start`}
+                  style={"margin-left:95px;"}
+                >
                   <div />
-                  <button class={`flex items-start justify-start px-4 py-2 bg-amber-500 rounded`} onClick={meta.submit}>
+                  <button
+                    class={`flex items-start justify-start px-4 py-2 bg-amber-500 rounded`}
+                    onClick={meta.submit}
+                  >
                     <div class="text-base font-bold leading-normal text-white">
                       Simpan
                     </div>
                   </button>
-                  <button class={`flex items-start justify-start px-4 py-2 border rounded border-gray-400`}
-                    onClick={()=> {
-                    navigate("/w-master-author");
+                  <button
+                    class={`flex items-start justify-start px-4 py-2 border rounded border-gray-400`}
+                    onClick={() => {
+                      navigate("/w-master-author");
                     }}
-                    >
+                  >
                     <div class="text-base font-bold leading-normal text-amber-500">
                       Batal
                     </div>
@@ -356,5 +446,5 @@
         </div>
       </div>
     </div>
-    )}
+  )}
 </>

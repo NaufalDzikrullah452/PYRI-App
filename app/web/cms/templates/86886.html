@@ -1,283 +1,516 @@
 <>
-  <effect meta={{ user_id: "" , user_name: "" , user_email: "" , user_password: "" , user_new_password: "" ,
-    user_confirm_password: "" , user_gender: "" , user_birthday: "" , user_forgot_token: "-" ,
-    user_membership_status: "NonActive" , user_level: false, user_date_created: "" , user_note: null,
-    user_old_password: "" , pass_type: "password" , new_pass_type: "password" , confirm_pass_type: "password" , user:
-    [], pass_type: "password" , underline: "underline" , style_change_pass: "display:none!important" , max_date: new
-    Date(new Date().setFullYear(new Date().getFullYear() - 12)), async styleChangePass() { if
-    (this.style_change_pass==="display:none!important" ) { this.style_change_pass="" ; this.underline="" ; } else {
-    this.style_change_pass="display:none!important" ; this.underline="underline" ; } }, async showHidePass(key) {
-    this[key]==="password" ? (this[key]="text" ) : (this[key]="password" ); }, async onChange(key, e) { let
-    value=e.target.value; runInAction(()=> (this[key] = value));
-    console.log(key + " : " + value);
-    },
+  <effect
+    meta={{
+      user_id: "",
+      user_name: "",
+      user_email: "",
+      user_password: "",
+      user_new_password: "",
+      user_confirm_password: "",
+      user_gender: "",
+      user_birthday: "",
+      user_forgot_token: "-",
+      user_membership_status: "NonActive",
+      user_level: false,
+      user_date_created: "",
+      user_note: null,
+      user_old_password: "",
+      pass_type: "password",
+      new_pass_type: "password",
+      confirm_pass_type: "password",
+      user: [],
+      pass_type: "password",
+      underline: "underline",
+      style_change_pass: "display:none!important",
+      max_date: new Date(new Date().setFullYear(new Date().getFullYear() - 12)),
 
-    async onChangeDate(key, value) {
-    // let value = new Date(e);
-    runInAction(() => (this[key] = value));
-    console.log(key + " : " + value);
-    },
-
-    validation() {
-    let msg =
-    this.user_name === "" || this.user_name === null
-    ? "Name cant be empty!"
-    : this.user_email === "" || this.user_email === null
-    ? "Email cant be empty!"
-    : !validateEmail(this.user_email)
-    ? "Invalid email! (abc@xyz.com)"
-    : this.user_gender === "" || this.user_gender === null
-    ? "Please select your gender!"
-    : this.user_birthday == [] || this.user_birthday == null
-    ? "Please select your birthdate!"
-    : this.max_date <= new Date(this.user_birthday) ? "Please reselect your birthdate! 12 Years old++." : false;
-      //validasi pass if (this.style_change_pass==="" ) { if (!msg && this.user_password) {
-      msg=this.user_new_password==="" || this.user_new_password===null ? "New password cant be empty!" :
-      !validatePass(this.user_new_password) ? "New password length 8-16 <br/>Include Uppercase, Lowercase & No space" :
-      this.user_confirm_password==="" || this.user_confirm_password===null ? "Please confirm your new password!" :
-      this.user_new_password !==this.user_confirm_password ? "Confirm passwords don’t match!" :
-      encrypt(this.user_password) !==this.user_old_password ? "Your current password is wrong!" : false; } if (!msg &&
-      this.user_new_password) { msg=this.user_password==="" || this.user_password===null
-      ? "Current password needed for change password!" : this.user_confirm_password==="" ||
-      this.user_confirm_password===null ? "Please confirm your new password!" : false; } if (!msg &&
-      this.user_confirm_password) { msg=this.user_password==="" || this.user_password===null
-      ? "Current password needed for change password!" : this.user_new_password==="" || this.user_new_password===null
-      ? "New password cant be empty!" : false; } } // console.log(msg); return msg; }, async submit() { let
-      updateuser={}; let error_msg=this.validation(); if (error_msg) { window.mobileApp.app.dialog.alert(null,
-      error_msg); } else { window.mobileApp.app.dialog.confirm( "Confirm Update ?" , "Alert" , ()=> {
-      window.mobileApp.app.dialog.preloader();
-      let updateuser = {};
-
-      if (this.style_change_pass === "display: none!important") {
-      updateuser = {
-      user_id: this.user_id,
-      user_name: this.user_name,
-      user_email: this.user_email,
-      user_gender: this.user_gender,
-      user_birthday: new Date(this.user_birthday),
-      user_forgot_token: this.user_forgot_token,
-      user_membership_status: this.user_membership_status,
-      user_level: this.user_level,
-      user_date_created: this.user_date_created,
-      user_note: this.user_note,
-      };
-      } else {
-      updateuser = {
-      user_id: this.user_id,
-      user_name: this.user_name,
-      user_email: this.user_email,
-      user_password: encrypt(this.user_new_password),
-      user_gender: this.user_gender,
-      user_birthday: new Date(this.user_birthday),
-      user_forgot_token: this.user_forgot_token,
-      user_membership_status: this.user_membership_status,
-      user_level: this.user_level,
-      user_date_created: this.user_date_created,
-      user_note: this.user_note,
-      };
-      }
-
-      api("/api/api-users", {
-      users: { ...updateuser },
-      e: "Update",
-      }).then((res) => {
-      if (res === null) {
-      window.mobileApp.app.dialog.close();
-      window.mobileApp.app.dialog.alert(
-      null,
-      "Database insert Failed!"
-      );
-      } else {
-      console.log(res);
-      window.mobileApp.app.dialog.close();
-      window.mobileApp.app.dialog.alert(null, res.res);
-      window.user = {
-      role: "users",
-      user: res.users,
-      };
-      runInAction(() => {
-      this.user_id = res.users.user_id;
-      this.user_name = res.users.user_name;
-      this.user_email = res.users.user_email;
-      this.user_old_password = res.users.user_password;
-      this.user_gender = res.users.user_gender;
-      this.user_birthday = [res.users.user_birthday] || [];
-      this.user_forgot_token = res.users.user_forgot_token;
-      this.user_membership_status =
-      res.users.user_membership_status;
-      this.user_level = res.users.user_level;
-      this.user_date_created = res.users.user_date_created;
-      this.user_note = res.users.user_note;
-      this.user_password = "";
-      this.user_new_password = "";
-      this.user_confirm_password = "";
-      }); // navigate("/m/edit-profile");
-      }
-      });
-      window.mobileApp.app.dialog.close(); // console.log(updateuser);
-      }
-      );
-      }
+      async styleChangePass() {
+        if (this.style_change_pass === "display:none!important") {
+          this.style_change_pass = "";
+          this.underline = "";
+        } else {
+          this.style_change_pass = "display:none!important";
+          this.underline = "underline";
+        }
       },
-      }}
-      run={async () => {
+
+      async showHidePass(key) {
+        this[key] === "password"
+          ? (this[key] = "text")
+          : (this[key] = "password");
+      },
+
+      async onChange(key, e) {
+        let value = e.target.value;
+        runInAction(() => (this[key] = value));
+        console.log(key + " : " + value);
+      },
+
+      async onChangeDate(key, value) {
+        // let value = new Date(e);
+        runInAction(() => (this[key] = value));
+        console.log(key + " : " + value);
+      },
+
+      validation() {
+        let msg =
+          this.user_name === "" || this.user_name === null
+            ? "Name cant be empty!"
+            : this.user_email === "" || this.user_email === null
+            ? "Email cant be empty!"
+            : !validateEmail(this.user_email)
+            ? "Invalid email! (abc@xyz.com)"
+            : this.user_gender === "" || this.user_gender === null
+            ? "Please select your gender!"
+            : this.user_birthday == [] || this.user_birthday == null
+            ? "Please select your birthdate!"
+            : this.max_date <= new Date(this.user_birthday)
+            ? "Please reselect your birthdate! 12 Years old++."
+            : false; //validasi pass
+
+        if (this.style_change_pass === "") {
+          if (!msg && this.user_password) {
+            msg =
+              this.user_new_password === "" || this.user_new_password === null
+                ? "New password cant be empty!"
+                : !validatePass(this.user_new_password)
+                ? "New password length 8-16 <br/>Include Uppercase, Lowercase & No space"
+                : this.user_confirm_password === "" ||
+                  this.user_confirm_password === null
+                ? "Please confirm your new password!"
+                : this.user_new_password !== this.user_confirm_password
+                ? "Confirm passwords don’t match!"
+                : encrypt(this.user_password) !== this.user_old_password
+                ? "Your current password is wrong!"
+                : false;
+          }
+
+          if (!msg && this.user_new_password) {
+            msg =
+              this.user_password === "" || this.user_password === null
+                ? "Current password needed for change password!"
+                : this.user_confirm_password === "" ||
+                  this.user_confirm_password === null
+                ? "Please confirm your new password!"
+                : false;
+          }
+
+          if (!msg && this.user_confirm_password) {
+            msg =
+              this.user_password === "" || this.user_password === null
+                ? "Current password needed for change password!"
+                : this.user_new_password === "" ||
+                  this.user_new_password === null
+                ? "New password cant be empty!"
+                : false;
+          }
+        } // console.log(msg);
+
+        return msg;
+      },
+
+      async submit() {
+        let updateuser = {};
+        let error_msg = this.validation();
+
+        if (error_msg) {
+          window.mobileApp.app.dialog.alert(null, error_msg);
+        } else {
+          window.mobileApp.app.dialog.confirm(
+            "Confirm Update ?",
+            "Alert",
+            () => {
+              window.mobileApp.app.dialog.preloader();
+              let updateuser = {};
+
+              if (this.style_change_pass === "display:none!important") {
+                console.log("no password");
+                updateuser = {
+                  user_id: this.user_id,
+                  user_name: this.user_name,
+                  user_email: this.user_email,
+                  user_gender: this.user_gender,
+                  user_birthday: new Date(this.user_birthday),
+                  user_forgot_token: this.user_forgot_token,
+                  user_membership_status: this.user_membership_status,
+                  user_level: this.user_level,
+                  user_date_created: this.user_date_created,
+                  user_note: this.user_note,
+                };
+              } else {
+                console.log("with password");
+                updateuser = {
+                  user_id: this.user_id,
+                  user_name: this.user_name,
+                  user_email: this.user_email,
+                  user_password: encrypt(this.user_new_password),
+                  user_gender: this.user_gender,
+                  user_birthday: new Date(this.user_birthday),
+                  user_forgot_token: this.user_forgot_token,
+                  user_membership_status: this.user_membership_status,
+                  user_level: this.user_level,
+                  user_date_created: this.user_date_created,
+                  user_note: this.user_note,
+                };
+              }
+
+              api("/api/api-users", {
+                users: { ...updateuser },
+                e: "Update",
+              }).then((res) => {
+                if (res === null) {
+                  window.mobileApp.app.dialog.close();
+                  window.mobileApp.app.dialog.alert(
+                    null,
+                    "Database insert Failed!"
+                  );
+                } else {
+                  console.log(res);
+                  window.mobileApp.app.dialog.close();
+                  window.mobileApp.app.dialog.alert(null, res.res);
+                  window.user = {
+                    role: "users",
+                    user: res.users,
+                  };
+                  runInAction(() => {
+                    this.user_id = res.users.user_id;
+                    this.user_name = res.users.user_name;
+                    this.user_email = res.users.user_email;
+                    this.user_old_password = res.users.user_password;
+                    this.user_gender = res.users.user_gender;
+                    this.user_birthday = [res.users.user_birthday] || [];
+                    this.user_forgot_token = res.users.user_forgot_token;
+                    this.user_membership_status =
+                      res.users.user_membership_status;
+                    this.user_level = res.users.user_level;
+                    this.user_date_created = res.users.user_date_created;
+                    this.user_note = res.users.user_note;
+                    this.user_password = "";
+                    this.user_new_password = "";
+                    this.user_confirm_password = "";
+                  }); // navigate("/m/edit-profile");
+                }
+              });
+              window.mobileApp.app.dialog.close(); // console.log(updateuser);
+            }
+          );
+        }
+      },
+    }}
+    run={async () => {
       // const res = await api("/api/api-users", {
-      // users: "ReadMany",
-      // e: "ReadMany",
+      //   users: "ReadMany",
+      //   e: "ReadMany",
       // });
       runInAction(() => {
-      user = window.user.user || [];
+        user = window.user.user || [];
 
-      if (user.role !== "guest") {
-      meta.user_id = user.user_id;
-      meta.user_name = user.user_name;
-      meta.user_email = user.user_email;
-      meta.user_old_password = user.user_password;
-      meta.user_gender = user.user_gender;
-      meta.user_birthday = [user.user_birthday] || [];
-      meta.user_forgot_token = user.user_forgot_token;
-      meta.user_membership_status = user.user_membership_status;
-      meta.user_level = user.user_level;
-      meta.user_date_created = user.user_date_created;
-      meta.user_note = user.user_note;
-      }
+        if (user.role !== "guest") {
+          meta.user_id = user.user_id;
+          meta.user_name = user.user_name;
+          meta.user_email = user.user_email;
+          meta.user_old_password = user.user_password;
+          meta.user_gender = user.user_gender;
+          meta.user_birthday = [user.user_birthday] || [];
+          meta.user_forgot_token = user.user_forgot_token;
+          meta.user_membership_status = user.user_membership_status;
+          meta.user_level = user.user_level;
+          meta.user_date_created = user.user_date_created;
+          meta.user_note = user.user_note;
+        }
       });
       console.log(user); // console.log(res);
-      }}
-      />
-      <div class={`flex flex-col items-start justify-start bg-white`}>
-        <div class="flex flex-1 self-stretch flex-col space-y-8 items-start justify-start">
-          <div class={`flex self-stretch flex-col items-start justify-start px-6 pt-9 pb-4 bg-white shadow`}>
-            <div class="flex self-stretch space-x-4 items-center justify-start">
-              <div class="flex self-stretch items-center justify-start">
-                <img src="/fimgs/1255_80657.x1.svg" class={`flex self-stretch items-center justify-start`}
-                  style={`width: 24px; min-width: 24px; max-width: 24px; height: 30px; min-height: 30px; max-height:
-                  30px;`} onClick={(e)=> {
+    }}
+  />
+  <div class={`flex flex-col items-start justify-start bg-white`}>
+    <div class="flex flex-1 self-stretch flex-col space-y-8 items-start justify-start">
+      <div
+        class={`flex self-stretch flex-col items-start justify-start px-6 pt-9 pb-4 bg-white shadow`}
+      >
+        <div class="flex self-stretch space-x-4 items-center justify-start">
+          <div class="flex self-stretch items-center justify-start">
+            <img
+              src="/fimgs/1255_80657.x1.svg"
+              class={`flex self-stretch items-center justify-start`}
+              style={`width: 24px; min-width: 24px; max-width: 24px; height: 30px; min-height: 30px; max-height: 30px;`}
+              onClick={(e) => {
                 navigate("/m/");
-                }}
-                />
-              </div>
-              <div class="flex flex-1 items-center justify-center">
-                <div class={`text-xl font-bold leading-loose text-center`}>
-                  {children || "Edit Profile"}
-                </div>
-              </div>
-              <div />
+              }}
+            />
+          </div>
+          <div class="flex flex-1 items-center justify-center">
+            <div class={`text-xl font-bold leading-loose text-center`}>
+              {children || "Edit Profile"}
             </div>
           </div>
-          <div class={`flex flex-1 self-stretch flex-col space-y-8 items-start justify-start px-6 pb-8`}>
-            <div class="flex self-stretch flex-col space-y-2.5 items-center justify-center py-2">
-              <img src="/fimgs/1255_50620.x1.svg" />
-              <div class="flex items-start justify-start px-2 py-0.5 border rounded border-trueGray-600">
-                <div class="text-xs font-medium leading-none text-center text-trueGray-600">
-                  Change photo
-                </div>
-              </div>
-            </div>
-            <div class="flex self-stretch flex-col space-y-4 items-start justify-start">
-              <div class={`flex self-stretch items-start justify-start`} style={"margin-bottom: 10px"}>
-                <div class="text-base font-bold leading-normal">Pyri Account</div>
-              </div>
-              <m-list class={`flex self-stretch flex-col space-y-2 items-start justify-start list-none`}>
-                <div class="flex self-stretch flex-col items-start justify-start border border-gray-300">
-                  <input-new label={"Full Name"} type={"text"} class="w-full " floatingLabel={true} required={true}
-                    disabled={false} inputStyle={{ color: "white" , }} style={`color:white; background:transparent;
-                    border-radius: 5px !important;`} value={meta.user_name} onChange={(e)=> meta.onChange("user_name",
-                    e)}
-                    />
-                </div>
-                <div class={`flex self-stretch flex-col items-start justify-start border border-gray-300`}>
-                  <input-new label={"Email"} type={"email"} class="w-full " floatingLabel={true} required={true}
-                    disabled={true} inputStyle={{ color: "white" , }} style={`color:white; background:transparent;
-                    border-radius: 5px !important;`} value={meta.user_email} onChange={(e)=> meta.onChange("user_email",
-                    e)}
-                    />
-                </div>
-                <div class="flex self-stretch flex-col items-start justify-start border border-gray-300">
-                  <input-dropdown label={"Gender"} type={"select"} class="w-full " floatingLabel={true} required={true}
-                    inputStyle={{ color: "black" , }}
-                    style={ "color:black; background:transparent; border-radius: 5px !important; " }
-                    value={meta.user_gender} onChange={(e)=> meta.onChange("user_gender", e)}
-                    >
-                    option
-                  </input-dropdown>
-                </div>
-                <div class="flex self-stretch flex-col items-start justify-start border border-gray-300">
-                  <m-list-input label={"Birth Date"} type={"datepicker"} class="w-full " floatingLabel={true}
-                    clearButton={true} required={true} inputStyle={{ color: "black" , }} style={`color: black;
-                    background:transparent; border-radius: 5px !important;`} calendarParams={{ openIn: "customModal" ,
-                    closeOnSelect: true, yearPickerMax: new Date().getFullYear(), yearPickerMin: new
-                    Date().getFullYear() - 51, // maxDate: new Date().setFullYear(new Date().getFullYear() - 12),
-                    dateFormat: "dd MM yyyy" , on: { dayClick: function (calendar, dayEl, year, month, day) { var
-                    value=[year + "-" + (month + 1) + "-" + (day + 1)]; meta.onChangeDate("user_birthday", value); //
-                    console.log(validateDate(value)); }, }, }} value={meta.user_birthday} />
-                </div>
-              </m-list>
-              <div class={`flex self-stretch flex-col space-y-4 items-start justify-start`}>
-                <div class={`flex items-start justify-start`} style={"margin-bottom: 10px"}>
-                  <div class={`text-base font-bold leading-normal ${meta.underline}`} onClick={meta.styleChangePass}>
-                    Change Password
-                  </div>
-                </div>
-                <m-list class={`flex self-stretch flex-col space-y-2 items-start justify-start list-none`}
-                  style={`transition: opacity 150ms ease-in-out; ${meta.style_change_pass}`}>
-                  <div class={`flex self-stretch space-x-2.5 items-start justify-start border border-gray-300`}>
-                    <input-new label={"Current Password"} type={meta.pass_type} class="w-full " floatingLabel={true}
-                      required={true} disabled={false} inputStyle={{ color: "white" , }} style={`color:white;
-                      background:transparent; border-radius: 5px !important;`} value={meta.user_password}
-                      onChange={(e)=> meta.onChange("user_password", e)}
-                      />
-                      <div class={`flex self-stretch flex-col items-start justify-center pr-4 pt-4`} style={`width:
-                        37px; min-width: 37px; max-width: 37px; height: 60px; min-height: 60px; max-height: 60px;`}>
-                        <img src="/fimgs/1710_105937.x1.svg" class={`flex flex-col items-center justify-center`}
-                          style={`width: 22px; min-width: 22px; max-width: 22px; height: 15px; min-height: 15px;
-                          max-height: 15px;`} onClick={()=> {
-                        meta.showHidePass("pass_type");
-                        }}
-                        />
-                      </div>
-                  </div>
-                  <div class={`flex self-stretch space-x-2.5 items-start justify-start border border-gray-300`}>
-                    <input-new label={"New Password"} type={meta.new_pass_type} class="w-full " floatingLabel={true}
-                      required={true} disabled={false} inputStyle={{ color: "white" , }} style={`color:white;
-                      background:transparent; border-radius: 5px !important;`} value={meta.user_new_password}
-                      onChange={(e)=> meta.onChange("user_new_password", e)}
-                      />
-                      <div class={`flex self-stretch flex-col items-start justify-center pr-4 pt-4`} style={`width:
-                        37px; min-width: 37px; max-width: 37px; height: 60px; min-height: 60px; max-height: 60px;`}>
-                        <img src="/fimgs/1710_105679.x1.svg" class={`flex flex-col items-center justify-center`}
-                          style={`width: 22px; min-width: 22px; max-width: 22px; height: 15px; min-height: 15px;
-                          max-height: 15px;`} onClick={()=> {
-                        meta.showHidePass("new_pass_type");
-                        }}
-                        />
-                      </div>
-                  </div>
-                  <div class={`flex self-stretch space-x-2.5 items-start justify-start border border-gray-300`}>
-                    <input-new label={"Confirm New Password"} type={meta.confirm_pass_type} class="w-full "
-                      floatingLabel={true} required={true} disabled={false} inputStyle={{ color: "white" , }}
-                      style={`color:white; background:transparent; border-radius: 5px !important;`}
-                      value={meta.user_confirm_password} onChange={(e)=> meta.onChange("user_confirm_password", e)}
-                      />
-                      <div class={`flex self-stretch flex-col items-start justify-center pr-4 pt-4`} style={`width:
-                        37px; min-width: 37px; max-width: 37px; height: 60px; min-height: 60px; max-height: 60px;`}>
-                        <img src="/fimgs/1710_105043.x1.svg" class={`flex flex-col items-center justify-center`}
-                          style={`width: 22px; min-width: 22px; max-width: 22px; height: 15px; min-height: 15px;
-                          max-height: 15px;`} onClick={()=> {
-                        meta.showHidePass("confirm_pass_type");
-                        }}
-                        />
-                      </div>
-                  </div>
-                </m-list>
-              </div>
-            </div>
-            <btn-primary class={`flex flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-amber-500 rounded
-              rounded-md`} style="height: 60px; min-height: 60px; max-height: 60px; background-color: #FF8F00"
-              type={"submit"} onClick={meta.submit}>
-              Save
-            </btn-primary>
-          </div>
+          <div />
         </div>
       </div>
+      <div
+        class={`flex flex-1 self-stretch flex-col space-y-8 items-start justify-start px-6 pb-8`}
+      >
+        <div class="flex self-stretch flex-col space-y-2.5 items-center justify-center py-2">
+          <img src="/fimgs/1255_50620.x1.svg" />
+          <div class="flex items-start justify-start px-2 py-0.5 border rounded border-trueGray-600">
+            <div class="text-xs font-medium leading-none text-center text-trueGray-600">
+              Change photo
+            </div>
+          </div>
+        </div>
+        <div class="flex self-stretch flex-col space-y-4 items-start justify-start">
+          <div
+            class={`flex self-stretch items-start justify-start`}
+            style={"margin-bottom: 10px"}
+          >
+            <div class="text-base font-bold leading-normal">Pyri Account</div>
+          </div>
+          <m-list
+            class={`flex self-stretch flex-col space-y-2 items-start justify-start list-none`}
+          >
+            <div class="flex self-stretch flex-col items-start justify-start border border-gray-300">
+              <input-new
+                label={"Full Name"}
+                type={"text"}
+                class="w-full "
+                floatingLabel={true}
+                required={true}
+                disabled={false}
+                inputStyle={{
+                  color: "white",
+                }}
+                style={`color:white; 
+    background:transparent; 
+    border-radius: 5px !important;`}
+                value={meta.user_name}
+                onChange={(e) => meta.onChange("user_name", e)}
+              />
+            </div>
+            <div
+              class={`flex self-stretch flex-col items-start justify-start border border-gray-300`}
+            >
+              <input-new
+                label={"Email"}
+                type={"email"}
+                class="w-full "
+                floatingLabel={true}
+                required={true}
+                disabled={true}
+                inputStyle={{
+                  color: "white",
+                }}
+                style={`color:white; 
+    background:transparent; 
+    border-radius: 5px !important;`}
+                value={meta.user_email}
+                onChange={(e) => meta.onChange("user_email", e)}
+              />
+            </div>
+            <div class="flex self-stretch flex-col items-start justify-start border border-gray-300">
+              <m-list-input
+                label={"Gender"}
+                type={"select"}
+                class="w-full "
+                floatingLabel={true}
+                required={true}
+                inputStyle={{
+                  color: "black",
+                }}
+                style={
+                  "color:black; background:transparent; border-radius: 5px !important; "
+                }
+                value={meta.user_gender}
+                onChange={(e) => meta.onChange("user_gender", e)}
+              >
+                <option value={""} hidden={true} />
+                <option
+                  value={"male"}
+                  hidden={true}
+                  class={`flex self-stretch flex-col items-start justify-start`}
+                  style="color: black"
+                >
+                  male
+                </option>
+                <option
+                  value={"female"}
+                  hidden={true}
+                  class={`flex self-stretch flex-col items-start justify-start`}
+                  style="color: black"
+                >
+                  female
+                </option>
+                <option
+                  value={"unknown"}
+                  hidden={true}
+                  class={`flex self-stretch flex-col items-start justify-start`}
+                  style="color: black"
+                >
+                  {"rather not say"}
+                </option>
+                <></>
+              </m-list-input>
+            </div>
+            <div class="flex self-stretch flex-col items-start justify-start border border-gray-300">
+              <m-list-input
+                label={"Birth Date"}
+                type={"datepicker"}
+                class="w-full "
+                floatingLabel={true}
+                clearButton={true}
+                required={true}
+                inputStyle={{
+                  color: "black",
+                }}
+                style={`color: black; 
+      background:transparent; 
+      border-radius: 5px !important;`}
+                calendarParams={{
+                  openIn: "customModal",
+                  closeOnSelect: true,
+                  yearPickerMax: new Date().getFullYear(),
+                  yearPickerMin: new Date().getFullYear() - 51,
+                  // maxDate: new Date().setFullYear(new Date().getFullYear() - 12),
+                  dateFormat: "dd MM yyyy",
+                  on: {
+                    dayClick: function (calendar, dayEl, year, month, day) {
+                      var value = [year + "-" + (month + 1) + "-" + (day + 1)];
+                      meta.onChangeDate("user_birthday", value); // console.log(validateDate(value));
+                    },
+                  },
+                }}
+                value={meta.user_birthday}
+              />
+            </div>
+          </m-list>
+          <div
+            class={`flex self-stretch flex-col space-y-4 items-start justify-start`}
+          >
+            <div
+              class={`flex items-start justify-start`}
+              style={"margin-bottom: 10px"}
+            >
+              <div
+                class={`text-base font-bold leading-normal ${meta.underline}`}
+                onClick={meta.styleChangePass}
+              >
+                Change Password
+              </div>
+            </div>
+            <m-list
+              class={`flex self-stretch flex-col space-y-2 items-start justify-start list-none`}
+              style={`transition: opacity 150ms ease-in-out;
+  ${meta.style_change_pass}`}
+            >
+              <div
+                class={`flex self-stretch space-x-2.5 items-start justify-start border border-gray-300`}
+              >
+                <input-new
+                  label={"Current Password"}
+                  type={meta.pass_type}
+                  class="w-full "
+                  floatingLabel={true}
+                  required={true}
+                  disabled={false}
+                  inputStyle={{
+                    color: "white",
+                  }}
+                  style={`color:white; 
+    background:transparent; 
+    border-radius: 5px !important;`}
+                  value={meta.user_password}
+                  onChange={(e) => meta.onChange("user_password", e)}
+                />
+                <div
+                  class={`flex self-stretch flex-col items-start justify-center pr-4 pt-4`}
+                  style={`width: 37px; min-width: 37px; max-width: 37px; height: 60px; min-height: 60px; max-height: 60px;`}
+                >
+                  <img
+                    src="/fimgs/1710_105937.x1.svg"
+                    class={`flex flex-col items-center justify-center`}
+                    style={`width: 22px; min-width: 22px; max-width: 22px; height: 15px; min-height: 15px; max-height: 15px;`}
+                    onClick={() => {
+                      meta.showHidePass("pass_type");
+                    }}
+                  />
+                </div>
+              </div>
+              <div
+                class={`flex self-stretch space-x-2.5 items-start justify-start border border-gray-300`}
+              >
+                <input-new
+                  label={"New Password"}
+                  type={meta.new_pass_type}
+                  class="w-full "
+                  floatingLabel={true}
+                  required={true}
+                  disabled={false}
+                  inputStyle={{
+                    color: "white",
+                  }}
+                  style={`color:white; 
+    background:transparent; 
+    border-radius: 5px !important;`}
+                  value={meta.user_new_password}
+                  onChange={(e) => meta.onChange("user_new_password", e)}
+                />
+                <div
+                  class={`flex self-stretch flex-col items-start justify-center pr-4 pt-4`}
+                  style={`width: 37px; min-width: 37px; max-width: 37px; height: 60px; min-height: 60px; max-height: 60px;`}
+                >
+                  <img
+                    src="/fimgs/1710_105679.x1.svg"
+                    class={`flex flex-col items-center justify-center`}
+                    style={`width: 22px; min-width: 22px; max-width: 22px; height: 15px; min-height: 15px; max-height: 15px;`}
+                    onClick={() => {
+                      meta.showHidePass("new_pass_type");
+                    }}
+                  />
+                </div>
+              </div>
+              <div
+                class={`flex self-stretch space-x-2.5 items-start justify-start border border-gray-300`}
+              >
+                <input-new
+                  label={"Confirm New Password"}
+                  type={meta.confirm_pass_type}
+                  class="w-full "
+                  floatingLabel={true}
+                  required={true}
+                  disabled={false}
+                  inputStyle={{
+                    color: "white",
+                  }}
+                  style={`color:white; 
+    background:transparent; 
+    border-radius: 5px !important;`}
+                  value={meta.user_confirm_password}
+                  onChange={(e) => meta.onChange("user_confirm_password", e)}
+                />
+                <div
+                  class={`flex self-stretch flex-col items-start justify-center pr-4 pt-4`}
+                  style={`width: 37px; min-width: 37px; max-width: 37px; height: 60px; min-height: 60px; max-height: 60px;`}
+                >
+                  <img
+                    src="/fimgs/1710_105043.x1.svg"
+                    class={`flex flex-col items-center justify-center`}
+                    style={`width: 22px; min-width: 22px; max-width: 22px; height: 15px; min-height: 15px; max-height: 15px;`}
+                    onClick={() => {
+                      meta.showHidePass("confirm_pass_type");
+                    }}
+                  />
+                </div>
+              </div>
+            </m-list>
+          </div>
+        </div>
+        <btn-primary
+          class={`flex flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-amber-500 rounded rounded-md`}
+          style="height: 60px; min-height: 60px; max-height: 60px; background-color: #FF8F00"
+          type={"submit"}
+          onClick={meta.submit}
+        >
+          Save
+        </btn-primary>
+      </div>
+    </div>
+  </div>
 </>

@@ -1,198 +1,344 @@
 <>
-  <effect meta={{ loginURL: "/m/login" , user_id: "" , user_name: "" , user_email: "" , user_password: "" ,
-    user_gender: "" , user_birthday: "" , user_forgot_token: "-" , user_membership_status: "NonActive" , user_level:
-    false, user_date_created: new Date().toJSON(), user_note: null, pass_type: "password" , term: "" , max_date: new
-    Date(new Date().setFullYear(new Date().getFullYear() - 12)), async showHidePass() { this.pass_type==="password" ?
-    (this.pass_type="text" ) : (this.pass_type="password" ); }, async onChange(key, e) { let value=e.target.value; if
-    (key==="term" ) { this[key]==="on" ? (this[key]="off" ) : (this[key]=value); console.log(key + " : " + this[key]); }
-    else { runInAction(()=> (this[key] = value));
-    console.log(key + " : " + value);
-    }
-    },
+  <effect
+    meta={{
+      loginURL: "/m/login",
+      user_id: "",
+      user_name: "",
+      user_email: "",
+      user_password: "",
+      user_gender: "",
+      user_birthday: "",
+      user_forgot_token: "-",
+      user_membership_status: "NonActive",
+      user_level: false,
+      user_date_created: new Date().toJSON(),
+      user_note: null,
+      pass_type: "password",
+      term: "",
+      max_date: new Date(new Date().setFullYear(new Date().getFullYear() - 12)),
 
-    async onChangeDate(key, value) {
-    runInAction(() => (this[key] = value));
-    console.log("user_birthday : " + this.user_birthday);
-    },
-
-    validation() {
-    let msg =
-    this.user_name === "" || this.user_name === null
-    ? "Name cant be empty!"
-    : this.user_email === "" || this.user_email === null
-    ? "Email cant be empty!"
-    : !validateEmail(this.user_email)
-    ? "Invalid email! (abc@xyz.com)"
-    : this.user_gender === "" || this.user_gender === null
-    ? "Please select your gender!"
-    : this.user_birthday == [] || this.user_birthday == null
-    ? "Please select your birthdate!"
-    : this.max_date <= new Date(this.user_birthday) ? "Please reselect your birthdate! 12 Years old++." :
-      this.user_password==="" || this.user_password===null ? "Password cant be empty!" :
-      !validatePass(this.user_password) ? "Password length 8-16 <br/>Include Uppercase, Lowercase & No space" :
-      this.term==="" || this.term==="off" ? "Please Check the term & conditions!" : false; // console.log(msg); return
-      msg; }, async submit() { let users={}; let error_msg=this.validation(); if (error_msg) {
-      window.mobileApp.app.dialog.alert(null, error_msg); } else { let user={ user_name: this.user_name, user_email:
-      this.user_email, user_password: encrypt(this.user_password), user_gender: this.user_gender, user_birthday: new
-      Date(this.user_birthday.toString()), user_forgot_token: this.user_forgot_token, user_membership_status:
-      this.user_membership_status, user_level: this.user_level, user_date_created: this.user_date_created, user_note:
-      this.user_note, }; api("/api/api-users", { users: { ...user }, e: "FindEmail" , }).then((res)=> {
-      if (res.users !== null) {
-      window.mobileApp.app.dialog.alert(
-      null,
-      "Email Already Registered!"
-      );
-      } else {
-      window.mobileApp.app.dialog.confirm(
-      "Apakah data yang anda masukkan sudah benar?",
-      "Alert",
-      () => {
-      api("/api/api-users", {
-      users: { ...user },
-      e: "Register",
-      }).then((res) => {
-      if (res === null) {
-      window.mobileApp.app.dialog.alert(
-      null,
-      "Database insert Failed!"
-      );
-      } else {
-      console.log(res);
-      navigate("/m/login");
-      }
-      });
-      }
-      );
-      }
-      }); //
-      } // console.log(users);
+      async showHidePass() {
+        this.pass_type === "password"
+          ? (this.pass_type = "text")
+          : (this.pass_type = "password");
       },
-      }}
-      run={async () => {
+
+      async onChange(key, e) {
+        let value = e.target.value;
+
+        if (key === "term") {
+          this[key] === "on" ? (this[key] = "off") : (this[key] = value);
+          console.log(key + " : " + this[key]);
+        } else {
+          runInAction(() => (this[key] = value));
+          console.log(key + " : " + value);
+        }
+      },
+
+      async onChangeDate(key, value) {
+        runInAction(() => (this[key] = value));
+        console.log("user_birthday : " + this.user_birthday);
+      },
+
+      validation() {
+        let msg =
+          this.user_name === "" || this.user_name === null
+            ? "Name cant be empty!"
+            : this.user_email === "" || this.user_email === null
+            ? "Email cant be empty!"
+            : !validateEmail(this.user_email)
+            ? "Invalid email! (abc@xyz.com)"
+            : this.user_gender === "" || this.user_gender === null
+            ? "Please select your gender!"
+            : this.user_birthday == [] || this.user_birthday == null
+            ? "Please select your birthdate!"
+            : this.max_date <= new Date(this.user_birthday)
+            ? "Please reselect your birthdate! 12 Years old++."
+            : this.user_password === "" || this.user_password === null
+            ? "Password cant be empty!"
+            : !validatePass(this.user_password)
+            ? "Password length 8-16 <br/>Include Uppercase, Lowercase & No space"
+            : this.term === "" || this.term === "off"
+            ? "Please Check the term & conditions!"
+            : false; // console.log(msg);
+
+        return msg;
+      },
+
+      async submit() {
+        let users = {};
+        let error_msg = this.validation();
+
+        if (error_msg) {
+          window.mobileApp.app.dialog.alert(null, error_msg);
+        } else {
+          let user = {
+            user_name: this.user_name,
+            user_email: this.user_email,
+            user_password: encrypt(this.user_password),
+            user_gender: this.user_gender,
+            user_birthday: new Date(this.user_birthday.toString()),
+            user_forgot_token: this.user_forgot_token,
+            user_membership_status: this.user_membership_status,
+            user_level: this.user_level,
+            user_date_created: this.user_date_created,
+            user_note: this.user_note,
+          };
+          api("/api/api-users", {
+            users: { ...user },
+            e: "FindEmail",
+          }).then((res) => {
+            if (res.users !== null) {
+              window.mobileApp.app.dialog.alert(
+                null,
+                "Email Already Registered!"
+              );
+            } else {
+              window.mobileApp.app.dialog.confirm(
+                "Confirm your data?",
+                "Alert",
+                () => {
+                  api("/api/api-users", {
+                    users: { ...user },
+                    e: "Register",
+                  }).then((res) => {
+                    if (res === null) {
+                      window.mobileApp.app.dialog.alert(
+                        null,
+                        "Database insert Failed!"
+                      );
+                    } else {
+                      console.log(res);
+                      navigate("/m/login");
+                    }
+                  });
+                }
+              );
+            }
+          }); //
+        } // console.log(users);
+      },
+    }}
+    run={async () => {
       // const res = await api("/api/api-users", {
-      // users: "ReadMany",
-      // e: "ReadMany",
+      //   users: "ReadMany",
+      //   e: "ReadMany",
       // });
       // console.log(res);
-      }}
-      />
-      <div class={`flex flex-col items-start justify-start bg-white w-full h-full`}>
-        <div class={`flex flex-1 self-stretch flex-col items-center justify-center`} style={`background-image:
-          url('/fimgs/bg-ff2b4084986bd7da53995b9a752b9e5665e21788');background-size:100%
-          100%;background-repeat:no-repeat;`}>
-          <div class={`flex flex-1 self-stretch flex-col space-y-9 items-center justify-center px-9 py-16 bg-black
-            bg-opacity-50`} style={`backdrop-filter: blur(20px);`}>
-            <div class="flex flex-col items-center justify-center px-10 py-8 bg-white bg-opacity-30 rounded-3xl"
-              style="width: 126px; min-width: 126px; max-width: 126px; height: 92px; min-height: 92px; max-height: 92px;">
-              <div class="text-base font-medium leading-normal text-white">
-                LOGO
+    }}
+  />
+  <div class={`flex flex-col items-start justify-start bg-white w-full h-full`}>
+    <div
+      class={`flex flex-1 self-stretch flex-col items-center justify-center`}
+      style={`background-image: url('/fimgs/bg-ff2b4084986bd7da53995b9a752b9e5665e21788');background-size:100% 100%;background-repeat:no-repeat;`}
+    >
+      <div
+        class={`flex flex-1 self-stretch flex-col space-y-9 items-center justify-center px-9 py-16 bg-black bg-opacity-50`}
+        style={`backdrop-filter: blur(20px);`}
+      >
+        <div
+          class="flex flex-col items-center justify-center px-10 py-8 bg-white bg-opacity-30 rounded-3xl"
+          style="width: 126px; min-width: 126px; max-width: 126px; height: 92px; min-height: 92px; max-height: 92px;"
+        >
+          <div class="text-base font-medium leading-normal text-white">
+            LOGO
+          </div>
+        </div>
+        <div class="flex self-stretch flex-col items-center justify-start">
+          <div class="flex self-stretch flex-col items-center justify-center">
+            <div class={`text-3xl font-bold leading-10 text-center text-white`}>
+              Create your account
+            </div>
+          </div>
+        </div>
+        <div
+          class={`flex self-stretch flex-col space-y-8 items-start justify-start`}
+        >
+          <m-list
+            class={`flex flex-1 self-stretch flex-col space-y-4 items-start justify-start list-none`}
+          >
+            <div
+              class={`flex flex-1 self-stretch flex-col items-start justify-start border rounded border-white`}
+            >
+              <input-new-white
+                label={"Full Name"}
+                type={"text"}
+                class="w-full "
+                floatingLabel={true}
+                required={true}
+                inputStyle={{
+                  color: "white",
+                }}
+                style={`color: white; 
+      background:transparent; 
+      border-radius: 5px !important;`}
+                value={meta.user_name}
+                onChange={(e) => {
+                  meta.onChange("user_name", e);
+                }}
+              />
+            </div>
+            <div class="flex flex-1 self-stretch flex-col items-start justify-start border rounded border-white">
+              <input-new-white
+                label={"Email"}
+                type={"email"}
+                class="w-full "
+                floatingLabel={true}
+                required={true}
+                inputStyle={{
+                  color: "white",
+                }}
+                style={`color: white; 
+      background:transparent; 
+      border-radius: 5px !important;`}
+                value={meta.user_email}
+                onChange={(e) => {
+                  meta.onChange("user_email", e);
+                }}
+              />
+            </div>
+            <div class="flex self-stretch flex-col items-start justify-start border rounded border-white">
+              <input-dropdown-white
+                label={"Gender"}
+                type={"select"}
+                class="w-full "
+                floatingLabel={true}
+                required={true}
+                inputStyle={{
+                  color: "white",
+                }}
+                style={`color: white; 
+      background:transparent; 
+      border-radius: 5px !important;`}
+                value={meta.user_gender}
+                onChange={(e) => meta.onChange("user_gender", e)}
+              >
+                option
+              </input-dropdown-white>
+            </div>
+            <div class="flex flex-1 self-stretch flex-col items-start justify-start border rounded border-white">
+              <m-list-input
+                label={"Birth Date"}
+                type={"datepicker"}
+                class="w-full "
+                floatingLabel={true}
+                clearButton={true}
+                required={true}
+                inputStyle={{
+                  color: "white",
+                }}
+                style={`color: white; 
+      background:transparent; 
+      border-radius: 5px !important;`}
+                calendarParams={{
+                  openIn: "customModal",
+                  closeOnSelect: true,
+                  yearPickerMax: new Date().getFullYear(),
+                  yearPickerMin: new Date().getFullYear() - 51,
+                  // maxDate: new Date().setFullYear(new Date().getFullYear() - 12),
+                  dateFormat: "dd MM yyyy",
+                  on: {
+                    dayClick: function (calendar, dayEl, year, month, day) {
+                      var value = [year + "-" + (month + 1) + "-" + (day + 1)];
+                      meta.onChangeDate("user_birthday", value); // console.log(validateDate(value));
+                    },
+                  },
+                }}
+                value={meta.user_birthday}
+              />
+            </div>
+            <div class="flex flex-1 self-stretch items-center justify-center border rounded border-white">
+              <input-new-white
+                label={"Password"}
+                type={meta.pass_type}
+                class="w-full "
+                floatingLabel={true}
+                required={true}
+                closeByBackdropClick={true}
+                inputStyle={{
+                  color: "white",
+                }}
+                style={`color: white; 
+      background:transparent; 
+      border-radius: 5px !important;`}
+                value={meta.user_password}
+                onChange={(e) => {
+                  meta.onChange("user_password", e);
+                }}
+              />
+              <div
+                class={`flex self-stretch flex-col items-start justify-center pt-4`}
+                style={`width: 33px; min-width: 33px; max-width: 33px; height: 61.25px; min-height: 61.25px; max-height: 61.25px;`}
+              >
+                <img
+                  src="/fimgs/1014_15614.x1.svg"
+                  class={`flex flex-col items-center justify-center`}
+                  style={`width: 22px; min-width: 22px; max-width: 22px; height: 15px; min-height: 15px; max-height: 15px;`}
+                  onClick={() => {
+                    meta.showHidePass();
+                  }}
+                />
               </div>
             </div>
-            <div class="flex self-stretch flex-col items-center justify-start">
-              <div class="flex self-stretch flex-col items-center justify-center">
-                <div class={`text-3xl font-bold leading-10 text-center text-white`}>
-                  Create your account
-                </div>
-              </div>
-            </div>
-            <div class={`flex self-stretch flex-col space-y-8 items-start justify-start`}>
-              <m-list class={`flex flex-1 self-stretch flex-col space-y-4 items-start justify-start list-none`}>
-                <div class={`flex flex-1 self-stretch flex-col items-start justify-start border rounded border-white`}>
-                  <input-new-white label={"Full Name"} type={"text"} class="w-full " floatingLabel={true}
-                    required={true} inputStyle={{ color: "white" , }} style={`color: white; background:transparent;
-                    border-radius: 5px !important;`} value={meta.user_name} onChange={(e)=> {
-                    meta.onChange("user_name", e);
-                    }}
-                    />
-                </div>
-                <div class="flex flex-1 self-stretch flex-col items-start justify-start border rounded border-white">
-                  <input-new-white label={"Email"} type={"email"} class="w-full " floatingLabel={true} required={true}
-                    inputStyle={{ color: "white" , }} style={`color: white; background:transparent; border-radius: 5px
-                    !important;`} value={meta.user_email} onChange={(e)=> {
-                    meta.onChange("user_email", e);
-                    }}
-                    />
-                </div>
-                <div class="flex self-stretch flex-col items-start justify-start border rounded border-white">
-                  <input-dropdown-white label={"Gender"} type={"select"} class="w-full " floatingLabel={true}
-                    required={true} inputStyle={{ color: "white" , }} style={`color: white; background:transparent;
-                    border-radius: 5px !important;`} value={meta.user_gender} onChange={(e)=>
-                    meta.onChange("user_gender", e)}
-                    >
-                    option
-                  </input-dropdown-white>
-                </div>
-                <div class="flex flex-1 self-stretch flex-col items-start justify-start border rounded border-white">
-                  <m-list-input label={"Birth Date"} type={"datepicker"} class="w-full " floatingLabel={true}
-                    clearButton={true} required={true} inputStyle={{ color: "white" , }} style={`color: white;
-                    background:transparent; border-radius: 5px !important;`} calendarParams={{ openIn: "customModal" ,
-                    closeOnSelect: true, yearPickerMax: new Date().getFullYear(), yearPickerMin: new
-                    Date().getFullYear() - 51, // maxDate: new Date().setFullYear(new Date().getFullYear() - 12),
-                    dateFormat: "dd MM yyyy" , on: { dayClick: function (calendar, dayEl, year, month, day) { var
-                    value=[year + "-" + (month + 1) + "-" + (day + 1)]; meta.onChangeDate("user_birthday", value); //
-                    console.log(validateDate(value)); }, }, }} value={meta.user_birthday} />
-                </div>
-                <div class="flex flex-1 self-stretch items-center justify-center border rounded border-white">
-                  <input-new-white label={"Password"} type={meta.pass_type} class="w-full " floatingLabel={true}
-                    required={true} closeByBackdropClick={true} inputStyle={{ color: "white" , }} style={`color: white;
-                    background:transparent; border-radius: 5px !important;`} value={meta.user_password} onChange={(e)=>
-                    {
-                    meta.onChange("user_password", e);
-                    }}
-                    />
-                    <div class={`flex self-stretch flex-col items-start justify-center pt-4`} style={`width: 33px;
-                      min-width: 33px; max-width: 33px; height: 61.25px; min-height: 61.25px; max-height: 61.25px;`}>
-                      <img src="/fimgs/1014_15614.x1.svg" class={`flex flex-col items-center justify-center`}
-                        style={`width: 22px; min-width: 22px; max-width: 22px; height: 15px; min-height: 15px;
-                        max-height: 15px;`} onClick={()=> {
-                      meta.showHidePass();
-                      }}
-                      />
-                    </div>
-                </div>
-                <div class="flex self-stretch space-x-2.5 items-center justify-start">
-                  <div class="flex items-center justify-center">
-                    <input type="checkbox" style={`width: 16px; min-width: 16px; max-width: 16px; height: 16px;
-                      min-height: 16px; max-height: 16px; background-color : transparent !important ; border:2px solid
-                      #ffffff !important; border-radius:3px`} required={true} onChange={(e)=> {
+            <div class="flex self-stretch space-x-2.5 items-center justify-start">
+              <div class="flex items-center justify-center">
+                <input
+                  type="checkbox"
+                  style={`width: 16px; min-width: 16px; max-width: 16px; height: 16px; min-height: 16px; max-height: 16px; 
+  background-color : transparent !important ;
+  border:2px solid #ffffff !important;
+  border-radius:3px`}
+                  required={true}
+                  onChange={(e) => {
                     meta.onChange("term", e);
-                    }}
-                    />
-                  </div>
-                  <div class="flex space-x-1 items-start justify-start">
-                    <div class="flex items-start justify-start">
-                      <div class={`text-base font-medium leading-normal text-white`}>
-                        I agree to the
-                      </div>
-                    </div>
-                    <div class="flex items-start justify-start">
-                      <div class={`text-base font-medium leading-normal text-amber-500`} style="color: #FF8F00">
-                        Terms & Conditions
-                      </div>
-                    </div>
+                  }}
+                />
+              </div>
+              <div class="flex space-x-1 items-start justify-start">
+                <div class="flex items-start justify-start">
+                  <div
+                    class={`text-base font-medium leading-normal text-white`}
+                  >
+                    I agree to the
                   </div>
                 </div>
-              </m-list>
-              <div class="flex self-stretch flex-col items-start justify-start">
-                <div class="flex self-stretch flex-col space-y-4 items-center justify-center">
-                  <btn-primary type={"submit"} onClick={meta.submit} class={`flex flex-col items-center justify-center
-                    py-1.5 pl-4 pr-6 bg-amber-500 rounded rounded-md`}
-                    style="height: 60px; min-height: 60px; max-height: 60px; background-color: #FF8F00">
-                    Register
-                  </btn-primary>
-                  <div class="flex self-stretch space-x-2.5 items-center justify-center">
-                    <div class="text-base font-medium leading-normal text-white">
-                      Already have an account?
-                    </div>
-                    <a href={meta.loginURL} class={`text-base font-bold leading-normal text-amber-500`}
-                      style="color: #FF8F00">
-                      Login
-                    </a>
+                <div class="flex items-start justify-start">
+                  <div
+                    class={`text-base font-medium leading-normal text-amber-500`}
+                    style="color: #FF8F00"
+                  >
+                    Terms & Conditions
                   </div>
                 </div>
+              </div>
+            </div>
+          </m-list>
+          <div class="flex self-stretch flex-col items-start justify-start">
+            <div class="flex self-stretch flex-col space-y-4 items-center justify-center">
+              <btn-primary
+                type={"submit"}
+                onClick={meta.submit}
+                class={`flex flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-amber-500 rounded rounded-md`}
+                style="height: 60px; min-height: 60px; max-height: 60px; background-color: #FF8F00"
+              >
+                Register
+              </btn-primary>
+              <div class="flex self-stretch space-x-2.5 items-center justify-center">
+                <div class="text-base font-medium leading-normal text-white">
+                  Already have an account?
+                </div>
+                <a
+                  href={meta.loginURL}
+                  class={`text-base font-bold leading-normal text-amber-500`}
+                  style="color: #FF8F00"
+                >
+                  Login
+                </a>
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
+  </div>
 </>
