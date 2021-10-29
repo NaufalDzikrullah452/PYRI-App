@@ -82,8 +82,7 @@
       });
       runInAction(() => {
         meta.tags = tags;
-      });
-      console.log(meta.tags);
+      }); // console.log(meta.tags);
     }}
   />
   <div class={`w-full flex items-start justify-start bg-white`}>
@@ -428,20 +427,22 @@
                           class={`flex self-stretch space-x-2.5 items-center justify-center`}
                           style={"margin-left:67px; margin-right:67px;"}
                         >
-                          {numList.tag_picture === "-" && (
+                          {(numList.tag_picture === "-" ||
+                            numList.tag_picture === "") && (
                             <img
                               src="/fimgs/2232_368894.x1.svg"
                               class={`flex items-center justify-center`}
                               style={`width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;`}
                             />
                           )}
-                          {numList.tag_picture !== "-" && (
-                            <img
-                              src={`/upload/${numList.tag_picture}`}
-                              class={`flex items-center justify-center`}
-                              style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
-                            />
-                          )}
+                          {numList.tag_picture !== "-" &&
+                            numList.tag_picture !== "" && (
+                              <img
+                                src={`/upload/${numList.tag_picture}`}
+                                class={`flex items-center justify-center`}
+                                style={`width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;`}
+                              />
+                            )}
                         </td>
                         <td
                           class={`flex flex-1 self-stretch items-center justify-start`}
