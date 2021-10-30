@@ -19,6 +19,16 @@ export default {
   admin: () => [import("web.crud/src/CRUD"), { c: "", s: "", h: "" }],
   qform: () => [import("web.crud/src/form/BaseForm"), { c: "", s: "", h: "" }],
   qlist: () => [import("web.crud/src/list/QBaseList"), { c: "", s: "", h: "" }],
+  ficon: () => [import("./components/FluentIcon"), { c: "", s: "", h: "" }],
+  faicon: () => [import("./components/FAIcon"), { c: "", s: "", h: "" }],
+  qrcode: () => [import("./components/qrcode"), { c: "", s: "", h: "" }],
+  dtable: () => [import("./components/DataTable"), { c: "", s: "", h: "" }],
+  dropify: () => [import("./components/Dropify"), { c: "", s: "", h: "" }],
+  "sample-component": () => [
+    import("./components/sample-component"),
+    { c: "", s: "", h: "" },
+  ],
+  test: () => [import("./components/test"), { c: "", s: "", h: "" }],
   "loginbtn-splash": () => [
     import("./components/loginbtn-splash"),
     { c: "", s: "", h: "" },
@@ -125,15 +135,6 @@ export default {
   ],
   "w-add-btn": () => [
     import("./components/w-add-btn"),
-    { c: "", s: "", h: "" },
-  ],
-  ficon: () => [import("./components/FluentIcon"), { c: "", s: "", h: "" }],
-  faicon: () => [import("./components/FAIcon"), { c: "", s: "", h: "" }],
-  qrcode: () => [import("./components/qrcode"), { c: "", s: "", h: "" }],
-  dtable: () => [import("./components/DataTable"), { c: "", s: "", h: "" }],
-  dropify: () => [import("./components/Dropify"), { c: "", s: "", h: "" }],
-  "sample-component": () => [
-    import("./components/sample-component"),
     { c: "", s: "", h: "" },
   ],
 };

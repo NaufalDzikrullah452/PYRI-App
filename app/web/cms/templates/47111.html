@@ -15,20 +15,21 @@
 
       async deleteTag(id) {
         console.log(id);
+        const confirmDel = confirm("Confirm delete?");
 
-        try {
-          confirm("Confrim Delete") &&
-            (await api("/api/tags", {
-              tags: {
-                tag_id: id,
-              },
-              e: "Delete",
-            }).then((res) => {
+        if (confirmDel) {
+          await api("/api/tags", {
+            tags: {
+              tag_id: id,
+            },
+            e: "Delete",
+          }).then((res) => {
+            if (res.res === "Failure") {
+              alert("Can't delete genre, because related with interest user");
+            } else {
               navigate("/w-master-genre");
-            }));
-        } catch (e) {
-          alert("Can't delete genre, because related with interest user");
-          console.log(e);
+            }
+          });
         }
       },
 
@@ -85,7 +86,7 @@
       }); // console.log(meta.tags);
     }}
   />
-  <div class={`w-full flex items-start justify-start bg-white`}>
+  <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
     <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
       <div
         class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}

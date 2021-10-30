@@ -15,15 +15,22 @@
 
       async deleteAuthor(id) {
         console.log(id);
-        confirm("Confrim Delete") &&
-          (await api("/api/authors", {
+        const confirmDel = confirm("Confirm delete?");
+
+        if (confirmDel) {
+          await api("/api/authors", {
             authors: {
               author_id: id,
             },
             e: "Delete",
           }).then((res) => {
-            navigate("/w-master-author");
-          }));
+            if (res.res === "Failure" || res === null) {
+              alert("Can't delete publisher, because related with other table");
+            } else {
+              navigate("/w-master-author");
+            }
+          });
+        }
       },
 
       async logout() {
