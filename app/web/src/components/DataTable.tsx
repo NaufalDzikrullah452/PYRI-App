@@ -1,12 +1,12 @@
-import { useEffect } from "react";
 import { BaseWindow } from "web.init/src/window";
 
-require('datatables.net')(window, (window as any).$);
+const $ = require('jquery');
+require('datatables.net')(window, $);
 declare const window: BaseWindow
 
 export default () => {
     window.db.parent.findMany().then((res) => {
-        (window as any).$('#dtable').DataTable({
+        $('#dtable').DataTable({
             data: res,
             aoColumns: [
                 { mData: 'id' },

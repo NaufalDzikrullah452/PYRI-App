@@ -1,8 +1,9 @@
-import { useEffect } from "react"
+const $ = require('jquery');
+import "./js/dropify.min.js"
 
 export default () => {
     setTimeout(() => {
-        (window as any).$('.dropify').dropify();
+        $('.dropify').dropify();
     })
 
     return (
