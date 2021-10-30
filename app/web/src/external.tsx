@@ -127,4 +127,13 @@ export default {
     import("./components/w-add-btn"),
     { c: "", s: "", h: "" },
   ],
+  ficon: () => [import("./components/FluentIcon"), { c: "", s: "", h: "" }],
+  faicon: () => [import("./components/FAIcon"), { c: "", s: "", h: "" }],
+  qrcode: () => [import("./components/qrcode"), { c: "", s: "", h: "" }],
+  dtable: () => [import("./components/DataTable"), { c: "", s: "", h: "" }],
+  dropify: () => [import("./components/Dropify"), { c: "", s: "", h: "" }],
+  "sample-component": () => [
+    import("./components/sample-component"),
+    { c: "", s: "", h: "" },
+  ],
 };
