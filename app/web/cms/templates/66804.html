@@ -123,7 +123,8 @@
           meta.tag_name = tag.tag_name;
           meta.tag_picture = tag.tag_picture;
         }
-      }); // console.log(tag);
+      });
+      console.log(tag);
     }}
   />
   <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
@@ -389,10 +390,13 @@
                 <div class="flex items-start justify-start">
                   <div class="text-base font-bold leading-normal">Ikon</div>
                 </div>
-                <input
+                <dropify
                   type={`file`}
                   class={`flex self-stretch flex-col space-y-2.5 items-center justify-center p-4 bg-white border rounded border-gray-400 dropify`}
                   style={`height: 210px; min-height: 210px; max-height: 210px;`}
+                  data-max-file-size={`3M`}
+                  data-allowed-file-extensions={"png jpg jpeg"}
+                  data-default-file={`/upload/${meta.tag_picture}`}
                   onChange={(e) => {
                     runInAction(async () => {
                       const upload = await meta.upload(e.target.files[0]);
@@ -443,6 +447,7 @@
                   </div>
                 </button>
               </div>
+              <div />
             </div>
           </div>
         </div>

@@ -339,7 +339,7 @@
               </div>
             </div>
           </div>
-          <div class="flex self-stretch flex-col space-y-6 items-start justify-start p-9 bg-white rounded-bl-lg rounded-br-lg">
+          <div class="flex self-stretch flex-col items-start justify-start p-9 bg-white rounded-bl-lg rounded-br-lg">
             <div
               class={`flex flex-col space-y-3 items-start justify-start w-full`}
               style={`max-width:567px`}
@@ -353,8 +353,11 @@
                 </div>
                 <dropify
                   type={`file`}
-                  class={`flex self-stretch flex-col space-y-2.5 items-center justify-center p-4 bg-white border rounded border-gray-400`}
+                  class={`flex flex-col space-y-2.5 items-center justify-center p-4 bg-white border rounded border-gray-400 dropify`}
                   style={`height: 210px; min-height: 210px; max-height: 210px;`}
+                  data-max-file-size={`3M`}
+                  data-allowed-file-extensions={"png jpg jpeg"}
+                  data-errors-position="outside"
                   onChange={(e) => {
                     runInAction(async () => {
                       const upload = await meta.upload(e.target.files[0]);
@@ -406,10 +409,6 @@
                 </button>
               </div>
             </div>
-            {meta.tag_picture !== "" &&
-              typeof meta.tag_picture === "string" && (
-                <img src={`/upload/${meta.tag_picture}`} />
-              )}
           </div>
         </div>
       </div>

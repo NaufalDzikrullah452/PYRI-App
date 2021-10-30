@@ -66,5 +66,5 @@ export const globalVar = {
   validateEmail,
   validatePass,
   validateDate,
-  _FormData
+  _FormData,
 }
