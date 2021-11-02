@@ -86,7 +86,7 @@
       }); // console.log(meta.tags);
     }}
   />
-  <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
+  <div class={`w-full flex items-start justify-start bg-white`}>
     <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
       <div
         class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -113,7 +113,7 @@
         >
           <div
             class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-            style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+            style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
           >
             <img
               src="/fimgs/2325_18641.x1.svg"
@@ -127,7 +127,7 @@
           </div>
           <div
             class={`flex self-stretch space-x-2.5 items-center justify-center py-3 pl-9 pr-3 rounded-2xl`}
-            style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+            style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
             onClick={() => {
               if (meta.showMasterData == false) {
                 meta.action.changeMasterData(true);
@@ -162,7 +162,7 @@
             >
               <div
                 class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer}"
                 onClick={() => {
                   navigate("/w-master-kategori");
                 }}
@@ -176,7 +176,7 @@
               </div>
               <div
                 class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;; cursor:pointer}"
                 onClick={() => {
                   navigate("/w-master-genre");
                 }}
@@ -190,7 +190,7 @@
               </div>
               <div
                 class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer}"
                 onClick={() => {
                   navigate("/w-master-author");
                 }}
@@ -204,7 +204,7 @@
               </div>
               <div
                 class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer}"
                 onClick={() => {
                   navigate("/w-master-publisher");
                 }}
@@ -220,7 +220,7 @@
           )}
           <div
             class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-            style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+            style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
             onClick={() => {
               if (meta.showManagement == false) {
                 meta.action.changeMasterData(false);
@@ -252,7 +252,7 @@
             >
               <div
                 class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
               >
                 <div />
                 <div class="flex flex-1 items-start justify-start">
@@ -263,7 +263,7 @@
               </div>
               <div
                 class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;  cursor:pointer;}"
               >
                 <div />
                 <div class="flex flex-1 items-start justify-start">
@@ -276,7 +276,7 @@
           )}
           <div
             class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-            style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+            style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
           >
             <img
               src="/fimgs/2325_18688.x1.svg"
@@ -305,28 +305,76 @@
             <div class="flex flex-1 items-start justify-start">
               <div class="text-3xl font-bold leading-10">Genre Buku</div>
             </div>
-            <div class="flex flex-1 space-x-2.5 items-center justify-end px-4">
-              <img
-                src="/fimgs/1916_12376.x1.png"
-                class="flex items-start justify-start p-2.5"
-                style="width: 60px; min-width: 60px; max-width: 60px; height: 60px; min-height: 60px; max-height: 60px;"
-              />
-              <div class="flex items-start justify-start">
-                <div class="text-base font-medium leading-normal text-gray-700">
-                  Savannah Nguyen
+            <div class="flex flex-col items-end justify-end">
+              <div class="flex items-center justify-end px-4">
+                <div
+                  class={`flex space-x-2.5 items-center justify-center`}
+                  style={"cursor:pointer;"}
+                  onClick={() => {
+                    if (meta.showProfile == false) {
+                      meta.action.changeProfile(true);
+                    } else {
+                      meta.action.changeProfile(false);
+                    }
+                  }}
+                >
+                  <img
+                    src="/fimgs/2436_32953.x1.png"
+                    class="flex items-start justify-start p-2.5"
+                    style="width: 60px; min-width: 60px; max-width: 60px; height: 60px; min-height: 60px; max-height: 60px;"
+                  />
+                  <div class="flex items-start justify-start">
+                    <div class="text-base font-medium leading-normal text-gray-700">
+                      Savannah Nguyen
+                    </div>
+                  </div>
+                  <img
+                    src="/fimgs/2436_32957.x1.svg"
+                    style="width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px;"
+                  />
                 </div>
               </div>
-              <img
-                src="/fimgs/1916_12380.x1.svg"
-                style="width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px;"
-              />
+              {meta.showProfile && (
+                <div
+                  class={`flex flex-col items-center justify-end px-4 absolute`}
+                  style={"top: 98px; cursor:pointer;"}
+                >
+                  <div
+                    class={`flex self-stretch flex-col space-y-1 items-center justify-start p-4 bg-white shadow rounded`}
+                  >
+                    <div
+                      class={`flex self-stretch items-center justify-center`}
+                    >
+                      <div class="text-base font-medium leading-normal text-gray-900">
+                        Edit Profile
+                      </div>
+                    </div>
+                    <div
+                      class={`flex self-stretch space-x-2.5 items-center justify-center`}
+                      onClick={meta.logout}
+                    >
+                      <div class="text-base font-medium leading-normal text-gray-900">
+                        Logout
+                      </div>
+                      <img
+                        src="/fimgs/I2436_32960_1048_3884.x1.svg"
+                        class={`flex items-start justify-start`}
+                        style={`width: 18px; min-width: 18px; max-width: 18px; height: 18px; min-height: 18px; max-height: 18px;`}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
         <div
           class={`w-full flex self-stretch flex-col items-start justify-start px-9 py-2 relative overflow-y-auto rounded`}
         >
-          <div class="flex self-stretch flex-col space-y-6 items-start justify-start p-6 relative overflow-y-auto bg-white rounded-lg">
+          <div
+            class={`flex self-stretch flex-col space-y-6 items-start justify-start p-6 relative overflow-y-auto bg-white rounded-lg`}
+            style={"margin-bottom:100px;"}
+          >
             <div class="flex self-stretch items-center justify-start">
               <div class="text-2xl font-bold leading-9 text-gray-900">
                 DATA GENRE BUKU
@@ -445,6 +493,13 @@
                                 onError={(e) => {
                                   e.target.onerror = null;
                                   e.target.src = "/fimgs/2232_368894.x1.svg";
+                                }}
+                                onClick={() => {
+                                  numList.tag_picture !== "-" &&
+                                    numList.tag_picture !== "" &&
+                                    window.open(
+                                      `/upload/${numList.tag_picture}`
+                                    );
                                 }}
                               />
                             )}

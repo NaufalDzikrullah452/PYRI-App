@@ -43,6 +43,26 @@
           });
         }
       },
+
+      async logout() {
+        confirm("Logout of admin?") &&
+          (await api("/api/admin", {
+            data: "",
+            event: "Logout",
+          }).then((res) => {
+            navigate("/login-admin");
+          }));
+      },
+
+      async logout() {
+        confirm("Logout of admin?") &&
+          (await api("/api/admin", {
+            data: "",
+            event: "Logout",
+          }).then((res) => {
+            navigate("/login-admin");
+          }));
+      },
     }}
     run={async () => {
       meta.action = {
@@ -100,7 +120,7 @@
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex items-start justify-start bg-white`}>
+    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
       <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
         <div
           class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -127,7 +147,7 @@
           >
             <div
               class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-              style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+              style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
             >
               <img
                 src="/fimgs/2259_130578.x1.svg"
@@ -141,7 +161,7 @@
             </div>
             <div
               class={`flex self-stretch space-x-2.5 items-center justify-center py-3 pl-9 pr-3 rounded-2xl`}
-              style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+              style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
               onClick={() => {
                 if (meta.showMasterData == false) {
                   meta.action.changeMasterData(true);
@@ -176,7 +196,7 @@
               >
                 <div
                   class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;; cursor:pointer}"
                   onClick={() => {
                     navigate("/w-master-kategori");
                   }}
@@ -190,7 +210,7 @@
                 </div>
                 <div
                   class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;; cursor:pointer}"
                   onClick={() => {
                     navigate("/w-master-genre");
                   }}
@@ -204,7 +224,7 @@
                 </div>
                 <div
                   class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer}"
                   onClick={() => {
                     navigate("/w-master-author");
                   }}
@@ -218,7 +238,7 @@
                 </div>
                 <div
                   class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer}"
                   onClick={() => {
                     navigate("/w-master-publisher");
                   }}
@@ -234,7 +254,7 @@
             )}
             <div
               class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-              style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+              style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
               onClick={() => {
                 if (meta.showManagement == false) {
                   meta.action.changeMasterData(false);
@@ -266,7 +286,7 @@
               >
                 <div
                   class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
                 >
                   <div />
                   <div class="flex flex-1 items-start justify-start">
@@ -277,7 +297,7 @@
                 </div>
                 <div
                   class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
                 >
                   <div />
                   <div class="flex flex-1 items-start justify-start">
@@ -290,7 +310,7 @@
             )}
             <div
               class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-              style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important;}"
+              style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
             >
               <img
                 src="/fimgs/2259_130625.x1.svg"
@@ -323,6 +343,7 @@
                 <div class="flex items-center justify-end px-4">
                   <div
                     class={`flex space-x-2.5 items-center justify-center`}
+                    style={"cursor:pointer;"}
                     onClick={() => {
                       if (meta.showProfile == false) {
                         meta.action.changeProfile(true);
@@ -350,11 +371,10 @@
                 {meta.showProfile && (
                   <div
                     class={`flex flex-col items-center justify-end px-4 absolute`}
-                    style={"top: 98px;"}
+                    style={"top: 98px;cursor:pointer;"}
                   >
                     <div
-                      class={`flex flex-1 flex-col space-y-1 items-center justify-start px-8 py-4 bg-white shadow rounded`}
-                      style={`width: 142px; min-width: 142px; max-width: 142px; height: 84px; min-height: 84px; max-height: 84px;`}
+                      class={`flex self-stretch flex-col space-y-1 items-center justify-start p-4 bg-white shadow rounded`}
                     >
                       <div
                         class={`flex self-stretch items-center justify-center`}
@@ -371,7 +391,7 @@
                           Logout
                         </div>
                         <img
-                          src="/fimgs/I2259_130662_1048_3884.x1.svg"
+                          src="/fimgs/I2436_30355_1048_3884.x1.svg"
                           class={`flex items-start justify-start`}
                           style={`width: 18px; min-width: 18px; max-width: 18px; height: 18px; min-height: 18px; max-height: 18px;`}
                         />
