@@ -13,18 +13,19 @@
         navigate("/w-master-kategori/edit/" + id);
       },
 
-      // async deleteKategori(id) {
-      //   console.log(id);
-      //   confirm("Confirm Delete") &&
-      //     (await api("/api/categories", {
-      //       category: {
-      //         category_id: id,
-      //       },
-      //       e: "Delete",
-      //     }).then((res) => {
-      //       navigate("/w-master-kategori");
-      //     }));
-      // },
+      async deleteKategori(id) {
+        console.log(id);
+        confirm("Confirm Delete") &&
+          (await api("/api/categories", {
+            category: {
+              category_id: id,
+            },
+            e: "Delete",
+          }).then((res) => {
+            navigate("/w-master-kategori");
+          }));
+      },
+
       async logout() {
         confirm("Logout of admin?") &&
           (await api("/api/admin", {
@@ -60,20 +61,74 @@
         changeProfile: (open) => {
           meta.showProfile = open;
         },
-      }; // var kategori = "";
-      // if (window.user.roleAdmin !== "admin") {
-      //   navigate("/login-admin");
-      // }
-      // await api("/api/categories", {
-      //   category: " ",
-      //   e: "ReadAll",
-      // }).then((res) => {
-      //   kategori = res.categories;
-      // });
-      // runInAction(() => {
-      //   meta.categories = kategori;
-      // });
-      // console.log(meta.categories);
+      };
+      var kategori = "";
+
+      if (window.user.roleAdmin !== "admin") {
+        navigate("/login-admin");
+      }
+
+      await api("/api/categories", {
+        category: " ",
+        e: "ReadAll",
+      }).then((res) => {
+        kategori = res.category;
+      });
+      runInAction(() => {
+        meta.categories = kategori;
+        document.getElementById("kotak").classList.add("flex-wrap");
+        document.getElementById("kotak").style.justifyContent = "flex-start";
+        document.getElementById("kotak").classList.add("space-y-6");
+        document.getElementById("kotak").classList.add("space-x-6"); // Loop each kategori and appendchild it to id "kotak"
+
+        for (let i = 0; i < kategori.length; i++) {
+          let mainDiv = document.createElement("div");
+          mainDiv.className =
+            "flex flex-1 flex-col items-center justify-start p-9 bg-gray-50 shadow rounded-lg css-1nc2z6h";
+          mainDiv.style.flex = "0 0 25%";
+          let bgImg = document.createElement("img");
+          bgImg.setAttribute("src", "upload/" + kategori[i].category_pictures);
+          bgImg.style.width = "200px";
+          bgImg.style.height = "150px";
+          mainDiv.appendChild(bgImg);
+          let contentDiv = document.createElement("div");
+          contentDiv.className =
+            "flex self-stretch space-x-2.5 items-center justify-start";
+          let captionDiv = document.createElement("div");
+          captionDiv.className = "flex flex-1 items-start justify-start";
+          let textDiv = document.createElement("div");
+          textDiv.className = "text-xl font-medium leading-loose";
+          textDiv.innerHTML = kategori[i].category_name;
+          captionDiv.appendChild(textDiv);
+          contentDiv.appendChild(captionDiv);
+          let imageDiv = document.createElement("div");
+          imageDiv.className =
+            "flex self-stretch space-x-2.5 items-center justify-center rounded";
+          let editBtn = document.createElement("img");
+          editBtn.className = "css-5nv48v";
+          editBtn.setAttribute("src", "/fimgs/2309_60058.x1.svg");
+
+          editBtn.onclick = () => {
+            meta.editKategori(kategori[i].category_id);
+          };
+
+          editBtn.style.cursor = "pointer";
+          imageDiv.appendChild(editBtn);
+          let delBtn = document.createElement("img");
+          delBtn.className = "css-1b79tb0";
+          delBtn.setAttribute("src", "/fimgs/2309_60065.x1.svg");
+
+          delBtn.onclick = () => {
+            meta.deleteKategori(kategori[i].category_id);
+          };
+
+          delBtn.style.cursor = "pointer";
+          imageDiv.appendChild(delBtn);
+          contentDiv.appendChild(imageDiv);
+          mainDiv.appendChild(contentDiv);
+          document.getElementById("kotak").appendChild(mainDiv);
+        }
+      });
     }}
   />
   {window.user.roleAdmin === "admin" && (
@@ -309,7 +364,7 @@
                     }}
                   >
                     <img
-                      src="/fimgs/2305_18249.x1.png"
+                      src="/fimgs/2436_42006.x1.png"
                       class="flex items-start justify-start p-2.5"
                       style="width: 60px; min-width: 60px; max-width: 60px; height: 60px; min-height: 60px; max-height: 60px;"
                     />
@@ -319,7 +374,7 @@
                       </div>
                     </div>
                     <img
-                      src="/fimgs/2305_18253.x1.svg"
+                      src="/fimgs/2436_42010.x1.svg"
                       style="width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px;"
                     />
                   </div>
@@ -330,8 +385,7 @@
                     style={"top: 98px;"}
                   >
                     <div
-                      class={`flex flex-1 flex-col space-y-1 items-center justify-start px-8 py-4 bg-white shadow rounded`}
-                      style={`width: 142px; min-width: 142px; max-width: 142px; height: 84px; min-height: 84px; max-height: 84px;`}
+                      class={`flex self-stretch flex-col space-y-1 items-center justify-start p-4 bg-white shadow rounded`}
                     >
                       <div
                         class={`flex self-stretch items-center justify-center`}
@@ -348,7 +402,7 @@
                           Logout
                         </div>
                         <img
-                          src="/fimgs/I2305_18256_1048_3884.x1.svg"
+                          src="/fimgs/I2436_42013_1048_3884.x1.svg"
                           class={`flex items-start justify-start`}
                           style={`width: 18px; min-width: 18px; max-width: 18px; height: 18px; min-height: 18px; max-height: 18px;`}
                         />
@@ -369,11 +423,19 @@
               <div class={`text-2xl font-bold leading-9 text-gray-900`}>
                 DATA KATEGORI BUKU
               </div>
-              <div class="flex self-stretch space-x-9 items-center justify-center p-5">
-                <div class="flex flex-1 self-stretch flex-col items-center justify-center">
+              <div
+                class="flex self-stretch items-center justify-center p-5"
+                id="kotak"
+              >
+                <div
+                  class={`flex self-stretch flex-col items-start justify-center`}
+                >
                   <button
-                    class={`flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-center p-8 bg-gray-50 shadow rounded-lg`}
+                    class={`flex flex-1 flex-col space-y-2.5 items-center justify-center p-8 bg-gray-50 shadow rounded-lg`}
                     style={"width:305px; min-width:200px; max-width:305px;"}
+                    onClick={() => {
+                      navigate("/w-master-kategori/add");
+                    }}
                   >
                     <img
                       src="/fimgs/1964_13812.x1.svg"
@@ -387,50 +449,6 @@
                       </div>
                     </div>
                   </button>
-                </div>
-                <div
-                  class={`flex flex-1 flex-col space-y-2.5 items-center justify-start p-9 bg-gray-50 shadow rounded-lg`}
-                  style={`:hover {background-color: rgba(255, 143, 0, 0.2);`}
-                >
-                  <img src="/fimgs/2309_55062.x1.png" />
-                  <div class="flex self-stretch space-x-2.5 items-center justify-start">
-                    <div class="flex flex-1 items-start justify-start">
-                      <div class="text-xl font-medium leading-loose">Novel</div>
-                    </div>
-                    <div class="flex self-stretch space-x-2.5 items-center justify-center rounded">
-                      <img
-                        src="/fimgs/2309_55067.x1.svg"
-                        style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
-                      />
-                      <img
-                        src="/fimgs/2309_55074.x1.svg"
-                        style="width: 20px; min-width: 20px; max-width: 20px; height: 19.91px; min-height: 19.91px; max-height: 19.91px;"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div
-                  class={`flex flex-1 flex-col space-y-2.5 items-center justify-start p-9 bg-gray-50 shadow rounded-lg`}
-                  style={`:hover {background-color: rgba(255, 143, 0, 0.2);`}
-                >
-                  <img src="/fimgs/2309_60053.x1.png" />
-                  <div class="flex self-stretch space-x-2.5 items-center justify-start">
-                    <div class="flex flex-1 items-start justify-start">
-                      <div class="text-xl font-medium leading-loose">
-                        Tafsir
-                      </div>
-                    </div>
-                    <div class="flex self-stretch space-x-2.5 items-center justify-center rounded">
-                      <img
-                        src="/fimgs/2309_60058.x1.svg"
-                        style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
-                      />
-                      <img
-                        src="/fimgs/2309_60065.x1.svg"
-                        style="width: 20px; min-width: 20px; max-width: 20px; height: 19.91px; min-height: 19.91px; max-height: 19.91px;"
-                      />
-                    </div>
-                  </div>
                 </div>
               </div>
               <div />

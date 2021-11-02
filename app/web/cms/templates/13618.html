@@ -7,17 +7,18 @@
       changeProfile: (open) => {},
       changeManagement: (open) => {},
       changeMasterData: (open) => {},
-      categoryName: "",
+      category_name: "",
+      category_picture: "",
 
-      async onChange(e) {
+      async onChange(key, e) {
         let value = e.target.value;
-        runInAction(() => (this.categoryName = value));
-        console.log("categoryName  : " + value);
+        runInAction(() => (this[key] = value));
+        console.log(key + " : " + value);
       },
 
       validation() {
         let msg =
-          this.categoryName === "" || this.categoryName === null
+          this.category_name === "" || this.category_name === null
             ? "Name cant be empty!"
             : false;
         return msg;
@@ -31,14 +32,28 @@
         } else {
           let kategori = api("/api/categories", {
             category: {
-              category_name: this.categoryName,
+              category_id: this.category_id,
+              category_name: this.category_name,
+              category_pictures: this.category_picture,
             },
-            e: "Create",
+            e: "Update",
           }).then((res) => {
             console.log(res);
             navigate("/w-master-kategori");
           });
         }
+      },
+
+      async upload(file) {
+        const formData = _FormData();
+
+        formData.append("path", "category_icon");
+        formData.append("file", file);
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+        return await response.json();
       },
     }}
     run={async () => {
@@ -67,10 +82,35 @@
           meta.showProfile = open;
         },
       };
+      let kategori = "";
 
       if (window.user.roleAdmin !== "admin") {
         navigate("/login-admin");
+      } else if (params.id) {
+        await api("/api/categories", {
+          category: {
+            category_id: parseInt(params.id),
+          },
+          e: "ReadById",
+        }).then((res) => {
+          if (res.category !== null) {
+            kategori = res.category;
+          } else {
+            navigate("/w-master-kategori");
+          }
+        });
+      } else {
+        navigate("/w-master-kategori");
       }
+
+      runInAction(() => {
+        if (kategori !== "") {
+          meta.category_id = kategori.category_id;
+          meta.category_name = kategori.category_name;
+          meta.category_picture = kategori.category_pictures;
+        }
+      });
+      console.log(kategori);
     }}
   />
   {window.user.roleAdmin === "admin" && (
@@ -307,7 +347,7 @@
                       }}
                     >
                       <img
-                        src="/fimgs/2309_35501.x1.png"
+                        src="/fimgs/2436_42701.x1.png"
                         class="flex items-start justify-start p-2.5"
                         style="width: 60px; min-width: 60px; max-width: 60px; height: 60px; min-height: 60px; max-height: 60px;"
                       />
@@ -317,7 +357,7 @@
                         </div>
                       </div>
                       <img
-                        src="/fimgs/2309_35505.x1.svg"
+                        src="/fimgs/2436_42705.x1.svg"
                         style="width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px;"
                       />
                     </div>
@@ -328,8 +368,7 @@
                       style={"top: 98px;"}
                     >
                       <div
-                        class={`flex flex-1 flex-col space-y-1 items-center justify-start px-8 py-4 bg-white shadow rounded`}
-                        style={`width: 142px; min-width: 142px; max-width: 142px; height: 84px; min-height: 84px; max-height: 84px;`}
+                        class={`flex self-stretch flex-col space-y-1 items-center justify-start p-4 bg-white shadow rounded`}
                       >
                         <div
                           class={`flex self-stretch items-center justify-center`}
@@ -346,7 +385,7 @@
                             Logout
                           </div>
                           <img
-                            src="/fimgs/I2309_35508_1048_3884.x1.svg"
+                            src="/fimgs/I2436_42708_1048_3884.x1.svg"
                             class={`flex items-start justify-start`}
                             style={`width: 18px; min-width: 18px; max-width: 18px; height: 18px; min-height: 18px; max-height: 18px;`}
                           />
@@ -379,12 +418,22 @@
                   <div class="flex items-start justify-start">
                     <div class="text-base font-bold leading-normal">Gambar</div>
                   </div>
-                  <div
-                    class="flex flex-col items-center justify-center p-4 bg-white border rounded border-gray-400"
-                    style="width: 567px; min-width: 567px; max-width: 567px; height: 210px; min-height: 210px; max-height: 210px;"
-                  >
-                    <div />
-                  </div>
+                  <dropify
+                    type={`file`}
+                    class={`flex flex-col items-center justify-center p-4 bg-white border rounded border-gray-400 dropify`}
+                    style={`height: 210px; min-height: 210px; max-height: 210px;`}
+                    data-max-file-size={`3M`}
+                    data-allowed-file-extensions={"png jpg jpeg"}
+                    data-default-file={`/upload/${meta.category_picture}`}
+                    onChange={(e) => {
+                      runInAction(async () => {
+                        const upload = await meta.upload(e.target.files[0]);
+                        runInAction(() => {
+                          meta.category_picture = upload.path;
+                        });
+                      });
+                    }}
+                  />
                 </div>
                 <div class="flex items-start justify-start">
                   <div class="text-base font-bold leading-normal">
@@ -402,19 +451,27 @@
                     style={`color: black;
       background:transparent; 
       outline: none;`}
-                    value={meta.tag_name}
+                    value={meta.category_name}
                     onChange={(e) => {
-                      meta.onChange("tag_name", e);
+                      meta.onChange("category_name", e);
                     }}
                   />
                 </div>
                 <div class="flex space-x-3 items-end justify-start pt-9">
-                  <button class="flex items-start justify-start px-4 py-2 bg-amber-500 rounded">
+                  <button
+                    class={`flex items-start justify-start px-4 py-2 bg-amber-500 rounded`}
+                    onClick={meta.submit}
+                  >
                     <div class="text-base font-bold leading-normal text-white">
                       Simpan
                     </div>
                   </button>
-                  <button class="flex items-start justify-start px-4 py-2 border rounded border-gray-400">
+                  <button
+                    class={`flex items-start justify-start px-4 py-2 border rounded border-gray-400`}
+                    onClick={() => {
+                      navigate("/w-master-kategori");
+                    }}
+                  >
                     <div class="text-base font-bold leading-normal text-amber-500">
                       Batal
                     </div>

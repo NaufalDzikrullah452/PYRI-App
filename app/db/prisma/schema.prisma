@@ -40,6 +40,7 @@ model users {
   user_level             Boolean
   user_date_created      DateTime?       @default(now()) @db.Timestamp(6)
   user_note              String?
+  user_picture           String?         @db.VarChar(50)
   interests              interests[]
 }
 
