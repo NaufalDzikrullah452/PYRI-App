@@ -14,6 +14,7 @@
       user_level: false,
       user_date_created: "",
       user_note: null,
+      user_picture: null,
       user_old_password: "",
       pass_type: "password",
       new_pass_type: "password",
@@ -32,6 +33,41 @@
           this.style_change_pass = "display:none!important";
           this.underline = "underline";
         }
+      },
+
+      async upload(file) {
+        const formData = _FormData();
+
+        formData.append("path", "user_icon");
+        formData.append("file", file);
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+        return await response.json();
+      },
+
+      async updatePicture() {
+        api("/api/api-users", {
+          users: {
+            user_id: this.user_id,
+            user_name: this.user_name,
+            user_email: this.user_email,
+            user_password: encrypt(this.user_new_password),
+            user_gender: this.user_gender,
+            user_birthday: new Date(this.user_birthday),
+            user_forgot_token: this.user_forgot_token,
+            user_membership_status: this.user_membership_status,
+            user_level: this.user_level,
+            user_date_created: this.user_date_created,
+            user_note: this.user_note,
+            user_picture: this.user_picture,
+          },
+          e: "UpdatePicture",
+        }).then((res) => {
+          console.log(res);
+          navigate("/m/");
+        });
       },
 
       async showHidePass(key) {
@@ -136,6 +172,7 @@
                   user_level: this.user_level,
                   user_date_created: this.user_date_created,
                   user_note: this.user_note,
+                  user_picture: this.user_picture,
                 };
               } else {
                 console.log("with password");
@@ -151,6 +188,7 @@
                   user_level: this.user_level,
                   user_date_created: this.user_date_created,
                   user_note: this.user_note,
+                  user_picture: this.user_picture,
                 };
               }
 
@@ -185,6 +223,7 @@
                     this.user_level = res.users.user_level;
                     this.user_date_created = res.users.user_date_created;
                     this.user_note = res.users.user_note;
+                    this.user_picture = res.users.user_picture;
                     this.user_password = "";
                     this.user_new_password = "";
                     this.user_confirm_password = "";
@@ -217,6 +256,7 @@
           meta.user_level = user.user_level;
           meta.user_date_created = user.user_date_created;
           meta.user_note = user.user_note;
+          meta.user_picture = user.user_picture;
         }
       });
       console.log(user); // console.log(res);
@@ -250,12 +290,40 @@
         class={`flex flex-1 self-stretch flex-col space-y-8 items-start justify-start px-6 pb-8`}
       >
         <div class="flex self-stretch flex-col space-y-2.5 items-center justify-center py-2">
-          <img src="/fimgs/1255_50620.x1.svg" />
-          <div class="flex items-start justify-start px-2 py-0.5 border rounded border-trueGray-600">
-            <div class="text-xs font-medium leading-none text-center text-trueGray-600">
+          <img
+            src={
+              meta.user_picture
+                ? "/upload/" + meta.user_picture
+                : "/fimgs/1255_50620.x1.svg"
+            }
+            width="128"
+            height="128"
+          />
+          <label
+            for="file-upload"
+            class={`flex flex-col items-start justify-start items-center`}
+          >
+            <input
+              type={`file`}
+              onChange={(e) => {
+                runInAction(async () => {
+                  const upload = await meta.upload(e.target.files[0]);
+                  runInAction(() => {
+                    meta.user_picture = upload.path;
+                  });
+                  const picture = await meta.updatePicture();
+                  console.log(picture);
+                });
+              }}
+              id="file-upload"
+              style="visibility:hidden;"
+            />
+            <div
+              class={`text-xs font-medium leading-none text-center text-trueGray-600 justify-center text-center border-2 rounded-lg border-black p-2`}
+            >
               Change photo
             </div>
-          </div>
+          </label>
         </div>
         <div class="flex self-stretch flex-col space-y-4 items-start justify-start">
           <div
