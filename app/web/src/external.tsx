@@ -16,6 +16,10 @@ export default {
     import("web.crud/src/legacy/Loading"),
     { c: "", s: "", h: "" },
   ],
+  "loading-box": () => [
+    import("web.crud/src/legacy/LoadingBox"),
+    { c: "", s: "", h: "" },
+  ],
   admin: () => [import("web.crud/src/CRUD"), { c: "", s: "", h: "" }],
   qform: () => [import("web.crud/src/form/BaseForm"), { c: "", s: "", h: "" }],
   qlist: () => [import("web.crud/src/list/QBaseList"), { c: "", s: "", h: "" }],

@@ -6,6 +6,8 @@
       tabProfile: true,
       user: [],
       interest: [],
+      loading: true,
+      loadingInterest: true,
 
       onClickTab(tab) {
         // console.log(tab);
@@ -19,7 +21,8 @@
           );
         } else if (tab === "profile" && this.tabProfile) {
           this.tabActive = tab;
-          this.tabProfile = false; // window.mobileApp.app.dialog.preloader();
+          this.tabProfile = false;
+          this.loadingInterest = true; // window.mobileApp.app.dialog.preloader();
 
           api("/api/interests", {
             e: "show",
@@ -39,7 +42,11 @@
                 "text-xs font-bold leading-none text-gray-700";
               textDiv.innerHTML = res.result[index].tags.tag_name;
               mainDiv.appendChild(textDiv);
-            } // window.mobileApp.app.dialog.close();
+            }
+
+            runInAction(() => {
+              this.loadingInterest = false;
+            }); // window.mobileApp.app.dialog.close();
           }); // console.log(tag.result)
         } else if (tab !== "profile") {
           this.tabProfile = true;
@@ -81,11 +88,17 @@
 
       runInAction(() => {
         meta.user = window.user.user || [];
+        console.log("/m/");
+        setTimeout(() => {
+          runInAction(() => {
+            meta.loading = false;
+          });
+        }, 3000);
       });
     }}
   />
   <div
-    class={`flex items-end justify-center bg-white`}
+    class={`flex self-stretch items-end justify-center bg-white`}
     style={"margin-bottom: 50px;"}
   >
     <div
@@ -147,39 +160,49 @@
         >
           {window.user.role !== "guest" && meta.tabActive === "home" && (
             <div
-              class={`flex self-stretch flex-col items-start justify-start p-6`}
+              class={`flex self-stretch flex-col space-y-2.5 items-start justify-start p-6`}
             >
-              <div
-                class="flex self-stretch flex-col items-start justify-start p-4 shadow rounded"
-                style="background-image: url('/fimgs/bg-8d8ddb80570065b889eef54faf9c419dd251956e');background-size:100% 100%;background-repeat:no-repeat;"
-              >
-                <div class="flex self-stretch space-x-2 items-center justify-start rounded">
-                  <img
-                    src="/fimgs/I1545_47714_1718_142617.x1.png"
-                    class="flex items-start justify-start"
-                    style="width: 36.40px; min-width: 36.40px; max-width: 36.40px; height: 52px; min-height: 52px; max-height: 52px;"
-                  />
-                  <div class="flex flex-1 space-x-0.5 items-center justify-center px-2">
-                    <div class="flex flex-1 self-stretch flex-col space-y-0.5 items-start justify-start">
-                      <div class="flex self-stretch items-start justify-start">
-                        <div class="text-base font-bold leading-normal">
-                          Continue Reading
+              {!meta.loading && (
+                <div
+                  class={`flex self-stretch flex-col items-start justify-start p-4 shadow rounded`}
+                  style={`background-image: url('/fimgs/bg-8d8ddb80570065b889eef54faf9c419dd251956e');background-size:100% 100%;background-repeat:no-repeat;`}
+                >
+                  <div class="flex self-stretch space-x-2 items-center justify-start rounded">
+                    <img
+                      src="/fimgs/2640_1336744.x1.png"
+                      class="flex items-start justify-start"
+                      style="width: 36.40px; min-width: 36.40px; max-width: 36.40px; height: 52px; min-height: 52px; max-height: 52px;"
+                    />
+                    <div class="flex flex-1 space-x-0.5 items-center justify-center px-2">
+                      <div class="flex flex-1 self-stretch flex-col space-y-0.5 items-start justify-start">
+                        <div class="flex self-stretch items-start justify-start">
+                          <div class="text-base font-bold leading-normal">
+                            Continue Reading
+                          </div>
                         </div>
-                      </div>
-                      <div class="flex self-stretch items-start justify-start">
-                        <div class="text-xs font-medium leading-none">
-                          The Design of Everyday Things
+                        <div class="flex self-stretch items-start justify-start">
+                          <div class="text-xs font-medium leading-none">
+                            The Design of Everyday Things
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div class="flex items-start justify-start px-4 py-0.5 bg-amber-500 shadow rounded">
-                    <div class="text-xs font-bold leading-none text-white">
-                      Continue
+                    <div class="flex items-start justify-start px-4 py-0.5 bg-amber-500 shadow rounded">
+                      <div class="text-xs font-bold leading-none text-white">
+                        Continue
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
+              {meta.loading && (
+                <div
+                  class={`flex self-stretch flex-col items-start justify-start w-full`}
+                  style={`height: 84px; min-height: 84px; max-height: 84px;`}
+                >
+                  <loading-box class="shadow" />
+                </div>
+              )}
             </div>
           )}
           {window.user.role !== "guest" && meta.tabActive === "home" && (
@@ -202,63 +225,103 @@
                 class={`flex self-stretch items-start justify-center px-6 over`}
               >
                 <div class="flex flex-1 flex-col space-y-2 items-center justify-end">
-                  <div
-                    class={`flex self-stretch space-x-4 items-start justify-start p-4 bg-white shadow rounded`}
-                    onClick={() => {
-                      navigate("/m/detail-book-page");
-                    }}
-                  >
+                  {!meta.loading && (
                     <div
-                      src="/fimgs/I1545_47723_1718_147206.x1.png"
-                      class={`flex items-start justify-start`}
+                      class={`flex self-stretch space-x-4 items-start justify-start p-4 bg-white shadow rounded`}
+                      onClick={() => {
+                        navigate("/m/detail-book-page");
+                      }}
                     >
-                      <img
-                        src="/fimgs/I1545_47723_1812_36071.x1.png"
-                        style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;"
-                      />
-                    </div>
-                    <div class="flex flex-1 self-stretch flex-col items-start justify-center">
-                      <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
-                        <div class="flex self-stretch flex-col items-start justify-start">
-                          <div class="flex self-stretch space-x-2 items-start justify-start">
-                            <div class="text-base font-bold leading-normal">
-                              Game Over
+                      <div
+                        src="/fimgs/I1545_47723_1718_147206.x1.png"
+                        class={`flex items-start justify-start`}
+                      >
+                        <img
+                          src="/fimgs/I1545_47723_1812_36071.x1.png"
+                          style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;"
+                        />
+                      </div>
+                      <div class="flex flex-1 self-stretch flex-col items-start justify-center">
+                        <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
+                          <div class="flex self-stretch flex-col items-start justify-start">
+                            <div class="flex self-stretch space-x-2 items-start justify-start">
+                              <div class="text-base font-bold leading-normal">
+                                Game Over
+                              </div>
+                              <div class="flex self-stretch items-center justify-start">
+                                <img
+                                  src="/fimgs/1718_227292.x1.svg"
+                                  style="width: 14px; min-width: 14px; max-width: 14px; height: 14px; min-height: 14px; max-height: 14px;"
+                                />
+                                <div class="text-sm font-medium leading-tight text-amber-500">
+                                  {" "}
+                                  4.5
+                                </div>
+                              </div>
                             </div>
                             <div class="flex self-stretch items-center justify-start">
-                              <img
-                                src="/fimgs/1718_227292.x1.svg"
-                                style="width: 14px; min-width: 14px; max-width: 14px; height: 14px; min-height: 14px; max-height: 14px;"
-                              />
-                              <div class="text-sm font-medium leading-tight text-amber-500">
-                                {" "}
-                                4.5
-                              </div>
-                            </div>
-                          </div>
-                          <div class="flex self-stretch items-center justify-start">
-                            <div class="flex space-x-2 items-start justify-start">
-                              <div class="flex items-center justify-center rounded-full">
-                                <div class="text-xs font-medium leading-none text-center text-gray-500">
-                                  Romance
+                              <div class="flex space-x-2 items-start justify-start">
+                                <div class="flex items-center justify-center rounded-full">
+                                  <div class="text-xs font-medium leading-none text-center text-gray-500">
+                                    Romance
+                                  </div>
                                 </div>
-                              </div>
-                              <div class="flex items-center justify-center rounded-full">
-                                <div class="text-xs font-medium leading-none text-center text-gray-500">
-                                  Fiction
+                                <div class="flex items-center justify-center rounded-full">
+                                  <div class="text-xs font-medium leading-none text-center text-gray-500">
+                                    Fiction
+                                  </div>
                                 </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                        <div class="flex self-stretch items-start justify-start">
-                          <div class="text-sm font-medium leading-tight text-gray-600">
-                            Glendi Adijunior adalah seadanya. Jaera Nindya
-                            adalah seadainya. Di permainan ini ...
+                          <div class="flex self-stretch items-start justify-start">
+                            <div class="text-sm font-medium leading-tight text-gray-600">
+                              Glendi Adijunior adalah seadanya. Jaera Nindya
+                              adalah seadainya. Di permainan ini ...
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  )}
+                  {meta.loading && (
+                    <div
+                      class={`flex self-stretch space-x-4 items-start justify-start p-4 shadow rounded`}
+                    >
+                      <div
+                        class={`flex items-start justify-start`}
+                        style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;"
+                      >
+                        <loading-box />
+                      </div>
+                      <div class="flex flex-1 self-stretch flex-col items-start justify-center">
+                        <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
+                          <div class="flex self-stretch flex-col space-y-2.5 items-start justify-start">
+                            <div
+                              class={`flex self-stretch flex-col items-start justify-start`}
+                              style={`height: 24px; min-height: 24px; max-height: 24px; max-width:80%;`}
+                            >
+                              <loading-box />
+                            </div>
+                            <div class="flex self-stretch flex-col items-start justify-start">
+                              <div
+                                class={`flex self-stretch items-center justify-start`}
+                                style={`height: 18px; min-height: 18px; max-height: 18px; max-width:40%;`}
+                              >
+                                <loading-box />
+                              </div>
+                            </div>
+                          </div>
+                          <div
+                            class="flex self-stretch flex-col items-start justify-start"
+                            style="height: 100px; min-height: 100px; max-height: 100px;"
+                          >
+                            <loading-box />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   <div class="flex flex-col items-start justify-start">
                     <div class="flex space-x-1.5 justify-center">
                       <div class="bg-amber-500 rounded-full" />
@@ -297,218 +360,418 @@
                 </div>
               </div>
             </div>
-            <div
-              class={`flex self-stretch space-x-3 items-start justify-start overflow-x-auto`}
-            >
+            {!meta.loading && (
               <div
-                class={`flex self-stretch flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded`}
-                onClick={() => {
-                  navigate("/m/detail-book-page");
-                }}
-              >
-                <img
-                  src="/fimgs/1718_224584.x1.png"
-                  style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;"
-                />
-                <div class="flex flex-1 self-stretch flex-col space-y-1 items-center justify-start px-2 pb-2">
-                  <div class="flex items-start justify-start">
-                    <div class="flex items-center justify-center rounded-full">
-                      <div class="text-xs font-medium leading-none text-center text-gray-500">
-                        Romace
-                      </div>
-                    </div>
-                  </div>
-                  <div class="flex self-stretch items-center justify-center">
-                    <div
-                      class={`text-sm font-medium leading-tight text-center`}
-                    >
-                      Game Over
-                    </div>
-                  </div>
-                  <div class="flex self-stretch space-x-2 items-center justify-center">
-                    <div class="flex items-center justify-center">
-                      <div class="flex space-x-0.5 items-center justify-center pr-0.5">
-                        <img
-                          src="/fimgs/1718_224593.x1.svg"
-                          class="flex items-center justify-center"
-                          style="width: 12px; min-width: 12px; max-width: 12px; height: 12px; min-height: 12px; max-height: 12px;"
-                        />
-                        <div class="text-xs leading-none">4.9</div>
-                      </div>
-                    </div>
-                    <div class="flex items-center justify-center">
-                      <img
-                        src="/fimgs/1718_224597.x1.svg"
-                        class="flex flex-col items-start justify-start pr-0.5"
-                        style="width: 16px; min-width: 16px; max-width: 16px; height: 9px; min-height: 9px; max-height: 9px;"
-                      />
-                      <div class="text-xs leading-none text-center">123</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div
-                class={`flex self-stretch flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded`}
-                onClick={() => {
-                  navigate("/m/detail-book-page");
-                }}
-              >
-                <img
-                  src="/fimgs/1718_221471.x1.png"
-                  style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;"
-                />
-                <div class="flex flex-1 self-stretch flex-col space-y-1 items-center justify-start px-2 pb-2">
-                  <div class="flex items-start justify-start">
-                    <div class="flex items-center justify-center rounded-full">
-                      <div class="text-xs font-medium leading-none text-center text-gray-500">
-                        Romace
-                      </div>
-                    </div>
-                  </div>
-                  <div class="flex self-stretch items-center justify-center">
-                    <div
-                      class={`text-sm font-medium leading-tight text-center`}
-                    >
-                      Game Over
-                    </div>
-                  </div>
-                  <div class="flex self-stretch space-x-2 items-center justify-center">
-                    <div class="flex items-center justify-center">
-                      <div class="flex space-x-0.5 items-center justify-center pr-0.5">
-                        <img
-                          src="/fimgs/1718_221480.x1.svg"
-                          class="flex items-center justify-center"
-                          style="width: 12px; min-width: 12px; max-width: 12px; height: 12px; min-height: 12px; max-height: 12px;"
-                        />
-                        <div class="text-xs leading-none">4.9</div>
-                      </div>
-                    </div>
-                    <div class="flex items-center justify-center">
-                      <img
-                        src="/fimgs/1718_221484.x1.svg"
-                        class="flex flex-col items-start justify-start pr-0.5"
-                        style="width: 16px; min-width: 16px; max-width: 16px; height: 9px; min-height: 9px; max-height: 9px;"
-                      />
-                      <div class="text-xs leading-none text-center">123</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div
-                class={`flex self-stretch flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded`}
-                onClick={() => {
-                  navigate("/m/detail-book-page");
-                }}
-              >
-                <img
-                  src="/fimgs/1718_227283.x1.png"
-                  style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;"
-                />
-                <div class="flex flex-1 self-stretch flex-col space-y-1 items-center justify-start px-2 pb-2">
-                  <div class="flex items-start justify-start">
-                    <div class="flex items-center justify-center rounded-full">
-                      <div class="text-xs font-medium leading-none text-center text-gray-500">
-                        Romace
-                      </div>
-                    </div>
-                  </div>
-                  <div class="flex self-stretch items-center justify-center">
-                    <div
-                      class={`text-sm font-medium leading-tight text-center`}
-                    >
-                      Game Over
-                    </div>
-                  </div>
-                  <div class="flex self-stretch space-x-2 items-center justify-center">
-                    <div class="flex items-center justify-center">
-                      <div class="flex space-x-0.5 items-center justify-center pr-0.5">
-                        <img
-                          src="/fimgs/1718_227292.x1.svg"
-                          class="flex items-center justify-center"
-                          style="width: 12px; min-width: 12px; max-width: 12px; height: 12px; min-height: 12px; max-height: 12px;"
-                        />
-                        <div class="text-xs leading-none">4.9</div>
-                      </div>
-                    </div>
-                    <div class="flex items-center justify-center">
-                      <img
-                        src="/fimgs/1718_227296.x1.svg"
-                        class="flex flex-col items-start justify-start pr-0.5"
-                        style="width: 16px; min-width: 16px; max-width: 16px; height: 9px; min-height: 9px; max-height: 9px;"
-                      />
-                      <div class="text-xs leading-none text-center">123</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div
-                class={`flex self-stretch flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded`}
-                onClick={() => {
-                  navigate("/m/detail-book-page");
-                }}
-              >
-                <img
-                  src="/fimgs/1718_228324.x1.png"
-                  style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;"
-                />
-                <div class="flex flex-1 self-stretch flex-col space-y-1 items-center justify-start px-2 pb-2">
-                  <div class="flex items-start justify-start">
-                    <div class="flex items-center justify-center rounded-full">
-                      <div class="text-xs font-medium leading-none text-center text-gray-500">
-                        Romace
-                      </div>
-                    </div>
-                  </div>
-                  <div class="flex self-stretch items-center justify-center">
-                    <div
-                      class={`text-sm font-medium leading-tight text-center`}
-                    >
-                      Game Over
-                    </div>
-                  </div>
-                  <div class="flex self-stretch space-x-2 items-center justify-center">
-                    <div class="flex items-center justify-center">
-                      <div class="flex space-x-0.5 items-center justify-center pr-0.5">
-                        <img
-                          src="/fimgs/1718_228333.x1.svg"
-                          class="flex items-center justify-center"
-                          style="width: 12px; min-width: 12px; max-width: 12px; height: 12px; min-height: 12px; max-height: 12px;"
-                        />
-                        <div class="text-xs leading-none">4.9</div>
-                      </div>
-                    </div>
-                    <div class="flex items-center justify-center">
-                      <img
-                        src="/fimgs/1718_228337.x1.svg"
-                        class="flex flex-col items-start justify-start pr-0.5"
-                        style="width: 16px; min-width: 16px; max-width: 16px; height: 9px; min-height: 9px; max-height: 9px;"
-                      />
-                      <div class="text-xs leading-none text-center">123</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div
-                class={`flex self-stretch flex-col items-center justify-center px-1 pt-1 pb-2.5 bg-white rounded`}
-                onClick={() => {
-                  navigate("/m/popular-page");
-                }}
+                class={`flex self-stretch space-x-3 items-start justify-start overflow-x-auto`}
               >
                 <div
-                  class="flex flex-1 self-stretch flex-col space-y-1 items-center justify-center"
-                  style="width: 110.16px; min-width: 110.16px; max-width: 110.16px;"
+                  class={`flex self-stretch flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded`}
+                  onClick={() => {
+                    navigate("/m/detail-book-page");
+                  }}
                 >
-                  <div class="text-xs leading-none text-center text-gray-500">
-                    Show all Popular
-                  </div>
-                  <div class="flex flex-col items-center justify-center bg-white border-2 rounded-full border-gray-300">
+                  <img
+                    src="/fimgs/1718_224584.x1.png"
+                    style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;"
+                  />
+                  <div class="flex flex-1 self-stretch flex-col space-y-1 items-center justify-start px-2 pb-2">
                     <div class="flex items-start justify-start">
-                      <div />
+                      <div class="flex items-center justify-center rounded-full">
+                        <div class="text-xs font-medium leading-none text-center text-gray-500">
+                          Romace
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex self-stretch items-center justify-center">
+                      <div
+                        class={`text-sm font-medium leading-tight text-center`}
+                      >
+                        Game Over
+                      </div>
+                    </div>
+                    <div class="flex self-stretch space-x-2 items-center justify-center">
+                      <div class="flex items-center justify-center">
+                        <div class="flex space-x-0.5 items-center justify-center pr-0.5">
+                          <img
+                            src="/fimgs/1718_224593.x1.svg"
+                            class="flex items-center justify-center"
+                            style="width: 12px; min-width: 12px; max-width: 12px; height: 12px; min-height: 12px; max-height: 12px;"
+                          />
+                          <div class="text-xs leading-none">4.9</div>
+                        </div>
+                      </div>
+                      <div class="flex items-center justify-center">
+                        <img
+                          src="/fimgs/1718_224597.x1.svg"
+                          class="flex flex-col items-start justify-start pr-0.5"
+                          style="width: 16px; min-width: 16px; max-width: 16px; height: 9px; min-height: 9px; max-height: 9px;"
+                        />
+                        <div class="text-xs leading-none text-center">123</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded`}
+                  onClick={() => {
+                    navigate("/m/detail-book-page");
+                  }}
+                >
+                  <img
+                    src="/fimgs/1718_221471.x1.png"
+                    style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;"
+                  />
+                  <div class="flex flex-1 self-stretch flex-col space-y-1 items-center justify-start px-2 pb-2">
+                    <div class="flex items-start justify-start">
+                      <div class="flex items-center justify-center rounded-full">
+                        <div class="text-xs font-medium leading-none text-center text-gray-500">
+                          Romace
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex self-stretch items-center justify-center">
+                      <div
+                        class={`text-sm font-medium leading-tight text-center`}
+                      >
+                        Game Over
+                      </div>
+                    </div>
+                    <div class="flex self-stretch space-x-2 items-center justify-center">
+                      <div class="flex items-center justify-center">
+                        <div class="flex space-x-0.5 items-center justify-center pr-0.5">
+                          <img
+                            src="/fimgs/1718_221480.x1.svg"
+                            class="flex items-center justify-center"
+                            style="width: 12px; min-width: 12px; max-width: 12px; height: 12px; min-height: 12px; max-height: 12px;"
+                          />
+                          <div class="text-xs leading-none">4.9</div>
+                        </div>
+                      </div>
+                      <div class="flex items-center justify-center">
+                        <img
+                          src="/fimgs/1718_221484.x1.svg"
+                          class="flex flex-col items-start justify-start pr-0.5"
+                          style="width: 16px; min-width: 16px; max-width: 16px; height: 9px; min-height: 9px; max-height: 9px;"
+                        />
+                        <div class="text-xs leading-none text-center">123</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded`}
+                  onClick={() => {
+                    navigate("/m/detail-book-page");
+                  }}
+                >
+                  <img
+                    src="/fimgs/1718_227283.x1.png"
+                    style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;"
+                  />
+                  <div class="flex flex-1 self-stretch flex-col space-y-1 items-center justify-start px-2 pb-2">
+                    <div class="flex items-start justify-start">
+                      <div class="flex items-center justify-center rounded-full">
+                        <div class="text-xs font-medium leading-none text-center text-gray-500">
+                          Romace
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex self-stretch items-center justify-center">
+                      <div
+                        class={`text-sm font-medium leading-tight text-center`}
+                      >
+                        Game Over
+                      </div>
+                    </div>
+                    <div class="flex self-stretch space-x-2 items-center justify-center">
+                      <div class="flex items-center justify-center">
+                        <div class="flex space-x-0.5 items-center justify-center pr-0.5">
+                          <img
+                            src="/fimgs/1718_227292.x1.svg"
+                            class="flex items-center justify-center"
+                            style="width: 12px; min-width: 12px; max-width: 12px; height: 12px; min-height: 12px; max-height: 12px;"
+                          />
+                          <div class="text-xs leading-none">4.9</div>
+                        </div>
+                      </div>
+                      <div class="flex items-center justify-center">
+                        <img
+                          src="/fimgs/1718_227296.x1.svg"
+                          class="flex flex-col items-start justify-start pr-0.5"
+                          style="width: 16px; min-width: 16px; max-width: 16px; height: 9px; min-height: 9px; max-height: 9px;"
+                        />
+                        <div class="text-xs leading-none text-center">123</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded`}
+                  onClick={() => {
+                    navigate("/m/detail-book-page");
+                  }}
+                >
+                  <img
+                    src="/fimgs/1718_228324.x1.png"
+                    style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;"
+                  />
+                  <div class="flex flex-1 self-stretch flex-col space-y-1 items-center justify-start px-2 pb-2">
+                    <div class="flex items-start justify-start">
+                      <div class="flex items-center justify-center rounded-full">
+                        <div class="text-xs font-medium leading-none text-center text-gray-500">
+                          Romace
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex self-stretch items-center justify-center">
+                      <div
+                        class={`text-sm font-medium leading-tight text-center`}
+                      >
+                        Game Over
+                      </div>
+                    </div>
+                    <div class="flex self-stretch space-x-2 items-center justify-center">
+                      <div class="flex items-center justify-center">
+                        <div class="flex space-x-0.5 items-center justify-center pr-0.5">
+                          <img
+                            src="/fimgs/1718_228333.x1.svg"
+                            class="flex items-center justify-center"
+                            style="width: 12px; min-width: 12px; max-width: 12px; height: 12px; min-height: 12px; max-height: 12px;"
+                          />
+                          <div class="text-xs leading-none">4.9</div>
+                        </div>
+                      </div>
+                      <div class="flex items-center justify-center">
+                        <img
+                          src="/fimgs/1718_228337.x1.svg"
+                          class="flex flex-col items-start justify-start pr-0.5"
+                          style="width: 16px; min-width: 16px; max-width: 16px; height: 9px; min-height: 9px; max-height: 9px;"
+                        />
+                        <div class="text-xs leading-none text-center">123</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch flex-col items-center justify-center px-1 pt-1 pb-2.5 bg-white rounded`}
+                  onClick={() => {
+                    navigate("/m/popular-page");
+                  }}
+                >
+                  <div
+                    class="flex flex-1 self-stretch flex-col space-y-1 items-center justify-center"
+                    style="width: 110.16px; min-width: 110.16px; max-width: 110.16px;"
+                  >
+                    <div class="text-xs leading-none text-center text-gray-500">
+                      Show all Popular
+                    </div>
+                    <div class="flex flex-col items-center justify-center bg-white border-2 rounded-full border-gray-300">
+                      <div class="flex items-start justify-start">
+                        <div />
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
+            {meta.loading && (
+              <div
+                class={`flex self-stretch space-x-3 items-start justify-start overflow-x-auto`}
+              >
+                <div
+                  class={`flex self-stretch flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded`}
+                  onClick={() => {
+                    navigate("/m/detail-book-page");
+                  }}
+                >
+                  <div
+                    class="flex items-start justify-start"
+                    style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;"
+                  >
+                    <loading-box
+                      style={`background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;`}
+                    />
+                  </div>
+                  <div class="flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-start px-2 pb-2">
+                    <div
+                      class="flex flex-col items-start justify-start"
+                      style="width: 75px; min-width: 75px; max-width: 75px; height: 12px; min-height: 12px; max-height: 12px;"
+                    >
+                      <loading-box class="bg-gray-200" />
+                    </div>
+                    <div
+                      class="flex flex-col items-start justify-start"
+                      style="width: 94.16px; min-width: 94.16px; max-width: 94.16px; height: 12px; min-height: 12px; max-height: 12px;"
+                    >
+                      <loading-box class="bg-gray-200" />
+                    </div>
+                    <div class="flex self-stretch space-x-2 items-center justify-center">
+                      <div
+                        class="flex flex-col items-start justify-start"
+                        style="width: 43.08px; min-width: 43.08px; max-width: 43.08px; height: 12px; min-height: 12px; max-height: 12px;"
+                      >
+                        <loading-box class="bg-gray-200" />
+                      </div>
+                      <div
+                        class="flex flex-col items-start justify-start"
+                        style="width: 43.08px; min-width: 43.08px; max-width: 43.08px; height: 12px; min-height: 12px; max-height: 12px;"
+                      >
+                        <loading-box class="bg-gray-200" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded`}
+                  onClick={() => {
+                    navigate("/m/detail-book-page");
+                  }}
+                >
+                  <div
+                    class="flex items-start justify-start"
+                    style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;"
+                  >
+                    <loading-box
+                      style={`background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;`}
+                    />
+                  </div>
+                  <div class="flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-start px-2 pb-2">
+                    <div
+                      class="flex flex-col items-start justify-start"
+                      style="width: 75px; min-width: 75px; max-width: 75px; height: 12px; min-height: 12px; max-height: 12px;"
+                    >
+                      <loading-box class="bg-gray-200" />
+                    </div>
+                    <div
+                      class="flex flex-col items-start justify-start"
+                      style="width: 94.16px; min-width: 94.16px; max-width: 94.16px; height: 12px; min-height: 12px; max-height: 12px;"
+                    >
+                      <loading-box class="bg-gray-200" />
+                    </div>
+                    <div class="flex self-stretch space-x-2 items-center justify-center">
+                      <div
+                        class="flex flex-col items-start justify-start"
+                        style="width: 43.08px; min-width: 43.08px; max-width: 43.08px; height: 12px; min-height: 12px; max-height: 12px;"
+                      >
+                        <loading-box class="bg-gray-200" />
+                      </div>
+                      <div
+                        class="flex flex-col items-start justify-start"
+                        style="width: 43.08px; min-width: 43.08px; max-width: 43.08px; height: 12px; min-height: 12px; max-height: 12px;"
+                      >
+                        <loading-box class="bg-gray-200" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded`}
+                  onClick={() => {
+                    navigate("/m/detail-book-page");
+                  }}
+                >
+                  <div
+                    class="flex items-start justify-start"
+                    style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;"
+                  >
+                    <loading-box
+                      style={`background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;`}
+                    />
+                  </div>
+                  <div class="flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-start px-2 pb-2">
+                    <div
+                      class="flex flex-col items-start justify-start"
+                      style="width: 75px; min-width: 75px; max-width: 75px; height: 12px; min-height: 12px; max-height: 12px;"
+                    >
+                      <loading-box class="bg-gray-200" />
+                    </div>
+                    <div
+                      class="flex flex-col items-start justify-start"
+                      style="width: 94.16px; min-width: 94.16px; max-width: 94.16px; height: 12px; min-height: 12px; max-height: 12px;"
+                    >
+                      <loading-box class="bg-gray-200" />
+                    </div>
+                    <div class="flex self-stretch space-x-2 items-center justify-center">
+                      <div
+                        class="flex flex-col items-start justify-start"
+                        style="width: 43.08px; min-width: 43.08px; max-width: 43.08px; height: 12px; min-height: 12px; max-height: 12px;"
+                      >
+                        <loading-box class="bg-gray-200" />
+                      </div>
+                      <div
+                        class="flex flex-col items-start justify-start"
+                        style="width: 43.08px; min-width: 43.08px; max-width: 43.08px; height: 12px; min-height: 12px; max-height: 12px;"
+                      >
+                        <loading-box class="bg-gray-200" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded`}
+                  onClick={() => {
+                    navigate("/m/detail-book-page");
+                  }}
+                >
+                  <div
+                    class="flex items-start justify-start"
+                    style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;"
+                  >
+                    <loading-box
+                      style={`background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;`}
+                    />
+                  </div>
+                  <div class="flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-start px-2 pb-2">
+                    <div
+                      class="flex flex-col items-start justify-start"
+                      style="width: 75px; min-width: 75px; max-width: 75px; height: 12px; min-height: 12px; max-height: 12px;"
+                    >
+                      <loading-box class="bg-gray-200" />
+                    </div>
+                    <div
+                      class="flex flex-col items-start justify-start"
+                      style="width: 94.16px; min-width: 94.16px; max-width: 94.16px; height: 12px; min-height: 12px; max-height: 12px;"
+                    >
+                      <loading-box class="bg-gray-200" />
+                    </div>
+                    <div class="flex self-stretch space-x-2 items-center justify-center">
+                      <div
+                        class="flex flex-col items-start justify-start"
+                        style="width: 43.08px; min-width: 43.08px; max-width: 43.08px; height: 12px; min-height: 12px; max-height: 12px;"
+                      >
+                        <loading-box class="bg-gray-200" />
+                      </div>
+                      <div
+                        class="flex flex-col items-start justify-start"
+                        style="width: 43.08px; min-width: 43.08px; max-width: 43.08px; height: 12px; min-height: 12px; max-height: 12px;"
+                      >
+                        <loading-box class="bg-gray-200" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch flex-col items-center justify-center px-1 pt-1 pb-2.5 bg-white rounded`}
+                  onClick={() => {
+                    navigate("/m/popular-page");
+                  }}
+                >
+                  <div
+                    class="flex flex-1 self-stretch flex-col space-y-1 items-center justify-center"
+                    style="width: 110.16px; min-width: 110.16px; max-width: 110.16px;"
+                  >
+                    <div class="text-xs leading-none text-center text-gray-500">
+                      Show all Popular
+                    </div>
+                    <div class="flex flex-col items-center justify-center bg-white border-2 rounded-full border-gray-300">
+                      <div class="flex items-start justify-start">
+                        <div />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
           <div
             class={`flex self-stretch flex-col space-y-2 items-start justify-start p-6 bg-orange-50`}
@@ -524,178 +787,358 @@
                 </div>
               </div>
             </div>
-            <div class="flex self-stretch flex-col space-y-2.5 items-start justify-start">
+            {!meta.loading && (
               <div
-                class={`flex self-stretch space-x-2 items-center justify-start p-2 bg-white rounded`}
-                onClick={() => {
-                  navigate("/m/detail-book-page");
-                }}
+                class={`flex self-stretch flex-col space-y-2.5 items-start justify-start`}
               >
-                <img
-                  src="/fimgs/1718_263052.x1.png"
-                  class={`flex items-start justify-start`}
-                />
-                <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
-                  <div class="flex self-stretch items-start justify-start">
-                    <div class="text-base font-bold leading-normal">
-                      The Design of Everiday Things
-                    </div>
-                  </div>
-                  <div class="flex self-stretch space-x-2 items-center justify-start">
+                <div
+                  class={`flex self-stretch space-x-2 items-center justify-start p-2 bg-white rounded`}
+                  onClick={() => {
+                    navigate("/m/detail-book-page");
+                  }}
+                >
+                  <img
+                    src="/fimgs/1718_263052.x1.png"
+                    class={`flex items-start justify-start`}
+                  />
+                  <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
                     <div class="flex self-stretch items-start justify-start">
-                      <div class="flex items-center justify-center rounded-full">
-                        <div class="text-xs font-medium leading-none text-center text-gray-500">
-                          Book
+                      <div class="text-base font-bold leading-normal">
+                        The Design of Everiday Things
+                      </div>
+                    </div>
+                    <div class="flex self-stretch space-x-2 items-center justify-start">
+                      <div class="flex self-stretch items-start justify-start">
+                        <div class="flex items-center justify-center rounded-full">
+                          <div class="text-xs font-medium leading-none text-center text-gray-500">
+                            Book
+                          </div>
+                        </div>
+                      </div>
+                      <div class="flex self-stretch items-start justify-start rounded-full">
+                        <div class="flex items-center justify-center rounded-full">
+                          <div class="text-xs font-medium leading-none text-center text-gray-500">
+                            Design
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <div class="flex self-stretch items-start justify-start rounded-full">
-                      <div class="flex items-center justify-center rounded-full">
-                        <div class="text-xs font-medium leading-none text-center text-gray-500">
-                          Design
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch space-x-2 items-center justify-start p-2 bg-white rounded`}
+                  onClick={() => {
+                    navigate("/m/detail-book-page");
+                  }}
+                >
+                  <img
+                    src="/fimgs/1718_263052.x1.png"
+                    class={`flex items-start justify-start`}
+                  />
+                  <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
+                    <div class="flex self-stretch items-start justify-start">
+                      <div class="text-base font-bold leading-normal">
+                        The Design of Everiday Things
+                      </div>
+                    </div>
+                    <div class="flex self-stretch space-x-2 items-center justify-start">
+                      <div class="flex self-stretch items-start justify-start">
+                        <div class="flex items-center justify-center rounded-full">
+                          <div class="text-xs font-medium leading-none text-center text-gray-500">
+                            Book
+                          </div>
+                        </div>
+                      </div>
+                      <div class="flex self-stretch items-start justify-start rounded-full">
+                        <div class="flex items-center justify-center rounded-full">
+                          <div class="text-xs font-medium leading-none text-center text-gray-500">
+                            Design
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch space-x-2 items-center justify-start p-2 bg-white rounded`}
+                  onClick={() => {
+                    navigate("/m/detail-book-page");
+                  }}
+                >
+                  <img
+                    src="/fimgs/1718_263052.x1.png"
+                    class={`flex items-start justify-start`}
+                  />
+                  <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
+                    <div class="flex self-stretch items-start justify-start">
+                      <div class="text-base font-bold leading-normal">
+                        The Design of Everiday Things
+                      </div>
+                    </div>
+                    <div class="flex self-stretch space-x-2 items-center justify-start">
+                      <div class="flex self-stretch items-start justify-start">
+                        <div class="flex items-center justify-center rounded-full">
+                          <div class="text-xs font-medium leading-none text-center text-gray-500">
+                            Book
+                          </div>
+                        </div>
+                      </div>
+                      <div class="flex self-stretch items-start justify-start rounded-full">
+                        <div class="flex items-center justify-center rounded-full">
+                          <div class="text-xs font-medium leading-none text-center text-gray-500">
+                            Design
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch space-x-2 items-center justify-start p-2 bg-white rounded`}
+                  onClick={() => {
+                    navigate("/m/detail-book-page");
+                  }}
+                >
+                  <img
+                    src="/fimgs/1718_263052.x1.png"
+                    class={`flex items-start justify-start`}
+                  />
+                  <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
+                    <div class="flex self-stretch items-start justify-start">
+                      <div class="text-base font-bold leading-normal">
+                        The Design of Everiday Things
+                      </div>
+                    </div>
+                    <div class="flex self-stretch space-x-2 items-center justify-start">
+                      <div class="flex self-stretch items-start justify-start">
+                        <div class="flex items-center justify-center rounded-full">
+                          <div class="text-xs font-medium leading-none text-center text-gray-500">
+                            Book
+                          </div>
+                        </div>
+                      </div>
+                      <div class="flex self-stretch items-start justify-start rounded-full">
+                        <div class="flex items-center justify-center rounded-full">
+                          <div class="text-xs font-medium leading-none text-center text-gray-500">
+                            Design
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch space-x-2 items-center justify-start p-2 bg-white rounded`}
+                  onClick={() => {
+                    navigate("/m/detail-book-page");
+                  }}
+                >
+                  <img
+                    src="/fimgs/1718_263052.x1.png"
+                    class={`flex items-start justify-start`}
+                  />
+                  <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
+                    <div class="flex self-stretch items-start justify-start">
+                      <div class="text-base font-bold leading-normal">
+                        The Design of Everiday Things
+                      </div>
+                    </div>
+                    <div class="flex self-stretch space-x-2 items-center justify-start">
+                      <div class="flex self-stretch items-start justify-start">
+                        <div class="flex items-center justify-center rounded-full">
+                          <div class="text-xs font-medium leading-none text-center text-gray-500">
+                            Book
+                          </div>
+                        </div>
+                      </div>
+                      <div class="flex self-stretch items-start justify-start rounded-full">
+                        <div class="flex items-center justify-center rounded-full">
+                          <div class="text-xs font-medium leading-none text-center text-gray-500">
+                            Design
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
+            )}
+            {meta.loading && (
               <div
-                class={`flex self-stretch space-x-2 items-center justify-start p-2 bg-white rounded`}
-                onClick={() => {
-                  navigate("/m/detail-book-page");
-                }}
+                class={`flex self-stretch flex-col space-y-2.5 items-start justify-start`}
               >
-                <img
-                  src="/fimgs/1718_263052.x1.png"
-                  class={`flex items-start justify-start`}
-                />
-                <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
-                  <div class="flex self-stretch items-start justify-start">
-                    <div class="text-base font-bold leading-normal">
-                      The Design of Everiday Things
+                <div
+                  class={`flex self-stretch space-x-2 items-center justify-start p-2 bg-white rounded`}
+                >
+                  <div class={`flex items-start justify-start`}>
+                    <div
+                      class="flex flex-1 self-stretch items-start justify-start"
+                      style="width: 36.40px; min-width: 36.40px; max-width: 36.40px; height: 52px; min-height: 52px; max-height: 52px;"
+                    >
+                      <loading-box style="background-image: url('/fimgs/bg-1cf452be1c924b48e1ebc8f542367afcc8b29932');background-size:100% 100%;background-repeat:no-repeat;" />
                     </div>
                   </div>
-                  <div class="flex self-stretch space-x-2 items-center justify-start">
-                    <div class="flex self-stretch items-start justify-start">
-                      <div class="flex items-center justify-center rounded-full">
-                        <div class="text-xs font-medium leading-none text-center text-gray-500">
-                          Book
-                        </div>
+                  <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
+                    <div
+                      class="flex self-stretch flex-col items-start justify-start"
+                      style="width: 302.60px; min-width: 302.60px; max-width: 302.60px; height: 17px; min-height: 17px; max-height: 17px;"
+                    >
+                      <loading-box class="bg-gray-200" />
+                    </div>
+                    <div class="flex self-stretch space-x-2 items-center justify-start">
+                      <div
+                        class="flex flex-col items-start justify-start"
+                        style="width: 24px; min-width: 24px; max-width: 24px; height: 17px; min-height: 17px; max-height: 17px;"
+                      >
+                        <loading-box class="bg-gray-200" />
+                      </div>
+                      <div class="flex flex-col items-start justify-start">
+                        <loading-box
+                          class="bg-gray-200"
+                          style="width: 24px; min-width: 24px; max-width: 24px; height: 17px; min-height: 17px; max-height: 17px;"
+                        />
                       </div>
                     </div>
-                    <div class="flex self-stretch items-start justify-start rounded-full">
-                      <div class="flex items-center justify-center rounded-full">
-                        <div class="text-xs font-medium leading-none text-center text-gray-500">
-                          Design
-                        </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch space-x-2 items-center justify-start p-2 bg-white rounded`}
+                >
+                  <div class={`flex items-start justify-start`}>
+                    <div
+                      class="flex flex-1 self-stretch items-start justify-start"
+                      style="width: 36.40px; min-width: 36.40px; max-width: 36.40px; height: 52px; min-height: 52px; max-height: 52px;"
+                    >
+                      <loading-box style="background-image: url('/fimgs/bg-1cf452be1c924b48e1ebc8f542367afcc8b29932');background-size:100% 100%;background-repeat:no-repeat;" />
+                    </div>
+                  </div>
+                  <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
+                    <div
+                      class="flex self-stretch flex-col items-start justify-start"
+                      style="width: 302.60px; min-width: 302.60px; max-width: 302.60px; height: 17px; min-height: 17px; max-height: 17px;"
+                    >
+                      <loading-box class="bg-gray-200" />
+                    </div>
+                    <div class="flex self-stretch space-x-2 items-center justify-start">
+                      <div
+                        class="flex flex-col items-start justify-start"
+                        style="width: 24px; min-width: 24px; max-width: 24px; height: 17px; min-height: 17px; max-height: 17px;"
+                      >
+                        <loading-box class="bg-gray-200" />
+                      </div>
+                      <div class="flex flex-col items-start justify-start">
+                        <loading-box
+                          class="bg-gray-200"
+                          style="width: 24px; min-width: 24px; max-width: 24px; height: 17px; min-height: 17px; max-height: 17px;"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch space-x-2 items-center justify-start p-2 bg-white rounded`}
+                >
+                  <div class={`flex items-start justify-start`}>
+                    <div
+                      class="flex flex-1 self-stretch items-start justify-start"
+                      style="width: 36.40px; min-width: 36.40px; max-width: 36.40px; height: 52px; min-height: 52px; max-height: 52px;"
+                    >
+                      <loading-box style="background-image: url('/fimgs/bg-1cf452be1c924b48e1ebc8f542367afcc8b29932');background-size:100% 100%;background-repeat:no-repeat;" />
+                    </div>
+                  </div>
+                  <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
+                    <div
+                      class="flex self-stretch flex-col items-start justify-start"
+                      style="width: 302.60px; min-width: 302.60px; max-width: 302.60px; height: 17px; min-height: 17px; max-height: 17px;"
+                    >
+                      <loading-box class="bg-gray-200" />
+                    </div>
+                    <div class="flex self-stretch space-x-2 items-center justify-start">
+                      <div
+                        class="flex flex-col items-start justify-start"
+                        style="width: 24px; min-width: 24px; max-width: 24px; height: 17px; min-height: 17px; max-height: 17px;"
+                      >
+                        <loading-box class="bg-gray-200" />
+                      </div>
+                      <div class="flex flex-col items-start justify-start">
+                        <loading-box
+                          class="bg-gray-200"
+                          style="width: 24px; min-width: 24px; max-width: 24px; height: 17px; min-height: 17px; max-height: 17px;"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch space-x-2 items-center justify-start p-2 bg-white rounded`}
+                >
+                  <div class={`flex items-start justify-start`}>
+                    <div
+                      class="flex flex-1 self-stretch items-start justify-start"
+                      style="width: 36.40px; min-width: 36.40px; max-width: 36.40px; height: 52px; min-height: 52px; max-height: 52px;"
+                    >
+                      <loading-box style="background-image: url('/fimgs/bg-1cf452be1c924b48e1ebc8f542367afcc8b29932');background-size:100% 100%;background-repeat:no-repeat;" />
+                    </div>
+                  </div>
+                  <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
+                    <div
+                      class="flex self-stretch flex-col items-start justify-start"
+                      style="width: 302.60px; min-width: 302.60px; max-width: 302.60px; height: 17px; min-height: 17px; max-height: 17px;"
+                    >
+                      <loading-box class="bg-gray-200" />
+                    </div>
+                    <div class="flex self-stretch space-x-2 items-center justify-start">
+                      <div
+                        class="flex flex-col items-start justify-start"
+                        style="width: 24px; min-width: 24px; max-width: 24px; height: 17px; min-height: 17px; max-height: 17px;"
+                      >
+                        <loading-box class="bg-gray-200" />
+                      </div>
+                      <div class="flex flex-col items-start justify-start">
+                        <loading-box
+                          class="bg-gray-200"
+                          style="width: 24px; min-width: 24px; max-width: 24px; height: 17px; min-height: 17px; max-height: 17px;"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch space-x-2 items-center justify-start p-2 bg-white rounded`}
+                >
+                  <div class={`flex items-start justify-start`}>
+                    <div
+                      class="flex flex-1 self-stretch items-start justify-start"
+                      style="width: 36.40px; min-width: 36.40px; max-width: 36.40px; height: 52px; min-height: 52px; max-height: 52px;"
+                    >
+                      <loading-box style="background-image: url('/fimgs/bg-1cf452be1c924b48e1ebc8f542367afcc8b29932');background-size:100% 100%;background-repeat:no-repeat;" />
+                    </div>
+                  </div>
+                  <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
+                    <div
+                      class="flex self-stretch flex-col items-start justify-start"
+                      style="width: 302.60px; min-width: 302.60px; max-width: 302.60px; height: 17px; min-height: 17px; max-height: 17px;"
+                    >
+                      <loading-box class="bg-gray-200" />
+                    </div>
+                    <div class="flex self-stretch space-x-2 items-center justify-start">
+                      <div
+                        class="flex flex-col items-start justify-start"
+                        style="width: 24px; min-width: 24px; max-width: 24px; height: 17px; min-height: 17px; max-height: 17px;"
+                      >
+                        <loading-box class="bg-gray-200" />
+                      </div>
+                      <div class="flex flex-col items-start justify-start">
+                        <loading-box
+                          class="bg-gray-200"
+                          style="width: 24px; min-width: 24px; max-width: 24px; height: 17px; min-height: 17px; max-height: 17px;"
+                        />
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div
-                class={`flex self-stretch space-x-2 items-center justify-start p-2 bg-white rounded`}
-                onClick={() => {
-                  navigate("/m/detail-book-page");
-                }}
-              >
-                <img
-                  src="/fimgs/1718_263052.x1.png"
-                  class={`flex items-start justify-start`}
-                />
-                <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
-                  <div class="flex self-stretch items-start justify-start">
-                    <div class="text-base font-bold leading-normal">
-                      The Design of Everiday Things
-                    </div>
-                  </div>
-                  <div class="flex self-stretch space-x-2 items-center justify-start">
-                    <div class="flex self-stretch items-start justify-start">
-                      <div class="flex items-center justify-center rounded-full">
-                        <div class="text-xs font-medium leading-none text-center text-gray-500">
-                          Book
-                        </div>
-                      </div>
-                    </div>
-                    <div class="flex self-stretch items-start justify-start rounded-full">
-                      <div class="flex items-center justify-center rounded-full">
-                        <div class="text-xs font-medium leading-none text-center text-gray-500">
-                          Design
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div
-                class={`flex self-stretch space-x-2 items-center justify-start p-2 bg-white rounded`}
-                onClick={() => {
-                  navigate("/m/detail-book-page");
-                }}
-              >
-                <img
-                  src="/fimgs/1718_263052.x1.png"
-                  class={`flex items-start justify-start`}
-                />
-                <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
-                  <div class="flex self-stretch items-start justify-start">
-                    <div class="text-base font-bold leading-normal">
-                      The Design of Everiday Things
-                    </div>
-                  </div>
-                  <div class="flex self-stretch space-x-2 items-center justify-start">
-                    <div class="flex self-stretch items-start justify-start">
-                      <div class="flex items-center justify-center rounded-full">
-                        <div class="text-xs font-medium leading-none text-center text-gray-500">
-                          Book
-                        </div>
-                      </div>
-                    </div>
-                    <div class="flex self-stretch items-start justify-start rounded-full">
-                      <div class="flex items-center justify-center rounded-full">
-                        <div class="text-xs font-medium leading-none text-center text-gray-500">
-                          Design
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div
-                class={`flex self-stretch space-x-2 items-center justify-start p-2 bg-white rounded`}
-                onClick={() => {
-                  navigate("/m/detail-book-page");
-                }}
-              >
-                <img
-                  src="/fimgs/1718_263052.x1.png"
-                  class={`flex items-start justify-start`}
-                />
-                <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
-                  <div class="flex self-stretch items-start justify-start">
-                    <div class="text-base font-bold leading-normal">
-                      The Design of Everiday Things
-                    </div>
-                  </div>
-                  <div class="flex self-stretch space-x-2 items-center justify-start">
-                    <div class="flex self-stretch items-start justify-start">
-                      <div class="flex items-center justify-center rounded-full">
-                        <div class="text-xs font-medium leading-none text-center text-gray-500">
-                          Book
-                        </div>
-                      </div>
-                    </div>
-                    <div class="flex self-stretch items-start justify-start rounded-full">
-                      <div class="flex items-center justify-center rounded-full">
-                        <div class="text-xs font-medium leading-none text-center text-gray-500">
-                          Design
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            )}
           </div>
         </m-tab>
         <m-tab id="explore" />
@@ -703,14 +1146,22 @@
         <m-tab
           class={`flex self-stretch flex-col space-y-2.5 items-start justify-start px-6 pt-2`}
           id="profile"
-          style="height: 800px; min-height: 800px; max-height: 800px;"
+          style={`height: 800px; min-height: 800px; max-height: 800px; padding-top:1rem`}
         >
           <div class="flex self-stretch space-x-2.5 items-center justify-start">
             <div
               src="/fimgs/1228_38484.x1.svg"
               class={`flex flex-col items-start justify-start`}
             >
-              <img src="/fimgs/855_10601.x1.svg" />
+              <img
+                src={
+                  meta.user.user_picture
+                    ? "/upload/" + meta.user.user_picture
+                    : "/fimgs/1255_50620.x1.svg"
+                }
+                class={`flex items-start justify-start rounded-full h-24 w-24`}
+                style={`border: 1px solid #555;`}
+              />
             </div>
             <div class="flex flex-1 self-stretch flex-col items-start justify-center p-4">
               <div class={`text-2xl font-bold leading-9`}>
@@ -856,8 +1307,16 @@
                     />
                   </div>
                 </div>
-                <div class="flex self-stretch flex-col items-start justify-start">
+                <div class="flex self-stretch flex-col space-y-1.5 items-start justify-start">
                   <div id="kotak" />
+                  {meta.loadingInterest && (
+                    <div
+                      class={`flex self-stretch flex-col items-start justify-start`}
+                      style={`height: 22px; min-height: 22px; max-height: 22px;`}
+                    >
+                      <loading-box />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

@@ -362,13 +362,14 @@
                 {meta.showProfile && (
                   <div
                     class={`flex flex-col items-center justify-end px-4 absolute`}
-                    style={"top: 98px; cursor:pointer;"}
+                    style={"top: 98px;"}
                   >
                     <div
                       class={`flex self-stretch flex-col space-y-1 items-center justify-start p-4 bg-white shadow rounded`}
                     >
                       <div
                         class={`flex self-stretch items-center justify-center`}
+                        style={"cursor:pointer;"}
                       >
                         <div class="text-base font-medium leading-normal text-gray-900">
                           Edit Profile
@@ -377,6 +378,7 @@
                       <div
                         class={`flex self-stretch space-x-2.5 items-center justify-center`}
                         onClick={meta.logout}
+                        style={"cursor:pointer;"}
                       >
                         <div class="text-base font-medium leading-normal text-gray-900">
                           Logout

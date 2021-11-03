@@ -51,22 +51,31 @@
         api("/api/api-users", {
           users: {
             user_id: this.user_id,
-            user_name: this.user_name,
-            user_email: this.user_email,
-            user_password: encrypt(this.user_new_password),
-            user_gender: this.user_gender,
-            user_birthday: new Date(this.user_birthday),
-            user_forgot_token: this.user_forgot_token,
-            user_membership_status: this.user_membership_status,
-            user_level: this.user_level,
-            user_date_created: this.user_date_created,
-            user_note: this.user_note,
             user_picture: this.user_picture,
           },
           e: "UpdatePicture",
         }).then((res) => {
-          console.log(res);
-          navigate("/m/");
+          runInAction(() => {
+            window.user = {
+              role: "users",
+              user: { ...res.users },
+            };
+            this.user_id = res.users.user_id;
+            this.user_name = res.users.user_name;
+            this.user_email = res.users.user_email;
+            this.user_old_password = res.users.user_password;
+            this.user_gender = res.users.user_gender;
+            this.user_birthday = [res.users.user_birthday] || [];
+            this.user_forgot_token = res.users.user_forgot_token;
+            this.user_membership_status = res.users.user_membership_status;
+            this.user_level = res.users.user_level;
+            this.user_date_created = res.users.user_date_created;
+            this.user_note = res.users.user_note;
+            this.user_picture = res.users.user_picture;
+            this.user_password = "";
+            this.user_new_password = "";
+            this.user_confirm_password = "";
+          });
         });
       },
 
@@ -211,6 +220,7 @@
                     user: res.users,
                   };
                   runInAction(() => {
+                    this.user = res.users;
                     this.user_id = res.users.user_id;
                     this.user_name = res.users.user_name;
                     this.user_email = res.users.user_email;
@@ -289,15 +299,17 @@
       <div
         class={`flex flex-1 self-stretch flex-col space-y-8 items-start justify-start px-6 pb-8`}
       >
-        <div class="flex self-stretch flex-col space-y-2.5 items-center justify-center py-2">
+        <div class="flex self-stretch flex-col space-y-1 items-center justify-center py-2">
           <img
             src={
               meta.user_picture
                 ? "/upload/" + meta.user_picture
                 : "/fimgs/1255_50620.x1.svg"
             }
-            width="128"
-            height="128"
+            width="80"
+            height="80"
+            class={`flex items-start justify-start rounded-full h-24 w-24`}
+            style={`border: 1px solid #555;`}
           />
           <label
             for="file-upload"

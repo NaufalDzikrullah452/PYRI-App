@@ -7,7 +7,7 @@
     }}
     run={async () => {}}
   />
-  <div class="flex flex-col items-start justify-start bg-white">
+  <div class="flex self-stretch flex-col items-start justify-start bg-white">
     <div class="flex flex-1 self-stretch flex-col space-y-1 items-start justify-start">
       <div
         class={`flex self-stretch flex-col items-start justify-center px-6 pt-9 pb-4 bg-white shadow`}
@@ -18,7 +18,9 @@
               src="/fimgs/1554_550132.x1.svg"
               class={`flex self-stretch items-center justify-start`}
               style={`width: 24px; min-width: 24px; max-width: 24px; height: 40px; min-height: 40px; max-height: 40px;`}
-              onClick={meta.back}
+              onClick={() => {
+                back();
+              }}
             />
           </div>
           <div class="flex flex-1 items-center justify-start pb-2.5">
@@ -34,31 +36,14 @@
               <div class="text-xl font-bold leading-loose">Game Over</div>
             </div>
             <div class="flex self-stretch items-start justify-start">
-              <div class="text-base leading-normal">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Vehicula facilisis ultrices adipiscing nulla eu faucibus dui
-                lorem diam. Velit donec duis id sed dictum. Non ultrices morbi
-                non ipsum non. Sociis viverra in porta aliquet a morbi. Vitae,
-                mattis mollis volutpat ut congue sollicitudin adipiscing.
-                Volutpat aliquam feugiat eu enim varius. Suspendisse feugiat
-                cras morbi sit sed odio sit vestibulum. Placerat volutpat
-                curabitur magna ut.
-                <br />
-                Fermentum, sit enim, donec eu auctor mattis eget. Vestibulum
-                quam congue blandit felis. Et at mattis donec amet ornare. Elit
-                nunc aliquet sit pulvinar cras tellus et tellus. Cras euismod
-                elementum vel viverra fusce. Dictum accumsan morbi id gravida
-                sed ut. Pellentesque ac commodo id leo quis cras.
+              <div class="text-sm font-medium leading-tight text-gray-600">
+                Glendi Adijunior adalah seadanya. <br />
+                Jaera Nindya adalah seadainya. <br />
+                Di permainan ini, mereka mencari titik terangnya
               </div>
             </div>
           </div>
           <div class="flex self-stretch space-x-1.5 items-center justify-start">
-            <div class="flex flex-col items-start justify-start p-2.5">
-              <span-genres
-                class={`flex items-center justify-center px-2.5 py-0.5 bg-orange-300 rounded`}
-                style={"background-color: #FDBA74;"}
-              />
-            </div>
             <div class="flex flex-col items-start justify-start p-2.5">
               <span-genres
                 class={`flex items-center justify-center px-2.5 py-0.5 bg-orange-300 rounded`}

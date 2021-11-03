@@ -22,7 +22,7 @@ model category {
 model tags {
   tag_id           Int         @id @default(autoincrement())
   tag_name         String      @db.VarChar(50)
-  tag_picture      String      @db.VarChar(100)
+  tag_picture      String?     @db.VarChar(100)
   tag_date_created DateTime?   @default(now()) @db.Timestamp(6)
   tag_date_updated DateTime?   @db.Timestamp(6)
   interests        interests[]
