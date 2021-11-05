@@ -9,6 +9,7 @@
       changeMasterData: (open) => {},
       category_name: "",
       category_picture: "",
+      disabled: false,
 
       async onChange(key, e) {
         let value = e.target.value;
@@ -30,6 +31,7 @@
         if (error_msg) {
           alert(error_msg);
         } else {
+          this.disabled = true;
           let kategori = api("/api/categories", {
             category: {
               category_name: this.category_name,
@@ -438,6 +440,7 @@
                   <button
                     class={`flex items-start justify-start px-4 py-2 bg-amber-500 rounded`}
                     onClick={meta.submit}
+                    disabled={meta.disabled}
                   >
                     <div class="text-base font-bold leading-normal text-white">
                       Tambah

@@ -15,15 +15,22 @@
 
       async deleteKategori(id) {
         console.log(id);
-        confirm("Confirm Delete") &&
-          (await api("/api/categories", {
+        const confirmDel = confirm("Confirm delete?");
+
+        if (confirmDel) {
+          await api("/api/categories", {
             category: {
               category_id: id,
             },
             e: "Delete",
           }).then((res) => {
-            navigate("/w-master-kategori");
-          }));
+            if (res.res === "Failure") {
+              alert("Can't delete genre, because related with other table");
+            } else {
+              navigate("/w-master-kategori");
+            }
+          });
+        }
       },
 
       async logout() {

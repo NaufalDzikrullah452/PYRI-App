@@ -8,6 +8,7 @@
       changeManagement: (open) => {},
       changeMasterData: (open) => {},
       publisherName: "",
+      disabled: false,
 
       async onChange(e) {
         let value = e.target.value;
@@ -39,6 +40,7 @@
         if (error_msg) {
           alert(error_msg);
         } else {
+          this.disabled = true;
           let publisher = api("/api/publisher", {
             publisher: {
               publisher_name: this.publisherName,
@@ -95,7 +97,7 @@
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
+    <div class={`w-full flex items-start justify-start bg-white`}>
       <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
         <div
           class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -421,6 +423,7 @@
                   <button
                     class={`flex items-start justify-start px-4 py-2 bg-amber-500 rounded`}
                     onClick={meta.submit}
+                    disabled={meta.disabled}
                   >
                     <div class="text-base font-bold leading-normal text-white">
                       Tambah

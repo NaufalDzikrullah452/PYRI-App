@@ -9,6 +9,7 @@
       changeMasterData: (open) => {},
       author_id: "",
       author_name: "",
+      disabled: false,
 
       async onChange(e) {
         let value = e.target.value;
@@ -30,6 +31,7 @@
         if (error_msg) {
           alert(error_msg);
         } else {
+          this.disabled = true;
           await api("/api/authors", {
             authors: {
               author_name: this.author_name,
@@ -436,6 +438,7 @@
                   <button
                     class={`flex items-start justify-start px-4 py-2 bg-amber-500 rounded`}
                     onClick={meta.submit}
+                    disabled={meta.disabled}
                   >
                     <div class="text-base font-bold leading-normal text-white">
                       Simpan

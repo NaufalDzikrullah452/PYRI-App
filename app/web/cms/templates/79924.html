@@ -9,6 +9,7 @@
       changeMasterData: (open) => {},
       tag_name: "",
       tag_picture: "",
+      disabled: false,
 
       async onChange(key, e) {
         let value = e.target.value;
@@ -30,6 +31,7 @@
         if (error_msg) {
           alert(error_msg);
         } else {
+          this.disabled = true;
           let tag = api("/api/tags", {
             tags: {
               tag_name: this.tag_name,
@@ -47,7 +49,7 @@
       async upload(file) {
         const formData = _FormData();
 
-        formData.append("path", "img");
+        formData.append("path", "genre_icon");
         formData.append("file", file);
         const response = await fetch("/api/upload", {
           method: "POST",
@@ -401,7 +403,7 @@
               class={`flex flex-col space-y-3 items-start justify-start w-full`}
             >
               <div
-                class={`flex self-stretch flex-col space-y-3 items-start justify-start`}
+                class={`flex flex-col space-y-3 items-start justify-start`}
                 style={"margin-bottom: 15px;"}
               >
                 <div class="flex items-start justify-start">
@@ -429,7 +431,7 @@
               </div>
               <div
                 class="flex self-stretch items-start justify-start px-4 py-2 border rounded border-gray-400"
-                style="height: 40px; min-height: 40px; max-height: 40px;"
+                style="width: 567px; min-width: 567px; max-width: 567px; height: 40px; min-height: 40px; max-height: 40px;"
               >
                 <input
                   class={"w-full"}
@@ -448,6 +450,7 @@
                 <button
                   class={`flex items-start justify-start px-4 py-2 bg-amber-500 rounded`}
                   onClick={meta.submit}
+                  disabled={meta.disabled}
                 >
                   <div class="text-base font-bold leading-normal text-white">
                     Tambah

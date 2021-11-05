@@ -86,7 +86,7 @@
       }); // console.log(meta.tags);
     }}
   />
-  <div class={`w-full flex items-start justify-start bg-white`}>
+  <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
     <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
       <div
         class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -489,7 +489,7 @@
                           {numList.tag_picture !== "-" &&
                             numList.tag_picture !== "" && (
                               <img
-                                src={`/upload/${numList.tag_picture}`}
+                                src={`/genre_icon/${numList.tag_picture}`}
                                 class={`flex items-center justify-center`}
                                 style={`width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;`}
                                 onError={(e) => {

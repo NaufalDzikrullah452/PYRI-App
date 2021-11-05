@@ -10,6 +10,7 @@
       tag_name: "",
       tag_picture: "",
       default_file: "",
+      disabled: false,
 
       async onChange(key, e) {
         let value = e.target.value;
@@ -31,12 +32,13 @@
         if (error_msg) {
           alert(error_msg);
         } else {
-          // const response = await fetch("/api/upload", {
+          this.disabled = true; // const response = await fetch("/api/upload", {
           //   method: "POST",
           //   body: this.form_data,
           // });
           // let res = await response.json();
           // this.tag_picture = res.path;
+
           let tag = await api("/api/tags", {
             tags: {
               tag_id: this.tag_id,
@@ -61,7 +63,7 @@
       async upload(file) {
         const formData = _FormData();
 
-        formData.append("path", "img");
+        formData.append("path", "genre_icon");
         formData.append("file", file); // this.setFile(formData);
 
         const response = await fetch("/api/upload", {
@@ -138,7 +140,7 @@
       console.log(tag);
     }}
   />
-  <div class={`w-full flex items-start justify-start bg-white`}>
+  <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
     <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
       <div
         class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -442,7 +444,7 @@
               style={`max-width:567px`}
             >
               <div
-                class={`flex self-stretch flex-col space-y-3 items-start justify-start`}
+                class={`flex flex-col space-y-3 items-start justify-start`}
                 style={"margin-bottom: 15px;"}
               >
                 <div class="flex items-start justify-start">
@@ -450,8 +452,7 @@
                 </div>
                 <dropify
                   type={`file`}
-                  class={`flex self-stretch flex-col space-y-2.5 items-center justify-center p-4 bg-white border rounded border-gray-400 dropify`}
-                  style={`height: 210px; min-height: 210px; max-height: 210px;`}
+                  class={`flex flex-col space-y-2.5 items-center justify-center p-4 bg-white border rounded border-gray-400 dropify`}
                   data-max-file-size={`1M`}
                   data-allowed-file-extensions={"png jpg jpeg"}
                   data-default-file={`/upload/${meta.tag_picture}`}
@@ -469,8 +470,8 @@
                 <div class="text-base font-bold leading-normal">Nama Genre</div>
               </div>
               <div
-                class="flex self-stretch items-start justify-start px-4 py-2 border rounded border-gray-400"
-                style="height: 40px; min-height: 40px; max-height: 40px;"
+                class="flex items-start justify-start px-4 py-2 border rounded border-gray-400"
+                style="width: 567px; min-width: 567px; max-width: 567px; height: 40px; min-height: 40px; max-height: 40px;"
               >
                 <input
                   class={"w-full"}
@@ -489,6 +490,7 @@
                 <button
                   class={`flex items-start justify-start px-4 py-2 bg-amber-500 rounded`}
                   onClick={meta.submit}
+                  disabled={meta.disabled}
                 >
                   <div class="text-base font-bold leading-normal text-white">
                     Simpan

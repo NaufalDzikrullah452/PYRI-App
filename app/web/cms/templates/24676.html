@@ -1,4 +1,10 @@
 <>
+  <effect
+    meta={{
+      color: ["white", "red", "black"],
+    }}
+    run={async () => {}}
+  />
   <div>
     <span>Loading Carousel</span>
     <loading-box />
@@ -9,6 +15,7 @@
     <span>Loading List</span>
     <loading-box />
     <dropify
+      class={`text-xs dropify placeholder-black`}
       onChange={(e) => {
         console.log(e.target.files[0]);
       }}
@@ -25,5 +32,8 @@
         </div>
       </div>
     </div>
+    {meta.color.map((numList) => {
+      return <span>{numList}</span>;
+    })}
   </div>
 </>
