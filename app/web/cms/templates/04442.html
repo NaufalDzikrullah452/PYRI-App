@@ -8,24 +8,51 @@
       changeManagement: (open) => {},
       changeMasterData: (open) => {},
       authors: [],
+      searching: "",
       entries: 5,
       last_entries: 5,
       first_entries: 0,
       page: 1,
       sum_page: 0,
+      more_condition: false,
       page_array: [],
 
       async onChange(key, e) {
         let value = e.target.value;
-        runInAction(() => {
-          this[key] = value;
-          this.first_entries = 0;
-          this.page = 1;
-          this.last_entries = parseInt(value);
-          this.sum_page = Math.ceil(this.authors.length / this.entries);
-          this.page_array = new Array(this.sum_page);
-        });
-        console.log(key + " : " + value); // console.log("page : " + this.page);
+
+        if (key === "entries") {
+          runInAction(() => {
+            this[key] = value;
+            this.first_entries = 0;
+            this.page = 1;
+            this.last_entries = parseInt(value);
+            this.sum_page = Math.ceil(this.authors.length / this.entries);
+            this.page_array = Array.apply(null, {
+              length: this.sum_page,
+            }).map(Number.call, Number);
+          });
+        } else if (key === "searching") {
+          runInAction(() => {
+            this[key] = value;
+            api("/api/authors", {
+              authors: {
+                author_name: value,
+              },
+              e: "Searching",
+            }).then((res) => {
+              runInAction(() => {
+                this.authors = res.authors;
+                this.sum_page = Math.ceil(this.authors.length / this.entries); // meta.page_array = new Array(meta.sum_page);
+
+                this.page_array = Array.apply(null, {
+                  length: this.sum_page,
+                }).map(Number.call, Number);
+              });
+            });
+          });
+        }
+
+        console.log(key + " : " + this[key]); // console.log("page : " + this.page);
         // console.log("last_entries : " + this.last_entries);
       },
 
@@ -36,6 +63,7 @@
           const res = gap > 0;
           runInAction(() => {
             this.page = value;
+            this.more_condition = false;
 
             if (res) {
               this.first_entries += parseInt(this.entries) * Math.abs(gap);
@@ -134,8 +162,11 @@
       });
       runInAction(() => {
         meta.authors = author;
-        meta.sum_page = Math.ceil(meta.authors.length / meta.entries);
-        meta.page_array = new Array(meta.sum_page);
+        meta.sum_page = Math.ceil(meta.authors.length / meta.entries); // meta.page_array = new Array(meta.sum_page);
+
+        meta.page_array = Array.apply(null, {
+          length: meta.sum_page,
+        }).map(Number.call, Number);
       }); // console.log(meta.page_array);
     }}
   />
@@ -429,7 +460,7 @@
             </div>
           </div>
           <div
-            class={`w-full flex self-stretch flex-col items-start justify-start px-9 rounded`}
+            class={`w-full flex self-stretch flex-col space-y-9 items-start justify-start px-9 rounded`}
           >
             <div
               class={`flex self-stretch flex-col space-y-4 items-start justify-start p-6 bg-white rounded-lg`}
@@ -611,6 +642,7 @@
                   <div class="flex space-x-2 items-start justify-start">
                     <div
                       class={`flex self-stretch flex-col items-center justify-center px-2 bg-white rounded cursor-pointer`}
+                      style={`:hover {outline: 2px solid #ababab;`}
                       onClick={() => {
                         meta.onClickPage(
                           "page" + (meta.page - 1),
@@ -624,29 +656,47 @@
                       />
                     </div>
                     {meta.page_array.map((numList, i) => {
-                      return (
-                        <div class={`flex items-start justify-start`}>
-                          <div
-                            class={`flex flex-col items-start justify-start px-2.5 py-1 bg-white rounded`}
-                            style={`${
-                              "page" + meta.page === "page" + (i + 1)
-                                ? `background: #FF8F00;`
-                                : `:hover {background-color: #ffc780;}`
-                            }
+                      const upper =
+                        meta.page + 2 < meta.page_array.length
+                          ? meta.page + 2
+                          : meta.page_array.length;
+                      const under = meta.page - 2 > 0 ? meta.page - 2 : 1;
+
+                      if (
+                        (numList + 1 < upper && numList + 1 > under) ||
+                        numList + 1 === 1 ||
+                        numList + 1 === meta.page_array.length
+                      ) {
+                        return (
+                          <div class={`flex items-start justify-start`}>
+                            {
+                              <div
+                                class={`flex flex-col items-start justify-start px-2.5 py-1 bg-white rounded`}
+                                style={`${
+                                  "page" + meta.page === "page" + (i + 1)
+                                    ? `background: #FF8F00;`
+                                    : `:hover {background-color: #ffc780;}`
+                                }
   cursor:pointer;`}
-                            onClick={() => {
-                              meta.onClickPage("page" + (i + 1), i + 1);
-                            }}
-                          >
-                            <div class={`text-base leading-normal`}>
-                              {i + 1}
-                            </div>
+                                onClick={() => {
+                                  meta.onClickPage("page" + (i + 1), i + 1);
+                                }}
+                              >
+                                <div class={`text-base leading-normal`}>
+                                  {numList + 1}
+                                </div>
+                              </div>
+                            }
                           </div>
-                        </div>
-                      );
+                        );
+                      } else {
+                        if (numList + 1 === upper || numList + 1 === under)
+                          return "...";
+                      }
                     })}
                     <div
                       class={`flex self-stretch flex-col items-center justify-center px-2 bg-white rounded cursor-pointer`}
+                      style={`:hover {outline: 2px solid #ababab;`}
                       onClick={() => {
                         meta.onClickPage(
                           "page" + (meta.page + 1),
@@ -662,6 +712,24 @@
                   </div>
                 </div>
               </div>
+            </div>
+            <div
+              class={`flex self-stretch flex-col space-y-2.5 items-center justify-start`}
+              style={`margin-bottom: 50px!important`}
+            >
+              <div class={`text-base font-bold leading-normal text-center`}>
+                Test Searching
+              </div>
+              <input
+                class="w-full"
+                type="text"
+                placeholder="Searching"
+                style="border: 1px solid black"
+                onChange={(e) => {
+                  meta.onChange("searching", e);
+                }}
+                value={meta.searching}
+              />
             </div>
           </div>
         </div>
