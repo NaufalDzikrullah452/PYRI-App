@@ -25,6 +25,12 @@
       style_change_pass: "display:none!important",
       max_date: new Date(new Date().setFullYear(new Date().getFullYear() - 12)),
 
+      timeOut(timer) {
+        setTimeout(function () {
+          window.mobileApp.app.dialog.close();
+        }, timer);
+      },
+
       async styleChangePass() {
         if (this.style_change_pass === "display:none!important") {
           this.style_change_pass = "";
@@ -48,6 +54,7 @@
       },
 
       async updatePicture() {
+        window.mobileApp.app.dialog.preloader("Updating photo");
         api("/api/api-users", {
           users: {
             user_id: this.user_id,
@@ -59,7 +66,9 @@
             window.user = {
               role: "users",
               user: { ...res.users },
+              roleAdmin: window.user.roleAdmin || "",
             };
+            this.timeOut(1000);
             this.user_id = res.users.user_id;
             this.user_name = res.users.user_name;
             this.user_email = res.users.user_email;
@@ -218,6 +227,7 @@
                   window.user = {
                     role: "users",
                     user: res.users,
+                    roleAdmin: window.user.roleAdmin || "",
                   };
                   runInAction(() => {
                     this.user = res.users;
@@ -304,12 +314,16 @@
             src={
               meta.user_picture
                 ? "/upload/" + meta.user_picture
-                : "/fimgs/1255_50620.x1.svg"
+                : "/fimgs/1228_310692.x1.png"
             }
             width="80"
             height="80"
             class={`flex items-start justify-start rounded-full h-24 w-24`}
             style={`border: 1px solid #555;`}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = "/fimgs/1228_310692.x1.png";
+            }}
           />
           <label
             for="file-upload"

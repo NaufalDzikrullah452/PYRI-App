@@ -65,6 +65,7 @@
               console.log(res);
               window.user = {
                 role: "guest",
+                roleAdmin: window.user.roleAdmin || "",
               };
               window.mobileApp.app.dialog.close();
               navigate("/m/");
@@ -82,6 +83,7 @@
           console.log(res);
           window.user = {
             role: "guest",
+            roleAdmin: window.user.roleAdmin || "",
           };
         });
       }
@@ -98,7 +100,7 @@
     }}
   />
   <div
-    class={`flex self-stretch items-end justify-center bg-white`}
+    class={`flex items-end justify-center bg-white`}
     style={"margin-bottom: 50px;"}
   >
     <div
@@ -1154,13 +1156,17 @@
               class={`flex flex-col items-start justify-start`}
             >
               <img
+                class={`flex items-start justify-start rounded-full h-24 w-24`}
                 src={
                   meta.user.user_picture
                     ? "/upload/" + meta.user.user_picture
-                    : "/fimgs/1255_50620.x1.svg"
+                    : "/fimgs/1228_310692.x1.png"
                 }
-                class={`flex items-start justify-start rounded-full h-24 w-24`}
                 style={`border: 1px solid #555;`}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "/fimgs/1228_310692.x1.png";
+                }}
               />
             </div>
             <div class="flex flex-1 self-stretch flex-col items-start justify-center p-4">

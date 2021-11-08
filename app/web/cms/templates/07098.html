@@ -31,6 +31,12 @@
         return msg;
       },
 
+      timeOut(timer) {
+        setTimeout(function () {
+          window.mobileApp.app.dialog.close();
+        }, timer);
+      },
+
       async submit() {
         let attemptuser = {};
         let error_msg = this.validation();
@@ -48,11 +54,15 @@
             users: { ...attemptuser },
             e: "FindEmail",
           }).then((res) => {
+            console.log(res);
+
             if (res === null) {
+              this.timeOut(1000);
               window.mobileApp.app.dialog.alert(null, "Database error!");
             }
 
             if (res.users === null) {
+              this.timeOut(1000);
               window.mobileApp.app.dialog.alert(null, "Email Not Found!");
             } else {
               api("/api/api-users", {
@@ -60,16 +70,13 @@
                 e: "Login",
               }).then((res) => {
                 if (res.users === null) {
-                  setTimeout(function () {
-                    window.mobileApp.app.dialog.close();
-                  }, 1000);
+                  this.timeOut(1000);
                   window.mobileApp.app.dialog.alert(null, "Wrong Password!");
                 } else {
-                  setTimeout(function () {
-                    window.mobileApp.app.dialog.close();
-                  }, 1000);
+                  this.timeOut(1000);
                   window.user = {
                     role: "users",
+                    roleAdmin: window.user.roleAdmin || "",
                     user: res.users,
                   }; // console.log(res.users);
 

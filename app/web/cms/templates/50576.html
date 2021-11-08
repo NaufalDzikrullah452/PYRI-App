@@ -8,6 +8,77 @@
       changeManagement: (open) => {},
       changeMasterData: (open) => {},
       publisher: [],
+      searching: "",
+      entries: 5,
+      last_entries: 5,
+      first_entries: 0,
+      page: 1,
+      sum_page: 0,
+      page_array: [],
+
+      async onChange(key, e) {
+        let value = e.target.value;
+
+        if (key === "entries") {
+          runInAction(() => {
+            this[key] = value;
+            this.first_entries = 0;
+            this.page = 1;
+            this.last_entries = parseInt(value);
+            this.sum_page = Math.ceil(this.publisher.length / this.entries);
+            this.page_array = Array.apply(null, {
+              length: this.sum_page,
+            }).map(Number.call, Number);
+          });
+        } else if (key === "searching") {
+          runInAction(() => {
+            this[key] = value;
+            api("/api/publisher", {
+              publisher: {
+                publisher_name: value,
+              },
+              e: "Searching",
+            }).then((res) => {
+              runInAction(() => {
+                this.publisher = res.publisher;
+                this.first_entries = 0;
+                this.page = 1;
+                this.last_entries = parseInt(this.entries);
+                this.sum_page = Math.ceil(this.publisher.length / this.entries); // meta.page_array = new Array(meta.sum_page);
+
+                this.page_array = Array.apply(null, {
+                  length: this.sum_page,
+                }).map(Number.call, Number);
+              });
+            });
+          });
+        }
+
+        console.log(key + " : " + this[key]); // console.log("page : " + this.page);
+        // console.log("last_entries : " + this.last_entries);
+      },
+
+      async onClickPage(key, value) {
+        if (value !== this.page && value !== 0 && value <= this.sum_page) {
+          const last_page = this.page;
+          const gap = value - last_page;
+          const res = gap > 0;
+          runInAction(() => {
+            this.page = value;
+
+            if (res) {
+              this.first_entries += parseInt(this.entries) * Math.abs(gap);
+              this.last_entries += parseInt(this.entries) * Math.abs(gap);
+            } else {
+              this.first_entries -= parseInt(this.entries) * Math.abs(gap);
+              this.last_entries -= parseInt(this.entries) * Math.abs(gap);
+            }
+          });
+          console.log(key + " : " + value); // console.log("first_entries : " + this.first_entries);
+          // console.log("last_entries : " + this.last_entries);
+          // console.log("gap : " + res);
+        }
+      },
 
       async editPublisher(id) {
         navigate("/w-master-publisher/edit/" + id);
@@ -83,8 +154,12 @@
       });
       runInAction(() => {
         meta.publisher = publisher;
-      });
-      console.log(meta.publisher);
+        meta.sum_page = Math.ceil(meta.publisher.length / meta.entries); // meta.page_array = new Array(meta.sum_page);
+
+        meta.page_array = Array.apply(null, {
+          length: meta.sum_page,
+        }).map(Number.call, Number);
+      }); // console.log(meta.page_array);
     }}
   />
   {window.user.roleAdmin === "admin" && (
@@ -391,15 +466,40 @@
                       <div class="text-base leading-normal">Show</div>
                     </div>
                     <div class="flex space-x-2 items-center justify-start">
-                      <div class="flex space-x-2.5 items-center justify-start px-6 py-1 bg-white border rounded border-gray-500">
-                        <div class="text-base leading-normal text-gray-500">
+                      <select
+                        class={`flex flex-col space-y-2.5 items-center justify-start px-6 py-1 bg-white border rounded border-gray-500`}
+                        style={`width: 95.87px; min-width: 95.87px; max-width: 95.87px;`}
+                        value={meta.entries}
+                        onChange={(e) => {
+                          meta.onChange("entries", e);
+                        }}
+                      >
+                        <option class={`hidden`} />
+                        <option
+                          value="5"
+                          class={`flex flex-1 self-stretch flex-col items-start justify-start bg-white`}
+                        >
+                          5
+                        </option>
+                        <option
+                          value="10"
+                          class="flex flex-1 self-stretch flex-col items-start justify-start bg-white"
+                        >
                           10
-                        </div>
-                        <img
-                          src="/fimgs/1706_10100.x1.svg"
-                          style="width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px;"
-                        />
-                      </div>
+                        </option>
+                        <option
+                          value="25"
+                          class="flex flex-1 self-stretch flex-col items-start justify-start bg-white"
+                        >
+                          25
+                        </option>
+                        <option
+                          value="50"
+                          class="flex flex-1 self-stretch flex-col items-start justify-start bg-white"
+                        >
+                          50
+                        </option>
+                      </select>
                       <div class="flex items-start justify-start">
                         <div class="text-base leading-normal">entries</div>
                       </div>
@@ -458,83 +558,140 @@
                     </tr>
                   </thead>
                   <tbody class="flex self-stretch flex-col items-start justify-start">
-                    {meta.publisher.map((numList, i) => {
-                      var odd = (i + 1) % 2;
-                      return (
-                        <tr
-                          class={`w-full flex self-stretch items-center justify-start px-4 py-3 bg-white rounded ${
-                            odd === 0 ? "bg-orange-100" : "bg-white"
-                          }`}
-                          style={":hover {background-color: #ffbe76;"}
-                        >
-                          <td
-                            class={`flex flex-col items-center justify-start`}
-                            style={"padding-left: 8px"}
+                    {meta.publisher
+                      .slice(meta.first_entries, meta.last_entries)
+                      .map((numList, i) => {
+                        var odd = (i + 1) % 2;
+                        return (
+                          <tr
+                            class={`w-full flex self-stretch items-center justify-start px-4 py-3 bg-white rounded ${
+                              odd === 0 ? "bg-orange-100" : "bg-white"
+                            }`}
+                            style={":hover {background-color: #ffbe76;"}
                           >
-                            <div class={`text-base leading-normal`}>
-                              {i + 1 || children}
-                            </div>
-                          </td>
-                          <td
-                            class={`flex flex-1 self-stretch items-center justify-start`}
-                            style={"padding-left:27px;"}
-                          >
-                            <div class={`text-base leading-normal`}>
-                              {numList.publisher_name || children}
-                            </div>
-                          </td>
-                          <td
-                            class={`flex self-stretch space-x-6 items-center justify-center`}
-                            style={""}
-                          >
-                            <div
-                              class={`flex self-stretch items-center justify-center rounded`}
-                              style={`cursor: pointer`}
-                              onClick={() => {
-                                meta.editPublisher(numList.publisher_id);
-                              }}
+                            <td
+                              class={`flex flex-col items-center justify-start`}
+                              style={"padding-left: 8px"}
                             >
+                              <div class={`text-base leading-normal`}>
+                                {meta.first_entries + i + 1 || children}
+                              </div>
+                            </td>
+                            <td
+                              class={`flex flex-1 self-stretch items-center justify-start`}
+                              style={"padding-left:27px;"}
+                            >
+                              <div class={`text-base leading-normal`}>
+                                {numList.publisher_name || children}
+                              </div>
+                            </td>
+                            <td
+                              class={`flex self-stretch space-x-6 items-center justify-center`}
+                              style={""}
+                            >
+                              <div
+                                class={`flex self-stretch items-center justify-center rounded`}
+                                style={`cursor: pointer`}
+                                onClick={() => {
+                                  meta.editPublisher(numList.publisher_id);
+                                }}
+                              >
+                                <img
+                                  src="/fimgs/I2122_57235_1644_9573.x1.svg"
+                                  style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
+                                />
+                              </div>
                               <img
-                                src="/fimgs/I2122_57235_1644_9573.x1.svg"
-                                style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
+                                src="/fimgs/I2122_57235_1412_7140.x1.svg"
+                                class={`flex self-stretch items-center justify-center rounded`}
+                                style={`cursor: pointer`}
+                                onClick={() => {
+                                  meta.deletePublisher(numList.publisher_id);
+                                }}
                               />
-                            </div>
-                            <img
-                              src="/fimgs/I2122_57235_1412_7140.x1.svg"
-                              class={`flex self-stretch items-center justify-center rounded`}
-                              style={`cursor: pointer`}
-                              onClick={() => {
-                                meta.deletePublisher(numList.publisher_id);
-                              }}
-                            />
-                          </td>
-                        </tr>
-                      );
-                    })}
+                            </td>
+                          </tr>
+                        );
+                      })}
                   </tbody>
                 </table>
                 <div class="flex self-stretch space-x-2.5 items-center justify-start bg-white">
                   <div class="flex flex-1 items-start justify-start">
-                    <div class="text-base leading-normal text-orange-900">
-                      Showing 1 to 6 of 6 entries
-                    </div>
+                    <div
+                      class={`text-base leading-normal text-orange-900`}
+                    >{`Showing ${meta.first_entries + 1} to ${
+                      meta.last_entries <= meta.publisher.length
+                        ? meta.last_entries
+                        : meta.publisher.length
+                    } of ${meta.publisher.length} entries`}</div>
                   </div>
                   <div class="flex space-x-2 items-start justify-start">
-                    <div class="flex self-stretch flex-col items-center justify-center px-2 bg-white rounded">
+                    <div
+                      class={`flex self-stretch flex-col items-center justify-center px-2 bg-white rounded cursor-pointer`}
+                      style={`:hover {outline: 2px solid #ababab;`}
+                      onClick={() => {
+                        meta.onClickPage(
+                          "page" + (meta.page - 1),
+                          meta.page - 1
+                        );
+                      }}
+                    >
                       <img
-                        src="/fimgs/I2104_16476_2069_35620.x1.svg"
-                        style="width: 18px; min-width: 18px; max-width: 18px; height: 14px; min-height: 14px; max-height: 14px;"
+                        src="/fimgs/2986_116902.x1.svg"
+                        style={`width: 18px; min-width: 18px; max-width: 18px; height: 14px; min-height: 14px; max-height: 14px;`}
                       />
                     </div>
-                    <div class="flex flex-col items-start justify-start px-2.5 py-1 bg-amber-500 rounded">
-                      <div class="text-base leading-normal">1</div>
-                    </div>
-                    <div class="flex flex-col items-start justify-start px-2.5 py-1 bg-white rounded">
-                      <div class="text-base leading-normal">2</div>
-                    </div>
-                    <div class="flex self-stretch flex-col items-center justify-center px-2 bg-white rounded">
+                    {meta.page_array.map((numList, i) => {
+                      const upper =
+                        meta.page + 2 < meta.page_array.length
+                          ? meta.page + 2
+                          : meta.page_array.length;
+                      const under = meta.page - 2 > 0 ? meta.page - 2 : 1;
+
+                      if (
+                        (numList + 1 < upper && numList + 1 > under) ||
+                        numList + 1 === 1 ||
+                        numList + 1 === meta.page_array.length
+                      ) {
+                        return (
+                          <div class={`flex items-start justify-start`}>
+                            {
+                              <div
+                                class={`flex flex-col items-start justify-start px-2.5 py-1 bg-white rounded`}
+                                style={`${
+                                  "page" + meta.page === "page" + (i + 1)
+                                    ? `background: #FF8F00;`
+                                    : `:hover {background-color: #ffc780;}`
+                                }
+  cursor:pointer;`}
+                                onClick={() => {
+                                  meta.onClickPage("page" + (i + 1), i + 1);
+                                }}
+                              >
+                                <div class={`text-base leading-normal`}>
+                                  {numList + 1}
+                                </div>
+                              </div>
+                            }
+                          </div>
+                        );
+                      } else {
+                        if (numList + 1 === upper || numList + 1 === under)
+                          return "...";
+                      }
+                    })}
+                    <div
+                      class={`flex self-stretch flex-col items-center justify-center px-2 bg-white rounded cursor-pointer`}
+                      style={`:hover {outline: 2px solid #ababab;`}
+                      onClick={() => {
+                        meta.onClickPage(
+                          "page" + (meta.page + 1),
+                          meta.page + 1
+                        );
+                      }}
+                    >
                       <img
-                        src="/fimgs/I2104_16476_2069_36428.x1.svg"
+                        src="/fimgs/2986_116908.x1.svg"
                         style="width: 18px; min-width: 18px; max-width: 18px; height: 14px; min-height: 14px; max-height: 14px;"
                       />
                     </div>
