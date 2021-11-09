@@ -14,9 +14,10 @@ model authors {
 }
 
 model category {
-  category_id       Int    @id @default(autoincrement())
-  category_name     String @db.VarChar(50)
-  category_pictures String @db.VarChar(100)
+  category_id       Int     @id @default(autoincrement())
+  category_name     String  @db.VarChar(50)
+  category_pictures String  @db.VarChar(100)
+  books             books[]
 }
 
 model tags {
@@ -40,7 +41,7 @@ model users {
   user_level             Boolean
   user_date_created      DateTime?       @default(now()) @db.Timestamp(6)
   user_note              String?
-  user_picture           String?         @db.VarChar(50)
+  user_picture           String?         @db.VarChar(100)
   interests              interests[]
 }
 
@@ -58,6 +59,49 @@ model publisher {
   publisher_date_created DateTime @default(now()) @db.Timestamp(6)
   publisher_date_updated DateTime @db.Timestamp(6)
   publisher_note         String?
+  books                  books[]
+}
+
+model books {
+  book_id              Int       @id @default(autoincrement())
+  book_title           String    @db.VarChar(50)
+  book_description     String?   @db.VarChar(50)
+  book_year_of_release Int?
+  book_publisher_id    Int
+  book_category_id     Int
+  book_notes           String?
+  book_date_created    DateTime  @default(now()) @db.Timestamp(6)
+  book_date_updated    DateTime  @db.Timestamp(6)
+  book_age_restriction Int?
+  book_is_released     Boolean
+  category             category  @relation(fields: [book_category_id], references: [category_id])
+  publisher            publisher @relation(fields: [book_publisher_id], references: [publisher_id])
+  chapter              chapter[]
+  page                 page[]
+}
+
+model chapter {
+  chapter_id           Int      @id @default(autoincrement())
+  chapter_name         String   @db.VarChar(50)
+  chapter_book_id      Int
+  chapter_date_created DateTime @default(now()) @db.Timestamp(6)
+  chapter_date_updated DateTime @db.Timestamp(6)
+  chapter_number       Int?
+  books                books    @relation(fields: [chapter_book_id], references: [book_id])
+  page                 page[]
+}
+
+model page {
+  page_id           Int      @id @default(autoincrement())
+  page_page         String   @db.VarChar(50)
+  page_content      String?  @db.VarChar(100)
+  page_chapter_id   Int
+  page_book_id      Int
+  page_date_created DateTime @default(now()) @db.Timestamp(6)
+  page_date_updated DateTime @db.Timestamp(6)
+  page_note         Int?
+  books             books    @relation(fields: [page_book_id], references: [book_id])
+  chapter           chapter  @relation(fields: [page_chapter_id], references: [chapter_id])
 }
 
 enum user_gender {

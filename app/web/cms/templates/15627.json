@@ -3,12 +3,12 @@
         "structure": "00000",
         "type": "Page"
     },
-    "id": "03047",
+    "id": "15627",
     "lang": "",
     "parent_id": "66283",
     "site": "*",
-    "slug": "/w-books/[book_id]/detail/[chapter_id]/page/edit/[page_id]",
+    "slug": "/w-books/[book_id]/detail/[chapter_id]/page/add",
     "status": "SYSTEM",
-    "title": "w-books-detail-page-edit",
+    "title": "w-books-detail-page-add",
     "type": "cms-template"
 }

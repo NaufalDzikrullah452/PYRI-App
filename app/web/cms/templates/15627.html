@@ -7,6 +7,82 @@
       changeProfile: (open) => {},
       changeManagement: (open) => {},
       changeMasterData: (open) => {},
+      page: [],
+      chapter: [],
+      disabled: false,
+
+      async onChange(key, e) {
+        let value;
+
+        if (key === "page_content") {
+          value = e;
+        } else {
+          value = e.target.value;
+        }
+
+        runInAction(() => (this.page[key] = value));
+        console.log(key + " : " + this.page[key]);
+      },
+
+      validation() {
+        console.log(this.page);
+        let msg =
+          this.page.page_chapter_id === "" ||
+          this.page.page_chapter_id === null ||
+          this.page.page_chapter_id === undefined
+            ? "Page chapter cant be empty !"
+            : this.page.page_page === "" ||
+              this.page.page_page === null ||
+              this.page.page_page === undefined
+            ? "Page number cant be empty/string!"
+            : this.page.page_page <= 0
+            ? "Page number must be greater than 0!"
+            : false;
+        return msg;
+      },
+
+      async submit() {
+        let error_msg = this.validation();
+
+        if (error_msg) {
+          alert(error_msg);
+        } else {
+          this.disabled = true;
+          api("/api/page", {
+            page: {
+              page_page: this.page.page_page,
+              page_date_updated: new Date(),
+              page_content: this.page.page_content || "",
+              page_book_id: parseInt(params.book_id),
+              page_chapter_id: parseInt(this.page.page_chapter_id),
+            },
+            e: "Create",
+          }).then((res) => {
+            console.log(res);
+
+            if (res === null) {
+              this.disabled = false;
+              alert("Failed insert to database!");
+            } else {
+              navigate(
+                `/w-books/${params.book_id}/detail/${params.chapter_id}/page`
+              );
+            }
+          });
+        }
+      },
+
+      async upload(file) {
+        const formData = _FormData();
+
+        formData.append("path", "book_page_img");
+        formData.append("file", file);
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+        return await response.json();
+      },
 
       async logout() {
         confirm("Logout of admin?") &&
@@ -19,6 +95,7 @@
       },
     }}
     run={async () => {
+      // console.log(params.chapter_id);
       meta.action = {
         changeMasterData: (open) => {
           meta.showMasterData = open;
@@ -44,11 +121,36 @@
           meta.showProfile = open;
         },
       };
+
+      if (window.user.roleAdmin !== "admin") {
+        navigate("/login-admin");
+      } // read chapter
+
+      var chapter = "";
+
+      if (params.book_id) {
+        await api("/api/chapter", {
+          chapter: {
+            chapter_book_id: parseInt(params.book_id),
+          },
+          e: "ReadByBookId",
+        }).then((res) => {
+          if (res.res !== "Failure" || res === null) {
+            chapter = res.chapter;
+          }
+        });
+        runInAction(() => {
+          meta.chapter = chapter;
+          meta.page.page_chapter_id = params.chapter_id;
+        });
+      } // console.log(meta.chapter);
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
-      <div class={`w-full flex items-start justify-start`}>
+    <div
+      class={`flex self-stretch items-start justify-start bg-white w-full h-full`}
+    >
+      <div class={`w-full flex flex-1 items-start justify-start`}>
         <div
           class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
           style={"background-color: black"}
@@ -385,36 +487,37 @@
                       <div class="flex self-stretch items-start justify-start px-4 py-3 bg-white border rounded border-gray-300">
                         <select
                           class="w-full"
-                          defaultValue="Pilih Chapter"
+                          value={
+                            meta.page.page_chapter_id
+                              ? meta.page.page_chapter_id
+                              : "Pilih Chapter "
+                          }
                           style={`color: black; 
       outline:none;
       background:transparent;`}
+                          onChange={(e) => {
+                            meta.onChange("page_chapter_id", e);
+                          }}
                         >
-                          <option value={""} hidden={true} />
                           <option
                             value={"Pilih Chapter"}
-                            hidden={true}
+                            disabled={true}
                             class={`flex self-stretch flex-col items-start justify-start`}
                             style="color: black"
                           >
                             {"Pilih Chapter"}
                           </option>
-                          <option
-                            value={""}
-                            hidden={true}
-                            class={`flex self-stretch flex-col items-start justify-start`}
-                            style="color: black"
-                          >
-                            {"Chapter 1"}
-                          </option>
-                          <option
-                            value={""}
-                            hidden={true}
-                            class={`flex self-stretch flex-col items-start justify-start`}
-                            style="color: black"
-                          >
-                            {"Chapter 2"}
-                          </option>
+                          {meta.chapter.map((numList, i) => {
+                            return (
+                              <option
+                                value={numList.chapter_id}
+                                class={`flex self-stretch flex-col items-start justify-start`}
+                                style="color: black"
+                              >
+                                {numList.chapter_name}
+                              </option>
+                            );
+                          })}
                           {"Pilih Publisher"}
                         </select>
                       </div>
@@ -428,11 +531,19 @@
                       <div class="flex self-stretch items-start justify-start px-4 py-3 bg-white border rounded border-gray-300">
                         <input
                           class={"w-full"}
-                          type="text"
+                          type="number"
                           placeholder="Masukkan Nomor Halaman Buku"
                           style={`color: black;
       background:transparent; 
       outline: none;`}
+                          onChange={(e) => {
+                            meta.onChange("page_page", e);
+                          }}
+                          min="1"
+                          value={runInAction(() => {
+                            meta.page.page_page;
+                          })}
+                          onWheel={(e) => e.target.blur()}
                         />
                       </div>
                     </div>
@@ -448,6 +559,14 @@
                         style={`height: 210px; min-height: 210px; max-height: 210px;`}
                         data-max-file-size={`1M`}
                         data-allowed-file-extensions={"png jpg jpeg"}
+                        onChange={(e) => {
+                          runInAction(async () => {
+                            const upload = await meta.upload(e.target.files[0]);
+                            runInAction(() => {
+                              meta.onChange("page_content", upload.path);
+                            });
+                          });
+                        }}
                       />
                     </div>
                   </div>
@@ -456,6 +575,7 @@
                   <button
                     class={`flex items-start justify-start px-4 py-2 bg-amber-500 rounded`}
                     onClick={meta.submit}
+                    disabled={meta.disabled}
                   >
                     <div class="text-base font-bold leading-normal text-white">
                       Tambah
@@ -464,7 +584,9 @@
                   <button
                     class={`flex items-start justify-start px-4 py-2 border rounded border-gray-400`}
                     onClick={() => {
-                      navigate("/w-master-kategori");
+                      navigate(
+                        `/w-books/${params.book_id}/detail/${params.chapter_id}/page`
+                      );
                     }}
                   >
                     <div class="text-base font-bold leading-normal text-amber-500">

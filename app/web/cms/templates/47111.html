@@ -171,8 +171,9 @@
         meta.page_array = Array.apply(null, {
           length: meta.sum_page,
         }).map(Number.call, Number);
-      });
-      console.log(meta.page_array); // console.log(meta.tags);
+      }); // console.log(meta.page_array);
+
+      console.log(meta.tags);
     }}
   />
   <div class={`w-full flex items-start justify-start bg-white`}>
@@ -609,7 +610,7 @@
                             {numList.tag_picture !== "-" &&
                               numList.tag_picture !== "" && (
                                 <img
-                                  src={`/genre_icon/${numList.tag_picture}`}
+                                  src={`/upload/${numList.tag_picture}`}
                                   class={`flex items-center justify-center`}
                                   style={`width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;`}
                                   onError={(e) => {
