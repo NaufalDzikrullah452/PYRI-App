@@ -6,13 +6,28 @@
       showManagement: false,
       changeProfile: (open) => {},
       changeManagement: (open) => {},
-      changeMasterData: (open) => {}, // category_name: "",
-      // category_picture: "",
-      // async onChange(key, e) {
-      //   let value = e.target.value;
-      //   runInAction(() => (this[key] = value));
-      //   console.log(key + " : " + value);
-      // },
+      changeMasterData: (open) => {},
+      publisher: [],
+      author: [],
+      kategori: [],
+      genre: [],
+      book_id: "",
+      book_title: "",
+      book_description: "",
+      book_year_of_release: "",
+      book_age_restriction: "",
+      book_publisher_id: "",
+      book_author_one_id: "",
+      book_author_two_id: "",
+      book_author_three_id: "",
+      book_category_id: "",
+      book_genre_one_id: "",
+      book_genre_two_id: "",
+      book_genre_three_id: "",
+      book_isbn: "",
+      book_notes: "",
+      book_is_released: "",
+
       // validation() {
       //   let msg =
       //     this.category_name === "" || this.category_name === null
@@ -20,34 +35,69 @@
       //       : false;
       //   return msg;
       // },
-      // async submit() {
-      //   let error_msg = this.validation();
-      //   if (error_msg) {
-      //     alert(error_msg);
-      //   } else {
-      //     let kategori = api("/api/categories", {
-      //       category: {
-      //         category_id: this.category_id,
-      //         category_name: this.category_name,
-      //         category_pictures: this.category_picture,
-      //       },
-      //       e: "Update",
-      //     }).then((res) => {
-      //       console.log(res);
-      //       navigate("/w-master-kategori");
-      //     });
-      //   }
-      // },
-      // async upload(file) {
-      //   const formData = _FormData();
-      //   formData.append("path", "category_icon");
-      //   formData.append("file", file);
-      //   const response = await fetch("/api/upload", {
-      //     method: "POST",
-      //     body: formData,
-      //   });
-      //   return await response.json();
-      // },
+      async onChange(key, e) {
+        let value = e.target.value;
+        runInAction(() => (this[key] = value));
+        console.log(key + " : " + value);
+      },
+
+      async submit() {
+        //let error_msg = this.validation();
+        let error_msg = false;
+
+        if (error_msg && false) {
+          alert(error_msg);
+        } else {
+          let book = api("/api/books", {
+            book: {
+              book_id: parseInt(this.book_id),
+              book_title: this.book_title,
+              book_description: this.book_description,
+              book_year_of_release: new Date(this.book_year_of_release),
+              book_picture: this.book_picture,
+              book_age_restriction: parseInt(this.book_age_restriction),
+              book_publisher_id: parseInt(this.book_publisher_id),
+              book_author_one_id: parseInt(this.book_author_one_id),
+              book_author_two_id: parseInt(this.book_author_two_id),
+              book_author_three_id: parseInt(this.book_author_three_id),
+              book_category_id: parseInt(this.book_category_id),
+              book_genre_one_id: parseInt(this.book_genre_one_id),
+              book_genre_two_id: parseInt(this.book_genre_two_id),
+              book_genre_three_id: parseInt(this.book_genre_three_id),
+              book_isbn: this.book_isbn,
+              book_notes: this.book_notes,
+              book_date_updated: new Date(),
+              book_is_released: this.book_is_released,
+            },
+            e: "Update",
+          }).then((res) => {
+            console.log(res);
+            navigate("/w-books");
+          });
+        }
+      },
+
+      async upload(file) {
+        const formData = _FormData();
+
+        formData.append("path", "book_cover");
+        formData.append("file", file);
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+        return await response.json();
+      },
+
+      async logout() {
+        confirm("Logout of admin?") &&
+          (await api("/api/admin", {
+            data: "",
+            event: "Logout",
+          }).then((res) => {
+            navigate("/login-admin");
+          }));
+      },
     }}
     run={async () => {
       meta.action = {
@@ -74,33 +124,87 @@
         changeProfile: (open) => {
           meta.showProfile = open;
         },
-      }; // let kategori = "";
-      // if (window.user.roleAdmin !== "admin") {
-      //   navigate("/login-admin");
-      // } else if (params.id) {
-      //   await api("/api/categories", {
-      //     category: {
-      //       category_id: parseInt(params.id),
-      //     },
-      //     e: "ReadById",
-      //   }).then((res) => {
-      //     if (res.category !== null) {
-      //       kategori = res.category;
-      //     } else {
-      //       navigate("/w-master-kategori");
-      //     }
-      //   });
-      // } else {
-      //   navigate("/w-master-kategori");
-      // }
-      // runInAction(() => {
-      //   if (kategori !== "") {
-      //     meta.category_id = kategori.category_id;
-      //     meta.category_name = kategori.category_name;
-      //     meta.category_picture = kategori.category_pictures;
-      //   }
-      // });
-      // console.log(kategori);
+      };
+      let buku = "";
+
+      if (window.user.roleAdmin !== "admin") {
+        navigate("/login-admin");
+      } else if (params.id) {
+        await api("/api/books", {
+          book: {
+            book_id: parseInt(params.id),
+          },
+          e: "ReadById",
+        }).then((res) => {
+          if (res.book !== null) {
+            buku = res.book;
+          }
+        });
+      } else {
+        navigate("/w-master-kategori");
+      }
+
+      runInAction(() => {
+        if (buku !== "") {
+          meta.book_id = buku.book_id;
+          meta.book_title = buku.book_title;
+          meta.book_description = buku.book_description;
+          meta.book_year_of_release = new Date(buku.book_year_of_release);
+          meta.book_picture = buku.book_picture;
+          meta.book_age_restriction = parseInt(buku.book_age_restriction);
+          meta.book_publisher_id = parseInt(buku.book_publisher_id);
+          meta.book_author_one_id = parseInt(buku.book_author_one_id);
+          meta.book_author_two_id = parseInt(buku.book_author_two_id);
+          meta.book_author_three_id = parseInt(buku.book_author_three_id);
+          meta.book_category_id = parseInt(buku.book_category_id);
+          meta.book_genre_one_id = parseInt(buku.book_genre_one_id);
+          meta.book_genre_two_id = parseInt(buku.book_genre_two_id);
+          meta.book_genre_three_id = parseInt(buku.book_genre_three_id);
+          meta.book_isbn = buku.book_isbn;
+          meta.book_notes = buku.book_notes;
+          meta.book_is_released = buku.book_is_released;
+        }
+      });
+      console.log(buku);
+      await api("/api/publisher", {
+        publisher: "",
+        e: "ReadAll",
+      }).then((res) => {
+        if (res.res !== "Failure" || res === null) {
+          meta.publisher = res.publisher;
+        }
+      });
+      await api("/api/categories", {
+        category: "",
+        e: "ReadAll",
+      }).then((res) => {
+        if (res.res !== "Failure" || res === null) {
+          meta.kategori = res.category;
+        }
+      });
+      await api("/api/authors", {
+        authors: "",
+        e: "ReadAll",
+      }).then((res) => {
+        if (res.res !== "Failure" || res === null) {
+          meta.author = res.authors;
+        }
+      });
+      await api("/api/tags", {
+        tags: "",
+        e: "ReadAll",
+      }).then((res) => {
+        if (res.res !== "Failure" || res === null) {
+          meta.genre = res.tags;
+        }
+      });
+      console.log(meta.publisher, meta.kategori, meta.author, meta.genre);
+      var date = new Date(meta.book_year_of_release);
+      var dd = ("0" + date.getDate()).slice(-2);
+      var mm = date.getMonth() + 1;
+      var yyyy = date.getFullYear();
+      var ToDate = yyyy + "-" + mm + "-" + dd;
+      document.getElementById("dp").setAttribute("value", ToDate);
     }}
   />
   {window.user.roleAdmin === "admin" && (
@@ -425,15 +529,16 @@
                           type={`file`}
                           class={`flex self-stretch flex-col space-y-2.5 items-center justify-center p-4 bg-white border rounded border-gray-400 dropify`}
                           style={`height: 210px; min-height: 210px; max-height: 210px;`}
-                          data-max-file-size={`1M`}
+                          data-max-file-size={`3M`}
                           data-allowed-file-extensions={"png jpg jpeg"}
+                          data-default-file={`/upload/${meta.book_picture}`}
                           onChange={(e) => {
                             runInAction(async () => {
                               const upload = await meta.upload(
                                 e.target.files[0]
                               );
                               runInAction(() => {
-                                meta.tag_picture = upload.path;
+                                meta.book_picture = upload.path;
                               });
                             });
                           }}
@@ -453,6 +558,10 @@
                             style={`color: black;
       background:transparent; 
       outline: none;`}
+                            value={meta.book_title ? meta.book_title : ""}
+                            onChange={(e) => {
+                              meta.onChange("book_title", e);
+                            }}
                           />
                         </div>
                       </div>
@@ -471,6 +580,15 @@
                             style={`color: black;
       background:transparent; 
       outline: none;`}
+                            value={
+                              meta.book_year_of_release
+                                ? meta.book_year_of_release
+                                : ""
+                            }
+                            onChange={(e) => {
+                              meta.onChange("book_year_of_release", e);
+                            }}
+                            id="dp"
                           />
                         </div>
                       </div>
@@ -488,6 +606,14 @@
                             style={`color: black;
       background:transparent; 
       outline: none;`}
+                            value={
+                              meta.book_age_restriction
+                                ? meta.book_age_restriction
+                                : ""
+                            }
+                            onChange={(e) => {
+                              meta.onChange("book_age_restriction", e);
+                            }}
                           />
                         </div>
                       </div>
@@ -502,12 +628,18 @@
                         <div class="flex flex-1 items-start justify-start">
                           <select
                             class="w-full"
-                            defaultValue="Pilih Publisher"
                             style={`color: black; 
       outline:none;
       background:transparent;`}
+                            value={
+                              meta.book_publisher_id
+                                ? meta.book_publisher_id
+                                : ""
+                            }
+                            onChange={(e) => {
+                              meta.onChange("book_publisher_id", e);
+                            }}
                           >
-                            <option value={""} hidden={true} />
                             <option
                               value={"Pilih Publisher"}
                               hidden={true}
@@ -516,22 +648,17 @@
                             >
                               {"Pilih Publisher"}
                             </option>
-                            <option
-                              value={""}
-                              hidden={true}
-                              class={`flex self-stretch flex-col items-start justify-start`}
-                              style="color: black"
-                            >
-                              {"select 2"}
-                            </option>
-                            <option
-                              value={""}
-                              hidden={true}
-                              class={`flex self-stretch flex-col items-start justify-start`}
-                              style="color: black"
-                            >
-                              {"select 3"}
-                            </option>
+                            {meta.publisher.map((numList, i) => {
+                              return (
+                                <option
+                                  value={numList.publisher_id}
+                                  class={`flex self-stretch flex-col items-start justify-start`}
+                                  style="color: black"
+                                >
+                                  {numList.publisher_name}
+                                </option>
+                              );
+                            })}
                             {"Pilih Publisher"}
                           </select>
                         </div>
@@ -549,12 +676,18 @@
                         <div class="flex self-stretch items-center justify-start px-4 py-3 bg-white border rounded border-gray-300">
                           <select
                             class="w-full"
-                            defaultValue="Pilih Author"
                             style={`color: black; 
       outline:none;
       background:transparent;`}
+                            value={
+                              meta.book_author_one_id
+                                ? meta.book_author_one_id
+                                : ""
+                            }
+                            onChange={(e) => {
+                              meta.onChange("book_author_one_id", e);
+                            }}
                           >
-                            <option value={""} hidden={true} />
                             <option
                               value={"Pilih Author"}
                               hidden={true}
@@ -563,22 +696,17 @@
                             >
                               {"Pilih Author"}
                             </option>
-                            <option
-                              value={""}
-                              hidden={true}
-                              class={`flex self-stretch flex-col items-start justify-start`}
-                              style="color: black"
-                            >
-                              {"Author 2"}
-                            </option>
-                            <option
-                              value={""}
-                              hidden={true}
-                              class={`flex self-stretch flex-col items-start justify-start`}
-                              style="color: black"
-                            >
-                              {"Author 3"}
-                            </option>
+                            {meta.author.map((numList, i) => {
+                              return (
+                                <option
+                                  value={numList.author_id}
+                                  class={`flex self-stretch flex-col items-start justify-start`}
+                                  style="color: black"
+                                >
+                                  {numList.author_name}
+                                </option>
+                              );
+                            })}
                             {"Pilih Publisher"}
                           </select>
                         </div>
@@ -599,12 +727,18 @@
                         <div class="flex self-stretch items-center justify-start px-6 py-3 bg-white border rounded border-gray-300">
                           <select
                             class="w-full"
-                            defaultValue="Pilih Author"
                             style={`color: black; 
       outline:none;
       background:transparent;`}
+                            value={
+                              meta.book_author_two_id
+                                ? meta.book_author_two_id
+                                : ""
+                            }
+                            onChange={(e) => {
+                              meta.onChange("book_author_two_id", e);
+                            }}
                           >
-                            <option value={""} hidden={true} />
                             <option
                               value={"Pilih Author"}
                               hidden={true}
@@ -613,22 +747,17 @@
                             >
                               {"Pilih Author"}
                             </option>
-                            <option
-                              value={""}
-                              hidden={true}
-                              class={`flex self-stretch flex-col items-start justify-start`}
-                              style="color: black"
-                            >
-                              {"Author 2"}
-                            </option>
-                            <option
-                              value={""}
-                              hidden={true}
-                              class={`flex self-stretch flex-col items-start justify-start`}
-                              style="color: black"
-                            >
-                              {"Author 3"}
-                            </option>
+                            {meta.author.map((numList, i) => {
+                              return (
+                                <option
+                                  value={numList.author_id}
+                                  class={`flex self-stretch flex-col items-start justify-start`}
+                                  style="color: black"
+                                >
+                                  {numList.author_name}
+                                </option>
+                              );
+                            })}
                             {"Pilih Publisher"}
                           </select>
                         </div>
@@ -649,12 +778,18 @@
                         <div class="flex self-stretch items-center justify-start px-6 py-3 bg-white border rounded border-gray-300">
                           <select
                             class="w-full"
-                            defaultValue="Pilih Author"
                             style={`color: black; 
       outline:none;
       background:transparent;`}
+                            value={
+                              meta.book_author_three_id
+                                ? meta.book_author_three_id
+                                : ""
+                            }
+                            onChange={(e) => {
+                              meta.onChange("book_author_three_id", e);
+                            }}
                           >
-                            <option value={""} hidden={true} />
                             <option
                               value={"Pilih Author"}
                               hidden={true}
@@ -663,22 +798,17 @@
                             >
                               {"Pilih Author"}
                             </option>
-                            <option
-                              value={""}
-                              hidden={true}
-                              class={`flex self-stretch flex-col items-start justify-start`}
-                              style="color: black"
-                            >
-                              {"Author 2"}
-                            </option>
-                            <option
-                              value={""}
-                              hidden={true}
-                              class={`flex self-stretch flex-col items-start justify-start`}
-                              style="color: black"
-                            >
-                              {"Author 3"}
-                            </option>
+                            {meta.author.map((numList, i) => {
+                              return (
+                                <option
+                                  value={numList.author_id}
+                                  class={`flex self-stretch flex-col items-start justify-start`}
+                                  style="color: black"
+                                >
+                                  {numList.author_name}
+                                </option>
+                              );
+                            })}
                             {"Pilih Publisher"}
                           </select>
                         </div>
@@ -694,12 +824,16 @@
                         <div class="flex flex-1 items-start justify-start">
                           <select
                             class="w-full"
-                            defaultValue="Pilih Kategori"
                             style={`color: black; 
       outline:none;
       background:transparent;`}
+                            value={
+                              meta.book_category_id ? meta.book_category_id : ""
+                            }
+                            onChange={(e) => {
+                              meta.onChange("book_category_id", e);
+                            }}
                           >
-                            <option value={""} hidden={true} />
                             <option
                               value={"Pilih Kategori"}
                               hidden={true}
@@ -708,22 +842,17 @@
                             >
                               {"Pilih Kategori"}
                             </option>
-                            <option
-                              value={""}
-                              hidden={true}
-                              class={`flex self-stretch flex-col items-start justify-start`}
-                              style="color: black"
-                            >
-                              {"select 2"}
-                            </option>
-                            <option
-                              value={""}
-                              hidden={true}
-                              class={`flex self-stretch flex-col items-start justify-start`}
-                              style="color: black"
-                            >
-                              {"select 3"}
-                            </option>
+                            {meta.kategori.map((numList, i) => {
+                              return (
+                                <option
+                                  value={numList.category_id}
+                                  class={`flex self-stretch flex-col items-start justify-start`}
+                                  style="color: black"
+                                >
+                                  {numList.category_name}
+                                </option>
+                              );
+                            })}
                             {"Pilih Publisher"}
                           </select>
                         </div>
@@ -738,13 +867,19 @@
                         </div>
                         <div class="flex self-stretch items-center justify-start px-4 py-3 bg-white border rounded border-gray-300">
                           <select
-                            defaultValue="Pilih Genre"
                             class="w-full"
                             style={`color: black; 
       outline:none;
       background:transparent;`}
+                            value={
+                              meta.book_genre_one_id
+                                ? meta.book_genre_one_id
+                                : ""
+                            }
+                            onChange={(e) => {
+                              meta.onChange("book_genre_one_id", e);
+                            }}
                           >
-                            <option value={""} hidden={true} />
                             <option
                               value={"Pilih Genre"}
                               hidden={true}
@@ -753,22 +888,17 @@
                             >
                               {"Pilih Genre"}
                             </option>
-                            <option
-                              value={""}
-                              hidden={true}
-                              class={`flex self-stretch flex-col items-start justify-start`}
-                              style="color: black"
-                            >
-                              {"Romance"}
-                            </option>
-                            <option
-                              value={""}
-                              hidden={true}
-                              class={`flex self-stretch flex-col items-start justify-start`}
-                              style="color: black"
-                            >
-                              {"Science-Fiction"}
-                            </option>
+                            {meta.genre.map((numList, i) => {
+                              return (
+                                <option
+                                  value={numList.tag_id}
+                                  class={`flex self-stretch flex-col items-start justify-start`}
+                                  style="color: black"
+                                >
+                                  {numList.tag_name}
+                                </option>
+                              );
+                            })}
                             {"Pilih Genre"}
                           </select>
                         </div>
@@ -788,13 +918,19 @@
                         </div>
                         <div class="flex self-stretch items-center justify-start px-4 py-3 bg-white border rounded border-gray-300">
                           <select
-                            defaultValue="Pilih Genre"
                             class="w-full"
                             style={`color: black; 
       outline:none;
       background:transparent;`}
+                            value={
+                              meta.book_genre_two_id
+                                ? meta.book_genre_two_id
+                                : ""
+                            }
+                            onChange={(e) => {
+                              meta.onChange("book_genre_two_id", e);
+                            }}
                           >
-                            <option value={""} hidden={true} />
                             <option
                               value={"Pilih Genre"}
                               hidden={true}
@@ -803,22 +939,17 @@
                             >
                               {"Pilih Genre"}
                             </option>
-                            <option
-                              value={""}
-                              hidden={true}
-                              class={`flex self-stretch flex-col items-start justify-start`}
-                              style="color: black"
-                            >
-                              {"Romance"}
-                            </option>
-                            <option
-                              value={""}
-                              hidden={true}
-                              class={`flex self-stretch flex-col items-start justify-start`}
-                              style="color: black"
-                            >
-                              {"Science-Fiction"}
-                            </option>
+                            {meta.genre.map((numList, i) => {
+                              return (
+                                <option
+                                  value={numList.tag_id}
+                                  class={`flex self-stretch flex-col items-start justify-start`}
+                                  style="color: black"
+                                >
+                                  {numList.tag_name}
+                                </option>
+                              );
+                            })}
                             {"Pilih Genre"}
                           </select>
                         </div>
@@ -838,13 +969,19 @@
                         </div>
                         <div class="flex self-stretch items-center justify-start px-4 py-3 bg-white border rounded border-gray-300">
                           <select
-                            defaultValue="Pilih Genre"
                             class="w-full"
                             style={`color: black; 
       outline:none;
       background:transparent;`}
+                            value={
+                              meta.book_genre_three_id
+                                ? meta.book_genre_three_id
+                                : ""
+                            }
+                            onChange={(e) => {
+                              meta.onChange("book_genre_three_id", e);
+                            }}
                           >
-                            <option value={""} hidden={true} />
                             <option
                               value={"Pilih Genre"}
                               hidden={true}
@@ -853,22 +990,17 @@
                             >
                               {"Pilih Genre"}
                             </option>
-                            <option
-                              value={""}
-                              hidden={true}
-                              class={`flex self-stretch flex-col items-start justify-start`}
-                              style="color: black"
-                            >
-                              {"Romance"}
-                            </option>
-                            <option
-                              value={""}
-                              hidden={true}
-                              class={`flex self-stretch flex-col items-start justify-start`}
-                              style="color: black"
-                            >
-                              {"Science-Fiction"}
-                            </option>
+                            {meta.genre.map((numList, i) => {
+                              return (
+                                <option
+                                  value={numList.tag_id}
+                                  class={`flex self-stretch flex-col items-start justify-start`}
+                                  style="color: black"
+                                >
+                                  {numList.tag_name}
+                                </option>
+                              );
+                            })}
                             {"Pilih Genre"}
                           </select>
                         </div>
@@ -888,6 +1020,10 @@
                           style={`color: black;
       background:transparent; 
       outline: none;`}
+                          value={meta.book_isbn ? meta.book_isbn : ""}
+                          onChange={(e) => {
+                            meta.onChange("book_isbn", e);
+                          }}
                         />
                       </div>
                     </div>
@@ -909,6 +1045,12 @@
                           style={`color: black;
       background:transparent; 
       outline: none;`}
+                          value={
+                            meta.book_description ? meta.book_description : ""
+                          }
+                          onChange={(e) => {
+                            meta.onChange("book_description", e);
+                          }}
                         />
                       </div>
                     </div>
@@ -926,6 +1068,10 @@
                           style={`color: black;
       background:transparent; 
       outline: none;`}
+                          value={meta.book_notes ? meta.book_notes : ""}
+                          onChange={(e) => {
+                            meta.onChange("book_notes", e);
+                          }}
                         />
                       </div>
                     </div>
@@ -936,7 +1082,7 @@
                 <button
                   class={`flex items-start justify-start px-4 py-2 border rounded border-gray-400`}
                   onClick={() => {
-                    navigate("/w-master-kategori");
+                    navigate("/w-books");
                   }}
                 >
                   <div class="text-base font-bold leading-normal text-amber-500">

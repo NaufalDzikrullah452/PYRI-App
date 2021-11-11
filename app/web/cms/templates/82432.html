@@ -59,65 +59,61 @@
         changeProfile: (open) => {
           meta.showProfile = open;
         },
-      }; // var kategori = "";
-      // if (window.user.roleAdmin !== "admin") {
-      //   navigate("/login-admin");
-      // }
-      // await api("/api/categories", {
-      //   category: " ",
-      //   e: "ReadAll",
-      // }).then((res) => {
-      //   kategori = res.category;
-      // });
-      // runInAction(() => {
-      //   meta.categories = kategori;
-      //   document.getElementById("kotak").classList.add("flex-wrap");
-      //   // Loop each kategori and appendchild it to id "kotak"
-      //   for (let i = 0; i < kategori.length; i++) {
-      //     let mainDiv = document.createElement("div");
-      //     mainDiv.className =
-      //       "flex flex-1 flex-col space-y-2.5 items-center justify-start p-9 bg-gray-50 shadow rounded-lg css-1nc2z6h";
-      //     mainDiv.style.flex = "1 0 25%";
-      //     mainDiv.style.marginLeft = "2.5%";
-      //     mainDiv.style.marginBottom = "2.5%";
-      //     mainDiv.style.marginTop = "2.5%";
-      //     let bgImg = document.createElement("img");
-      //     bgImg.setAttribute("src", "upload/" + kategori[i].category_pictures);
-      //     bgImg.style.width = "200px";
-      //     bgImg.style.height = "150px";
-      //     mainDiv.appendChild(bgImg);
-      //     let contentDiv = document.createElement("div");
-      //     contentDiv.className =
-      //       "flex self-stretch space-x-2.5 items-center justify-start";
-      //     let captionDiv = document.createElement("div");
-      //     captionDiv.className = "flex flex-1 items-start justify-start";
-      //     let textDiv = document.createElement("div");
-      //     textDiv.className = "text-xl font-medium leading-loose";
-      //     textDiv.innerHTML = kategori[i].category_name;
-      //     captionDiv.appendChild(textDiv);
-      //     contentDiv.appendChild(captionDiv);
-      //     let imageDiv = document.createElement("div");
-      //     imageDiv.className =
-      //       "flex self-stretch space-x-2.5 items-center justify-center rounded";
-      //     let editBtn = document.createElement("img");
-      //     editBtn.className = "css-5nv48v";
-      //     editBtn.setAttribute("src", "/fimgs/2309_60058.x1.svg");
-      //     editBtn.onclick = () => {
-      //       meta.editKategori(kategori[i].category_id);
-      //     };
-      //     imageDiv.appendChild(editBtn);
-      //     let delBtn = document.createElement("img");
-      //     delBtn.className = "css-1b79tb0";
-      //     delBtn.setAttribute("src", "/fimgs/2309_60065.x1.svg");
-      //     delBtn.onclick = () => {
-      //       meta.deleteKategori(kategori[i].category_id);
-      //     };
-      //     imageDiv.appendChild(delBtn);
-      //     contentDiv.appendChild(imageDiv);
-      //     mainDiv.appendChild(contentDiv);
-      //     document.getElementById("kotak").appendChild(mainDiv);
-      //   }
-      // });
+      };
+      let buku = "";
+
+      if (window.user.roleAdmin !== "admin") {
+        navigate("/login-admin");
+      }
+
+      await api("/api/books", {
+        book: " ",
+        e: "ReadAll",
+      }).then((res) => {
+        buku = res.book;
+      });
+      runInAction(() => {
+        document.getElementById("bc").classList.add("space-x-4");
+
+        for (let i = 0; i < buku.length; i++) {
+          let a = document.createElement("div");
+          a.className =
+            "flex flex-col items-center justify-center bg-gray-50 shadow rounded-lg py-8 px-4 w-1/4 truncate css-ktvuj3";
+          a.style.cursor = "pointer";
+
+          a.onmouseenter = () => {
+            a.style.backgroundColor = "rgba(255, 143, 0, 0.2)";
+          };
+
+          a.onmouseleave = () => {
+            a.style.backgroundColor = "transparent";
+          };
+
+          let b = document.createElement("div");
+          b.className =
+            "flex flex-1 self-stretch flex-col space-y-4 items-center justify-center px-4 pt-4 css-apsgmz";
+          let ci = document.createElement("img");
+          ci.src = buku[i].book_picture
+            ? "upload/" + buku[i].book_picture
+            : "/fimgs/I2808_18979_2808_18944.x1.png";
+          ci.className = "css-xgm4xn";
+          ci.style.width = "121px";
+          ci.style.height = "180px";
+          let d = document.createElement("div");
+          d.className = "flex flex-1 self-stretch items-start justify-center";
+          let e = document.createElement("div");
+          e.className = "flex flex-1 items-start justify-start";
+          let f = document.createElement("div");
+          f.className = "text-base leading-normal";
+          f.innerText = buku[i].book_title;
+          e.appendChild(f);
+          d.appendChild(e);
+          b.appendChild(ci);
+          b.appendChild(d);
+          a.appendChild(b);
+          document.getElementById("bc").appendChild(a);
+        }
+      });
     }}
   />
   {window.user.roleAdmin === "admin" && (
@@ -484,10 +480,16 @@
                   </div>
                 </div>
               </div>
-              <div class="flex self-stretch space-x-8 items-center justify-center">
+              <div
+                class={`flex self-stretch items-center justify-center`}
+                id="bc"
+              >
                 <button
-                  class="flex flex-col space-y-7 items-center justify-center px-8 py-5 bg-gray-50 shadow rounded-lg"
-                  style="width: 214px; min-width: 214px; max-width: 214px; height: 305px; min-height: 305px; max-height: 305px;"
+                  class={`flex flex-col space-y-7 items-center justify-center px-8 py-5 bg-gray-50 shadow rounded-lg`}
+                  style={`width: 214px; min-width: 214px; max-width: 214px; height: 305px; min-height: 305px; max-height: 305px;`}
+                  onClick={() => {
+                    navigate("/w-books/add");
+                  }}
                 >
                   <img
                     src="/fimgs/2705_18697.x1.svg"
@@ -501,69 +503,6 @@
                     </div>
                   </div>
                 </button>
-                <div
-                  class={`flex flex-col items-center justify-center bg-gray-50 shadow rounded-lg`}
-                  style={`width: 214px; min-width: 214px; max-width: 214px; height: 305px; min-height: 305px; max-height: 305px; :hover {background-color: rgba(255, 143, 0, 0.2); cursor:pointer;`}
-                >
-                  <div
-                    class={`flex flex-1 self-stretch flex-col space-y-4 items-center justify-center px-4 pt-4`}
-                    style={"padding-top:30px;"}
-                  >
-                    <img
-                      src="/fimgs/I2808_18979_2808_18944.x1.png"
-                      style="width: 120px; min-width: 120px; max-width: 120px; height: 179.23px; min-height: 179.23px; max-height: 179.23px;background-image: url('/fimgs/bg-8cf180f8c9bc5fec9363e489cbbba28f18b9b868');background-size:100% 100%;background-repeat:no-repeat;"
-                    />
-                    <div class="flex flex-1 self-stretch items-start justify-center">
-                      <div class="flex flex-1 items-start justify-start">
-                        <div class="text-base leading-normal text-center">
-                          The DESIGN of EVERYDAY THINGS{" "}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  class={`flex flex-col items-center justify-center bg-gray-50 shadow rounded-lg`}
-                  style={`width: 214px; min-width: 214px; max-width: 214px; height: 305px; min-height: 305px; max-height: 305px; :hover {background-color: rgba(255, 143, 0, 0.2); cursor:pointer;`}
-                >
-                  <div
-                    class={`flex flex-1 self-stretch flex-col space-y-4 items-center justify-center px-4 pt-4`}
-                    style={"padding-top:30px;"}
-                  >
-                    <img
-                      src="/fimgs/I2808_18973_2808_18944.x1.png"
-                      style="width: 120px; min-width: 120px; max-width: 120px; height: 179.23px; min-height: 179.23px; max-height: 179.23px;background-image: url('/fimgs/bg-8cf180f8c9bc5fec9363e489cbbba28f18b9b868');background-size:100% 100%;background-repeat:no-repeat;"
-                    />
-                    <div class="flex flex-1 self-stretch items-start justify-center">
-                      <div class="flex flex-1 items-start justify-start">
-                        <div class="text-base leading-normal text-center">
-                          The DESIGN of EVERYDAY THINGS{" "}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  class={`flex flex-col items-center justify-center bg-gray-50 shadow rounded-lg`}
-                  style={`width: 214px; min-width: 214px; max-width: 214px; height: 305px; min-height: 305px; max-height: 305px; :hover {background-color: rgba(255, 143, 0, 0.2); cursor:pointer;`}
-                >
-                  <div
-                    class={`flex flex-1 self-stretch flex-col space-y-4 items-center justify-center px-4 pt-4`}
-                    style={"padding-top:30px;"}
-                  >
-                    <img
-                      src="/fimgs/I2808_18949_2808_18944.x1.png"
-                      style="width: 120px; min-width: 120px; max-width: 120px; height: 179.23px; min-height: 179.23px; max-height: 179.23px;background-image: url('/fimgs/bg-8cf180f8c9bc5fec9363e489cbbba28f18b9b868');background-size:100% 100%;background-repeat:no-repeat;"
-                    />
-                    <div class="flex flex-1 self-stretch items-start justify-center">
-                      <div class="flex flex-1 items-start justify-start">
-                        <div class="text-base leading-normal text-center">
-                          The DESIGN of EVERYDAY THINGS{" "}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
               </div>
               <div class="flex self-stretch space-x-2.5 items-center justify-start bg-white">
                 <div class="flex flex-1 items-start justify-start">
