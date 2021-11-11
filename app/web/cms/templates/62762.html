@@ -208,7 +208,7 @@
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex items-start justify-start bg-white`}>
+    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
       <div class={`w-full flex items-start justify-start`}>
         <div
           class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -400,7 +400,7 @@
               class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
               style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
               onClick={() => {
-                navigate("/w-books");
+                navigate("/w-book");
               }}
             >
               <img

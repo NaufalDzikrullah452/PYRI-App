@@ -18,12 +18,12 @@
     "mobx": "^6.1.8",
     "mobx-react-lite": "^3.2.0",
     "nodemailer": "^6.6.5",
-    "password-validator": "^5.1.1",
+    "password-validator": "^5.2.1",
     "qrcode.react": "^1.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "tailwindcss": "^2.2.17",
-    "validator": "^13.6.0"
+    "tailwindcss": "^2.2.19",
+    "validator": "^13.7.0"
   },
   "script": {
     "post-install": "patch-package"

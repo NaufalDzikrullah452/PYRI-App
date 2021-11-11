@@ -79,7 +79,7 @@
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex items-start justify-start bg-white`}>
+    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
       <div class={`w-full flex flex-1 items-start justify-start`}>
         <div
           class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -270,7 +270,7 @@
             <div
               class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
               onClick={() => {
-                navigate("/w-books");
+                navigate("/w-book");
               }}
               style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
             >
@@ -373,7 +373,7 @@
                   class={`flex items-center justify-start`}
                   style={`width: 28px; min-width: 28px; max-width: 28px; height: 40px; min-height: 40px; max-height: 40px;`}
                   onClick={() => {
-                    back();
+                    navigate("/w-book");
                   }}
                 />
                 <div class="flex flex-1 items-start justify-start">
