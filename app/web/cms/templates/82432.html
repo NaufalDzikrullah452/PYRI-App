@@ -7,6 +7,243 @@
       changeProfile: (open) => {},
       changeManagement: (open) => {},
       changeMasterData: (open) => {},
+      books: [],
+      add_card: "",
+      searching: "",
+      entries: 5,
+      last_entries: 5,
+      first_entries: 0,
+      pages: 1,
+      sum_pages: 0,
+      pages_array: [],
+      loading_page: true,
+
+      async onChange(key, e) {
+        this.loading_page = true;
+        let value = e.target.value;
+
+        if (key === "entries") {
+          runInAction(() => {
+            var buku = this.books;
+            this[key] = value;
+            this.first_entries = 0;
+            this.pages = 1;
+            this.last_entries =
+              parseInt(value) < buku.length ? parseInt(value) : buku.length;
+            this.sum_pages = Math.ceil(this.books.length / this.entries);
+            this.pages_array = Array.apply(null, {
+              length: this.sum_pages,
+            }).map(Number.call, Number);
+
+            for (let j = 0; j < this.books.length; j++) {
+              var remove = document.getElementById("bc");
+
+              for (let k = 0; k < this.books.length; k++) {
+                if (remove.childNodes[k]?.nodeName === "DIV") {
+                  remove.removeChild(remove.childNodes[k]);
+                }
+              }
+            }
+
+            for (let i = this.first_entries; i < this.last_entries; i++) {
+              // console.log(buku[i].book_id);
+              let a = document.createElement("div");
+              a.className =
+                "flex flex-col items-center justify-center bg-gray-50 shadow rounded-lg py-8 px-4 w-1/4 truncate css-ktvuj3";
+              a.id = "books-" + buku[i].book_id;
+              a.style = `
+              width: "214px";
+              min-width: 214px;
+              max-width: 214px;
+              height: 305px;
+              min-height: 305px;
+              max-height: 305px;
+              margin: 50px 10px 0px 10px
+              `;
+              a.style.cursor = "pointer";
+
+              a.onmouseenter = () => {
+                a.style.backgroundColor = "rgba(255, 143, 0, 0.2)";
+              };
+
+              a.onmouseleave = () => {
+                a.style.backgroundColor = "transparent";
+              };
+
+              let b = document.createElement("div");
+              b.className =
+                "flex flex-1 self-stretch flex-col space-y-4 items-center justify-center px-4 pt-4 css-apsgmz";
+              let ci = document.createElement("img");
+              ci.src = buku[i].book_picture
+                ? "upload/" + buku[i].book_picture
+                : "/fimgs/I2808_18979_2808_18944.x1.png";
+              ci.className = "css-xgm4xn";
+              ci.style.width = "121px";
+              ci.style.height = "180px";
+              let d = document.createElement("div");
+              d.className =
+                "flex flex-1 self-stretch items-start justify-center";
+              let e = document.createElement("div");
+              e.className = "flex flex-1 items-start justify-start";
+              let f = document.createElement("div");
+              f.className = "text-base leading-normal";
+              f.innerText = buku[i].book_title;
+              e.appendChild(f);
+              d.appendChild(e);
+              b.appendChild(ci);
+              b.appendChild(d);
+              a.appendChild(b);
+              document.getElementById("bc").appendChild(a);
+            }
+
+            this.loading_page = false;
+          });
+        } else if (key === "searching") {
+          runInAction(() => {
+            this[key] = value;
+            api("/api/page", {
+              page: {
+                page_page: value,
+                page_chapter_id: parseInt(params.chapter_id),
+              },
+              e: "Searching",
+            }).then((res) => {
+              // console.log(res.page);
+              runInAction(() => {
+                this.page = res.page;
+                this.page.sort(function (a, b) {
+                  var aNum = parseInt(a.page_page);
+                  var bNum = parseInt(b.page_page);
+                  return aNum - bNum;
+                });
+                this.first_entries = 0;
+                this.pages = 1;
+                this.last_entries = parseInt(this.entries);
+                this.sum_pages = Math.ceil(this.page.length / this.entries); // meta.page_array = new Array(meta.sum_page);
+
+                this.pages_array = Array.apply(null, {
+                  length: this.sum_pages,
+                }).map(Number.call, Number);
+                this.loading_page = false;
+              });
+            });
+          });
+        }
+
+        console.log(key + " : " + this[key]); // console.log("page : " + this.page);
+        // console.log("last_entries : " + this.last_entries);
+      },
+
+      async onClickPages(key, value) {
+        if (value !== this.pages && value !== 0 && value <= this.sum_pages) {
+          const last_pages = this.pages;
+          const gap = value - last_pages;
+          const res = gap > 0;
+          runInAction(() => {
+            var buku = this.books;
+            this.pages = value;
+
+            if (res) {
+              this.first_entries += parseInt(this.entries) * Math.abs(gap);
+              this.last_entries += parseInt(this.entries) * Math.abs(gap);
+            } else {
+              this.first_entries -= parseInt(this.entries) * Math.abs(gap);
+              this.last_entries -= parseInt(this.entries) * Math.abs(gap);
+            }
+
+            if (this.pages === 1) {
+              for (let j = 0; j < this.books.length; j++) {
+                var remove = document.getElementById("bc");
+
+                for (let k = 0; k < this.books.length; k++) {
+                  if (remove.childNodes[k]?.nodeName === "DIV") {
+                    remove.removeChild(remove.childNodes[k]);
+                  }
+                }
+              }
+            } else {
+              var remove = document.getElementById("bc");
+              var child = remove.lastElementChild;
+
+              while (child) {
+                if (remove.lastElementChild.nodeName === "BUTTON") {
+                  this.add_card = remove.lastElementChild;
+                }
+
+                remove.removeChild(child);
+                child = remove.lastElementChild;
+              }
+            }
+
+            if (this.add_card && this.pages === 1) {
+              document.getElementById("bc").appendChild(this.add_card);
+            }
+
+            for (
+              let i = this.first_entries;
+              i <
+              (this.last_entries < this.books.length
+                ? this.last_entries
+                : this.books.length);
+              i++
+            ) {
+              // console.log(buku[i].book_id);
+              let a = document.createElement("div");
+              a.className =
+                "flex flex-col items-center justify-center bg-gray-50 shadow rounded-lg py-8 px-4 w-1/4 truncate css-ktvuj3";
+              a.id = "books-" + buku[i].book_id;
+              a.style = `
+              width: "214px";
+              min-width: 214px;
+              max-width: 214px;
+              height: 305px;
+              min-height: 305px;
+              max-height: 305px;
+              margin: 50px 10px 0px 10px
+              `;
+              a.style.cursor = "pointer";
+
+              a.onmouseenter = () => {
+                a.style.backgroundColor = "rgba(255, 143, 0, 0.2)";
+              };
+
+              a.onmouseleave = () => {
+                a.style.backgroundColor = "transparent";
+              };
+
+              let b = document.createElement("div");
+              b.className =
+                "flex flex-1 self-stretch flex-col space-y-4 items-center justify-center px-4 pt-4 css-apsgmz";
+              let ci = document.createElement("img");
+              ci.src = buku[i].book_picture
+                ? "upload/" + buku[i].book_picture
+                : "/fimgs/I2808_18979_2808_18944.x1.png";
+              ci.className = "css-xgm4xn";
+              ci.style.width = "121px";
+              ci.style.height = "180px";
+              let d = document.createElement("div");
+              d.className =
+                "flex flex-1 self-stretch items-start justify-center";
+              let e = document.createElement("div");
+              e.className = "flex flex-1 items-start justify-start";
+              let f = document.createElement("div");
+              f.className = "text-base leading-normal";
+              f.innerText = buku[i].book_title;
+              e.appendChild(f);
+              d.appendChild(e);
+              b.appendChild(ci);
+              b.appendChild(d);
+              a.appendChild(b);
+              document.getElementById("bc").appendChild(a);
+            }
+
+            this.loading_page = false;
+          });
+          console.log(key + " : " + value); // console.log("first_entries : " + this.first_entries);
+          // console.log("last_entries : " + this.last_entries);
+          // console.log("gap : " + res);
+        }
+      },
 
       async logout() {
         confirm("Logout of admin?") &&
@@ -57,12 +294,30 @@
         buku = res.book;
       });
       runInAction(() => {
+        meta.books = buku;
+        meta.last_entries =
+          meta.last_entries < buku.length ? meta.last_entries : buku.length;
+        meta.sum_pages = Math.ceil(meta.books.length / meta.entries); // meta.page_array = new Array(meta.sum_page);
+
+        meta.pages_array = Array.apply(null, {
+          length: meta.sum_pages,
+        }).map(Number.call, Number);
         document.getElementById("bc").classList.add("space-x-4");
 
-        for (let i = 0; i < buku.length; i++) {
+        for (let i = meta.first_entries; i < meta.last_entries; i++) {
           let a = document.createElement("div");
           a.className =
             "flex flex-col items-center justify-center bg-gray-50 shadow rounded-lg py-8 px-4 w-1/4 truncate css-ktvuj3";
+          a.id = "books-" + buku[i].book_id;
+          a.style = `
+          width: "214px";
+          min-width: 214px;
+          max-width: 214px;
+          height: 305px;
+          min-height: 305px;
+          max-height: 305px;
+          margin: 50px 10px 0px 10px
+          `;
           a.style.cursor = "pointer";
 
           a.onmouseenter = () => {
@@ -97,11 +352,13 @@
           a.appendChild(b);
           document.getElementById("bc").appendChild(a);
         }
+
+        meta.loading_page = false;
       });
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
+    <div class={`w-full flex items-start justify-start bg-white`}>
       <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
         <div
           class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -426,7 +683,6 @@
                     <select
                       class={`flex flex-col space-y-2.5 items-center justify-start px-6 py-1 bg-white border rounded border-gray-500`}
                       style={`width: 95.87px; min-width: 95.87px; max-width: 95.87px;`}
-                      defaultValue="10"
                       value={meta.entries}
                       onChange={(e) => {
                         meta.onChange("entries", e);
@@ -465,12 +721,12 @@
                 </div>
               </div>
               <div
-                class={`flex self-stretch items-center justify-center`}
+                class={`flex self-stretch items-center justify-start flex flex-wrap`}
                 id="bc"
               >
                 <button
                   class={`flex flex-col space-y-7 items-center justify-center px-8 py-5 bg-gray-50 shadow rounded-lg`}
-                  style={`width: 214px; min-width: 214px; max-width: 214px; height: 305px; min-height: 305px; max-height: 305px;`}
+                  style={`width: 214px; min-width: 214px; max-width: 214px; height: 305px; min-height: 305px; max-height: 305px; margin : 50px 10px 0px 10px;`}
                   onClick={() => {
                     navigate("/w-books/add");
                   }}
@@ -490,25 +746,84 @@
               </div>
               <div class="flex self-stretch space-x-2.5 items-center justify-start bg-white">
                 <div class="flex flex-1 items-start justify-start">
-                  <div class="text-base leading-normal text-orange-900">
-                    Showing 1 to 6 of 6 entries
-                  </div>
+                  <div
+                    class={`text-base leading-normal text-orange-900`}
+                  >{`Showing ${meta.first_entries + 1} to ${
+                    meta.last_entries <= meta.books.length
+                      ? meta.last_entries
+                      : meta.books.length
+                  } of ${meta.books.length} entries`}</div>
                 </div>
                 <div class="flex space-x-2 items-start justify-start">
-                  <img
-                    src="/fimgs/2976_18698.x1.svg"
-                    style="width: 34px; min-width: 34px; max-width: 34px; height: 32px; min-height: 32px; max-height: 32px;"
-                  />
-                  <div class="flex flex-col items-start justify-start px-2.5 py-1 bg-amber-500 rounded">
-                    <div class="text-base leading-normal">1</div>
+                  <div
+                    class={`flex self-stretch flex-col items-center justify-center px-2 bg-white rounded cursor-pointer`}
+                    style={`:hover {outline: 2px solid #ababab;`}
+                    onClick={() => {
+                      meta.onClickPages(
+                        "page" + (meta.pages - 1),
+                        meta.pages - 1
+                      );
+                    }}
+                  >
+                    <img
+                      src="/fimgs/3182_1705048.x1.svg"
+                      style={`width: 18px; min-width: 18px; max-width: 18px; height: 14px; min-height: 14px; max-height: 14px;`}
+                    />
                   </div>
-                  <div class="flex flex-col items-start justify-start px-2.5 py-1 bg-white rounded">
-                    <div class="text-base leading-normal">2</div>
+                  {meta.pages_array.map((numList, i) => {
+                    const upper =
+                      meta.pages + 2 < meta.pages_array.length
+                        ? meta.pages + 2
+                        : meta.pages_array.length;
+                    const under = meta.pages - 2 > 0 ? meta.pages - 2 : 1;
+
+                    if (
+                      (numList + 1 < upper && numList + 1 > under) ||
+                      numList + 1 === 1 ||
+                      numList + 1 === meta.pages_array.length
+                    ) {
+                      return (
+                        <div class={`flex items-start justify-start`}>
+                          {
+                            <div
+                              class={`flex flex-col items-start justify-start px-2.5 py-1 bg-white rounded`}
+                              style={`${
+                                "page" + meta.pages === "page" + (i + 1)
+                                  ? `background: #FF8F00;`
+                                  : `:hover {background-color: #ffc780;}`
+                              }
+  cursor:pointer;`}
+                              onClick={() => {
+                                meta.onClickPages("page" + (i + 1), i + 1);
+                              }}
+                            >
+                              <div class={`text-base leading-normal`}>
+                                {numList + 1}
+                              </div>
+                            </div>
+                          }
+                        </div>
+                      );
+                    } else {
+                      if (numList + 1 === upper || numList + 1 === under)
+                        return "...";
+                    }
+                  })}
+                  <div
+                    class={`flex self-stretch flex-col items-center justify-center px-2 bg-white rounded cursor-pointer`}
+                    style={`:hover {outline: 2px solid #ababab;`}
+                    onClick={() => {
+                      meta.onClickPages(
+                        "page" + (meta.pages + 1),
+                        meta.pages + 1
+                      );
+                    }}
+                  >
+                    <img
+                      src="/fimgs/3182_1705054.x1.svg"
+                      style="width: 18px; min-width: 18px; max-width: 18px; height: 14px; min-height: 14px; max-height: 14px;"
+                    />
                   </div>
-                  <img
-                    src="/fimgs/2976_18704.x1.svg"
-                    style="width: 34px; min-width: 34px; max-width: 34px; height: 32px; min-height: 32px; max-height: 32px;"
-                  />
                 </div>
               </div>
             </div>
