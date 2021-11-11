@@ -58,22 +58,28 @@
           if (open == true) {
             btn_swicth1.setAttribute(
               "style",
-              "transition: .4s; transform: translateX(0px);"
+              "transition: .4s; margin-left: 0px;"
             );
-            btn_swicth2.setAttribute("style", "background-color: #d2dae2");
+            btn_swicth2.setAttribute(
+              "style",
+              "transition: .3s; background-color: #d2dae2"
+            );
           } else {
             btn_swicth1.setAttribute(
               "style",
-              "transition: .4s; transform: translateX(26px);"
+              "transition: .4s; margin-left: 25px;"
             );
-            btn_swicth2.setAttribute("style", "background-color: #ffc048;");
+            btn_swicth2.setAttribute(
+              "style",
+              "transition: .3s; background-color: #ffc048;"
+            );
           }
         },
       };
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
+    <div class={`w-full flex items-start justify-start bg-white`}>
       <div class={`w-full flex flex-1 items-start justify-start`}>
         <div
           class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
