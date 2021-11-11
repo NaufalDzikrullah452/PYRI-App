@@ -72,7 +72,7 @@
             e: "Update",
           }).then((res) => {
             console.log(res);
-            navigate("/w-books");
+            navigate("/w-book");
           });
         }
       },
@@ -141,7 +141,7 @@
           }
         });
       } else {
-        navigate("/w-master-kategori");
+        navigate("/w-book");
       }
 
       runInAction(() => {
@@ -1082,7 +1082,7 @@
                 <button
                   class={`flex items-start justify-start px-4 py-2 border rounded border-gray-400`}
                   onClick={() => {
-                    navigate("/w-books");
+                    navigate("/w-book");
                   }}
                 >
                   <div class="text-base font-bold leading-normal text-amber-500">

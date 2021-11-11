@@ -8,22 +8,6 @@
       changeManagement: (open) => {},
       changeMasterData: (open) => {},
 
-      // authors: [],
-      // async editKategori(id) {
-      //   navigate("/w-master-kategori/edit/" + id);
-      // },
-      // async deleteKategori(id) {
-      //   console.log(id);
-      //   confirm("Confirm Delete") &&
-      //     (await api("/api/categories", {
-      //       category: {
-      //         category_id: id,
-      //       },
-      //       e: "Delete",
-      //     }).then((res) => {
-      //       navigate("/w-master-kategori");
-      //     }));
-      // },
       async logout() {
         confirm("Logout of admin?") &&
           (await api("/api/admin", {
