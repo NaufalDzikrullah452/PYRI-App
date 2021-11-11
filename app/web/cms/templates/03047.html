@@ -94,7 +94,7 @@
       },
     }}
     run={async () => {
-      console.log(params);
+      // console.log(params);
       meta.action = {
         changeMasterData: (open) => {
           meta.showMasterData = open;
@@ -127,7 +127,7 @@
 
       var chapter = "";
 
-      if (params.chapter_id) {
+      if (params.book_id) {
         await api("/api/chapter", {
           chapter: {
             chapter_book_id: parseInt(params.book_id),
@@ -153,6 +153,10 @@
             page = res.page;
           }
         });
+      }
+
+      if (page.page_chapter_id !== parseInt(params.chapter_id)) {
+        navigate(`/w-books/${params.book_id}/detail/${params.chapter_id}/page`);
       }
 
       runInAction(() => {

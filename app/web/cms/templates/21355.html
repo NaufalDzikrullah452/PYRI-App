@@ -106,8 +106,9 @@
               api("/api/page", {
                 page: {
                   page_chapter_id: parseInt(params.chapter_id),
+                  page_book_id: parseInt(params.book_id),
                 },
-                e: "ReadByChapterId",
+                e: "ReadByBookChapterId",
               }).then((res) => {
                 console.log(res);
 
@@ -171,44 +172,52 @@
         navigate("/login-admin");
       } // read page by chapter
 
-      var page = "";
-      await api("/api/page", {
-        page: {
-          page_chapter_id: parseInt(params.chapter_id),
-        },
-        e: "ReadByChapterId",
-      }).then((res) => {
-        if (res.res !== "Failure" || res === null) {
-          page = res.page;
-          page.sort(function (a, b) {
-            var aNum = parseInt(a.page_page);
-            var bNum = parseInt(b.page_page);
-            return aNum - bNum;
-          });
-        }
-      }); //read chapter
+      if (
+        params.chapter_id &&
+        params.chapter_id !== "undefined" &&
+        params.book_id &&
+        params.book_id !== "undefined"
+      ) {
+        var page = "";
+        await api("/api/page", {
+          page: {
+            page_chapter_id: parseInt(params.chapter_id),
+            page_book_id: parseInt(params.book_id),
+          },
+          e: "ReadByBookChapterId",
+        }).then((res) => {
+          if (res.res !== "Failure" || res === null) {
+            page = res.page;
+            page.sort(function (a, b) {
+              var aNum = parseInt(a.page_page);
+              var bNum = parseInt(b.page_page);
+              return aNum - bNum;
+            });
+          }
+        }); //read chapter
 
-      var chapter = "";
-      await api("/api/chapter", {
-        chapter: {
-          chapter_id: parseInt(params.chapter_id),
-        },
-        e: "ReadById",
-      }).then((res) => {
-        if (res.res !== "Failure" || res === null) {
-          chapter = res.chapter;
-        }
-      });
-      runInAction(() => {
-        meta.page = page;
-        meta.chapter = chapter;
-        meta.sum_pages = Math.ceil(meta.page.length / meta.entries); // meta.page_array = new Array(meta.sum_page);
+        var chapter = "";
+        await api("/api/chapter", {
+          chapter: {
+            chapter_id: parseInt(params.chapter_id),
+          },
+          e: "ReadById",
+        }).then((res) => {
+          if (res.res !== "Failure" || res === null) {
+            chapter = res.chapter;
+          }
+        });
+        runInAction(() => {
+          meta.page = page;
+          meta.chapter = chapter;
+          meta.sum_pages = Math.ceil(meta.page.length / meta.entries); // meta.page_array = new Array(meta.sum_page);
 
-        meta.pages_array = Array.apply(null, {
-          length: meta.sum_pages,
-        }).map(Number.call, Number);
-        meta.loading_page = false;
-      }); // console.log(meta.chapter)
+          meta.pages_array = Array.apply(null, {
+            length: meta.sum_pages,
+          }).map(Number.call, Number);
+          meta.loading_page = false;
+        });
+      } // console.log(meta.chapter)
       // var kategori = "";
       // if (window.user.roleAdmin !== "admin") {
       //   navigate("/login-admin");
@@ -271,7 +280,7 @@
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
+    <div class={`w-full flex items-start justify-start bg-white`}>
       <div class={`w-full flex flex-1 items-start justify-start`}>
         <div
           class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -712,6 +721,11 @@
                                     : `/upload/book_page_img/default_page.png`
                                 }
                                 style={`width: 174px; min-width: 174px; max-width: 174px; height: 260px; min-height: 260px; max-height: 260px;background-image: url('/fimgs/bg-5c4db141fe326bacda3b0dd04473d8a9b085f27f');background-size:100% 100%;background-repeat:no-repeat;`}
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src =
+                                    "/upload/book_page_img/default_page.png";
+                                }}
                               />
                               <div class="flex self-stretch space-x-2.5 items-center justify-start bg-gray-100 shadow-inner rounded-bl rounded-br">
                                 <div class="flex flex-1 flex-col items-start justify-start px-4 py-2">

@@ -400,10 +400,10 @@
           </div>
           <div class="flex self-stretch flex-col items-start justify-start p-9 bg-white rounded-bl-lg rounded-br-lg">
             <div
-              class={`flex flex-col space-y-3 items-start justify-start w-full`}
+              class={`flex self-stretch flex-col space-y-3 items-start justify-start w-full`}
             >
               <div
-                class={`flex flex-col space-y-3 items-start justify-start`}
+                class={`flex self-stretch flex-col space-y-3 items-start justify-start`}
                 style={"margin-bottom: 15px;"}
               >
                 <div class="flex items-start justify-start">
@@ -411,7 +411,7 @@
                 </div>
                 <dropify
                   type={`file`}
-                  class={`flex flex-col space-y-2.5 items-center justify-center p-4 bg-white border rounded border-gray-400 dropify`}
+                  class={`flex self-stretch flex-col space-y-2.5 items-center justify-center p-4 bg-white border rounded border-gray-400 dropify`}
                   style={`height: 210px; min-height: 210px; max-height: 210px;`}
                   data-max-file-size={`3M`}
                   data-allowed-file-extensions={"png jpg jpeg"}
@@ -430,8 +430,8 @@
                 <div class="text-base font-bold leading-normal">Nama Genre</div>
               </div>
               <div
-                class="flex self-stretch items-start justify-start px-4 py-2 border rounded border-gray-400"
-                style="width: 567px; min-width: 567px; max-width: 567px; height: 40px; min-height: 40px; max-height: 40px;"
+                class={`flex self-stretch items-start justify-start px-4 py-2 border rounded border-gray-400 w`}
+                style={`height: 40px; min-height: 40px; max-height: 40px;`}
               >
                 <input
                   class={"w-full"}
