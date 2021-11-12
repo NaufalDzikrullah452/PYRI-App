@@ -7,6 +7,74 @@
       changeProfile: (open) => {},
       changeManagement: (open) => {},
       changeMasterData: (open) => {},
+      book_title: "",
+      book_picture: "",
+      book_category: "",
+      chapter_id: "",
+      chapter_name: "",
+      chapter_book_id: "",
+      chapter_date_updated: "",
+      chapter_number: "",
+      disabled: false,
+
+      async onChange(key, e) {
+        let value;
+
+        if (key === "chapter_content") {
+          value = e;
+        } else {
+          value = e.target.value;
+        }
+
+        runInAction(() => (this[key] = value));
+        console.log(key + " : " + this[key]);
+      },
+
+      validation() {
+        console.log(this.page);
+        let msg =
+          this.chapter_number === "" ||
+          this.chapter_number === null ||
+          this.chapter_number === undefined
+            ? "Chapter number cant be empty !"
+            : this.chapter_name === "" ||
+              this.chapter_name === null ||
+              this.chapter_name === undefined
+            ? "Chapter name cant be empty/string!"
+            : this.chapter_number < 0
+            ? "Chapter number must be positive!"
+            : false;
+        return msg;
+      },
+
+      async submit() {
+        let error_msg = this.validation();
+
+        if (error_msg) {
+          alert(error_msg);
+        } else {
+          this.disabled = true;
+          api("/api/chapter", {
+            chapter: {
+              chapter_id: parseInt(params.chapter_id),
+              chapter_date_updated: new Date(),
+              chapter_name: this.chapter_name,
+              chapter_book_id: parseInt(params.book_id),
+              chapter_number: parseInt(this.chapter_number),
+            },
+            e: "Update",
+          }).then((res) => {
+            console.log(res);
+
+            if (res === null) {
+              this.disabled = false;
+              alert("Failed insert to database!");
+            } else {
+              navigate(`/w-books/${params.book_id}/detail`);
+            }
+          });
+        }
+      },
 
       async logout() {
         confirm("Logout of admin?") &&
@@ -19,6 +87,7 @@
       },
     }}
     run={async () => {
+      console.log(params);
       meta.action = {
         changeMasterData: (open) => {
           meta.showMasterData = open;
@@ -44,6 +113,52 @@
           meta.showProfile = open;
         },
       };
+
+      if (window.user.roleAdmin !== "admin") {
+        navigate("/login-admin");
+      } // read book
+
+      let buku = "";
+      let chap = "";
+
+      if (params.book_id) {
+        await api("/api/books", {
+          book: {
+            book_id: parseInt(params.book_id),
+          },
+          e: "ReadById",
+        }).then((res) => {
+          if (res.res !== "Failure" || res === null) {
+            buku = res.book;
+          }
+        });
+        runInAction(() => {
+          meta.book_title = buku.book_title;
+          meta.book_picture = buku.book_picture;
+          meta.book_category = buku.category.category_name;
+          console.log(buku);
+          console.log(buku.category);
+        });
+      }
+
+      if (params.chapter_id) {
+        await api("/api/chapter", {
+          chapter: {
+            chapter_id: parseInt(params.chapter_id),
+          },
+          e: "ReadById",
+        }).then((res) => {
+          if (res.res !== "Failure" || res === null) {
+            chap = res.chapter;
+          }
+        });
+        runInAction(() => {
+          meta.chapter_id = chap.chapter_id;
+          meta.chapter_name = chap.chapter_name;
+          meta.chapter_number = chap.chapter_number;
+          console.log(chap);
+        });
+      }
     }}
   />
   {window.user.roleAdmin === "admin" && (
@@ -359,18 +474,26 @@
                   <div class="flex self-stretch space-x-6 items-center justify-start p-6 bg-white shadow rounded-lg">
                     <img
                       src="/fimgs/3115_100793.x1.png"
-                      class="flex flex-col items-center justify-start"
-                      style="width: 46.85px; min-width: 46.85px; max-width: 46.85px; height: 70px; min-height: 70px; max-height: 70px;"
+                      class={`flex flex-col items-center justify-start`}
+                      style={`width: 46.85px; min-width: 46.85px; max-width: 46.85px; height: 70px; min-height: 70px; max-height: 70px;`}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "/fimgs/3115_100793.x1.png";
+                      }}
                     />
                     <div class="flex flex-1 flex-col space-y-2 items-start justify-start">
                       <div class="flex self-stretch items-start justify-start">
-                        <div class="text-2xl font-bold leading-9 text-gray-900">
-                          One Piece
+                        <div
+                          class={`text-2xl font-bold leading-9 text-gray-900`}
+                        >
+                          {meta.book_title}
                         </div>
                       </div>
                       <div class="flex items-start justify-start px-3 py-0.5 bg-orange-100 rounded">
-                        <div class="text-base font-bold leading-normal text-amber-500">
-                          Komik
+                        <div
+                          class={`text-base font-bold leading-normal text-amber-500`}
+                        >
+                          {meta.book_category}
                         </div>
                       </div>
                     </div>
@@ -389,6 +512,10 @@
                         style={`color: black;
       background:transparent; 
       outline: none;`}
+                        value={meta.chapter_name}
+                        onChange={(e) => {
+                          meta.onChange("chapter_name", e);
+                        }}
                       />
                     </div>
                   </div>
@@ -406,6 +533,10 @@
                         style={`color: black;
       background:transparent; 
       outline: none;`}
+                        value={meta.chapter_number}
+                        onChange={(e) => {
+                          meta.onChange("chapter_number", e);
+                        }}
                       />
                     </div>
                   </div>
@@ -422,7 +553,7 @@
                   <button
                     class={`flex items-start justify-start px-4 py-2 border rounded border-gray-400`}
                     onClick={() => {
-                      navigate("/w-master-kategori");
+                      navigate(`/w-books/${params.book_id}/detail`);
                     }}
                   >
                     <div class="text-base font-bold leading-normal text-amber-500">

@@ -1,1 +1,1 @@
-{"content":{"structure":"00000","type":"Page"},"id":"84469","lang":"","parent_id":"66283","site":"*","slug":"w-books-detail-chapter/edit","status":"SYSTEM","title":"w-books-detail-chapter-edit","type":"cms-template"}
+{"content":{"structure":"00000","type":"Page"},"id":"84469","lang":"","parent_id":"66283","site":"*","slug":"w-books/[book_id]/chapter/edit/[chapter_id]","status":"SYSTEM","title":"w-books-chapter-edit","type":"cms-template"}
