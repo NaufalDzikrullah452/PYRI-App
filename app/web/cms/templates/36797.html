@@ -8,6 +8,93 @@
       changeManagement: (open) => {},
       changeMasterData: (open) => {},
       authors: [],
+      categories: [],
+      searching: "",
+      entries: 5,
+      last_entries: 5,
+      first_entries: 0,
+      pages: 1,
+      sum_pages: 0,
+      pages_array: [],
+      loading_page: true,
+
+      async onChange(key, e) {
+        this.loading_page = true;
+        let value = e.target.value;
+
+        if (key === "entries") {
+          runInAction(() => {
+            this[key] = value;
+            this.first_entries = 0;
+            this.pages = 1;
+            this.last_entries =
+              parseInt(value) < this.categories.length
+                ? parseInt(value)
+                : this.categories.length;
+            this.sum_pages = Math.ceil(this.categories.length / this.entries);
+            this.pages_array = Array.apply(null, {
+              length: this.sum_pages,
+            }).map(Number.call, Number); // dom manipulation
+
+            this.loading_page = false;
+          });
+        } else if (key === "searching") {
+          runInAction(() => {
+            this[key] = value;
+            api("/api/page", {
+              page: {
+                page_page: value,
+                page_chapter_id: parseInt(params.chapter_id),
+              },
+              e: "Searching",
+            }).then((res) => {
+              // console.log(res.page);
+              runInAction(() => {
+                this.page = res.page;
+                this.page.sort(function (a, b) {
+                  var aNum = parseInt(a.page_page);
+                  var bNum = parseInt(b.page_page);
+                  return aNum - bNum;
+                });
+                this.first_entries = 0;
+                this.pages = 1;
+                this.last_entries = parseInt(this.entries);
+                this.sum_pages = Math.ceil(this.page.length / this.entries); // meta.categories_array = new Array(meta.sum_page);
+
+                this.pages_array = Array.apply(null, {
+                  length: this.sum_pages,
+                }).map(Number.call, Number);
+                this.loading_page = false;
+              });
+            });
+          });
+        }
+
+        console.log(key + " : " + this[key]); // console.log("page : " + this.page);
+        // console.log("last_entries : " + this.last_entries);
+      },
+
+      async onClickPages(key, value) {
+        if (value !== this.pages && value !== 0 && value <= this.sum_pages) {
+          const last_pages = this.pages;
+          const gap = value - last_pages;
+          const res = gap > 0;
+          runInAction(() => {
+            this.pages = value;
+
+            if (res) {
+              this.first_entries += parseInt(this.entries) * Math.abs(gap);
+              this.last_entries += parseInt(this.entries) * Math.abs(gap);
+            } else {
+              this.first_entries -= parseInt(this.entries) * Math.abs(gap);
+              this.last_entries -= parseInt(this.entries) * Math.abs(gap);
+            }
+          });
+          console.log(key + " : " + value); // console.log("first_entries : " + this.first_entries);
+          // console.log("last_entries : " + this.last_entries);
+          // console.log("gap : " + res);
+        }
+      },
 
       async editKategori(id) {
         navigate("/w-master-kategori/edit/" + id);
@@ -44,18 +131,18 @@
       },
     }}
     run={async () => {
-      setTimeout(function () {
-        alert(
-          "Admin Session Ended (10 min) at : " +
-            dateFormat(new Date(), "hh:mm:ss")
-        );
-        api("/api/admin", {
-          data: "",
-          event: "Logout",
-        }).then((res) => {
-          navigate("/login-admin");
-        });
-      }, 600000);
+      // setTimeout(function () {
+      //   alert(
+      //     "Admin Session Ended (10 min) at : " +
+      //     dateFormat(new Date(), "hh:mm:ss")
+      //   );
+      //   api("/api/admin", {
+      //     data: "",
+      //     event: "Logout",
+      //   }).then((res) => {
+      //     navigate("/login-admin");
+      //   });
+      // }, 600000);
       meta.action = {
         changeMasterData: (open) => {
           meta.showMasterData = open;
@@ -95,6 +182,16 @@
       });
       runInAction(() => {
         meta.categories = kategori;
+        meta.sum_pages = Math.ceil(meta.categories.length / meta.entries); // meta.categories_array = new Array(meta.sum_page);
+
+        meta.pages_array = Array.apply(null, {
+          length: meta.sum_pages,
+        }).map(Number.call, Number);
+        meta.last_entries =
+          meta.last_entries < meta.categories.length
+            ? meta.last_entries
+            : meta.categories.length;
+        meta.loading_page = false;
         document.getElementById("kotak").classList.add("flex-wrap");
         document.getElementById("kotak").style.justifyContent = "flex-start";
         document.getElementById("kotak").classList.add("space-y-6");
@@ -104,7 +201,7 @@
           let mainDiv = document.createElement("div");
           mainDiv.className =
             "flex flex-1 flex-col items-center justify-start p-9 bg-gray-50 shadow rounded-lg css-1nc2z6h";
-          mainDiv.style.flex = "0 0 25%";
+          mainDiv.style.flex = "0 0 33.333333%";
           let bgImg = document.createElement("img");
           bgImg.setAttribute(
             "src",
@@ -115,6 +212,7 @@
           );
           bgImg.style.width = "200px";
           bgImg.style.height = "150px";
+          bgImg.style.objectFit = "contain";
           mainDiv.appendChild(bgImg);
           let contentDiv = document.createElement("div");
           contentDiv.className =
@@ -445,41 +543,191 @@
             class={`w-full flex self-stretch flex-col items-start justify-start px-6 py-2 relative overflow-y-auto rounded`}
           >
             <div
-              class={`flex self-stretch flex-col space-y-9 items-start justify-start p-9 relative overflow-y-auto bg-white rounded-lg`}
+              class={`flex self-stretch flex-col space-y-6 items-start justify-start p-9 relative overflow-y-auto bg-white rounded-lg`}
               style={"margin-bottom:100px;"}
             >
-              <div class={`text-2xl font-bold leading-9 text-gray-900`}>
-                DATA KATEGORI BUKU
+              <div class="flex self-stretch space-x-2.5 items-start justify-start">
+                <div class="flex flex-1 items-start justify-start">
+                  <div class={`text-2xl font-bold leading-9 text-gray-900`}>
+                    DATA KATEGORI BUKU
+                  </div>
+                </div>
+                <div
+                  class={`w-full flex space-x-4 items-center justify-start px-4 py-2 bg-gray-100 rounded-lg`}
+                  style="width: 300px; min-width: 300px; max-width: 300px; height: 40px; min-height: 40px; max-height: 40px;"
+                >
+                  <img
+                    src="/fimgs/I3273_19609_2941_18426.x1.svg"
+                    class="flex items-start justify-start"
+                    style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
+                  />
+                  <input
+                    class={"w-full"}
+                    type="text"
+                    placeholder="Search"
+                    style={`color: black;
+      background:transparent; 
+      outline: none;`}
+                    onChange={(e) => {
+                      meta.onChange("searching", e);
+                    }}
+                  />
+                </div>
+              </div>
+              <div class="flex self-stretch space-x-4 items-center justify-start">
+                <div class="flex items-start justify-start">
+                  <div class="text-base leading-normal">Show</div>
+                </div>
+                <div class={`flex flex-1 space-x-2 items-center justify-start`}>
+                  <div class="flex flex-col items-start justify-start">
+                    <select
+                      class={`flex flex-col space-y-2.5 items-center justify-start px-6 py-1 bg-white border rounded border-gray-500`}
+                      style={`width: 95.87px; min-width: 95.87px; max-width: 95.87px;`}
+                      value={meta.entries}
+                      onChange={(e) => {
+                        meta.onChange("entries", e);
+                      }}
+                    >
+                      <option class={`hidden`} />
+                      <option
+                        value="5"
+                        class={`flex flex-1 self-stretch flex-col items-start justify-start bg-white`}
+                      >
+                        5
+                      </option>
+                      <option
+                        value="10"
+                        class="flex flex-1 self-stretch flex-col items-start justify-start bg-white"
+                      >
+                        10
+                      </option>
+                      <option
+                        value="25"
+                        class="flex flex-1 self-stretch flex-col items-start justify-start bg-white"
+                      >
+                        25
+                      </option>
+                      <option
+                        value="50"
+                        class="flex flex-1 self-stretch flex-col items-start justify-start bg-white"
+                      >
+                        50
+                      </option>
+                    </select>
+                  </div>
+                  <div class="flex items-start justify-start">
+                    <div class="text-base leading-normal">entries</div>
+                  </div>
+                </div>
+                <button
+                  class={`flex space-x-1 items-start justify-start px-4 py-2 bg-amber-500 shadow rounded`}
+                  style={`style={'margin-left: 10px;'}`}
+                  onClick={() => {
+                    navigate("/w-master-kategori/add");
+                  }}
+                >
+                  <img
+                    src="/fimgs/3273_19581.x1.svg"
+                    class="flex items-start justify-start"
+                    style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
+                  />
+                  <div class={`flex self-stretch items-start justify-start`}>
+                    <div
+                      class={`text-base font-bold leading-normal text-white`}
+                    >
+                      {children || "Tambah Kategori"}
+                    </div>
+                  </div>
+                </button>
               </div>
               <div
                 class="flex self-stretch items-center justify-center p-5"
                 id="kotak"
               >
-                <div
-                  class={`flex self-stretch flex-col items-start justify-center`}
-                >
-                  <button
-                    class={`flex flex-1 flex-col space-y-2.5 items-center justify-center p-8 bg-gray-50 shadow rounded-lg`}
-                    style={"width:305px; min-width:200px; max-width:305px;"}
+                <div />
+              </div>
+              <div class="flex self-stretch space-x-2.5 items-center justify-start bg-white">
+                <div class="flex flex-1 items-start justify-start">
+                  <div
+                    class={`text-base leading-normal text-orange-900`}
+                  >{`Showing ${meta.first_entries + 1} to ${
+                    meta.last_entries <= meta.categories.length
+                      ? meta.last_entries
+                      : meta.categories.length
+                  } of ${meta.categories.length} entries`}</div>
+                </div>
+                <div class="flex space-x-2 items-start justify-start">
+                  <div
+                    class={`flex self-stretch flex-col items-center justify-center px-2 bg-white rounded cursor-pointer`}
+                    style={`:hover {outline: 2px solid #ababab;`}
                     onClick={() => {
-                      navigate("/w-master-kategori/add");
+                      meta.onClickPages(
+                        "page" + (meta.pages - 1),
+                        meta.pages - 1
+                      );
                     }}
                   >
                     <img
-                      src="/fimgs/1964_13812.x1.svg"
-                      style="width: 55px; min-width: 55px; max-width: 55px; height: 55px; min-height: 55px; max-height: 55px;"
+                      src="/fimgs/3273_19594.x1.svg"
+                      style={`width: 18px; min-width: 18px; max-width: 18px; height: 14px; min-height: 14px; max-height: 14px;`}
                     />
-                    <div class="flex self-stretch items-center justify-center">
-                      <div class="flex flex-1 items-center justify-center">
-                        <div class="text-base leading-normal text-center text-gray-500">
-                          Tambah Kategori
+                  </div>
+                  {meta.pages_array.map((numList, i) => {
+                    const upper =
+                      meta.pages + 2 < meta.pages_array.length
+                        ? meta.pages + 2
+                        : meta.pages_array.length;
+                    const under = meta.pages - 2 > 0 ? meta.pages - 2 : 1;
+
+                    if (
+                      (numList + 1 < upper && numList + 1 > under) ||
+                      numList + 1 === 1 ||
+                      numList + 1 === meta.pages_array.length
+                    ) {
+                      return (
+                        <div class={`flex items-start justify-start`}>
+                          {
+                            <div
+                              class={`flex flex-col items-start justify-start px-2.5 py-1 bg-white rounded`}
+                              style={`${
+                                "page" + meta.pages === "page" + (i + 1)
+                                  ? `background: #FF8F00;`
+                                  : `:hover {background-color: #ffc780;}`
+                              }
+  cursor:pointer;`}
+                              onClick={() => {
+                                meta.onClickPages("page" + (i + 1), i + 1);
+                              }}
+                            >
+                              <div class={`text-base leading-normal`}>
+                                {numList + 1}
+                              </div>
+                            </div>
+                          }
                         </div>
-                      </div>
-                    </div>
-                  </button>
+                      );
+                    } else {
+                      if (numList + 1 === upper || numList + 1 === under)
+                        return "...";
+                    }
+                  })}
+                  <div
+                    class={`flex self-stretch flex-col items-center justify-center px-2 bg-white rounded cursor-pointer`}
+                    style={`:hover {outline: 2px solid #ababab;`}
+                    onClick={() => {
+                      meta.onClickPages(
+                        "page" + (meta.pages + 1),
+                        meta.pages + 1
+                      );
+                    }}
+                  >
+                    <img
+                      src="/fimgs/3273_19600.x1.svg"
+                      style="width: 18px; min-width: 18px; max-width: 18px; height: 14px; min-height: 14px; max-height: 14px;"
+                    />
+                  </div>
                 </div>
               </div>
-              <div />
             </div>
           </div>
         </div>

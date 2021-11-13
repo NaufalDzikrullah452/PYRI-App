@@ -7,6 +7,140 @@
       changeProfile: (open) => {},
       changeManagement: (open) => {},
       changeMasterData: (open) => {},
+      user_id: "",
+      user_name: "",
+      user_email: "",
+      user_old_password: "",
+      user_password: "",
+      user_new_password: "",
+      user_new_confirm_password: "",
+      user_gender: "",
+      user_birthday: "",
+      user_forgot_token: "-",
+      user_membership_status: "NonActive",
+      user_level: null,
+      user_date_created: new Date().toJSON(),
+      user_picture: "",
+      user_note: null,
+      pass_type: "password",
+      new_pass_type: "password",
+      new_pass_confirm_type: "password",
+      disabled: false,
+      max_date: new Date(new Date().setFullYear(new Date().getFullYear() - 12)),
+
+      async showHidePass(key) {
+        this[key] === "password"
+          ? (this[key] = "text")
+          : (this[key] = "password");
+      },
+
+      async upload(file) {
+        const formData = _FormData();
+
+        formData.append("path", "genre_icon");
+        formData.append("file", file);
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+        return await response.json();
+      },
+
+      async onChange(key, e) {
+        let value = "";
+
+        if (key === "user_level") {
+          value = e;
+        } else {
+          value = e.target.value;
+        }
+
+        runInAction(() => (this[key] = value));
+        console.log(key + " : " + value);
+      },
+
+      async onChangeDate(key, value) {
+        runInAction(() => (this[key] = value));
+        console.log("user_birthday : " + this.user_birthday);
+      },
+
+      validation() {
+        let msg =
+          this.user_name === "" || this.user_name === null
+            ? "Name can not be empty!"
+            : this.user_level &&
+              (this.user_email === "" || this.user_email === null)
+            ? "Email can not be empty!"
+            : this.user_level && !validateEmail(this.user_email)
+            ? "Invalid email! (abc@xyz.com)"
+            : this.user_gender === "" || this.user_gender === null
+            ? "Please select your gender!"
+            : this.user_birthday == [] || this.user_birthday == null
+            ? "Please select your birthdate!"
+            : this.max_date <= new Date(this.user_birthday)
+            ? "Please reselect your birthdate! 12 Years old++."
+            : this.user_level === "" || this.user_level === null
+            ? "Please select role!"
+            : this.user_password === "" || this.user_password === null
+            ? "Old password can not be empty!"
+            : encrypt(this.user_password) !== this.user_old_password
+            ? "Wrong old password!"
+            : this.user_new_password === "" || this.user_new_password === null
+            ? "New password can not be empty!"
+            : !validatePass(this.user_new_password)
+            ? "New password length 8-16 <br/>Include Uppercase, Lowercase & No space"
+            : this.user_new_confirm_password === "" ||
+              this.user_new_confirm_password === null
+            ? "Confirm password can not be empty!"
+            : this.user_new_password !== this.user_new_confirm_password
+            ? "New and confirm password not same!"
+            : false; // console.log(msg);
+
+        return msg;
+      },
+
+      async submit() {
+        let users = {};
+        let error_msg = this.validation();
+
+        if (error_msg) {
+          alert(error_msg);
+        } else {
+          runInAction(() => (this.disabled = true));
+          let user = {
+            user_id: this.user_id,
+            user_name: this.user_name,
+            user_email: this.user_email,
+            user_password: encrypt(this.user_new_password),
+            user_gender: this.user_gender,
+            user_birthday: new Date(this.user_birthday.toString()),
+            user_forgot_token: this.user_forgot_token,
+            user_membership_status: this.user_membership_status,
+            user_level: this.user_level,
+            user_date_created: this.user_date_created,
+            user_picture: this.user_picture,
+            user_note: this.user_note,
+          };
+          var conf = confirm("Confirm your data?");
+
+          if (conf) {
+            api("/api/api-users", {
+              users: { ...user },
+              e: "Update",
+            }).then((res) => {
+              if (res === null) {
+                runInAction(() => (this.disabled = false));
+                alert("Database insert Failed!");
+              } else {
+                console.log(res);
+                navigate("/w-master-user");
+              }
+            });
+          } else {
+            runInAction(() => (this.disabled = false));
+          }
+        } // console.log(users);
+      },
 
       async logout() {
         confirm("Logout of admin?") &&
@@ -44,10 +178,36 @@
           meta.showProfile = open;
         },
       };
+      api("/api/api-users", {
+        users: {
+          user_id: parseInt(params.id),
+        },
+        e: "ReadById",
+      }).then((res) => {
+        // console.log(res)
+        if (res.users !== null) {
+          runInAction(() => {
+            meta.user_id = res.users.user_id;
+            meta.user_name = res.users.user_name;
+            meta.user_email = res.users.user_email;
+            meta.user_old_password = res.users.user_password;
+            meta.user_gender = res.users.user_gender;
+            meta.user_birthday = new Date(res.users.user_birthday.toString());
+            meta.user_forgot_token = res.users.user_forgot_token;
+            meta.user_membership_status = res.users.user_membership_status;
+            meta.user_level = res.users.user_level;
+            meta.user_date_created = res.users.user_date_created;
+            meta.user_picture = res.users.user_picture;
+            meta.user_note = res.users.user_note;
+          });
+        } else {
+          navigate("/w-master-user");
+        }
+      });
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
+    <div class={`w-full flex items-start justify-start bg-white`}>
       <div class={`w-full flex items-start justify-start`}>
         <div
           class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -228,6 +388,20 @@
                 <div
                   class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
                   style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
+                  onClick={() => {
+                    navigate("/w-mster-user-blocked");
+                  }}
+                >
+                  <div />
+                  <div class="flex flex-1 items-start justify-start">
+                    <div class="text-base font-bold leading-normal text-gray-50">
+                      Blocked User
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
                 >
                   <div />
                   <div class="flex flex-1 items-start justify-start">
@@ -367,6 +541,7 @@
                         style={`height: 210px; min-height: 210px; max-height: 210px;`}
                         data-max-file-size={`1M`}
                         data-allowed-file-extensions={"png jpg jpeg"}
+                        data-default-file={"/upload/" + meta.user_picture}
                         onChange={(e) => {
                           runInAction(async () => {
                             const upload = await meta.upload(e.target.files[0]);
@@ -391,6 +566,10 @@
                           style={`color: black;
       background:transparent; 
       outline: none;`}
+                          value={meta.user_name}
+                          onChange={(e) => {
+                            meta.onChange("user_name", e);
+                          }}
                         />
                       </div>
                     </div>
@@ -408,6 +587,10 @@
                           style={`color: black;
       background:transparent; 
       outline: none;`}
+                          value={meta.user_email}
+                          onChange={(e) => {
+                            meta.onChange("user_email", e);
+                          }}
                         />
                       </div>
                     </div>
@@ -421,22 +604,29 @@
                         <div class="flex flex-1 items-start justify-start">
                           <select
                             class="w-full"
-                            defaultValue="Pilih Jenis Kelamin"
                             style={`color: black; 
       outline:none;
       background:transparent;`}
+                            value={
+                              meta.user_gender
+                                ? meta.user_gender
+                                : "Pilih Jenis Kelamin"
+                            }
+                            onChange={(e) => {
+                              meta.onChange("user_gender", e);
+                            }}
                           >
                             <option value={""} hidden={true} />
                             <option
                               value={"Pilih Jenis Kelamin"}
-                              hidden={true}
+                              disabled={true}
                               class={`flex self-stretch flex-col items-start justify-start`}
                               style="color: black"
                             >
                               {"Pilih Jenis Kelamin"}
                             </option>
                             <option
-                              value={"Male"}
+                              value={"male"}
                               hidden={true}
                               class={`flex self-stretch flex-col items-start justify-start`}
                               style="color: black"
@@ -444,15 +634,104 @@
                               {"Male"}
                             </option>
                             <option
-                              value={"Female"}
+                              value={"female"}
                               hidden={true}
                               class={`flex self-stretch flex-col items-start justify-start`}
                               style="color: black"
                             >
                               {"Female"}
                             </option>
+                            <option
+                              value={"unknown"}
+                              hidden={true}
+                              class={`flex self-stretch flex-col items-start justify-start`}
+                              style="color: black"
+                            >
+                              {"Rather not say"}
+                            </option>
                             {"Pilih Publisher"}
                           </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
+                      <div class="flex self-stretch items-start justify-start">
+                        <div class="text-base font-bold leading-normal">
+                          Tanggal Lahir
+                        </div>
+                      </div>
+                      <div class="flex self-stretch items-center justify-start px-6 py-3 bg-white border rounded border-gray-300">
+                        <input
+                          class={"w-full"}
+                          type="date"
+                          placeholder="Masukkan Email"
+                          style={`color: black;
+      background:transparent; 
+      outline: none;`}
+                          value={
+                            meta.user_birthday
+                              ? dateFormat(meta.user_birthday, "yyyy-MM-dd")
+                              : []
+                          }
+                          onChange={(e) => {
+                            meta.onChange("user_birthday", e);
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
+                      <div class="flex self-stretch items-start justify-start">
+                        <div class="text-base font-bold leading-normal">
+                          Role
+                        </div>
+                      </div>
+                      <div class="flex self-stretch space-x-6 items-start justify-start">
+                        <div class="flex space-x-2 items-center justify-start">
+                          <div class="flex items-start justify-start">
+                            <input
+                              class={`bg-white border rounded-full border-coolGray-400`}
+                              type="radio"
+                              name="role"
+                              style={
+                                "input :checked {background-color:#feca57;}"
+                              }
+                              onChange={(e) => {
+                                meta.onChange("user_level", true);
+                              }}
+                              checked={
+                                meta.user_level !== null
+                                  ? meta.user_level
+                                  : null
+                              }
+                            />
+                          </div>
+                          <div class="flex items-start justify-start">
+                            <div class="text-base font-medium leading-normal text-gray-600">
+                              Admin
+                            </div>
+                          </div>
+                        </div>
+                        <div class="flex flex-1 space-x-2 items-center justify-start">
+                          <div class="flex items-start justify-start">
+                            <input
+                              class={`bg-white border rounded-full border-coolGray-400`}
+                              type="radio"
+                              name="role"
+                              onChange={(e) => {
+                                meta.onChange("user_level", false);
+                              }}
+                              checked={
+                                meta.user_level !== null
+                                  ? !meta.user_level
+                                  : null
+                              }
+                            />
+                          </div>
+                          <div class="flex flex-1 items-start justify-start">
+                            <div class="text-base font-medium leading-normal text-gray-600">
+                              User
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -471,11 +750,14 @@
                       <div class="flex self-stretch items-center justify-start px-6 py-3 bg-white border rounded border-gray-300">
                         <input
                           class={"w-full"}
-                          type="password"
+                          type={meta.pass_type}
                           placeholder="Masukkan Kata Sandi Lama"
                           style={`color: black;
       background:transparent; 
       outline: none;`}
+                          onChange={(e) => {
+                            meta.onChange("user_password", e);
+                          }}
                         />
                       </div>
                     </div>
@@ -490,11 +772,14 @@
                       <div class="flex self-stretch items-center justify-start px-6 py-3 bg-white border rounded border-gray-300">
                         <input
                           class={"w-full"}
-                          type="password"
+                          type={meta.new_pass_type}
                           placeholder="Masukkan Kata Sandi Baru"
                           style={`color: black;
       background:transparent; 
       outline: none;`}
+                          onChange={(e) => {
+                            meta.onChange("user_new_password", e);
+                          }}
                         />
                       </div>
                     </div>
@@ -509,11 +794,14 @@
                       <div class="flex self-stretch items-center justify-start px-6 py-3 bg-white border rounded border-gray-300">
                         <input
                           class={"w-full"}
-                          type="password"
+                          type={meta.new_pass_confirm_type}
                           placeholder="Ulangi Kata Sandi"
                           style={`color: black;
       background:transparent; 
       outline: none;`}
+                          onChange={(e) => {
+                            meta.onChange("user_new_confirm_password", e);
+                          }}
                         />
                       </div>
                     </div>
@@ -524,7 +812,7 @@
                 <button
                   class={`flex items-start justify-start px-4 py-2 border rounded border-gray-400`}
                   onClick={() => {
-                    navigate("/w-master-kategori");
+                    navigate("/w-master-user");
                   }}
                 >
                   <div class="text-base font-bold leading-normal text-amber-500">
@@ -534,6 +822,7 @@
                 <button
                   class={`flex items-start justify-start px-4 py-2 bg-amber-500 rounded`}
                   onClick={meta.submit}
+                  disabled={meta.disabled}
                 >
                   <div class="text-base font-bold leading-normal text-white">
                     Simpan

@@ -115,18 +115,18 @@
       },
     }}
     run={async () => {
-      setTimeout(function () {
-        alert(
-          "Admin Session Ended (10 min) at : " +
-            dateFormat(new Date(), "hh:mm:ss")
-        );
-        api("/api/admin", {
-          data: "",
-          event: "Logout",
-        }).then((res) => {
-          navigate("/login-admin");
-        });
-      }, 600000);
+      // setTimeout(function () {
+      //   alert(
+      //     "Admin Session Ended (10 min) at : " +
+      //       dateFormat(new Date(), "hh:mm:ss")
+      //   );
+      //   api("/api/admin", {
+      //     data: "",
+      //     event: "Logout",
+      //   }).then((res) => {
+      //     navigate("/login-admin");
+      //   });
+      // }, 600000);
       meta.action = {
         changeMasterData: (open) => {
           meta.showMasterData = open;

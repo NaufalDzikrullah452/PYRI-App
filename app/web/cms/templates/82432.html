@@ -17,6 +17,16 @@
       sum_pages: 0,
       pages_array: [],
       loading_page: true,
+      search_cond: true,
+      card_style: `
+              height: 261.23077392578125px;
+              max-height: 261.23077392578125px;
+              min-height: 261.23077392578125px;
+              width: 163.60000610351562px;
+              max-width: 163.60000610351562px;
+              min-width: 163.60000610351562px;
+              margin: 30px 15px 0px;
+            `,
 
       async onChange(key, e) {
         this.loading_page = true;
@@ -33,17 +43,10 @@
             this.sum_pages = Math.ceil(this.books.length / this.entries);
             this.pages_array = Array.apply(null, {
               length: this.sum_pages,
-            }).map(Number.call, Number);
+            }).map(Number.call, Number); //dom manipulation
 
-            for (let j = 0; j < this.books.length; j++) {
-              var remove = document.getElementById("bc");
-
-              for (let k = 0; k < this.books.length; k++) {
-                if (remove.childNodes[k]?.nodeName === "DIV") {
-                  remove.removeChild(remove.childNodes[k]);
-                }
-              }
-            }
+            var remove = document.getElementById("bc");
+            remove.innerHTML = "";
 
             for (let i = this.first_entries; i < this.last_entries; i++) {
               // console.log(buku[i].book_id);
@@ -51,15 +54,7 @@
               a.className =
                 "flex flex-col items-center justify-center bg-gray-50 shadow rounded-lg py-8 px-4 w-1/4 truncate css-ktvuj3";
               a.id = "books-" + buku[i].book_id;
-              a.style = `
-              width: "214px";
-              min-width: 214px;
-              max-width: 214px;
-              height: 305px;
-              min-height: 305px;
-              max-height: 305px;
-              margin: 50px 10px 0px 10px
-              `;
+              a.style = this.card_style;
               a.style.cursor = "pointer";
 
               a.onmouseenter = () => {
@@ -80,14 +75,25 @@
               ci.className = "css-xgm4xn";
               ci.style.width = "121px";
               ci.style.height = "180px";
+              ci.style.objectFit = "contain";
+              ci.style.paddingBottom = "8px";
               let d = document.createElement("div");
               d.className =
                 "flex flex-1 self-stretch items-start justify-center";
+              d.style.margin = "auto";
               let e = document.createElement("div");
               e.className = "flex flex-1 items-start justify-start";
               let f = document.createElement("div");
               f.className = "text-base leading-normal";
               f.innerText = buku[i].book_title;
+              f.style = `
+              width: 100px;
+              height: 3em;
+              white-space: normal;
+              overflow: hidden;
+              text-overflow: ellipsis;  
+              text-align: center;
+            `;
               e.appendChild(f);
               d.appendChild(e);
               b.appendChild(ci);
@@ -101,29 +107,102 @@
         } else if (key === "searching") {
           runInAction(() => {
             this[key] = value;
-            api("/api/page", {
-              page: {
-                page_page: value,
-                page_chapter_id: parseInt(params.chapter_id),
+            api("/api/books", {
+              book: {
+                book_title: value,
               },
               e: "Searching",
             }).then((res) => {
-              // console.log(res.page);
+              // console.log(res.book);
               runInAction(() => {
-                this.page = res.page;
-                this.page.sort(function (a, b) {
-                  var aNum = parseInt(a.page_page);
-                  var bNum = parseInt(b.page_page);
-                  return aNum - bNum;
-                });
+                this.books = res.book;
+                var buku = this.books;
                 this.first_entries = 0;
                 this.pages = 1;
-                this.last_entries = parseInt(this.entries);
-                this.sum_pages = Math.ceil(this.page.length / this.entries); // meta.page_array = new Array(meta.sum_page);
+                this.last_entries =
+                  parseInt(this.entries) < buku.length
+                    ? parseInt(this.entries)
+                    : buku.length;
+                this.sum_pages = Math.ceil(this.books.length / this.entries); // meta.page_array = new Array(meta.sum_page);
 
                 this.pages_array = Array.apply(null, {
                   length: this.sum_pages,
-                }).map(Number.call, Number);
+                }).map(Number.call, Number); //dom manipulation
+
+                var remove = document.getElementById("bc");
+
+                if (buku.length === 0 && this.search_cond) {
+                  remove.innerHTML = "";
+                  this.search_cond = false;
+                  let f = document.createElement("div");
+                  f.className = "text-base leading-normal";
+                  f.innerText = "Book not found! ";
+                  f.style = `
+                  width: 100%;
+                  height: 100%;
+                  text-align: center;
+                `;
+                  document.getElementById("bc").cl;
+                  document.getElementById("bc").appendChild(f);
+                } else if (buku.length > 0) {
+                  remove.innerHTML = "";
+                  this.search_cond = true;
+
+                  for (let i = this.first_entries; i < this.last_entries; i++) {
+                    // console.log(buku[i].book_id);
+                    let a = document.createElement("div");
+                    a.className =
+                      "flex flex-col items-center justify-center bg-gray-50 shadow rounded-lg py-8 px-4 w-1/4 truncate css-ktvuj3";
+                    a.id = "books-" + buku[i].book_id;
+                    a.style = this.card_style;
+                    a.style.cursor = "pointer";
+
+                    a.onmouseenter = () => {
+                      a.style.backgroundColor = "rgba(255, 143, 0, 0.2)";
+                    };
+
+                    a.onmouseleave = () => {
+                      a.style.backgroundColor = "transparent";
+                    };
+
+                    let b = document.createElement("div");
+                    b.className =
+                      "flex flex-1 self-stretch flex-col space-y-4 items-center justify-center px-4 pt-4 css-apsgmz";
+                    let ci = document.createElement("img");
+                    ci.src = buku[i].book_picture
+                      ? "upload/" + buku[i].book_picture
+                      : "/fimgs/I2808_18979_2808_18944.x1.png";
+                    ci.className = "css-xgm4xn";
+                    ci.style.width = "121px";
+                    ci.style.height = "180px";
+                    ci.style.objectFit = "contain";
+                    ci.style.paddingBottom = "8px";
+                    let d = document.createElement("div");
+                    d.className =
+                      "flex flex-1 self-stretch items-start justify-center";
+                    d.style.margin = "auto";
+                    let e = document.createElement("div");
+                    e.className = "flex flex-1 items-start justify-start";
+                    let f = document.createElement("div");
+                    f.className = "text-base leading-normal";
+                    f.innerText = buku[i].book_title;
+                    f.style = `
+                    width: 100px;
+                    height: 3em;
+                    white-space: normal;
+                    overflow: hidden;
+                    text-overflow: ellipsis;  
+                    text-align: center;
+                  `;
+                    e.appendChild(f);
+                    d.appendChild(e);
+                    b.appendChild(ci);
+                    b.appendChild(d);
+                    a.appendChild(b);
+                    document.getElementById("bc").appendChild(a);
+                  }
+                }
+
                 this.loading_page = false;
               });
             });
@@ -149,31 +228,10 @@
             } else {
               this.first_entries -= parseInt(this.entries) * Math.abs(gap);
               this.last_entries -= parseInt(this.entries) * Math.abs(gap);
-            }
+            } //dom manipulation
 
-            if (this.pages === 1) {
-              for (let j = 0; j < this.books.length; j++) {
-                var remove = document.getElementById("bc");
-
-                for (let k = 0; k < this.books.length; k++) {
-                  if (remove.childNodes[k]?.nodeName === "DIV") {
-                    remove.removeChild(remove.childNodes[k]);
-                  }
-                }
-              }
-            } else {
-              var remove = document.getElementById("bc");
-              var child = remove.lastElementChild;
-
-              while (child) {
-                if (remove.lastElementChild.nodeName === "BUTTON") {
-                  this.add_card = remove.lastElementChild;
-                }
-
-                remove.removeChild(child);
-                child = remove.lastElementChild;
-              }
-            }
+            var remove = document.getElementById("bc");
+            remove.innerHTML = "";
 
             if (this.add_card && this.pages === 1) {
               document.getElementById("bc").appendChild(this.add_card);
@@ -192,15 +250,7 @@
               a.className =
                 "flex flex-col items-center justify-center bg-gray-50 shadow rounded-lg py-8 px-4 w-1/4 truncate css-ktvuj3";
               a.id = "books-" + buku[i].book_id;
-              a.style = `
-              width: "214px";
-              min-width: 214px;
-              max-width: 214px;
-              height: 305px;
-              min-height: 305px;
-              max-height: 305px;
-              margin: 50px 10px 0px 10px
-              `;
+              a.style = this.card_style;
               a.style.cursor = "pointer";
 
               a.onmouseenter = () => {
@@ -221,14 +271,25 @@
               ci.className = "css-xgm4xn";
               ci.style.width = "121px";
               ci.style.height = "180px";
+              ci.style.objectFit = "contain";
+              ci.style.paddingBottom = "8px";
               let d = document.createElement("div");
               d.className =
                 "flex flex-1 self-stretch items-start justify-center";
+              d.style.margin = "auto";
               let e = document.createElement("div");
               e.className = "flex flex-1 items-start justify-start";
               let f = document.createElement("div");
               f.className = "text-base leading-normal";
               f.innerText = buku[i].book_title;
+              f.style = `
+              width: 100px;
+              height: 3em;
+              white-space: normal;
+              overflow: hidden;
+              text-overflow: ellipsis;  
+              text-align: center;
+            `;
               e.appendChild(f);
               d.appendChild(e);
               b.appendChild(ci);
@@ -309,15 +370,7 @@
           a.className =
             "flex flex-col items-center justify-center bg-gray-50 shadow rounded-lg py-8 px-4 w-1/4 truncate css-ktvuj3";
           a.id = "books-" + buku[i].book_id;
-          a.style = `
-          width: "214px";
-          min-width: 214px;
-          max-width: 214px;
-          height: 305px;
-          min-height: 305px;
-          max-height: 305px;
-          margin: 50px 10px 0px 10px
-          `;
+          a.style = meta.card_style;
           a.style.cursor = "pointer";
 
           a.onmouseenter = () => {
@@ -338,13 +391,24 @@
           ci.className = "css-xgm4xn";
           ci.style.width = "121px";
           ci.style.height = "180px";
+          ci.style.objectFit = "contain";
+          ci.style.paddingBottom = "8px";
           let d = document.createElement("div");
           d.className = "flex flex-1 self-stretch items-start justify-center";
+          d.style.margin = "auto";
           let e = document.createElement("div");
           e.className = "flex flex-1 items-start justify-start";
           let f = document.createElement("div");
           f.className = "text-base leading-normal";
           f.innerText = buku[i].book_title;
+          f.style = `
+          width: 100px;
+          height: 3em;
+          white-space: normal;
+          overflow: hidden;
+          text-overflow: ellipsis;  
+              text-align: center;
+        `;
           e.appendChild(f);
           d.appendChild(e);
           b.appendChild(ci);
@@ -660,7 +724,7 @@
                   style="width: 300px; min-width: 300px; max-width: 300px; height: 40px; min-height: 40px; max-height: 40px;"
                 >
                   <img
-                    src="/fimgs/I2976_18688_2941_18426.x1.svg"
+                    src="/fimgs/I3268_381111_2941_18426.x1.svg"
                     class="flex items-start justify-start"
                     style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
                   />
@@ -671,14 +735,17 @@
                     style={`color: black;
       background:transparent; 
       outline: none;`}
+                    onChange={(e) => {
+                      meta.onChange("searching", e);
+                    }}
                   />
                 </div>
               </div>
-              <div class="flex space-x-4 items-center justify-start">
+              <div class="flex self-stretch space-x-4 items-center justify-start">
                 <div class="flex items-start justify-start">
                   <div class="text-base leading-normal">Show</div>
                 </div>
-                <div class="flex space-x-2 items-center justify-start">
+                <div class={`flex flex-1 space-x-2 items-center justify-start`}>
                   <div class="flex flex-col items-start justify-start">
                     <select
                       class={`flex flex-col space-y-2.5 items-center justify-start px-6 py-1 bg-white border rounded border-gray-500`}
@@ -719,31 +786,28 @@
                     <div class="text-base leading-normal">entries</div>
                   </div>
                 </div>
-              </div>
-              <div
-                class={`flex self-stretch items-center justify-start flex flex-wrap`}
-                id="bc"
-              >
                 <button
-                  class={`flex flex-col space-y-7 items-center justify-center px-8 py-5 bg-gray-50 shadow rounded-lg`}
-                  style={`width: 214px; min-width: 214px; max-width: 214px; height: 305px; min-height: 305px; max-height: 305px; margin : 50px 10px 0px 10px;`}
+                  class={`flex space-x-1 items-start justify-start px-4 py-2 bg-amber-500 shadow rounded`}
+                  style={`style={'margin-left: 10px;'}`}
                   onClick={() => {
                     navigate("/w-books/add");
                   }}
                 >
                   <img
-                    src="/fimgs/2705_18697.x1.svg"
-                    style="width: 46px; min-width: 46px; max-width: 46px; height: 46px; min-height: 46px; max-height: 46px;"
+                    src="/fimgs/3196_19650.x1.svg"
+                    class="flex items-start justify-start"
+                    style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
                   />
-                  <div class="flex self-stretch items-center justify-center pt-4">
-                    <div class="flex flex-1 items-center justify-center">
-                      <div class="text-base leading-normal text-center text-gray-500">
-                        Tambah Buku
-                      </div>
+                  <div class={`flex self-stretch items-start justify-start`}>
+                    <div
+                      class={`text-base font-bold leading-normal text-white`}
+                    >
+                      {children || "Tambah Buku"}
                     </div>
                   </div>
                 </button>
               </div>
+              <div class={`flex flex-wrap w-full`} id="bc" />
               <div class="flex self-stretch space-x-2.5 items-center justify-start bg-white">
                 <div class="flex flex-1 items-start justify-start">
                   <div

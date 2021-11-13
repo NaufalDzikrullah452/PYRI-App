@@ -1,1 +1,15 @@
-{"content":{"structure":"00000","type":"Page","figma":{}},"id":"29079","lang":"","parent_id":"66283","site":"*","slug":"/w-master-user/edit","status":"SYSTEM","title":"w-master-user-edit","type":"cms-template"}
+{
+    "content": {
+        "structure": "00000",
+        "type": "Page",
+        "figma": {}
+    },
+    "id": "29079",
+    "lang": "",
+    "parent_id": "66283",
+    "site": "*",
+    "slug": "/w-master-user/edit/[id]",
+    "status": "SYSTEM",
+    "title": "w-master-user-edit",
+    "type": "cms-template"
+}
