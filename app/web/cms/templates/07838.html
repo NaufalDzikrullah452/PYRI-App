@@ -11,6 +11,43 @@
       changeManagement: (open) => {},
       changeMasterData: (open) => {},
       changePublish: (open) => {},
+      book_title: "",
+      book_year_of_release: "",
+      book_picture: "",
+      book_category: "",
+      book_age_restriction: "",
+      book_genre_one: "",
+      book_genre_two: "",
+      book_genre_three: "",
+      book_author_one: "",
+      book_author_two: "",
+      book_author_three: "",
+      book_publisher: "",
+      book_isbn: "",
+      book_description: "",
+      book_notes: "",
+      chapter_count: "",
+      page_count: "",
+
+      async deleteBook(id) {
+        console.log(id);
+        const confirmDel = confirm("Confirm delete?");
+
+        if (confirmDel) {
+          await api("/api/books", {
+            book: {
+              book_id: parseInt(id),
+            },
+            e: "Delete",
+          }).then((res) => {
+            if (res.res === "Failure") {
+              alert("Can't delete book, related to other tables");
+            } else {
+              navigate("/w-book");
+            }
+          });
+        }
+      },
 
       async logout() {
         confirm("Logout of admin?") &&
@@ -75,7 +112,48 @@
             );
           }
         },
-      };
+      }; // read book
+
+      let buku = "";
+
+      if (params.book_id) {
+        await api("/api/books", {
+          book: {
+            book_id: parseInt(params.book_id),
+          },
+          e: "ReadDetailById",
+        }).then((res) => {
+          if (res.res !== "Failure" || res === null) {
+            buku = res.book;
+          }
+        });
+        runInAction(() => {
+          meta.book_title = buku.book_title;
+          meta.book_year_of_release = buku.book_year_of_release;
+          meta.book_picture = buku.book_picture;
+          meta.book_category = buku.category.category_name;
+          meta.book_age_restriction = buku.book_age_restriction;
+          meta.book_genre_one =
+            buku.tags_books_book_genre_one_idTotags.tag_name;
+          meta.book_genre_two =
+            buku.tags_books_book_genre_two_idTotags.tag_name;
+          meta.book_genre_three =
+            buku.tags_books_book_genre_three_idTotags.tag_name;
+          meta.book_author_one =
+            buku.authors_authorsTobooks_book_author_one_id.author_name;
+          meta.book_author_two =
+            buku.authors_authorsTobooks_book_author_two_id.author_name;
+          meta.book_author_three =
+            buku.authors_authorsTobooks_book_author_three_id.author_name;
+          meta.book_publisher = buku.publisher.publisher_name;
+          meta.book_isbn = buku.book_isbn;
+          meta.book_description = buku.book_description;
+          meta.book_notes = buku.book_notes;
+          meta.chapter_count = buku.chapter.length;
+          meta.page_count = buku.page.length;
+          console.log(buku);
+        });
+      }
     }}
   />
   {window.user.roleAdmin === "admin" && (
@@ -407,6 +485,9 @@
                         style={
                           ":hover {color:#ffc048;background-color: rgba(255, 192, 72, 0.2); } "
                         }
+                        onClick={(e) => {
+                          navigate(`/w-books/edit/${params.book_id}`);
+                        }}
                       >
                         <div
                           class={`text-base font-medium leading-normal text-gray-500`}
@@ -420,6 +501,9 @@
                         style={
                           ":hover {color:#ffc048;background-color: rgba(255, 192, 72, 0.2); } "
                         }
+                        onClick={(e) => {
+                          meta.deleteBook(params.book_id);
+                        }}
                       >
                         <div
                           class={`text-base font-medium leading-normal text-gray-500`}
@@ -470,32 +554,53 @@
                   <div class="flex flex-col items-center justify-start px-6">
                     <img
                       src="/fimgs/3127_33008.x1.png"
-                      class="shadow"
-                      style="width: 200.81px; min-width: 200.81px; max-width: 200.81px; height: 300px; min-height: 300px; max-height: 300px;background-image: url('/fimgs/bg-8cf180f8c9bc5fec9363e489cbbba28f18b9b868');background-size:100% 100%;background-repeat:no-repeat;"
+                      class={`shadow`}
+                      style={`width: 200.81px; min-width: 200.81px; max-width: 200.81px; height: 300px; min-height: 300px; max-height: 300px;background-image: url('/fimgs/bg-8cf180f8c9bc5fec9363e489cbbba28f18b9b868');background-size:100% 100%;background-repeat:no-repeat;`}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "/fimgs/3127_33008.x1.png";
+                      }}
                     />
                   </div>
                   <div class="flex flex-1 flex-col space-y-4 items-start justify-start">
                     <div class="flex self-stretch flex-col items-start justify-start">
                       <div class="flex self-stretch items-start justify-start">
-                        <div class="text-2xl font-bold leading-9 text-gray-900">
-                          One Piece
+                        <div
+                          class={`text-2xl font-bold leading-9 text-gray-900`}
+                        >
+                          {meta.book_title}
                         </div>
                       </div>
                       <div class="flex self-stretch items-start justify-start">
-                        <div class="text-base leading-normal text-gray-500">
-                          Tanggal Publikasi : 11 Juni 2001
+                        <div class={`text-base leading-normal text-gray-500`}>
+                          Tanggal Publikasi :{" "}
+                          {meta.book_year_of_release
+                            ? new Date(
+                                meta.book_year_of_release
+                              ).toLocaleDateString("en-GB", {
+                                day: "numeric",
+                                month: "short",
+                                year: "numeric",
+                              })
+                            : "Release date not specified"}
                         </div>
                       </div>
                     </div>
                     <div class="flex self-stretch space-x-2 items-start justify-start">
                       <div class="flex items-start justify-start px-3 py-0.5 bg-orange-100 rounded">
-                        <div class="text-base font-bold leading-normal text-amber-500">
-                          Komik
+                        <div
+                          class={`text-base font-bold leading-normal text-amber-500`}
+                        >
+                          {meta.book_category}
                         </div>
                       </div>
                       <div class="flex items-start justify-start px-3 py-0.5 bg-white border border-gray-500">
-                        <div class="text-base font-bold leading-normal text-gray-500">
-                          16+
+                        <div
+                          class={`text-base font-bold leading-normal text-gray-500`}
+                        >
+                          {meta.book_age_restriction
+                            ? meta.book_age_restriction + "+"
+                            : "E"}
                         </div>
                       </div>
                     </div>
@@ -510,8 +615,14 @@
                           </div>
                         </div>
                         <div class="flex flex-1 items-start justify-start">
-                          <div class="text-base leading-normal text-gray-500">
-                            Fiction
+                          <div class={`text-base leading-normal text-gray-500`}>
+                            {meta.book_genre_one ? meta.book_genre_one : ""}{" "}
+                            {meta.book_genre_two
+                              ? ", " + meta.book_genre_two
+                              : ""}{" "}
+                            {meta.book_genre_three
+                              ? ", " + meta.book_genre_three
+                              : ""}
                           </div>
                         </div>
                       </div>
@@ -525,8 +636,14 @@
                           </div>
                         </div>
                         <div class="flex flex-1 items-start justify-start">
-                          <div class="text-base leading-normal text-gray-500">
-                            Eichiro Oda
+                          <div class={`text-base leading-normal text-gray-500`}>
+                            {meta.book_author_one ? meta.book_author_one : ""}{" "}
+                            {meta.book_author_two
+                              ? ", " + meta.book_author_two
+                              : ""}{" "}
+                            {meta.book_author_three
+                              ? ", " + meta.book_author_three
+                              : ""}
                           </div>
                         </div>
                       </div>
@@ -540,8 +657,8 @@
                           </div>
                         </div>
                         <div class="flex flex-1 items-start justify-start">
-                          <div class="text-base leading-normal text-gray-500">
-                            Elex Media Komputindo
+                          <div class={`text-base leading-normal text-gray-500`}>
+                            {meta.book_publisher ? meta.book_publisher : "-"}
                           </div>
                         </div>
                       </div>
@@ -555,8 +672,8 @@
                           </div>
                         </div>
                         <div class="flex flex-1 items-start justify-start">
-                          <div class="text-base leading-normal text-gray-500">
-                            1234567890123
+                          <div class={`text-base leading-normal text-gray-500`}>
+                            {meta.book_isbn ? meta.book_isbn : "-"}
                           </div>
                         </div>
                       </div>
@@ -568,16 +685,10 @@
                         </div>
                       </div>
                       <div class="flex self-stretch items-start justify-start">
-                        <div class="text-base leading-normal text-gray-500">
-                          Lorem ipsum dolor sit amet, consectetur adipiscing
-                          elit. In dictum elementum ante nec quam id. Tellus
-                          duis risus adipiscing facilisis viverra suspendisse
-                          sit aliquam ultricies. Nisl viverra viverra ultrices
-                          et imperdiet. Semper ut nisl, diam mollis. Ac arcu in
-                          turpis morbi elementum leo. Urna, magna euismod
-                          sagittis nunc blandit sollicitudin neque ipsum.
-                          Laoreet eu, orci habitasse at. Sodales pellentesque
-                          venenatis morbi sed. Dictum.
+                        <div class={`text-base leading-normal text-gray-500`}>
+                          {meta.book_description
+                            ? meta.book_description
+                            : "No description available yet."}
                         </div>
                       </div>
                     </div>
@@ -588,16 +699,20 @@
                         </div>
                       </div>
                       <div class="flex self-stretch items-start justify-start">
-                        <div class="text-base leading-normal text-gray-500">
-                          Catatan untuk si mimin
+                        <div class={`text-base leading-normal text-gray-500`}>
+                          {meta.book_notes
+                            ? meta.book_notes
+                            : "No notes added."}
                         </div>
                       </div>
                     </div>
                     <div class="flex self-stretch space-x-6 items-start justify-start">
                       <div class="flex flex-col items-center justify-center px-9 py-2 bg-white border rounded border-amber-500 border-opacity-50">
                         <div class="flex flex-col items-start justify-start">
-                          <div class="text-2xl font-bold leading-9 text-gray-700">
-                            0
+                          <div
+                            class={`text-2xl font-bold leading-9 text-gray-700`}
+                          >
+                            {meta.chapter_count ? meta.chapter_count : 0}
                           </div>
                         </div>
                         <div class="flex items-start justify-start">
@@ -608,8 +723,10 @@
                       </div>
                       <div class="flex flex-col items-center justify-center px-9 py-2 bg-white border rounded border-amber-500 border-opacity-50">
                         <div class="flex flex-col items-start justify-start">
-                          <div class="text-2xl font-bold leading-9 text-gray-700">
-                            0
+                          <div
+                            class={`text-2xl font-bold leading-9 text-gray-700`}
+                          >
+                            {meta.page_count ? meta.page_count : 0}
                           </div>
                         </div>
                         <div class="flex items-start justify-start">
@@ -632,7 +749,9 @@
                   <button
                     class={`flex space-x-1 items-start justify-start px-4 py-2 bg-orange-50 shadow rounded`}
                     style={`style={'margin-left:6px;'}`}
-                    onClick={onClick}
+                    onClick={(e) => {
+                      navigate(`/w-books/${params.book_id}/chapter/add`);
+                    }}
                   >
                     <img
                       src="/fimgs/2763_18663.x1.svg"
