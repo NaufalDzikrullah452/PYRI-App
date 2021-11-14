@@ -65,6 +65,14 @@
                 a.style.backgroundColor = "transparent";
               };
 
+              a.onclick = () => {
+                if (buku[i].chapter.length != 0) {
+                  navigate(`/w-books/${buku[i].book_id}/details`);
+                } else {
+                  navigate(`/w-books/${buku[i].book_id}/details-nochapter`);
+                }
+              };
+
               let b = document.createElement("div");
               b.className =
                 "flex flex-1 self-stretch flex-col space-y-4 items-center justify-center px-4 pt-4 css-apsgmz";
@@ -165,6 +173,16 @@
                       a.style.backgroundColor = "transparent";
                     };
 
+                    a.onclick = () => {
+                      if (buku[i].chapter.length != 0) {
+                        navigate(`/w-books/${buku[i].book_id}/details`);
+                      } else {
+                        navigate(
+                          `/w-books/${buku[i].book_id}/details-nochapter`
+                        );
+                      }
+                    };
+
                     let b = document.createElement("div");
                     b.className =
                       "flex flex-1 self-stretch flex-col space-y-4 items-center justify-center px-4 pt-4 css-apsgmz";
@@ -259,6 +277,14 @@
 
               a.onmouseleave = () => {
                 a.style.backgroundColor = "transparent";
+              };
+
+              a.onclick = () => {
+                if (buku[i].chapter.length != 0) {
+                  navigate(`/w-books/${buku[i].book_id}/details`);
+                } else {
+                  navigate(`/w-books/${buku[i].book_id}/details-nochapter`);
+                }
               };
 
               let b = document.createElement("div");
@@ -379,6 +405,14 @@
 
           a.onmouseleave = () => {
             a.style.backgroundColor = "transparent";
+          };
+
+          a.onclick = () => {
+            if (buku[i].chapter.length != 0) {
+              navigate(`/w-books/${buku[i].book_id}/details`);
+            } else {
+              navigate(`/w-books/${buku[i].book_id}/details-nochapter`);
+            }
           };
 
           let b = document.createElement("div");

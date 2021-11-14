@@ -27,13 +27,54 @@
       book_notes: "",
       book_is_released: "",
 
-      // validation() {
-      //   let msg =
-      //     this.category_name === "" || this.category_name === null
-      //       ? "Name cant be empty!"
-      //       : false;
-      //   return msg;
-      // },
+      validation() {
+        let msg =
+          this.book_picture === "" ||
+          this.book_picture === null ||
+          this.book_picture === undefined
+            ? "Book cover cant be empty !"
+            : this.book_title === "" ||
+              this.book_title === null ||
+              this.book_title === undefined
+            ? "Book title cant be empty!"
+            : this.book_year_of_release === "" ||
+              this.book_year_of_release === null ||
+              this.book_year_of_release === undefined
+            ? "Book year of release cant be empty!"
+            : this.book_publisher_id === "" ||
+              this.book_publisher_id === null ||
+              this.book_publisher_id === undefined
+            ? "Publisher cant be empty!"
+            : this.book_author_one_id === "" ||
+              this.book_author_one_id === null ||
+              this.book_author_one_id === undefined
+            ? "Author cant be empty!"
+            : this.book_genre_one_id === "" ||
+              this.book_genre_one_id === null ||
+              this.book_genre_one_id === undefined
+            ? "Genre cant be empty!"
+            : this.book_category_id === "" ||
+              this.book_category_id === null ||
+              this.book_category_id === undefined
+            ? "Category cant be empty!"
+            : this.book_author_one_id === this.book_author_two_id ||
+              this.book_author_one_id === this.book_author_three_id ||
+              this.book_author_one_id === this.book_author_three_id
+            ? "Author should be unique"
+            : this.book_genre_one_id === this.book_genre_two_id ||
+              this.book_genre_one_id === this.book_genre_three_id ||
+              this.book_genre_one_id === this.book_genre_three_id
+            ? "Genre should be unique"
+            : this.book_description === "" ||
+              this.book_description === null ||
+              this.book_description === undefined
+            ? "Book description cant be empty!"
+            : isNaN(this.book_isbn)
+            ? "ISBN should only contain numbers!"
+            : false;
+        return msg;
+      },
+
       async onChange(key, e) {
         let value = e.target.value;
         runInAction(() => (this[key] = value));
@@ -41,10 +82,9 @@
       },
 
       async submit() {
-        //let error_msg = this.validation();
-        let error_msg = false;
+        let error_msg = this.validation();
 
-        if (error_msg && false) {
+        if (error_msg) {
           alert(error_msg);
         } else {
           let book = api("/api/books", {
@@ -164,7 +204,7 @@
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
+    <div class={`w-full flex items-start justify-start bg-white`}>
       <div class={`w-full flex items-start justify-start`}>
         <div
           class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}

@@ -135,16 +135,20 @@
           meta.book_age_restriction = buku.book_age_restriction;
           meta.book_genre_one =
             buku.tags_books_book_genre_one_idTotags.tag_name;
-          meta.book_genre_two =
-            buku.tags_books_book_genre_two_idTotags.tag_name;
-          meta.book_genre_three =
-            buku.tags_books_book_genre_three_idTotags.tag_name;
+          meta.book_genre_two = buku.tags_books_book_genre_two_idTotags
+            ? buku.tags_books_book_genre_two_idTotags.tag_name
+            : null;
+          meta.book_genre_three = buku.tags_books_book_genre_three_idTotags
+            ? buku.tags_books_book_genre_three_idTotags.tag_name
+            : null;
           meta.book_author_one =
             buku.authors_authorsTobooks_book_author_one_id.author_name;
-          meta.book_author_two =
-            buku.authors_authorsTobooks_book_author_two_id.author_name;
-          meta.book_author_three =
-            buku.authors_authorsTobooks_book_author_three_id.author_name;
+          meta.book_author_two = buku.authors_authorsTobooks_book_author_two_id
+            ? buku.authors_authorsTobooks_book_author_two_id.author_name
+            : null;
+          meta.book_author_three = buku.authors_authorsTobooks_book_author_three_id
+            ? buku.authors_authorsTobooks_book_author_three_id.author_name
+            : null;
           meta.book_publisher = buku.publisher.publisher_name;
           meta.book_isbn = buku.book_isbn;
           meta.book_description = buku.book_description;
@@ -157,7 +161,7 @@
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex items-start justify-start bg-white`}>
+    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
       <div class={`w-full flex flex-1 items-start justify-start`}>
         <div
           class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
