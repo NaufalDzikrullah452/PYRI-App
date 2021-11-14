@@ -48,6 +48,7 @@ model users {
   user_date_created      DateTime?       @default(now()) @db.Timestamp(6)
   user_note              String?
   user_picture           String?         @db.VarChar(100)
+  user_blocked           Boolean         @default(false)
   interests              interests[]
 }
 

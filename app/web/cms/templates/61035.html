@@ -40,7 +40,7 @@
               users: {
                 user_name: value,
               },
-              e: "Searching",
+              e: "SearchingNotBlocked",
             }).then((res) => {
               // console.log(res.page);
               runInAction(() => {
@@ -97,7 +97,38 @@
           }).then((res) => {
             if (res.res !== "Failure" && res !== null) {
               api("/api/api-users", {
-                e: "ReadMany",
+                e: "ReadNotBlocked",
+              }).then((res) => {
+                runInAction(() => {
+                  this.users = res.users;
+                  this.sum_pages = Math.ceil(this.users.length / this.entries); // meta.page_array = new Array(meta.sum_page);
+
+                  this.pages_array = Array.apply(null, {
+                    length: this.sum_pages,
+                  }).map(Number.call, Number);
+                  this.loading_page = false;
+                });
+              });
+            } else {
+              alert("Database error !");
+            }
+          });
+        }
+      },
+
+      async userBlock(id) {
+        var conf = confirm("Block user?");
+
+        if (conf) {
+          api("/api/api-users", {
+            users: {
+              user_id: parseInt(id),
+            },
+            e: "BlockUser",
+          }).then((res) => {
+            if (res.res !== "Failure" && res !== null) {
+              api("/api/api-users", {
+                e: "ReadNotBlocked",
               }).then((res) => {
                 runInAction(() => {
                   this.users = res.users;
@@ -154,7 +185,7 @@
       };
       var user = "";
       await api("/api/api-users", {
-        e: "ReadMany",
+        e: "ReadNotBlocked",
       }).then((res) => {
         user = res.users;
       });
@@ -598,7 +629,7 @@
                       </div>
                     </th>
                     <th
-                      class={`flex self-stretch items-center justify-start px-2.5`}
+                      class={`flex self-stretch items-center justify-start`}
                       style={"width: 20%"}
                     >
                       <div class="text-base font-bold leading-normal text-white">
@@ -808,12 +839,25 @@
                                 src="/fimgs/3201_185145.x1.svg"
                                 class={`flex items-start justify-start cursor-pointer`}
                                 style={`width: 20px; min-width: 20px; max-width: 20px; height: 20px; min-height: 20px; max-height: 20px;`}
+                                onClick={() => {
+                                  meta.userBlock(numList.user_id);
+                                }}
                               />
                             </div>
                           </td>
                         </tr>
                       );
                     })}
+                  {meta.users.length === 0 && (
+                    <tr
+                      class={`w-full flex self-stretch items-center justify-center px-4 py-2.5 bg-white rounded`}
+                      style={""}
+                    >
+                      <div class="text-base leading-normal">
+                        User data not found!
+                      </div>
+                    </tr>
+                  )}
                 </tbody>
               </table>
               <div class="flex self-stretch space-x-2.5 items-center justify-start bg-white">
