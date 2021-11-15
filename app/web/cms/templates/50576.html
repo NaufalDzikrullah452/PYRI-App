@@ -455,8 +455,34 @@
               style={"margin-bottom:100px;"}
             >
               <div class="flex self-stretch items-center justify-start">
-                <div class="text-2xl font-bold leading-9 text-gray-900">
-                  DATA PUBLISHER
+                <div class="flex flex-1 self-stretch space-x-2.5 items-start justify-start">
+                  <div class="flex flex-1 items-start justify-start">
+                    <div class="text-2xl font-bold leading-9 text-gray-900">
+                      DATA PUBLISHER
+                    </div>
+                  </div>
+                  <div
+                    class={`w-full flex space-x-4 items-center justify-start px-4 py-2 bg-gray-100 rounded-lg`}
+                    style="width: 300px; min-width: 300px; max-width: 300px; height: 40px; min-height: 40px; max-height: 40px;"
+                  >
+                    <img
+                      src="/fimgs/3384_64718.x1.svg"
+                      class="flex items-start justify-start"
+                      style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
+                    />
+                    <input
+                      class={"w-full"}
+                      type="text"
+                      placeholder="Search"
+                      style={`color: black;
+      background:transparent; 
+      outline: none;`}
+                      onChange={(e) => {
+                        meta.onChange("searching", e);
+                      }}
+                      value={meta.searching}
+                    />
+                  </div>
                 </div>
               </div>
               <div class="flex self-stretch flex-col items-start justify-start">
@@ -613,6 +639,16 @@
                           </tr>
                         );
                       })}
+                    {meta.publisher.length === 0 && (
+                      <tr
+                        class={`w-full flex self-stretch items-center justify-center px-4 py-3 bg-white rounded`}
+                        style={""}
+                      >
+                        <div class={`text-base leading-normal text-center`}>
+                          No data found!
+                        </div>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
                 <div class="flex self-stretch space-x-2.5 items-center justify-start bg-white">

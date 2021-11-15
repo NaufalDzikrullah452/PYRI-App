@@ -181,7 +181,7 @@
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex items-start justify-start bg-white`}>
+    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
       <div class={`w-full flex items-start justify-start`}>
         <div
           class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -685,7 +685,7 @@
                       Kata Sandi
                     </div>
                   </div>
-                  <div class="flex self-stretch items-center justify-start px-6 py-3 bg-white border rounded border-gray-300">
+                  <div class="flex self-stretch space-x-2.5 items-center justify-start px-6 py-3 bg-white border rounded border-gray-300">
                     <input
                       class={"w-full"}
                       type={meta.pass_type}
@@ -697,6 +697,18 @@
                         meta.onChange("user_password", e);
                       }}
                     />
+                    <ficon
+                      aria-label={`${
+                        meta.pass_type === "password" ? "RedEye" : "Hide"
+                      }`}
+                      iconName={`${
+                        meta.pass_type === "password" ? "RedEye" : "Hide"
+                      }`}
+                      style={`cursor:pointer; color:gray;`}
+                      onClick={() => {
+                        meta.showHidePass("pass_type");
+                      }}
+                    />
                   </div>
                 </div>
                 <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
@@ -705,7 +717,7 @@
                       Konfirmasi Kata Sandi
                     </div>
                   </div>
-                  <div class="flex self-stretch items-center justify-start px-6 py-3 bg-white border rounded border-gray-300">
+                  <div class="flex self-stretch space-x-2.5 items-center justify-start px-6 py-3 bg-white border rounded border-gray-300">
                     <input
                       class={"w-full"}
                       type={meta.pass_confirm_type}
@@ -715,6 +727,22 @@
       outline: none;`}
                       onChange={(e) => {
                         meta.onChange("user_confirm_password", e);
+                      }}
+                    />
+                    <ficon
+                      aria-label={`${
+                        meta.pass_confirm_type === "password"
+                          ? "RedEye"
+                          : "Hide"
+                      }`}
+                      iconName={`${
+                        meta.pass_confirm_type === "password"
+                          ? "RedEye"
+                          : "Hide"
+                      }`}
+                      style={`cursor:pointer; color:gray;`}
+                      onClick={() => {
+                        meta.showHidePass("pass_confirm_type");
                       }}
                     />
                   </div>

@@ -825,7 +825,7 @@
                                   var res = false;
 
                                   if (numList.user_level) {
-                                    res = confirm("Delete Admin ?");
+                                    alert("Cant delete Admin !");
                                   } else {
                                     res = true;
                                   }
@@ -840,7 +840,17 @@
                                 class={`flex items-start justify-start cursor-pointer`}
                                 style={`width: 20px; min-width: 20px; max-width: 20px; height: 20px; min-height: 20px; max-height: 20px;`}
                                 onClick={() => {
-                                  meta.userBlock(numList.user_id);
+                                  var res = false;
+
+                                  if (numList.user_level) {
+                                    alert("Cant block Admin !");
+                                  } else {
+                                    res = true;
+                                  }
+
+                                  if (res) {
+                                    meta.userBlock(numList.user_id);
+                                  }
                                 }}
                               />
                             </div>
@@ -850,12 +860,12 @@
                     })}
                   {meta.users.length === 0 && (
                     <tr
-                      class={`w-full flex self-stretch items-center justify-center px-4 py-2.5 bg-white rounded`}
+                      class={`w-full flex self-stretch items-center justify-center px-4 py-2.5 rounded`}
                       style={""}
                     >
-                      <div class="text-base leading-normal">
+                      <td class={`text-base leading-normal`}>
                         User data not found!
-                      </div>
+                      </td>
                     </tr>
                   )}
                 </tbody>

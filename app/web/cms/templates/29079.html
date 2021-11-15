@@ -26,6 +26,7 @@
       new_pass_type: "password",
       new_pass_confirm_type: "password",
       disabled: false,
+      display_info: false,
       max_date: new Date(new Date().setFullYear(new Date().getFullYear() - 12)),
 
       async showHidePass(key) {
@@ -81,20 +82,30 @@
             ? "Please reselect your birthdate! 12 Years old++."
             : this.user_level === "" || this.user_level === null
             ? "Please select role!"
-            : this.user_password === "" || this.user_password === null
-            ? "Old password can not be empty!"
-            : encrypt(this.user_password) !== this.user_old_password
-            ? "Wrong old password!"
-            : this.user_new_password === "" || this.user_new_password === null
-            ? "New password can not be empty!"
-            : !validatePass(this.user_new_password)
-            ? "New password length 8-16 <br/>Include Uppercase, Lowercase & No space"
-            : this.user_new_confirm_password === "" ||
-              this.user_new_confirm_password === null
-            ? "Confirm password can not be empty!"
-            : this.user_new_password !== this.user_new_confirm_password
-            ? "New and confirm password not same!"
             : false; // console.log(msg);
+        // check pass issfilled
+
+        if (
+          this.user_password !== "" ||
+          this.user_new_password !== "" ||
+          this.user_new_confirm_password !== ""
+        ) {
+          msg =
+            this.user_password === "" || this.user_password === null
+              ? "Old password can not be empty!"
+              : encrypt(this.user_password) !== this.user_old_password
+              ? "Wrong old password!"
+              : this.user_new_password === "" || this.user_new_password === null
+              ? "New password can not be empty!"
+              : !validatePass(this.user_new_password)
+              ? "New password length 8-16 <br/>Include Uppercase, Lowercase & No space"
+              : this.user_new_confirm_password === "" ||
+                this.user_new_confirm_password === null
+              ? "Confirm password can not be empty!"
+              : this.user_new_password !== this.user_new_confirm_password
+              ? "New and confirm password not same!"
+              : false;
+        }
 
         return msg;
       },
@@ -107,20 +118,39 @@
           alert(error_msg);
         } else {
           runInAction(() => (this.disabled = true));
-          let user = {
-            user_id: this.user_id,
-            user_name: this.user_name,
-            user_email: this.user_email,
-            user_password: encrypt(this.user_new_password),
-            user_gender: this.user_gender,
-            user_birthday: new Date(this.user_birthday.toString()),
-            user_forgot_token: this.user_forgot_token,
-            user_membership_status: this.user_membership_status,
-            user_level: this.user_level,
-            user_date_created: this.user_date_created,
-            user_picture: this.user_picture,
-            user_note: this.user_note,
-          };
+          let user;
+
+          if (this.user_password === "" || this.user_password === null) {
+            user = {
+              user_id: this.user_id,
+              user_name: this.user_name,
+              user_email: this.user_email,
+              user_gender: this.user_gender,
+              user_birthday: new Date(this.user_birthday.toString()),
+              user_forgot_token: this.user_forgot_token,
+              user_membership_status: this.user_membership_status,
+              user_level: this.user_level,
+              user_date_created: this.user_date_created,
+              user_picture: this.user_picture,
+              user_note: this.user_note,
+            };
+          } else {
+            user = {
+              user_id: this.user_id,
+              user_name: this.user_name,
+              user_email: this.user_email,
+              user_password: encrypt(this.user_new_password),
+              user_gender: this.user_gender,
+              user_birthday: new Date(this.user_birthday.toString()),
+              user_forgot_token: this.user_forgot_token,
+              user_membership_status: this.user_membership_status,
+              user_level: this.user_level,
+              user_date_created: this.user_date_created,
+              user_picture: this.user_picture,
+              user_note: this.user_note,
+            };
+          }
+
           var conf = confirm("Confirm your data?");
 
           if (conf) {
@@ -207,7 +237,7 @@
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex items-start justify-start bg-white`}>
+    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
       <div class={`w-full flex items-start justify-start`}>
         <div
           class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -742,12 +772,42 @@
                 <div class="flex self-stretch flex-col space-y-9 items-start justify-start p-9 bg-white shadow rounded-lg">
                   <div class="flex self-stretch flex-col items-start justify-start rounded-lg">
                     <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
-                      <div class="flex self-stretch items-start justify-start">
+                      <div class="flex self-stretch space-x-2.5 items-start justify-start">
                         <div class="text-base font-bold leading-normal">
                           Kata Sandi Lama
                         </div>
+                        <ficon
+                          style={`cursor:default;`}
+                          aria-label="Unknown"
+                          iconName="Unknown"
+                          onMouseEnter={() =>
+                            runInAction(() => {
+                              meta.display_info = true;
+                            })
+                          }
+                          onMouseLeave={() =>
+                            runInAction(() => {
+                              meta.display_info = false;
+                            })
+                          }
+                        />
+                        <div
+                          class={`flex flex-1 flex-col items-start justify-start bg-white ${
+                            meta.display_info ? "" : "hidden"
+                          }`}
+                        >
+                          <div
+                            class={`text-base font-bold leading-normal`}
+                            style={`font-size: 0.75rem;
+line-height: 1rem;
+color: gray;`}
+                          >
+                            Field kata sandi bersifat opsional, jika ingin
+                            mengubah password silahkan isi semua field.
+                          </div>
+                        </div>
                       </div>
-                      <div class="flex self-stretch items-center justify-start px-6 py-3 bg-white border rounded border-gray-300">
+                      <div class="flex self-stretch space-x-2.5 items-center justify-start px-6 py-3 bg-white border rounded border-gray-300">
                         <input
                           class={"w-full"}
                           type={meta.pass_type}
@@ -757,6 +817,18 @@
       outline: none;`}
                           onChange={(e) => {
                             meta.onChange("user_password", e);
+                          }}
+                        />
+                        <ficon
+                          aria-label={`${
+                            meta.pass_type === "password" ? "RedEye" : "Hide"
+                          }`}
+                          iconName={`${
+                            meta.pass_type === "password" ? "RedEye" : "Hide"
+                          }`}
+                          style={`cursor:pointer; color:gray;`}
+                          onClick={() => {
+                            meta.showHidePass("pass_type");
                           }}
                         />
                       </div>
@@ -769,7 +841,7 @@
                           Kata Sandi Baru
                         </div>
                       </div>
-                      <div class="flex self-stretch items-center justify-start px-6 py-3 bg-white border rounded border-gray-300">
+                      <div class="flex self-stretch space-x-2.5 items-center justify-start px-6 py-3 bg-white border rounded border-gray-300">
                         <input
                           class={"w-full"}
                           type={meta.new_pass_type}
@@ -779,6 +851,22 @@
       outline: none;`}
                           onChange={(e) => {
                             meta.onChange("user_new_password", e);
+                          }}
+                        />
+                        <ficon
+                          aria-label={`${
+                            meta.new_pass_type === "password"
+                              ? "RedEye"
+                              : "Hide"
+                          }`}
+                          iconName={`${
+                            meta.new_pass_type === "password"
+                              ? "RedEye"
+                              : "Hide"
+                          }`}
+                          style={`cursor:pointer; color:gray;`}
+                          onClick={() => {
+                            meta.showHidePass("new_pass_type");
                           }}
                         />
                       </div>
@@ -791,7 +879,7 @@
                           Ulangi Kata Sandi Baru
                         </div>
                       </div>
-                      <div class="flex self-stretch items-center justify-start px-6 py-3 bg-white border rounded border-gray-300">
+                      <div class="flex self-stretch space-x-2.5 items-center justify-start px-6 py-3 bg-white border rounded border-gray-300">
                         <input
                           class={"w-full"}
                           type={meta.new_pass_confirm_type}
@@ -801,6 +889,22 @@
       outline: none;`}
                           onChange={(e) => {
                             meta.onChange("user_new_confirm_password", e);
+                          }}
+                        />
+                        <ficon
+                          aria-label={`${
+                            meta.new_pass_confirm_type === "password"
+                              ? "RedEye"
+                              : "Hide"
+                          }`}
+                          iconName={`${
+                            meta.new_pass_confirm_type === "password"
+                              ? "RedEye"
+                              : "Hide"
+                          }`}
+                          style={`cursor:pointer; color:gray;`}
+                          onClick={() => {
+                            meta.showHidePass("new_pass_confirm_type");
                           }}
                         />
                       </div>
