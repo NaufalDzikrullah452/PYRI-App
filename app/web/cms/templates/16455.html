@@ -28,6 +28,7 @@
       book_notes: "",
       chapter_count: "",
       page_count: "",
+      pages: [],
 
       async deleteBook(id) {
         console.log(id);
@@ -155,13 +156,62 @@
           meta.book_notes = buku.book_notes;
           meta.chapter_count = buku.chapter.length;
           meta.page_count = buku.page.length;
+          meta.pages = buku.page;
           console.log(buku);
+          console.log(meta.pages[0]);
         });
+      }
+
+      document.getElementById("pc").className =
+        "flex self-stretch items-start justify-start";
+
+      for (let ind = 0; ind < buku.page.length; ind++) {
+        let a = document.createElement("div");
+        a.className =
+          "flex flex-col items-center justify-end bg-white shadow rounded css-1qubcqz";
+        let b = document.createElement("div");
+        b.className = "flex flex-col items-start justify-start rounded";
+        let ci = document.createElement("img");
+        ci.className = "css-1iy43u4";
+        ci.setAttribute("src", "/fimgs/3145_414594.x1.png");
+        let d = document.createElement("div");
+        d.className =
+          "flex self-stretch space-x-2.5 items-center justify-start bg-gray-100 shadow-inner rounded-bl rounded-br";
+        let e = document.createElement("div");
+        e.className =
+          "flex flex-1 flex-col items-start justify-start px-4 py-2";
+        let f = document.createElement("div");
+        f.className = "text-base font-bold leading-normal";
+        f.innerText = buku.page[ind].page_page;
+        let g = document.createElement("div");
+        g.className = "flex flex-col items-end justify-center pr-2";
+        let h = document.createElement("div");
+        h.className = "flex space-x-4 items-center justify-center css-2fhuhl";
+        let i = document.createElement("div");
+        i.className = "flex self-stretch items-center justify-center rounded";
+        let ji = document.createElement("img");
+        ji.className = "css-5nv48v";
+        ji.setAttribute("src", "/fimgs/3145_414601.x1.svg");
+        let ki = document.createElement("img");
+        ki.className =
+          "flex self-stretch items-center justify-center rounded css-vke9og";
+        ki.setAttribute("src", "/fimgs/3145_414602.x1.svg");
+        i.appendChild(ji);
+        h.appendChild(i);
+        h.appendChild(ki);
+        g.appendChild(h);
+        e.appendChild(f);
+        d.appendChild(e);
+        d.appendChild(g);
+        b.appendChild(ci);
+        b.appendChild(d);
+        a.appendChild(b);
+        document.getElementById("pc").appendChild(a);
       }
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
+    <div class={`w-full flex items-start justify-start bg-white`}>
       <div class={`w-full flex flex-1 items-start justify-start`}>
         <div
           class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -836,48 +886,7 @@
                       />
                     </div>
                   </div>
-                  <div class="flex self-stretch items-start justify-start">
-                    <div
-                      class={`flex flex-col items-center justify-end bg-white shadow rounded`}
-                      style={`margin:50px 40px 0px 40px;
-        
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.15);
-  :hover{
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.4);}`}
-                    >
-                      <div class="flex flex-col items-start justify-start rounded">
-                        <img
-                          src="/fimgs/3145_414594.x1.png"
-                          style="width: 174px; min-width: 174px; max-width: 174px; height: 260px; min-height: 260px; max-height: 260px;background-image: url('/fimgs/bg-5c4db141fe326bacda3b0dd04473d8a9b085f27f');background-size:100% 100%;background-repeat:no-repeat;"
-                        />
-                        <div class="flex self-stretch space-x-2.5 items-center justify-start bg-gray-100 shadow-inner rounded-bl rounded-br">
-                          <div class="flex flex-1 flex-col items-start justify-start px-4 py-2">
-                            <div class="text-base font-bold leading-normal">
-                              1
-                            </div>
-                          </div>
-                          <div class="flex flex-col items-end justify-center pr-2">
-                            <div
-                              class={`flex space-x-4 items-center justify-center`}
-                              style={""}
-                            >
-                              <div class="flex self-stretch items-center justify-center rounded">
-                                <img
-                                  src="/fimgs/3145_414601.x1.svg"
-                                  style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
-                                />
-                              </div>
-                              <img
-                                src="/fimgs/3145_414602.x1.svg"
-                                class={`flex self-stretch items-center justify-center rounded`}
-                                style={`width: 20px; min-width: 20px; max-width: 20px; height: 30px; min-height: 30px; max-height: 30px; margin-top:3px;`}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <div id="pc" />
                   <div class="flex self-stretch space-x-2.5 items-center justify-start bg-white">
                     <div class="flex flex-1 items-start justify-start">
                       <div class="text-base leading-normal text-orange-900">
