@@ -208,6 +208,19 @@
         a.appendChild(b);
         document.getElementById("pc").appendChild(a);
       }
+
+      let oldbc = document.getElementById("bc");
+      let newbc = document.createElement("img");
+      newbc.setAttribute("src", "/upload/" + meta.book_picture);
+      newbc.setAttribute("width", "200");
+      newbc.setAttribute("heigth", "300");
+
+      newbc.onerror = (e) => {
+        e.target.onerror = null;
+        e.target.src = "/fimgs/3145_306147.x1.png";
+      };
+
+      document.getElementById("bc").parentNode.replaceChild(newbc, oldbc);
     }}
   />
   {window.user.roleAdmin === "admin" && (
@@ -611,6 +624,7 @@
                         e.target.onerror = null;
                         e.target.src = "/fimgs/3145_306147.x1.png";
                       }}
+                      id="bc"
                     />
                   </div>
                   <div class="flex flex-1 flex-col space-y-4 items-start justify-start">

@@ -136,6 +136,19 @@
           console.log(buku);
         });
       }
+
+      let oldbc = document.getElementById("bc");
+      let newbc = document.createElement("img");
+      newbc.setAttribute("src", "/upload/" + meta.book_picture);
+      newbc.setAttribute("width", "47");
+      newbc.setAttribute("heigth", "70");
+
+      newbc.onerror = (e) => {
+        e.target.onerror = null;
+        e.target.src = "/fimgs/3115_100793.x1.png";
+      };
+
+      document.getElementById("bc").parentNode.replaceChild(newbc, oldbc);
     }}
   />
   {window.user.roleAdmin === "admin" && (
@@ -317,6 +330,20 @@
                 <div
                   class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
                   style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
+                  onClick={() => {
+                    navigate("/w-master-user-blocked");
+                  }}
+                >
+                  <div />
+                  <div class="flex flex-1 items-start justify-start">
+                    <div class="text-base font-bold leading-normal text-gray-50">
+                      Blocked User
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
                 >
                   <div />
                   <div class="flex flex-1 items-start justify-start">
@@ -450,13 +477,10 @@
                 <div class="flex self-stretch flex-col space-y-9 items-start justify-start">
                   <div class="flex self-stretch space-x-6 items-center justify-start p-6 bg-white shadow rounded-lg">
                     <img
-                      src="/fimgs/2747_18450.x1.png"
-                      class={`flex flex-col items-center justify-start`}
-                      style={`width: 46.85px; min-width: 46.85px; max-width: 46.85px; height: 70px; min-height: 70px; max-height: 70px;`}
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = "/fimgs/2747_18450.x1.png";
-                      }}
+                      id="bc"
+                      style={`width: 46.85px; min-width: 46.85px; max-width: 46.85px; height: 70px; min-height: 70px; max-height: 70px;background-image: url('/fimgs/bg-8cf180f8c9bc5fec9363e489cbbba28f18b9b868');background-size:100% 100%;background-repeat:no-repeat;`}
+                      class={`shadow`}
+                      src={"upload/" + meta.book_picture}
                     />
                     <div class="flex flex-1 flex-col space-y-2 items-start justify-start">
                       <div class="flex self-stretch items-start justify-start">
@@ -530,7 +554,7 @@
                   <button
                     class={`flex items-start justify-start px-4 py-2 border rounded border-gray-400`}
                     onClick={() => {
-                      navigate(`/w-books/${params.book_id}/detail`);
+                      navigate(`/w-books/${params.book_id}/details`);
                     }}
                   >
                     <div class="text-base font-bold leading-normal text-amber-500">
