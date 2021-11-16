@@ -447,11 +447,28 @@
                 <div
                   class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
                   style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
+                  onClick={() => {
+                    navigate("/w-master-user");
+                  }}
                 >
                   <div />
                   <div class="flex flex-1 items-start justify-start">
                     <div class="text-base font-bold leading-normal text-gray-50">
                       Data User
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
+                  onClick={() => {
+                    navigate("/w-master-user-blocked");
+                  }}
+                >
+                  <div />
+                  <div class="flex flex-1 items-start justify-start">
+                    <div class="text-base font-bold leading-normal text-gray-50">
+                      Blocked User
                     </div>
                   </div>
                 </div>
