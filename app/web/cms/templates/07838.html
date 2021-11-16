@@ -11,6 +11,7 @@
       changeManagement: (open) => {},
       changeMasterData: (open) => {},
       changePublish: (open) => {},
+      chapter: [],
       book_title: "",
       book_year_of_release: "",
       book_picture: "",
@@ -44,6 +45,26 @@
               alert("Can't delete book, related to other tables");
             } else {
               navigate("/w-book");
+            }
+          });
+        }
+      },
+
+      async deleteChapter(id) {
+        console.log(id);
+        const confirmDel = confirm("Confirm delete?");
+
+        if (confirmDel) {
+          await api("/api/chapter", {
+            chapter: {
+              chapter_id: parseInt(id),
+            },
+            e: "Delete",
+          }).then((res) => {
+            if (res.res === "Failure") {
+              alert("Can't delete chapter, related to other tables");
+            } else {
+              navigate(`/w-books/${params.book_id}/details`);
             }
           });
         }
@@ -126,8 +147,21 @@
           if (res.res !== "Failure" || res === null) {
             buku = res.book;
           }
+        }); // read chapter
+
+        let chapter = "";
+        await api("/api/chapter", {
+          chapter: {
+            chapter_book_id: parseInt(params.book_id),
+          },
+          e: "ReadByBookId",
+        }).then((res) => {
+          if (res.res !== "Failure" || res === null) {
+            chapter = res.chapter;
+          }
         });
         runInAction(() => {
+          meta.chapter = buku.chapter;
           meta.book_title = buku.book_title;
           meta.book_year_of_release = buku.book_year_of_release;
           meta.book_picture = buku.book_picture;
@@ -155,8 +189,63 @@
           meta.book_notes = buku.book_notes;
           meta.chapter_count = buku.chapter.length;
           meta.page_count = buku.page.length;
-          console.log(buku);
+          console.log(meta.chapter);
         });
+      }
+
+      document.getElementById("cc").className =
+        "flex self-stretch flex-col items-start justify-start";
+
+      for (let ind = 0; ind < buku.chapter.length; ind++) {
+        let a = document.createElement("div");
+        a.className =
+          "flex self-stretch space-x-6 items-center justify-start px-4 py-2 bg-white rounded css-3d9z0n";
+        let bi = document.createElement("img");
+        bi.className = "flex items-start justify-start css-5nv48v";
+        bi.setAttribute("src", "/fimgs/3135_52607.x1.svg");
+        let c = document.createElement("div");
+        c.className = "flex flex-1 items-start justify-start";
+        let d = document.createElement("div");
+        d.className = "text-base font-medium leading-normal";
+        d.innerText = buku.chapter[ind].chapter_name;
+
+        d.onclick = () => {
+          navigate(
+            `/w-books/${params.book_id}/detail/${buku.chapter[ind].chapter_id}/page`
+          );
+        };
+
+        let e = document.createElement("div");
+        e.className = "flex space-x-4 items-center justify-center css-2fhuhl";
+        let f = document.createElement("div");
+        f.className = "flex self-stretch items-center justify-center rounded";
+        let gi = document.createElement("img");
+        gi.className = "css-5nv48v";
+        gi.setAttribute("src", "/fimgs/3135_52614.x1.svg");
+
+        gi.onclick = () => {
+          navigate(
+            `/w-books/${params.book_id}/chapter/edit/${buku.chapter[ind].chapter_id}`
+          );
+        };
+
+        let hi = document.createElement("img");
+        hi.className =
+          "flex self-stretch items-center justify-center rounded css-vke9og";
+        hi.setAttribute("src", "/fimgs/3135_52615.x1.svg");
+
+        hi.onclick = () => {
+          meta.deleteChapter(buku.chapter[ind].chapter_id);
+        };
+
+        f.appendChild(gi);
+        e.appendChild(f);
+        e.appendChild(hi);
+        c.appendChild(d);
+        a.appendChild(bi);
+        a.appendChild(c);
+        a.appendChild(e);
+        document.getElementById("cc").appendChild(a);
       }
     }}
   />
@@ -851,70 +940,7 @@
                       />
                     </div>
                   </div>
-                  <div class="flex self-stretch flex-col items-start justify-start">
-                    <div
-                      class={`flex self-stretch space-x-6 items-center justify-start px-4 py-2 bg-white rounded`}
-                      style={":hover {background-color: #ffeaa7;}"}
-                    >
-                      <img
-                        src="/fimgs/3135_52607.x1.svg"
-                        class="flex items-start justify-start"
-                        style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
-                      />
-                      <div class="flex flex-1 items-start justify-start">
-                        <div class={`text-base font-medium leading-normal`}>
-                          Prolog
-                        </div>
-                      </div>
-                      <div
-                        class={`flex space-x-4 items-center justify-center`}
-                        style={""}
-                      >
-                        <div class="flex self-stretch items-center justify-center rounded">
-                          <img
-                            src="/fimgs/3135_52614.x1.svg"
-                            style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
-                          />
-                        </div>
-                        <img
-                          src="/fimgs/3135_52615.x1.svg"
-                          class={`flex self-stretch items-center justify-center rounded`}
-                          style={`width: 20px; min-width: 20px; max-width: 20px; height: 30px; min-height: 30px; max-height: 30px; margin-top:3px;`}
-                        />
-                      </div>
-                    </div>
-                    <div
-                      class={`flex self-stretch space-x-6 items-center justify-start px-4 py-2 bg-orange-50 rounded`}
-                      style={":hover {background-color: #ffeaa7;}"}
-                    >
-                      <img
-                        src="/fimgs/3135_52623.x1.svg"
-                        class="flex items-start justify-start"
-                        style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
-                      />
-                      <div class="flex flex-1 items-start justify-start">
-                        <div class="text-base font-medium leading-normal">
-                          BAB I
-                        </div>
-                      </div>
-                      <div
-                        class={`flex space-x-4 items-center justify-center`}
-                        style={""}
-                      >
-                        <div class="flex self-stretch items-center justify-center rounded">
-                          <img
-                            src="/fimgs/3135_52630.x1.svg"
-                            style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
-                          />
-                        </div>
-                        <img
-                          src="/fimgs/3135_52631.x1.svg"
-                          class={`flex self-stretch items-center justify-center rounded`}
-                          style={`width: 20px; min-width: 20px; max-width: 20px; height: 30px; min-height: 30px; max-height: 30px; margin-top:3px;`}
-                        />
-                      </div>
-                    </div>
-                  </div>
+                  <div id="cc" />
                   <div class="flex self-stretch space-x-2.5 items-center justify-start bg-white">
                     <div class="flex flex-1 items-start justify-start">
                       <div class="text-base leading-normal text-orange-900">
