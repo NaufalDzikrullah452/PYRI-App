@@ -29,10 +29,11 @@
       book_notes: "",
       chapter_count: "",
       page_count: "",
+      book_is_released: false,
 
       async deleteBook(id) {
         console.log(id);
-        const confirmDel = confirm("Confirm delete?");
+        const confirmDel = confirm("Confirm delete? ");
 
         if (confirmDel) {
           await api("/api/books", {
@@ -65,6 +66,38 @@
               alert("Can't delete chapter, related to other tables");
             } else {
               navigate(`/w-books/${params.book_id}/details`);
+            }
+          });
+        }
+      },
+
+      async setPublishTrue(id) {
+        if (true) {
+          await api("/api/books", {
+            book: {
+              book_id: parseInt(id),
+              book_is_released: true,
+            },
+            e: "Update",
+          }).then((res) => {
+            if (res.res === "Failure") {
+              alert("Can't update book, related to other tables");
+            }
+          });
+        }
+      },
+
+      async setPublishFalse(id) {
+        if (true) {
+          await api("/api/books", {
+            book: {
+              book_id: parseInt(id),
+              book_is_released: false,
+            },
+            e: "Update",
+          }).then((res) => {
+            if (res.res === "Failure") {
+              alert("Can't update book, related to other tables");
             }
           });
         }
@@ -189,6 +222,7 @@
           meta.book_notes = buku.book_notes;
           meta.chapter_count = buku.chapter.length;
           meta.page_count = buku.page.length;
+          meta.book_is_released = buku.book_is_released;
           console.log(meta.chapter);
         });
       }
@@ -260,6 +294,11 @@
       };
 
       document.getElementById("bc").parentNode.replaceChild(newbc, oldbc);
+
+      if (meta.book_is_released) {
+        meta.setPublish = true;
+        meta.action.changePublish(false);
+      }
     }}
   />
   {window.user.roleAdmin === "admin" && (
@@ -642,8 +681,10 @@
                       onClick={() => {
                         if (meta.setPublish == false) {
                           meta.action.changePublish(true);
+                          meta.setPublishFalse(params.book_id);
                         } else {
                           meta.action.changePublish(false);
+                          meta.setPublishTrue(params.book_id);
                         }
                       }}
                     >
@@ -854,29 +895,11 @@
                     </div>
                   </div>
                   <button
-                    class={`flex space-x-1 items-start justify-start px-4 py-2 bg-orange-50 shadow rounded`}
+                    class={`flex space-x-1 items-start justify-start px-4 py-2 bg-amber-500 shadow rounded`}
                     style={`style={'margin-left:6px;'}`}
                     onClick={(e) => {
                       navigate(`/w-books/${params.book_id}/chapter/add`);
                     }}
-                  >
-                    <img
-                      src="/fimgs/2763_18663.x1.svg"
-                      class="flex items-start justify-start"
-                      style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
-                    />
-                    <div class="flex self-stretch items-start justify-start">
-                      <div
-                        class={`text-base font-bold leading-normal text-amber-500`}
-                      >
-                        {children || "Tambah Chapter"}
-                      </div>
-                    </div>
-                  </button>
-                  <button
-                    class={`flex space-x-1 items-start justify-start px-4 py-2 bg-amber-500 shadow rounded`}
-                    style={`style={'margin-left:6px;'}`}
-                    onClick={onClick}
                   >
                     <img
                       src="/fimgs/2763_18672.x1.svg"
@@ -887,7 +910,7 @@
                       <div
                         class={`text-base font-bold leading-normal text-white`}
                       >
-                        {children || "Tambah Halaman"}
+                        {children || "Tambah Chapter"}
                       </div>
                     </div>
                   </button>
