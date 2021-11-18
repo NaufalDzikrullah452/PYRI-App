@@ -438,7 +438,7 @@
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex items-start justify-start bg-white`}>
+    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
       <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
         <div
           class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -745,7 +745,10 @@
           <div
             class={`w-full flex self-stretch flex-col items-start justify-start px-6 py-2 relative overflow-y-auto rounded`}
           >
-            <div class="flex self-stretch flex-col space-y-6 items-start justify-start p-8 relative overflow-y-auto bg-white rounded-lg">
+            <div
+              class={`flex self-stretch flex-col space-y-6 items-start justify-start p-8 relative overflow-y-auto bg-white rounded-lg`}
+              style={"margin-bottom:70px;"}
+            >
               <div class="flex self-stretch space-x-2.5 items-start justify-start">
                 <div class="flex flex-1 items-start justify-start">
                   <div class="text-2xl font-bold leading-9 text-gray-900">
