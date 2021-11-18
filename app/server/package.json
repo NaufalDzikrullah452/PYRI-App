@@ -6,7 +6,7 @@
   "dependencies": {
     "crypto-js": "^4.1.1",
     "dropify": "^0.2.2",
-    "nodemailer": "^6.7.0"
+    "nodemailer": "^6.7.1"
   },
   "types": "./src/index.ts",
   "main": "./build/index.js"

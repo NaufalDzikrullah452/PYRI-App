@@ -38,7 +38,7 @@
       async upload(file) {
         const formData = _FormData();
 
-        formData.append("path", "genre_icon");
+        formData.append("path", "user_icon");
         formData.append("file", file);
         const response = await fetch("/api/upload", {
           method: "POST",
@@ -237,7 +237,7 @@
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex items-start justify-start bg-white`}>
+    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
       <div class={`w-full flex items-start justify-start`}>
         <div
           class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -576,7 +576,7 @@
                           runInAction(async () => {
                             const upload = await meta.upload(e.target.files[0]);
                             runInAction(() => {
-                              meta.tag_picture = upload.path;
+                              meta.user_picture = upload.path;
                             });
                           });
                         }}

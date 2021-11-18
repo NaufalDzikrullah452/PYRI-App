@@ -7,6 +7,8 @@
       changeProfile: (open) => {},
       changeManagement: (open) => {},
       changeMasterData: (open) => {},
+      books: [],
+      category: [],
       page: [],
       chapter: [],
       searching: "",
@@ -178,6 +180,17 @@
         params.book_id &&
         params.book_id !== "undefined"
       ) {
+        var buku = "";
+        await api("/api/books", {
+          book: {
+            book_id: parseInt(params.book_id),
+          },
+          e: "ReadDetailById",
+        }).then((res) => {
+          if (res.res !== "Failure" || res === null) {
+            buku = res.book;
+          }
+        });
         var page = "";
         await api("/api/page", {
           page: {
@@ -208,8 +221,10 @@
           }
         });
         runInAction(() => {
+          meta.books = buku;
           meta.page = page;
           meta.chapter = chapter;
+          meta.category = buku.category;
           meta.sum_pages = Math.ceil(meta.page.length / meta.entries); // meta.page_array = new Array(meta.sum_page);
 
           meta.pages_array = Array.apply(null, {
@@ -217,7 +232,7 @@
           }).map(Number.call, Number);
           meta.loading_page = false;
         });
-      } // console.log(meta.chapter)
+      } // console.log(meta.category);
       // var kategori = "";
       // if (window.user.roleAdmin !== "admin") {
       //   navigate("/login-admin");
@@ -280,7 +295,7 @@
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex items-start justify-start bg-white`}>
+    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
       <div class={`w-full flex flex-1 items-start justify-start`}>
         <div
           class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -596,6 +611,9 @@
                   src="/fimgs/2723_19910.x1.svg"
                   class={`flex self-stretch items-center justify-start`}
                   style={`width: 28px; min-width: 28px; max-width: 28px; height: 36px; min-height: 36px; max-height: 36px;`}
+                  onClick={() => {
+                    navigate(`/w-books/${params.book_id}/details`);
+                  }}
                 />
                 <div class="flex flex-1 items-start justify-start">
                   <div class={`text-2xl font-bold leading-9 text-coolGray-800`}>
@@ -605,19 +623,28 @@
               </div>
               <div class="flex self-stretch space-x-6 items-center justify-start p-6 bg-white shadow rounded-lg">
                 <img
-                  src="/fimgs/I2808_19228_2808_19212.x1.png"
-                  class="flex flex-col items-center justify-start"
-                  style="width: 46.85px; min-width: 46.85px; max-width: 46.85px; height: 70px; min-height: 70px; max-height: 70px;"
+                  src={
+                    meta.books.book_picture
+                      ? "/upload/" + meta.books.book_picture
+                      : "/fimgs/I2808_19228_2808_19212.x1.png"
+                  }
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "/fimgs/I2808_19228_2808_19212.x1.png";
+                  }}
+                  class={`flex flex-col items-center justify-start`}
                 />
                 <div class="flex flex-1 flex-col space-y-2 items-start justify-start">
                   <div class="flex self-stretch items-start justify-start">
-                    <div class="text-2xl font-bold leading-9 text-gray-900">
-                      One Piece
+                    <div class={`text-2xl font-bold leading-9 text-gray-900`}>
+                      {meta.books.book_title || "Nama buku"}
                     </div>
                   </div>
                   <div class="flex items-start justify-start px-3 py-0.5 bg-orange-100 rounded">
-                    <div class="text-base font-bold leading-normal text-amber-500">
-                      Komik
+                    <div
+                      class={`text-base font-bold leading-normal text-amber-500`}
+                    >
+                      {meta.category.category_name || "Kategori"}
                     </div>
                   </div>
                 </div>

@@ -34,7 +34,7 @@
       async upload(file) {
         const formData = _FormData();
 
-        formData.append("path", "genre_icon");
+        formData.append("path", "user_icon");
         formData.append("file", file);
         const response = await fetch("/api/upload", {
           method: "POST",

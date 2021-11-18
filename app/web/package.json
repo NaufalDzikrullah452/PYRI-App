@@ -10,7 +10,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@fortawesome/react-fontawesome": "^0.1.15",
     "datatables.net": "^1.11.3",
-    "date-fns": "^2.24.0",
+    "date-fns": "^2.25.0",
     "dropify": "^0.2.2",
     "is-my-date-valid": "^0.1.1",
     "jquery": "^3.6.0",

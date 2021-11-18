@@ -7,6 +7,8 @@
       changeProfile: (open) => {},
       changeManagement: (open) => {},
       changeMasterData: (open) => {},
+      books: [],
+      category: [],
       page_chapter_id: "",
       page_page: "",
       page_content: "",
@@ -127,7 +129,19 @@
 
       if (window.user.roleAdmin !== "admin") {
         navigate("/login-admin");
-      } // read chapter
+      } // read buku
+
+      var buku = "";
+      await api("/api/books", {
+        book: {
+          book_id: parseInt(params.book_id),
+        },
+        e: "ReadDetailById",
+      }).then((res) => {
+        if (res.res !== "Failure" || res === null) {
+          buku = res.book;
+        }
+      }); // read chapter
 
       var chapter = "";
 
@@ -143,6 +157,8 @@
           }
         });
         runInAction(() => {
+          meta.books = buku;
+          meta.category = buku.category;
           meta.chapter = chapter;
           meta.page_chapter_id = params.chapter_id;
         });
@@ -478,19 +494,30 @@
                 <div class="flex self-stretch flex-col space-y-9 items-start justify-start">
                   <div class="flex self-stretch space-x-6 items-center justify-start p-6 bg-white shadow rounded-lg">
                     <img
-                      src="/fimgs/I2978_55580_2808_19212.x1.png"
-                      class="flex flex-col items-center justify-start"
-                      style="width: 46.85px; min-width: 46.85px; max-width: 46.85px; height: 70px; min-height: 70px; max-height: 70px;"
+                      src={
+                        meta.books.book_picture
+                          ? "/upload/" + meta.books.book_picture
+                          : "/fimgs/I2808_19228_2808_19212.x1.png"
+                      }
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "/fimgs/I2808_19228_2808_19212.x1.png";
+                      }}
+                      class={`flex flex-col items-center justify-start`}
                     />
                     <div class="flex flex-1 flex-col space-y-2 items-start justify-start">
                       <div class="flex self-stretch items-start justify-start">
-                        <div class="text-2xl font-bold leading-9 text-gray-900">
-                          One Piece
+                        <div
+                          class={`text-2xl font-bold leading-9 text-gray-900`}
+                        >
+                          {meta.books.book_title || "Nama buku"}
                         </div>
                       </div>
                       <div class="flex items-start justify-start px-3 py-0.5 bg-orange-100 rounded">
-                        <div class="text-base font-bold leading-normal text-amber-500">
-                          Komik
+                        <div
+                          class={`text-base font-bold leading-normal text-amber-500`}
+                        >
+                          {meta.category.category_name || "Kategori"}
                         </div>
                       </div>
                     </div>
