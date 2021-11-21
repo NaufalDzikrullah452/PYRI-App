@@ -1,0 +1,73 @@
+<>
+  <effect meta={{}} run={async () => {}} />
+  <div class="flex flex-col items-center justify-center bg-white">
+    <div class="flex flex-1 self-stretch flex-col items-start justify-start">
+      <div class="flex self-stretch flex-col space-y-5 items-start justify-start">
+        <div class="flex self-stretch flex-col items-start justify-start">
+          <div
+            class={`flex self-stretch items-center justify-center px-4 pt-6 pb-4`}
+            style={""}
+          >
+            <div class="text-base font-bold leading-normal text-center">
+              Pyri List
+            </div>
+          </div>
+          <div
+            class={`flex self-stretch items-start justify-start`}
+            style={"margin-top:20px;"}
+          >
+            <div
+              class={`flex flex-1 flex-col space-y-2.5 items-center justify-center bg-white`}
+              style={
+                "padding:8px; border-bottom: 3px solid black; border-bottom-color: #f5f6fa"
+              }
+            >
+              <div class="text-base leading-normal text-center text-gray-900">
+                History
+              </div>
+            </div>
+            <div
+              class={`flex flex-1 flex-col space-y-2.5 items-center justify-center bg-white`}
+              style={
+                "padding:8px; border-bottom: 3px solid black; border-bottom-color: #feca57"
+              }
+            >
+              <div class="text-base leading-normal text-center text-amber-500">
+                Read Later
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-center">
+          <div
+            class={`flex self-stretch flex-col space-y-2.5 items-center justify-start`}
+            style={"margin-top:100px;"}
+          >
+            <img
+              src="/fimgs/3785_137516.x1.svg"
+              class="flex items-center justify-center"
+              style="width: 125.04px; min-width: 125.04px; max-width: 125.04px; height: 148px; min-height: 148px; max-height: 148px;"
+            />
+            <div class="flex items-start justify-start">
+              <div class="text-base leading-normal text-center text-gray-600">
+                You have no book in read later, <br />
+                go find your book!
+              </div>
+            </div>
+          </div>
+          <button
+            class={`flex items-center justify-center px-4 py-1 bg-amber-500 shadow rounded`}
+            style={`width: 88px; min-width: 88px; max-width: 88px; height: 26px; min-height: 26px; max-height: 26px; margin-top:15px !important;`}
+            onClick={(e) => {
+              navigate("/m/home");
+            }}
+          >
+            <div class="text-xs font-bold leading-none text-white">
+              Read Now
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</>

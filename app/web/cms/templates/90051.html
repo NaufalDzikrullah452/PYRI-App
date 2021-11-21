@@ -1,0 +1,352 @@
+<>
+  <effect
+    meta={{
+      tabActive: "history",
+      tabLink: "",
+      tabRead: true,
+
+      onClickTab(tab) {
+        this.tabActive = tab;
+      },
+    }}
+    run={async () => {}}
+  />
+  <div class="flex self-stretch flex-col items-start justify-start bg-white">
+    <div class="flex flex-1 self-stretch flex-col items-start justify-start">
+      <div class="flex self-stretch flex-col items-start justify-start">
+        <div class="flex self-stretch items-center justify-center px-4 pt-6 pb-4">
+          <div
+            class={`text-base font-bold leading-normal text-center`}
+            style={"font-size:18px;"}
+          >
+            Pyri List
+          </div>
+        </div>
+        <div
+          class={`flex self-stretch items-center justify-center`}
+          style={"margin-top:20px;"}
+        >
+          <m-link
+            class={`flex flex-1 self-stretch flex-col space-y-2.5 items-start justify-start`}
+            tabLink="#history"
+            onClick={(e) => meta.onClickTab("history")}
+            tabLinkActive={meta.tabActive === "history"}
+          >
+            {meta.tabActive === "history" && (
+              <div
+                class={`flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-center bg-white`}
+                style={`padding:8px; border-bottom: 3px solid black; border-bottom-color: #feca57`}
+              >
+                <div class="text-base leading-normal text-center text-amber-500">
+                  History
+                </div>
+              </div>
+            )}
+            {meta.tabActive !== "history" && (
+              <div
+                class={`flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-center`}
+                style={
+                  "padding:8px; border-bottom: 3px solid black; border-bottom-color: #f5f6fa"
+                }
+              >
+                <div class="text-base leading-normal text-center text-gray-900">
+                  History
+                </div>
+              </div>
+            )}
+          </m-link>
+          <m-link
+            class={`flex flex-1 self-stretch flex-col space-y-2.5 items-start justify-start`}
+            tabLink="#read-later"
+            onClick={(e) => meta.onClickTab("read-later")}
+            tabLinkActive={meta.tabActive === "read-later"}
+          >
+            {meta.tabActive === "read-later" && (
+              <div
+                class={`flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-center`}
+                style={
+                  "padding:8px; border-bottom: 3px solid black; border-bottom-color: #feca57;"
+                }
+              >
+                <div class="text-base leading-normal text-center text-amber-500">
+                  Read Later
+                </div>
+              </div>
+            )}
+            {meta.tabActive !== "read-later" && (
+              <div
+                class={`flex self-stretch flex-col space-y-2.5 items-center justify-center bg-white`}
+                style={`padding:8px; border-bottom: 3px solid black; border-bottom-color: #f5f6fa;`}
+              >
+                <div class="text-base leading-normal text-center text-gray-900">
+                  Read Later
+                </div>
+              </div>
+            )}
+          </m-link>
+        </div>
+      </div>
+      <m-tabs
+        class={`flex flex-1 self-stretch flex-col space-y-5 items-center justify-center pt-4`}
+        swipeable={true}
+      >
+        <m-tab
+          class={`flex flex-1 self-stretch flex-col space-y-3 items-center justify-start px-6`}
+          id="history"
+          style="margin-top:25px;"
+        >
+          <div class="flex space-x-4 items-start justify-start p-2 bg-white shadow shadow-inner rounded">
+            <div class="flex items-start justify-start">
+              <img src="/fimgs/3801_18876.x1.png" style={`border-radius:8%;`} />
+            </div>
+            <div class="flex flex-1 self-stretch flex-col space-y-1.5 items-start justify-center">
+              <div class="flex self-stretch flex-col items-start justify-start">
+                <div class="flex self-stretch items-start justify-start">
+                  <div class="text-sm font-medium leading-tight">
+                    Rumah di Perkebunan Karet
+                  </div>
+                </div>
+                <div class="flex flex-1 self-stretch items-center justify-start rounded-full">
+                  <div class="text-xs font-medium leading-none text-gray-500">
+                    Author
+                  </div>
+                </div>
+              </div>
+              <div class="flex self-stretch items-start justify-start">
+                <div class="text-sm leading-tight text-gray-600">
+                  Last read on page 23
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex space-x-4 items-start justify-start p-2 bg-white shadow shadow-inner rounded">
+            <div class="flex items-start justify-start">
+              <img style={`border-radius:8%;`} src="/fimgs/3801_18877.x1.png" />
+            </div>
+            <div class="flex flex-1 self-stretch flex-col space-y-1.5 items-start justify-center">
+              <div class="flex self-stretch flex-col items-start justify-start">
+                <div class="flex self-stretch items-start justify-start">
+                  <div class="text-sm font-medium leading-tight">Game Over</div>
+                </div>
+                <div class="flex flex-1 self-stretch items-center justify-start rounded-full">
+                  <div class="text-xs font-medium leading-none text-gray-500">
+                    Valerie Patkar
+                  </div>
+                </div>
+              </div>
+              <div class="flex self-stretch items-start justify-start">
+                <div class="text-sm leading-tight text-gray-600">
+                  Last read on page 23
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex space-x-4 items-start justify-start p-2 bg-white shadow shadow-inner rounded">
+            <div class="flex items-start justify-start">
+              <img style={`border-radius:8%;`} src="/fimgs/3801_18878.x1.png" />
+            </div>
+            <div class="flex flex-1 self-stretch flex-col space-y-1.5 items-start justify-center">
+              <div class="flex self-stretch flex-col items-start justify-start">
+                <div class="flex self-stretch items-start justify-start">
+                  <div class="text-sm font-medium leading-tight">One Piece</div>
+                </div>
+                <div class="flex flex-1 self-stretch items-center justify-start rounded-full">
+                  <div class="text-xs font-medium leading-none text-gray-500">
+                    Eichiro Oda
+                  </div>
+                </div>
+              </div>
+              <div class="flex self-stretch items-start justify-start">
+                <div class="text-sm leading-tight text-gray-600">
+                  Last read on page 23
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex space-x-4 items-start justify-start p-2 bg-white shadow shadow-inner rounded">
+            <div class="flex items-start justify-start">
+              <img src="/fimgs/3801_18879.x1.png" style={`border-radius:8%;`} />
+            </div>
+            <div class="flex flex-1 self-stretch flex-col space-y-1.5 items-start justify-center">
+              <div class="flex self-stretch flex-col items-start justify-start">
+                <div class="flex self-stretch items-start justify-start">
+                  <div class="text-sm font-medium leading-tight">
+                    Rumah di Perkebunan Karet
+                  </div>
+                </div>
+                <div class="flex flex-1 self-stretch items-center justify-start rounded-full">
+                  <div class="text-xs font-medium leading-none text-gray-500">
+                    Author
+                  </div>
+                </div>
+              </div>
+              <div class="flex self-stretch items-start justify-start">
+                <div class="text-sm leading-tight text-gray-600">
+                  Last read on page 23
+                </div>
+              </div>
+            </div>
+          </div>
+        </m-tab>
+        <m-tab
+          class={`flex flex-1 self-stretch flex-col space-y-3 items-center justify-start px-6`}
+          id="read-later"
+          style="margin-top:25px;"
+        >
+          <div class="flex flex-col items-start justify-start p-2 bg-white shadow shadow-inner rounded">
+            <div class="flex self-stretch space-x-4 items-start justify-start">
+              <div class="flex items-start justify-start">
+                <img
+                  src="/fimgs/3801_41280.x1.png"
+                  style={`border-radius:8%;`}
+                />
+              </div>
+              <div class="flex flex-1 self-stretch flex-col space-y-1.5 items-start justify-start">
+                <div class="flex flex-1 self-stretch flex-col items-start justify-start">
+                  <div class="flex self-stretch flex-col items-start justify-start">
+                    <div class="flex self-stretch items-start justify-start">
+                      <div class="text-sm font-medium leading-tight">
+                        Rumah di Perkebunan Karet
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class={`flex self-stretch items-center justify-start`}
+                    style="margin-top:5px;"
+                  >
+                    <div class="flex items-start justify-start">
+                      <div class="flex items-center justify-center rounded-full">
+                        <div class="text-xs font-medium leading-none text-center text-gray-500">
+                          Brii
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex self-stretch space-x-2 items-start justify-start">
+                  <div class="flex flex-1 items-center justify-center px-4 py-2.5 bg-white shadow border rounded border-amber-500">
+                    <div class="text-xs font-bold leading-none text-center text-amber-500">
+                      Read Now
+                    </div>
+                  </div>
+                  <div
+                    class="flex items-center justify-center px-1.5 py-1 bg-white shadow border rounded border-gray-400"
+                    style="width: 36px; min-width: 36px; max-width: 36px; height: 34px; min-height: 34px; max-height: 34px;"
+                  >
+                    <img
+                      class={`flex self-stretch items-center justify-end`}
+                      style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
+                      src="/fimgs/3801_41293.x1.svg"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-col items-start justify-start p-2 bg-white shadow shadow-inner rounded">
+            <div class="flex self-stretch space-x-4 items-start justify-start">
+              <div class="flex items-start justify-start">
+                <div class="flex items-start justify-start">
+                  <img
+                    style={`border-radius:8%;`}
+                    src="/fimgs/3801_41300.x1.png"
+                  />
+                </div>
+              </div>
+              <div class="flex flex-1 self-stretch flex-col space-y-1.5 items-start justify-start">
+                <div class="flex flex-1 self-stretch flex-col items-start justify-start">
+                  <div class="flex self-stretch flex-col items-start justify-start">
+                    <div class="flex self-stretch items-start justify-start">
+                      <div class="text-sm font-medium leading-tight">
+                        Rumah di Perkebunan Karet
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class={`flex self-stretch items-center justify-start`}
+                    style="margin-top:5px;"
+                  >
+                    <div class="flex items-start justify-start">
+                      <div class="flex items-center justify-center rounded-full">
+                        <div class="text-xs font-medium leading-none text-center text-gray-500">
+                          Brii
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex self-stretch space-x-2 items-start justify-start">
+                  <div class="flex flex-1 items-center justify-center px-4 py-2.5 bg-white shadow border rounded border-amber-500">
+                    <div class="text-xs font-bold leading-none text-center text-amber-500">
+                      Read Now
+                    </div>
+                  </div>
+                  <div
+                    class="flex items-center justify-center px-1.5 py-1 bg-white shadow border rounded border-gray-400"
+                    style="width: 36px; min-width: 36px; max-width: 36px; height: 34px; min-height: 34px; max-height: 34px;"
+                  >
+                    <img
+                      class={`flex self-stretch items-center justify-end`}
+                      style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
+                      src="/fimgs/3801_63305.x1.svg"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-col items-start justify-start p-2 bg-white shadow shadow-inner rounded">
+            <div class="flex self-stretch space-x-4 items-start justify-start">
+              <div class="flex items-start justify-start">
+                <img
+                  style={`border-radius:8%;`}
+                  src="/fimgs/3801_41319.x1.png"
+                />
+              </div>
+              <div class="flex flex-1 self-stretch flex-col space-y-1.5 items-start justify-start">
+                <div class="flex flex-1 self-stretch flex-col items-start justify-start">
+                  <div class="flex self-stretch flex-col items-start justify-start">
+                    <div class="flex self-stretch items-start justify-start">
+                      <div class="text-sm font-medium leading-tight">
+                        Rumah di Perkebunan Karet
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class={`flex self-stretch items-center justify-start`}
+                    style="margin-top:5px;"
+                  >
+                    <div class="flex items-start justify-start">
+                      <div class="flex items-center justify-center rounded-full">
+                        <div class="text-xs font-medium leading-none text-center text-gray-500">
+                          Brii
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex self-stretch space-x-2 items-start justify-start">
+                  <div class="flex flex-1 items-center justify-center px-4 py-2.5 bg-white shadow border rounded border-amber-500">
+                    <div class="text-xs font-bold leading-none text-center text-amber-500">
+                      Read Now
+                    </div>
+                  </div>
+                  <div
+                    class="flex items-center justify-center px-1.5 py-1 bg-white shadow border rounded border-gray-400"
+                    style="width: 36px; min-width: 36px; max-width: 36px; height: 34px; min-height: 34px; max-height: 34px;"
+                  >
+                    <img
+                      class={`flex self-stretch items-center justify-end`}
+                      style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
+                      src="/fimgs/3801_64423.x1.svg"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </m-tab>
+      </m-tabs>
+    </div>
+  </div>
+</>
