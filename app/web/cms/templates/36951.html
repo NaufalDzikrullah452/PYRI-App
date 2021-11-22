@@ -1,11 +1,36 @@
 <>
   <effect
     meta={{
+      book: [],
+      author: [],
+      publisher: [],
+      category: [],
+
       async back() {
-        navigate("/m/detail-book-page");
+        var book_id = "";
+        if (params.book_id !== undefined) book_id = params.book_id;
+        navigate("/m/detail-book-page/" + book_id);
       },
     }}
-    run={async () => {}}
+    run={async () => {
+      // read book
+      if (params.book_id !== undefined) {
+        api("/api/books", {
+          book: {
+            book_id: parseInt(params.book_id),
+          },
+          e: "ReadById",
+        }).then((res) => {
+          console.log(res);
+          runInAction(() => {
+            meta.book = res.book;
+            meta.publisher = res.book.publisher; // meta.author = res.book.author;
+
+            meta.category = res.book.category;
+          });
+        });
+      }
+    }}
   />
   <div class="flex flex-col items-start justify-start bg-white">
     <div class="flex flex-1 self-stretch flex-col space-y-1 items-start justify-start">
@@ -19,7 +44,7 @@
               class={`flex self-stretch items-center justify-start`}
               style={`width: 24px; min-width: 24px; max-width: 24px; height: 40px; min-height: 40px; max-height: 40px;`}
               onClick={() => {
-                back();
+                meta.back();
               }}
             />
           </div>
@@ -33,13 +58,13 @@
         <div class="flex self-stretch flex-col space-y-4 items-start justify-start">
           <div class="flex self-stretch flex-col space-y-2.5 items-start justify-start">
             <div class="flex self-stretch items-start justify-start">
-              <div class="text-xl font-bold leading-loose">Game Over</div>
+              <div class={`text-xl font-bold leading-loose`}>
+                {meta.book.book_title || "Book title"}
+              </div>
             </div>
             <div class="flex self-stretch items-start justify-start">
-              <div class="text-sm font-medium leading-tight text-gray-600">
-                Glendi Adijunior adalah seadanya. <br />
-                Jaera Nindya adalah seadainya. <br />
-                Di permainan ini, mereka mencari titik terangnya
+              <div class={`text-sm font-medium leading-tight text-gray-600`}>
+                {meta.book.book_description || "Book description..."}
               </div>
             </div>
           </div>
@@ -67,10 +92,22 @@
         </div>
         <div class="flex self-stretch space-x-2.5 items-start justify-start">
           <div class="flex flex-1 items-start justify-start">
+            <div class="text-base leading-normal">Category</div>
+          </div>
+          <div class="flex flex-1 items-start justify-end">
+            <div class={`text-base leading-normal text-right`}>
+              {meta.category.category_name || "-"}
+            </div>
+          </div>
+        </div>
+        <div class="flex self-stretch space-x-2.5 items-start justify-start">
+          <div class="flex flex-1 items-start justify-start">
             <div class="text-base leading-normal">Publisher</div>
           </div>
           <div class="flex flex-1 items-start justify-end">
-            <div class="text-base leading-normal text-right">Bhuana Sastra</div>
+            <div class={`text-base leading-normal text-right`}>
+              {meta.publisher.publisher_name || "Publisher name"}
+            </div>
           </div>
         </div>
         <div class="flex self-stretch space-x-2.5 items-start justify-start">
@@ -88,7 +125,9 @@
             <div class="text-base leading-normal">ISBN</div>
           </div>
           <div class="flex flex-1 items-start justify-end">
-            <div class="text-base leading-normal text-right">1234567890123</div>
+            <div class={`text-base leading-normal text-right`}>
+              {meta.book.book_isbn || "-"}
+            </div>
           </div>
         </div>
         <div class="flex self-stretch space-x-2.5 items-start justify-start">
@@ -96,8 +135,10 @@
             <div class="text-base leading-normal">Publish on</div>
           </div>
           <div class="flex flex-1 items-start justify-end">
-            <div class="text-base leading-normal text-right">
-              3 Februari 2020
+            <div class={`text-base leading-normal text-right`}>
+              {meta.book.book_date_created
+                ? dateFormat(meta.book.book_date_created, "d MMMM yyyy")
+                : "d MMMM yyyy"}
             </div>
           </div>
         </div>

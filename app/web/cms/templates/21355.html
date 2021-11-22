@@ -295,7 +295,7 @@
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
+    <div class={`w-full flex items-start justify-start bg-white`}>
       <div class={`w-full flex flex-1 items-start justify-start`}>
         <div
           class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -609,7 +609,7 @@
               <div class="flex self-stretch space-x-2 items-start justify-start">
                 <img
                   src="/fimgs/2723_19910.x1.svg"
-                  class={`flex self-stretch items-center justify-start`}
+                  class={`flex self-stretch items-center justify-start cursor-pointer`}
                   style={`width: 28px; min-width: 28px; max-width: 28px; height: 36px; min-height: 36px; max-height: 36px;`}
                   onClick={() => {
                     navigate(`/w-books/${params.book_id}/details`);
@@ -633,6 +633,7 @@
                     e.target.src = "/fimgs/I2808_19228_2808_19212.x1.png";
                   }}
                   class={`flex flex-col items-center justify-start`}
+                  style={`width: 46.85px; min-width: 46.85px; max-width: 46.85px; height: 70px; min-height: 70px; max-height: 70px; object-fit: cover;`}
                 />
                 <div class="flex flex-1 flex-col space-y-2 items-start justify-start">
                   <div class="flex self-stretch items-start justify-start">

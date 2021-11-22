@@ -25,7 +25,7 @@
               width: 163.60000610351562px;
               max-width: 163.60000610351562px;
               min-width: 163.60000610351562px;
-              margin: 30px 15px 0px;
+              margin: 30px 30px 0px;
             `,
 
       async onChange(key, e) {
@@ -438,7 +438,7 @@
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
+    <div class={`w-full flex items-start justify-start bg-white`}>
       <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
         <div
           class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -843,7 +843,9 @@
                   </div>
                 </button>
               </div>
-              <div class={`flex flex-wrap w-full`} id="bc" />
+              <div class="flex self-stretch flex-col items-start justify-start p-2.5">
+                <div class={`flex flex-wrap w-full`} id="bc" />
+              </div>
               <div class="flex self-stretch space-x-2.5 items-center justify-start bg-white">
                 <div class="flex flex-1 items-start justify-start">
                   <div

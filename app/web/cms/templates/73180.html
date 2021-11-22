@@ -1,22 +1,89 @@
 <>
   <effect
     meta={{
+      author: [],
+      book: [],
+      chapter: [],
+      category: [],
+      page: [],
+      publisher: [],
+      page_info: false,
+      save_info: false,
+      star_info: false,
+      read_info: false,
+
+      async showInfo(key) {
+        if (key === "page_info" && !this[key]) {
+          this.page_info = true;
+          this.save_info = false;
+          this.star_info = false;
+          this.read_info = false;
+        } else if (key === "save_info" && !this[key]) {
+          this.page_info = false;
+          this.save_info = true;
+          this.star_info = false;
+          this.read_info = false;
+        } else if (key === "star_info" && !this[key]) {
+          this.page_info = false;
+          this.save_info = false;
+          this.star_info = true;
+          this.read_info = false;
+        } else if (key === "read_info" && !this[key]) {
+          this.page_info = false;
+          this.save_info = false;
+          this.star_info = false;
+          this.read_info = true;
+        } else {
+          this.page_info = false;
+          this.save_info = false;
+          this.star_info = false;
+          this.read_info = false;
+        }
+
+        console.log("onclick:" + this.page_info);
+      },
+
       async back() {
         navigate("/m/");
       },
 
       async aboutPage() {
-        navigate("/m/about-books-page");
+        var book_id = "";
+        if (params.book_id !== undefined) book_id = params.book_id;
+        navigate("/m/about-books-page/" + book_id);
       },
 
       async commentPage() {
-        navigate("/m/comment-page");
+        var book_id = "";
+        if (params.book_id !== undefined) book_id = params.book_id;
+        navigate("/m/comment-page/" + book_id);
       },
     }}
-    run={async () => {}}
+    run={async () => {
+      // read buku by book_id
+      if (params.book_id !== undefined) {
+        api("/api/books", {
+          book: {
+            book_id: parseInt(params.book_id),
+          },
+          e: "ReadById",
+        }).then((res) => {
+          console.log(res);
+          runInAction(() => {
+            meta.book = res.book;
+            meta.chapter = res.book.chapter;
+            meta.category = res.book.category;
+            meta.publisher = res.book.publisher;
+            meta.page = res.book.page; // meta.author = res.book.author;
+          });
+        });
+      }
+    }}
   />
   <div class={`flex items-start justify-start bg-white`}>
-    <div class="flex flex-1 self-stretch flex-col space-y-4 items-start justify-start">
+    <div
+      class={`flex flex-1 self-stretch flex-col space-y-4 items-start justify-start`}
+    >
       <div class="flex self-stretch flex-col items-start justify-start">
         <div
           class={`flex self-stretch flex-col items-start justify-start px-6 pt-9 pb-4 bg-white shadow`}
@@ -28,7 +95,7 @@
                 class={`flex self-stretch items-center justify-start`}
                 style={`width: 24px; min-width: 24px; max-width: 24px; height: 30px; min-height: 30px; max-height: 30px;`}
                 onClick={() => {
-                  back();
+                  meta.back();
                 }}
               />
             </div>
@@ -47,21 +114,33 @@
               style={`width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;`}
             >
               <img
-                src="/fimgs/733_4436.x1.png"
-                style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;"
+                src={
+                  meta.book.book_picture
+                    ? "/upload/" + meta.book.book_picture
+                    : "/fimgs/733_4436.x1.png"
+                }
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "/fimgs/733_4436.x1.png";
+                }}
+                style={`background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;`}
               />
             </div>
             <div class="flex flex-1 self-stretch flex-col space-y-1 items-start justify-start">
               <div class="flex self-stretch items-start justify-start">
-                <div class="text-2xl font-bold leading-9">Game Over</div>
-              </div>
-              <div class="flex self-stretch items-start justify-start">
-                <div class="text-sm font-bold leading-tight text-gray-500">
-                  By Valerie Patkar
+                <div class={`text-2xl font-bold leading-9`}>
+                  {meta.book.book_title || "Book title"}
                 </div>
               </div>
               <div class="flex self-stretch items-start justify-start">
-                <div class="text-xs font-bold leading-none">Bhuana Sastra</div>
+                <div class={`text-sm font-bold leading-tight text-gray-500`}>
+                  By {meta.author.author_name || "Author"}
+                </div>
+              </div>
+              <div class="flex self-stretch items-start justify-start">
+                <div class={`text-xs font-bold leading-none`}>
+                  {meta.publisher.publisher_name || "Book publisher"}
+                </div>
               </div>
               <div class="flex items-start justify-start px-1 py-0.5 bg-white border border-gray-500">
                 <div class="text-xs leading-none text-right text-gray-500">
@@ -70,44 +149,127 @@
               </div>
             </div>
           </div>
-          <div class="flex self-stretch items-center justify-center py-4 bg-gray-100 rounded">
-            <div class="flex flex-1 items-center justify-center p-2.5">
-              <img
-                src="/fimgs/1369_30601.x1.svg"
-                style="width: 18px; min-width: 18px; max-width: 18px; height: 18px; min-height: 18px; max-height: 18px;"
-                class="flex items-start justify-start"
-              />
-              <div class="flex items-center justify-start">
-                <div class="text-base font-bold leading-normal">4.5</div>
-              </div>
-            </div>
-            <div class="flex flex-1 items-center justify-center p-2.5">
-              <img
-                src="/fimgs/I991_7642_991_7622.x1.svg"
-                class="flex items-center justify-center"
-                style="width: 10.47px; min-width: 10.47px; max-width: 10.47px; height: 16px; min-height: 16px; max-height: 16px;"
-              />
-              <div class="flex items-center justify-start">
-                <div class="text-base font-bold leading-normal">125K</div>
-              </div>
-            </div>
-            <div class="flex flex-1 items-center justify-center p-2.5">
-              <img
-                src="/fimgs/I991_7642_991_7629.x1.svg"
-                class="flex items-start justify-start"
-                style="width: 16px; min-width: 16px; max-width: 16px; height: 16px; min-height: 16px; max-height: 16px;"
-              />
-              <div class="flex items-center justify-start">
-                <div class="text-base font-bold leading-normal">125K</div>
-              </div>
-            </div>
-            <div class="flex flex-1 items-center justify-center p-2.5">
+          <div
+            class={`flex self-stretch items-center justify-center py-4 bg-gray-100 rounded`}
+            tabIndex="0"
+            onBlur={() => {
+              meta.showInfo(false);
+            }}
+          >
+            <div
+              class={`flex flex-1 flex-col items-center justify-center p-2.5`}
+              onClick={() => {
+                meta.showInfo("star_info");
+              }}
+            >
+              {meta.star_info && (
+                <div
+                  class={`flex self-stretch flex-col items-center justify-center`}
+                  style={`margin-top: -22px;`}
+                >
+                  <div
+                    class={`text-base font-bold leading-normal text-gray-500`}
+                  >
+                    Rates
+                  </div>
+                </div>
+              )}
               <div class="flex items-start justify-start">
-                <div class="text-base font-bold leading-normal">125</div>
+                <img
+                  src="/fimgs/1369_30601.x1.svg"
+                  style="width: 18px; min-width: 18px; max-width: 18px; height: 18px; min-height: 18px; max-height: 18px;"
+                  class="flex items-start justify-start"
+                />
+                <div class="flex items-center justify-start">
+                  <div class="text-base font-bold leading-normal">4.5</div>
+                </div>
               </div>
-              <div class="flex items-start justify-start">
-                <div class="text-xs font-bold leading-none text-gray-500">
-                  Pages
+            </div>
+            <div
+              class={`flex flex-1 flex-col items-center justify-center p-2.5`}
+              onClick={() => {
+                meta.showInfo("save_info");
+              }}
+            >
+              {meta.save_info && (
+                <div
+                  class={`flex self-stretch flex-col items-center justify-center`}
+                  style={`margin-top: -22px;`}
+                >
+                  <div
+                    class={`text-base font-bold leading-normal text-gray-500`}
+                  >
+                    Saves
+                  </div>
+                </div>
+              )}
+              <div class="flex items-center justify-center">
+                <img
+                  src="/fimgs/3840_264934.x1.svg"
+                  class="flex items-center justify-center"
+                  style="width: 10.47px; min-width: 10.47px; max-width: 10.47px; height: 16px; min-height: 16px; max-height: 16px;"
+                />
+                <div class="flex items-center justify-start">
+                  <div class="text-base font-bold leading-normal">125K</div>
+                </div>
+              </div>
+            </div>
+            <div
+              class={`flex flex-1 flex-col items-center justify-center`}
+              onClick={() => {
+                meta.showInfo("read_info");
+              }}
+            >
+              {meta.read_info && (
+                <div
+                  class={`flex self-stretch flex-col items-center justify-center`}
+                  style={`margin-top: -22px;`}
+                >
+                  <div
+                    class={`text-base font-bold leading-normal text-gray-500`}
+                  >
+                    Reads
+                  </div>
+                </div>
+              )}
+              <div class="flex space-x-0.5 items-center justify-center">
+                <img
+                  src="/fimgs/3840_264942.x1.svg"
+                  class="flex items-start justify-start"
+                  style="width: 16px; min-width: 16px; max-width: 16px; height: 16px; min-height: 16px; max-height: 16px;"
+                />
+                <div class="flex items-center justify-start">
+                  <div class="text-base font-bold leading-normal">125K</div>
+                </div>
+              </div>
+            </div>
+            <div
+              class={`flex flex-1 flex-col items-center justify-center`}
+              onClick={() => {
+                meta.showInfo("page_info");
+              }}
+            >
+              {meta.page_info && (
+                <div
+                  class={`flex self-stretch flex-col items-center justify-center`}
+                  style={`margin-top: -22px;`}
+                >
+                  <div class="text-base font-bold leading-normal text-gray-500">
+                    Pages
+                  </div>
+                </div>
+              )}
+              <div class={`flex space-x-0.5 items-center justify-center`}>
+                <ficon
+                  aria-label="Page"
+                  iconName="PageSolid"
+                  class={`flex items-start justify-start`}
+                  style={`color: rgba(245,158,11,var(--tw-bg-opacity));`}
+                />
+                <div class={`flex items-start justify-start`}>
+                  <div class={`text-base font-bold leading-normal`}>
+                    {meta.page.length || "-"}
+                  </div>
                 </div>
               </div>
             </div>
@@ -131,12 +293,20 @@
         </div>
         <div class="flex self-stretch flex-col space-y-4 items-start justify-start">
           <div
-            class={`flex self-stretch items-start justify-start`}
+            class={`flex self-stretch flex-col items-start justify-start`}
             onClick={meta.aboutPage}
           >
-            <div class="text-sm font-medium leading-tight text-gray-600">
-              Glendi Adijunior adalah seadanya. Jaera Nindya adalah seadainya.
-              Di permainan ini ...
+            <div
+              class={`text-sm font-medium leading-tight text-gray-600`}
+              style={`overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-height: 1.5em;
+    max-height: 3em;`}
+            >
+              {meta.book.book_description || "Description preview"}
             </div>
           </div>
           <div class="flex self-stretch space-x-1.5 items-center justify-start">

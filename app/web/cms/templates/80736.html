@@ -1,13 +1,38 @@
 <>
   <effect
     meta={{
+      book: [],
+      author: [],
+      publisher: [],
+      category: [],
+
       async back() {
-        navigate("/m/detail-book-page");
+        var book_id = "";
+        if (params.book_id !== undefined) book_id = params.book_id;
+        navigate("/m/detail-book-page/" + book_id);
       },
     }}
-    run={async () => {}}
+    run={async () => {
+      // read book
+      if (params.book_id !== undefined) {
+        api("/api/books", {
+          book: {
+            book_id: parseInt(params.book_id),
+          },
+          e: "ReadById",
+        }).then((res) => {
+          console.log(res);
+          runInAction(() => {
+            meta.book = res.book;
+            meta.publisher = res.book.publisher; // meta.author = res.book.author;
+
+            meta.category = res.book.category;
+          });
+        });
+      }
+    }}
   />
-  <div class="flex self-stretch flex-col items-start justify-start bg-white">
+  <div class="flex flex-col items-start justify-start bg-white">
     <div class="flex flex-1 self-stretch flex-col space-y-1 items-start justify-start">
       <div
         class={`flex self-stretch flex-col items-start justify-center px-6 pt-9 pb-4 bg-white shadow`}

@@ -118,42 +118,54 @@
             <div class="text-xl font-bold leading-loose">PYRI</div>
           </div>
         </div>
-        <div class={`flex self-stretch flex-col items-start justify-start`}>
-          {window.user.role === "guest" && meta.tabActive === "home" && (
-            <div
-              class={`flex self-stretch space-x-2 items-center justify-start p-4 bg-orange-50`}
-            >
-              <img
-                src="/fimgs/1198_41628.x1.svg"
-                class="flex flex-col items-start justify-start"
-                style="width: 108.21px; min-width: 108.21px; max-width: 108.21px; height: 100px; min-height: 100px; max-height: 100px;"
-              />
-              <div class="flex flex-1 self-stretch flex-col space-y-4 items-start justify-center">
-                <div class="flex self-stretch items-start justify-start">
-                  <div class="text-xl font-bold leading-loose">
-                    Login dulu kuy!
+        <div
+          class={`flex self-stretch flex-col space-y-2 items-start justify-start`}
+        >
+          {window.user.role === "guest" &&
+            meta.tabActive === "home" &&
+            !meta.loading && (
+              <div
+                class={`flex self-stretch space-x-2 items-center justify-start p-4 bg-orange-50`}
+              >
+                <img
+                  src="/fimgs/1198_41628.x1.svg"
+                  class="flex flex-col items-start justify-start"
+                  style="width: 108.21px; min-width: 108.21px; max-width: 108.21px; height: 100px; min-height: 100px; max-height: 100px;"
+                />
+                <div class="flex flex-1 self-stretch flex-col space-y-4 items-start justify-center">
+                  <div class="flex self-stretch items-start justify-start">
+                    <div class="text-xl font-bold leading-loose">
+                      Login dulu kuy!
+                    </div>
+                  </div>
+                  <div class="flex self-stretch flex-col items-start justify-center">
+                    <button
+                      class={`flex items-center justify-center px-4 py-1 bg-amber-500 rounded`}
+                      style={`width: 61px; min-width: 61px; max-width: 61px; height: 26px; min-height: 26px; max-height: 26px;`}
+                      onClick={(e) => {
+                        navigate("/m/login");
+                      }}
+                    >
+                      <div class="text-xs font-bold leading-none text-white">
+                        Login
+                      </div>
+                    </button>
                   </div>
                 </div>
-                <div class="flex self-stretch flex-col items-start justify-center">
-                  <button
-                    class={`flex items-center justify-center px-4 py-1 bg-amber-500 rounded`}
-                    style={`width: 61px; min-width: 61px; max-width: 61px; height: 26px; min-height: 26px; max-height: 26px;`}
-                    onClick={(e) => {
-                      navigate("/m/login");
-                    }}
-                  >
-                    <div class="text-xs font-bold leading-none text-white">
-                      Login
-                    </div>
-                  </button>
-                </div>
               </div>
+            )}
+          {meta.loading && (
+            <div
+              class={`flex self-stretch flex-col items-start justify-start p-5 w-full`}
+              style={`height: 124px; min-height: 124px; max-height: 124px;`}
+            >
+              <loading-box class="shadow" />
             </div>
           )}
         </div>
       </div>
       <m-tabs
-        class={`flex flex-1 self-stretch flex-col items-start justify-start w-full`}
+        class={`flex flex-1 self-stretch items-start justify-start w-full`}
         swipeable={true}
       >
         <m-tab
@@ -1148,7 +1160,7 @@
         <m-tab
           class={`flex self-stretch flex-col space-y-2.5 items-start justify-start px-6 pt-2`}
           id="profile"
-          style={`height: 800px; min-height: 800px; max-height: 800px; padding-top:1rem`}
+          style={`height: 1362.22px; min-height: 1362.22px; max-height: 1362.22px; padding-top:1rem`}
         >
           <div class="flex self-stretch space-x-2.5 items-center justify-start">
             <div
