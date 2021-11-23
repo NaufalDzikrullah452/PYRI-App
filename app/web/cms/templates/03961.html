@@ -1,0 +1,251 @@
+<>
+  <effect
+    meta={{
+      tabActive: "categories",
+      tabLink: "",
+      tabGenres: true,
+
+      onClickTab(tab) {
+        this.tabActive = tab;
+      },
+    }}
+    run={async () => {}}
+  />
+  <div class="flex flex-col items-start justify-start bg-white">
+    <div class="flex flex-1 self-stretch flex-col items-start justify-start">
+      <div class="flex self-stretch flex-col items-start justify-start">
+        <div class="flex self-stretch items-center justify-center px-4 pt-6 pb-4">
+          <div
+            class={`text-base font-bold leading-normal text-center`}
+            style={"font-size:18px;"}
+          >
+            Explore
+          </div>
+        </div>
+        <div
+          class={`flex self-stretch items-center justify-center`}
+          style={"margin-top:20px;"}
+        >
+          <m-link
+            class={`flex flex-1 self-stretch flex-col space-y-2.5 items-start justify-start`}
+            tabLink="#categories"
+            onClick={(e) => meta.onClickTab("categories")}
+            tabLinkActive={meta.tabActive === "categories"}
+          >
+            {meta.tabActive === "categories" && (
+              <div
+                class={`flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-center bg-white`}
+                style={`padding:8px; border-bottom: 3px solid black; border-bottom-color: #feca57`}
+              >
+                <div class="text-base leading-normal text-center text-amber-500">
+                  Categories
+                </div>
+              </div>
+            )}
+            {meta.tabActive !== "categories" && (
+              <div
+                class={`flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-center`}
+                style={
+                  "padding:8px; border-bottom: 3px solid black; border-bottom-color: #f5f6fa"
+                }
+              >
+                <div class="text-base leading-normal text-center text-gray-900">
+                  Categories
+                </div>
+              </div>
+            )}
+          </m-link>
+          <m-link
+            class={`flex flex-1 self-stretch flex-col space-y-2.5 items-start justify-start`}
+            tabLink="#genres"
+            onClick={(e) => meta.onClickTab("genres")}
+            tabLinkActive={meta.tabActive === "genres"}
+          >
+            {meta.tabActive === "genres" && (
+              <div
+                class={`flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-center`}
+                style={
+                  "padding:8px; border-bottom: 3px solid black; border-bottom-color: #feca57;"
+                }
+              >
+                <div class="text-base leading-normal text-center text-amber-500">
+                  Genres
+                </div>
+              </div>
+            )}
+            {meta.tabActive !== "genres" && (
+              <div
+                class={`flex self-stretch flex-col space-y-2.5 items-center justify-center bg-white`}
+                style={`padding:8px; border-bottom: 3px solid black; border-bottom-color: #f5f6fa;`}
+              >
+                <div class="text-base leading-normal text-center text-gray-900">
+                  Genres
+                </div>
+              </div>
+            )}
+          </m-link>
+        </div>
+      </div>
+      <m-tabs
+        class={`flex flex-1 self-stretch flex-col items-center justify-center pt-4`}
+        swipeable={true}
+      >
+        <m-tab
+          class={`flex flex-1 self-stretch flex-col space-y-3 items-center justify-start px-6`}
+          id="categories"
+          style="margin-top:25px;"
+        >
+          <div class="flex self-stretch space-x-4 items-center justify-center">
+            <div
+              class={`flex flex-1 self-stretch flex-col items-start justify-start rounded-lg`}
+              style={`width: 173.50px; min-width: 173.50px; max-width: 173.50px; height: 96px; min-height: 96px; max-height: 96px;background-image: url('/fimgs/bg-a6fa4b24612d31938183833666e361e2179d3f89');background-size:100% 100%;background-repeat:no-repeat; border-radius:8%;`}
+            >
+              <div
+                class={`flex flex-1 self-stretch flex-col items-center justify-center px-4 bg-black bg-opacity-60`}
+                style="border-radius:8%;"
+              >
+                <div class="text-base font-bold leading-normal text-center text-white">
+                  Encyclopedia
+                </div>
+              </div>
+            </div>
+            <div
+              class={`flex flex-1 self-stretch flex-col items-start justify-start rounded-lg`}
+              style={`width: 173.50px; min-width: 173.50px; max-width: 173.50px; height: 96px; min-height: 96px; max-height: 96px;background-image: url('/fimgs/bg-22c9c9f6c85b10137561dcb0416e0a11da4d9dd5');background-size:100% 100%;background-repeat:no-repeat; border-radius:8%;`}
+            >
+              <div
+                class={`flex flex-1 self-stretch flex-col items-center justify-center px-4 bg-black bg-opacity-60`}
+                style="border-radius:8%;"
+              >
+                <div class="text-base font-bold leading-normal text-center text-white">
+                  Scientific Articles
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex self-stretch space-x-4 items-center justify-center">
+            <div
+              class={`flex flex-1 self-stretch flex-col items-start justify-start rounded-lg`}
+              style={`width: 173.50px; min-width: 173.50px; max-width: 173.50px; height: 96px; min-height: 96px; max-height: 96px;background-image: url('/fimgs/bg-1a8e9a5a58134bb96e55a88fa2bef1054608575d');background-size:100% 100%;background-repeat:no-repeat; border-radius:8%;`}
+            >
+              <div
+                class={`flex flex-1 self-stretch flex-col items-center justify-center px-4 bg-black bg-opacity-60`}
+                style="border-radius:8%;"
+              >
+                <div class="text-base font-bold leading-normal text-center text-white">
+                  Dictionary
+                </div>
+              </div>
+            </div>
+            <div
+              class={`flex flex-1 self-stretch flex-col items-start justify-start rounded-lg`}
+              style={`width: 173.50px; min-width: 173.50px; max-width: 173.50px; height: 96px; min-height: 96px; max-height: 96px;background-image: url('/fimgs/bg-4b0acd70e23ce81212e303e41946d86e2796efa8');background-size:100% 100%;background-repeat:no-repeat; border-radius:8%;`}
+            >
+              <div
+                class={`flex flex-1 self-stretch flex-col items-center justify-center px-4 bg-black bg-opacity-60`}
+                style="border-radius:8%;"
+              >
+                <div class="text-base font-bold leading-normal text-center text-white">
+                  Magazine
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex self-stretch space-x-4 items-center justify-center">
+            <div
+              class={`flex self-stretch flex-col items-start justify-start rounded-lg`}
+              style={`width: 173.50px; min-width: 173.50px; max-width: 173.50px; height: 96px; min-height: 96px; max-height: 96px;background-image: url('/fimgs/bg-708c9c649e1957177220357d0f19765cea6e2726');background-size:100% 100%;background-repeat:no-repeat; border-radius:8%;`}
+            >
+              <div
+                class={`flex flex-1 self-stretch flex-col items-center justify-center px-4 bg-black bg-opacity-60`}
+                style="border-radius:8%;"
+              >
+                <div class="text-base font-bold leading-normal text-center text-white">
+                  Novel
+                </div>
+              </div>
+            </div>
+            <div
+              class={`flex self-stretch flex-col items-start justify-start rounded-lg`}
+              style={`width: 173.50px; min-width: 173.50px; max-width: 173.50px; height: 96px; min-height: 96px; max-height: 96px;background-image: url('/fimgs/bg-7c5073755fb61c6043e2f5332a01f7dcb3f5a37a');background-size:100% 100%;background-repeat:no-repeat; border-radius:8%;`}
+            >
+              <div
+                class={`flex flex-1 self-stretch flex-col items-center justify-center px-4 bg-black bg-opacity-60`}
+                style="border-radius:8%;"
+              >
+                <div class="text-base font-bold leading-normal text-center text-white">
+                  Biography
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex self-stretch items-center justify-start">
+            <div
+              class={`flex flex-col items-start justify-center rounded`}
+              style={`width: 173.50px; min-width: 173.50px; max-width: 173.50px; height: 96px; min-height: 96px; max-height: 96px;background-image: url('/fimgs/bg-6959cbbd6a23dcca8f4885c3d74924750e2bbb9f');background-size:100% 100%;background-repeat:no-repeat; border-radius:8%;`}
+            >
+              <div
+                class={`flex flex-1 self-stretch flex-col items-center justify-center px-4 bg-black bg-opacity-60`}
+                style="border-radius:8%;"
+              >
+                <div class="text-base font-bold leading-normal text-center text-white">
+                  Book
+                </div>
+              </div>
+            </div>
+          </div>
+        </m-tab>
+        <m-tab
+          class={`flex flex-1 self-stretch flex-col space-y-3 items-center justify-start px-6`}
+          id="genres"
+          style="margin-top:25px;"
+        >
+          <div class="flex self-stretch space-x-4 items-start justify-start">
+            <div class="flex flex-col space-y-2.5 items-center justify-start px-6 py-4 bg-gray-50 shadow rounded-lg">
+              <img
+                src="/fimgs/3857_18440.x1.svg"
+                class="flex items-center justify-center bg-white rounded-full"
+                style="width: 60px; min-width: 60px; max-width: 60px; height: 60px; min-height: 60px; max-height: 60px;"
+              />
+              <div class="text-sm font-bold leading-tight">Romance</div>
+            </div>
+            <div class="flex flex-col space-y-2.5 items-center justify-start px-6 py-4 bg-gray-50 shadow rounded-lg">
+              <img
+                src="/fimgs/3857_18448.x1.svg"
+                class="flex items-center justify-center bg-white rounded-full"
+                style="width: 60px; min-width: 60px; max-width: 60px; height: 60px; min-height: 60px; max-height: 60px;"
+              />
+              <div class="text-sm font-bold leading-tight">Horror</div>
+            </div>
+            <div class="flex flex-col space-y-2.5 items-center justify-start px-6 py-4 bg-gray-50 shadow rounded-lg">
+              <img
+                src="/fimgs/3857_18455.x1.svg"
+                class="flex items-center justify-center bg-white rounded-full"
+                style="width: 60px; min-width: 60px; max-width: 60px; height: 60px; min-height: 60px; max-height: 60px;"
+              />
+              <div class="text-sm font-bold leading-tight">Sci - Fi</div>
+            </div>
+          </div>
+          <div class="flex self-stretch space-x-4 items-start justify-start">
+            <div class="flex flex-col space-y-2.5 items-center justify-start px-6 py-4 bg-gray-50 shadow rounded-lg">
+              <img
+                src="/fimgs/3857_18529.x1.svg"
+                class="flex items-center justify-center bg-white rounded-full"
+                style="width: 60px; min-width: 60px; max-width: 60px; height: 60px; min-height: 60px; max-height: 60px;"
+              />
+              <div class="text-sm font-bold leading-tight">Historical</div>
+            </div>
+            <div class="flex flex-col space-y-2.5 items-center justify-start px-6 py-4 bg-gray-50 shadow rounded-lg">
+              <img
+                src="/fimgs/3857_18540.x1.svg"
+                class="flex items-center justify-center bg-white rounded-full"
+                style="width: 60px; min-width: 60px; max-width: 60px; height: 60px; min-height: 60px; max-height: 60px;"
+              />
+              <div class="text-sm font-bold leading-tight">Magic</div>
+            </div>
+          </div>
+        </m-tab>
+      </m-tabs>
+    </div>
+  </div>
+</>
