@@ -80,7 +80,7 @@
       }
     }}
   />
-  <div class={`flex items-start justify-start bg-white`}>
+  <div class={`flex self-stretch items-start justify-start bg-white`}>
     <div
       class={`flex flex-1 self-stretch flex-col space-y-4 items-start justify-start`}
     >
@@ -520,7 +520,7 @@
         <button
           class={`flex flex-1 items-center justify-center p-2.5 bg-amber-500 shadow rounded-lg`}
           onClick={() => {
-            navigate("/m/read-book-page");
+            navigate("/m/read-book-page/" + params.book_id + "/");
           }}
         >
           <div class="text-base font-bold leading-normal text-center text-white">

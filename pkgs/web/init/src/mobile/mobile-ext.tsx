@@ -23,6 +23,7 @@ export const extendExternals = () => {
     'm-toolbar': () => [require('../../../mobile/src/m-toolbar')],
     'm-checkbox': () => [require('../../../mobile/src/m-checkbox')],
     'm-popup': () => [require('../../../mobile/src/m-popup')],
+    'm-panel': () => [require('../../../mobile/src/m-panel')],
     'm-radio': () => [require('../../../mobile/src/m-radio')],
     'm-range': () => [require('../../../mobile/src/m-range')],
     'm-searchbar': () => [require('../../../mobile/src/m-searchbar')],

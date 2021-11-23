@@ -1,6 +1,106 @@
 <>
-  <effect meta={{}} run={async () => {}} />
-  <div class="flex flex-col items-start justify-start bg-white">
+  <effect
+    meta={{
+      author: [],
+      book: [],
+      chapter: [],
+      category: [],
+      page: [],
+      page_chapter: [],
+      publisher: [],
+      chapter_id: 1,
+      pages: 0,
+      page_id: 1,
+      page_length: 0,
+
+      async back() {
+        var book_id = "";
+        if (params.book_id !== undefined) book_id = params.book_id;
+        navigate("/m/detail-book-page/" + book_id);
+      },
+
+      async changePage(key) {
+        if (key === "next" && this.pages < this.page_chapter.length) {
+          runInAction(() => {
+            this.pages++;
+            this.page_id = this.page_chapter[this.pages - 1].page_id;
+          });
+        } else if (key === "prev" && this.pages > 1) {
+          runInAction(() => {
+            this.pages--;
+            this.page_id = this.page_chapter[this.pages - 1].page_id;
+          });
+        }
+      },
+
+      async onChange(key, value) {
+        runInAction(() => {
+          this[key] = value;
+        }); // get page by chapter
+
+        var page_chapter = [];
+        this.page.map((value) => {
+          if (value.page_chapter_id === this.chapter_id) {
+            page_chapter.push(value);
+            this.pages = 1;
+          }
+        });
+        this.page_chapter = page_chapter;
+
+        if (page_chapter.length !== 0) {
+          this.page_id = page_chapter[0].page_id;
+        }
+
+        console.log(key + " : " + value);
+      },
+    }}
+    run={async () => {
+      // read buku by book_id
+      if (params.book_id !== undefined) {
+        api("/api/books", {
+          book: {
+            book_id: parseInt(params.book_id),
+          },
+          e: "ReadById",
+        }).then((res) => {
+          console.log(res);
+
+          if (res !== null || res.res !== "Failure") {
+            runInAction(() => {
+              meta.book = res.book;
+              meta.chapter = res.book.chapter;
+              meta.category = res.book.category;
+              meta.publisher = res.book.publisher;
+              meta.page = res.book.page; // meta.author = res.book.author;
+
+              meta.chapter_id =
+                params.chapter_id !== undefined
+                  ? parseInt(params.chapter_id)
+                  : meta.chapter[0].chapter_id; // get page by chapter
+
+              var page_chapter = [];
+              meta.page.map((value) => {
+                if (value.page_chapter_id === meta.chapter_id) {
+                  page_chapter.push(value);
+                  meta.pages = 1;
+                }
+              });
+              meta.page_chapter = page_chapter;
+
+              if (page_chapter.length !== 0) {
+                meta.page_id = page_chapter[0].page_id;
+              }
+            });
+          }
+        });
+      }
+
+      console.log(params.chapter_id);
+    }}
+  />
+  <div
+    class={`flex self-stretch space-x-2.5 items-start justify-start bg-white w-full h-full`}
+  >
     <div class="flex flex-1 self-stretch flex-col space-y-1 items-start justify-start">
       <div class="flex self-stretch flex-col items-start justify-start px-6 pt-9 pb-4 bg-white shadow">
         <div class="flex self-stretch items-center justify-start">
@@ -10,7 +110,7 @@
               class={`flex self-stretch items-center justify-start`}
               style={`width: 24px; min-width: 24px; max-width: 24px; height: 36px; min-height: 36px; max-height: 36px;`}
               onClick={() => {
-                back();
+                meta.back();
               }}
             />
           </div>
@@ -19,46 +119,143 @@
             src="/fimgs/1554_504666.x1.svg"
             style="width: 41px; min-width: 41px; max-width: 41px; height: 36px; min-height: 36px; max-height: 36px;"
           />
-          <img
-            src="/fimgs/1554_504668.x1.svg"
-            class="flex items-center justify-center"
-            style="width: 41px; min-width: 41px; max-width: 41px; height: 36px; min-height: 36px; max-height: 36px;"
-          />
+          <m-button
+            panelOpen="right"
+            class={`flex flex-col items-start justify-start`}
+          >
+            <img
+              src="/fimgs/1554_504668.x1.svg"
+              class="flex items-center justify-center"
+              style="width: 41px; min-width: 41px; max-width: 41px; height: 36px; min-height: 36px; max-height: 36px;"
+            />
+          </m-button>
         </div>
       </div>
-      <div class="flex flex-1 self-stretch items-start justify-start px-4">
-        <img
-          src="/fimgs/708_2600.x3.png"
-          style="width: 379px; min-width: 379px; max-width: 379px; height: 651px; min-height: 651px; max-height: 651px;background-image: url('/fimgs/bg-41b447df617d0e6879cf62ac89bba01eb158d003');background-size:100% 100%;background-repeat:no-repeat;"
-        />
+      {meta.page_chapter.length === 0 && (
+        <div
+          class={`flex flex-1 self-stretch items-center justify-center w-full`}
+        >
+          <div class="text-base font-bold leading-normal">No pages</div>
+        </div>
+      )}
+      <div class={`flex flex-1 self-stretch items-start justify-start w-full`}>
+        {meta.page_chapter.map((value) => {
+          return (
+            <div
+              class={`flex flex-1 self-stretch items-center justify-center px-4
+        ${meta.page_id === value.page_id ? "" : "hidden"}`}
+              id={"ch-" + meta.chapter_id + "-page-" + value.page_id}
+            >
+              <img
+                src={
+                  value.page_content
+                    ? "/upload/" + value.page_content
+                    : "/fimgs/708_2600.x3.png"
+                }
+                style={`width: 379px; min-width: 379px; max-width: 379px; height: 651px; min-height: 651px; max-height: 651px;background-image: url('/fimgs/bg-41b447df617d0e6879cf62ac89bba01eb158d003');background-size:100% 100%;background-repeat:no-repeat; background:#E4E4E7;`}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "";
+                }}
+              />
+            </div>
+          );
+        })}
       </div>
       <div class="flex self-stretch flex-col items-center justify-center p-6 bg-white shadow-inner">
         <div class="flex self-stretch space-x-4 items-center justify-center">
           <div class="flex flex-1 items-start justify-start">
-            <div class="text-xs font-bold leading-none text-gray-500">
-              Page 2/28
+            <div class={`text-xs font-bold leading-none text-gray-500`}>
+              Page {meta.pages || 0} / {meta.page_chapter.length || 0}
             </div>
           </div>
           <div class="flex space-x-4 items-center justify-center">
-            <div class="flex flex-col items-center justify-center bg-white border rounded border-gray-500">
+            <m-button
+              class={`flex flex-col items-center justify-center bg-white border rounded border-gray-500`}
+              onClick={() => {
+                meta.changePage("prev");
+              }}
+            >
               <img
                 src="/fimgs/3378_77663.x1.svg"
                 style="width: 23.20px; min-width: 23.20px; max-width: 23.20px; height: 23.98px; min-height: 23.98px; max-height: 23.98px;"
               />
-            </div>
+            </m-button>
             <div class="flex flex-col items-start justify-start">
-              <div class="text-base font-bold leading-normal">2</div>
+              <div class={`text-base font-bold leading-normal`}>
+                {meta.pages || 0}
+              </div>
             </div>
-            <div class="flex flex-col items-center justify-center bg-white border rounded border-gray-500">
+            <m-button
+              class={`flex flex-col items-center justify-center bg-white border rounded border-gray-500`}
+              onClick={() => {
+                meta.changePage("next");
+              }}
+            >
               <img
                 src="/fimgs/3378_77669.x1.svg"
                 class="flex items-start justify-start"
                 style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
               />
-            </div>
+            </m-button>
           </div>
         </div>
       </div>
     </div>
+    <m-panel
+      class={`flex self-stretch flex-col items-start justify-start`}
+      right={true}
+    >
+      <div class="flex flex-1 self-stretch flex-col space-y-2.5 items-start justify-start px-6 pt-9 pb-6">
+        <div class="flex self-stretch flex-col space-y-2.5 items-center justify-start py-6 bg-white shadow">
+          <img
+            class={`bg-gray-200`}
+            src={
+              meta.book.book_picture
+                ? "/upload/" + meta.book.book_picture
+                : "/fimgs/3902_27574.x1.png"
+            }
+            style={`width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;`}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = "/fimgs/3902_27574.x1.png";
+            }}
+          />
+          <div class="flex self-stretch items-start justify-center">
+            <div class={`text-2xl font-medium leading-9 text-center`}>
+              {meta.book.book_title || "Book title"}
+            </div>
+          </div>
+          <div class="flex self-stretch items-start justify-center">
+            <div
+              class={`text-base font-bold leading-normal text-center text-gray-500`}
+            >
+              {"Author"}
+            </div>
+          </div>
+        </div>
+        <m-list
+          class={`flex self-stretch flex-col items-center justify-start flex-col list list-none w-full`}
+        >
+          {meta.chapter.map((value) => {
+            return (
+              <m-list-item
+                class={`flex self-stretch items-start justify-start bg-white rounded w-full`}
+                title={value.chapter_name}
+                id={`chapter-${value.chapter_id}`}
+                onClick={() => {
+                  meta.onChange("chapter_id", value.chapter_id);
+                }}
+                style={`width:100%; ${
+                  meta.chapter_id === value.chapter_id
+                    ? "background-color:#FFEDD5; "
+                    : ":active { background-color: #FFEDD5;};"
+                }`}
+              />
+            );
+          })}
+        </m-list>
+      </div>
+    </m-panel>
   </div>
 </>

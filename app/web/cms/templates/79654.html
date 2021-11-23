@@ -1,6 +1,21 @@
-<div>
+<div class="w-full">
   <effect
-    meta={{}}
+    meta={{
+      books: [
+        {
+          books_id: 1,
+          books_name: "Yes",
+        },
+        {
+          books_id: 2,
+          books_name: "No",
+        },
+        {
+          books_id: 3,
+          books_name: "YesNo",
+        },
+      ],
+    }}
     // run={() => {
     //   db.albums.findMany().then((res) => {
     //     console.log(res);
@@ -25,4 +40,37 @@
   {user.nama}
   {user.role}
   <qrcode val={12345} />
+  <m-navbar>
+    <m-nav-right>test</m-nav-right>
+  </m-navbar>
+  <m-button raised fill panelOpen="right">
+    Open right panel
+  </m-button>
+  <m-panel right={true} class={`bg-gray-200`}>
+    <m-list class={`flex-col list list-none`}>
+      {meta.books.map((value) => {
+        return (
+          <m-list-item
+            title={value.books_name}
+            link={`#book-${value.book_id}`}
+          ></m-list-item>
+        );
+      })}
+    </m-list>
+  </m-panel>
+  <div
+    class={`flex self-stretch space-x-8 items-center justify-start px-9 pt-8 bg-gray-200`}
+    style={"margin-top:35px;"}
+  >
+    <img
+      src="/fimgs/2259_103944.x1.svg"
+      style="width: 36px; min-width: 36px; max-width: 36px; height: 36px; min-height: 36px; max-height: 36px;"
+    />
+    <div
+      class={`text-3xl font-bold leading-10 text-black`}
+      style={"margin-left:20px;"}
+    >
+      PYRI
+    </div>
+  </div>
 </div>
