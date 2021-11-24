@@ -85,11 +85,21 @@
                   meta.pages = 1;
                 }
               });
-              meta.page_chapter = page_chapter;
 
               if (page_chapter.length !== 0) {
                 meta.page_id = page_chapter[0].page_id;
+              } else {
+                meta.chapter_id = meta.chapter[0].chapter_id;
+                meta.page.map((value) => {
+                  if (value.page_chapter_id === meta.chapter_id) {
+                    page_chapter.push(value);
+                    meta.pages = 1;
+                  }
+                });
+                meta.page_id = page_chapter[0].page_id;
               }
+
+              meta.page_chapter = page_chapter;
             });
           }
         });
@@ -99,7 +109,7 @@
     }}
   />
   <div
-    class={`flex self-stretch space-x-2.5 items-start justify-start bg-white w-full h-full`}
+    class={`flex space-x-2.5 items-start justify-start bg-white w-full h-full`}
   >
     <div class="flex flex-1 self-stretch flex-col space-y-1 items-start justify-start">
       <div class="flex self-stretch flex-col items-start justify-start px-6 pt-9 pb-4 bg-white shadow">
@@ -120,7 +130,7 @@
             style="width: 41px; min-width: 41px; max-width: 41px; height: 36px; min-height: 36px; max-height: 36px;"
           />
           <m-button
-            panelOpen="right"
+            panelOpen={meta.chapter.length === 0 ? "#" : "right"}
             class={`flex flex-col items-start justify-start`}
           >
             <img
@@ -135,7 +145,11 @@
         <div
           class={`flex flex-1 self-stretch items-center justify-center w-full`}
         >
-          <div class="text-base font-bold leading-normal">No pages</div>
+          <div class={`text-base font-bold leading-normal`}>
+            {meta.chapter.length === 0
+              ? "This book has no chapter yet"
+              : "No pages"}
+          </div>
         </div>
       )}
       <div class={`flex flex-1 self-stretch items-start justify-start w-full`}>
@@ -204,6 +218,7 @@
     </div>
     <m-panel
       class={`flex self-stretch flex-col items-start justify-start`}
+      style={`box-shadow: -0.05px 0px 5px grey;`}
       right={true}
     >
       <div class="flex flex-1 self-stretch flex-col space-y-2.5 items-start justify-start px-6 pt-9 pb-6">

@@ -1,6 +1,8 @@
 <>
   <effect
     meta={{
+      rating: 0,
+      avg_rating: 0,
       author: [],
       book: [],
       chapter: [],
@@ -11,6 +13,79 @@
       save_info: false,
       star_info: false,
       read_info: false,
+
+      async onChange(key, value) {
+        if (key === "rating") {
+          runInAction(() => {
+            this[key] = value;
+          });
+        }
+
+        console.log(key + " : " + value);
+      },
+
+      async sendRating() {
+        if (window.user.role === "guest") {
+          window.mobileApp.app.dialog.confirm(
+            null,
+            "Please login first!",
+            () => {
+              navigate("/m/login");
+            }
+          );
+        } else if (this.rating !== 0) {
+          api("/api/rating", {
+            rating: {
+              rating_user_id: window.user.user.user_id,
+              rating_book_id: parseInt(params.book_id),
+            },
+            e: "ReadByBooknUserId",
+          }).then((res) => {
+            console.log(res);
+
+            if (res === null || res.rating === null) {
+              api("/api/rating", {
+                rating: {
+                  rating_point: this.rating,
+                  rating_user_id: window.user.user.user_id,
+                  rating_book_id: parseInt(params.book_id),
+                  rating_date_updated: new Date(),
+                },
+                e: "Create",
+              }).then((res) => {
+                console.log(res);
+
+                if (res !== null) {
+                  window.mobileApp.app.dialog.preloader("Rating success!");
+                  setTimeout(() => {
+                    window.mobileApp.app.dialog.close();
+                  }, 2000);
+                }
+              });
+            } else if (res.rating !== null) {
+              api("/api/rating", {
+                rating: {
+                  rating_id: res.rating.rating_id,
+                  rating_point: this.rating,
+                  rating_date_updated: new Date(),
+                },
+                e: "Update",
+              }).then((res) => {
+                console.log(res);
+
+                if (res !== null) {
+                  window.mobileApp.app.dialog.preloader(
+                    "Update rating success!"
+                  );
+                  setTimeout(() => {
+                    window.mobileApp.app.dialog.close();
+                  }, 2000);
+                }
+              });
+            }
+          });
+        }
+      },
 
       async showInfo(key) {
         if (key === "page_info" && !this[key]) {
@@ -62,13 +137,47 @@
     run={async () => {
       // read buku by book_id
       if (params.book_id !== undefined) {
+        // read all rating by book
+        api("/api/rating", {
+          rating: {
+            rating_book_id: parseInt(params.book_id),
+          },
+          e: "ReadByBookId",
+        }).then((res) => {
+          // console.log(res);
+          if (res !== null) {
+            var sum_rating = 0;
+            res.rating.map((value) => {
+              sum_rating += value.rating_point;
+            });
+            runInAction(() => {
+              meta.avg_rating = parseFloat(sum_rating / res.rating.length);
+            });
+          }
+        }); // read rating by user_id
+
+        api("/api/rating", {
+          rating: {
+            rating_user_id: window.user.user.user_id,
+            rating_book_id: parseInt(params.book_id),
+          },
+          e: "ReadByBooknUserId",
+        }).then((res) => {
+          // console.log(res);
+          if (res !== null && res.rating !== null) {
+            runInAction(() => {
+              meta.rating = res.rating.rating_point;
+            });
+          }
+        }); // read book data
+
         api("/api/books", {
           book: {
             book_id: parseInt(params.book_id),
           },
           e: "ReadById",
         }).then((res) => {
-          console.log(res);
+          // console.log(res);
           runInAction(() => {
             meta.book = res.book;
             meta.chapter = res.book.chapter;
@@ -77,10 +186,10 @@
             meta.page = res.book.page; // meta.author = res.book.author;
           });
         });
-      }
+      } // console.log("rating: "+meta.rating);
     }}
   />
-  <div class={`flex self-stretch items-start justify-start bg-white`}>
+  <div class={`flex items-start justify-start bg-white`}>
     <div
       class={`flex flex-1 self-stretch flex-col space-y-4 items-start justify-start`}
     >
@@ -181,7 +290,9 @@
                   class="flex items-start justify-start"
                 />
                 <div class="flex items-center justify-start">
-                  <div class="text-base font-bold leading-normal">4.5</div>
+                  <div class={`text-base font-bold leading-normal`}>
+                    {meta.avg_rating}
+                  </div>
                 </div>
               </div>
             </div>
@@ -466,43 +577,76 @@
           <div class="flex self-stretch flex-col space-y-2.5 items-center justify-center">
             <div class="flex items-start justify-center">
               <img
-                src="/fimgs/1369_30601.x1.svg"
-                class="flex items-center justify-center"
-                style="width: 30px; min-width: 30px; max-width: 30px; height: 30px; min-height: 30px; max-height: 30px;"
+                class={`flex items-center justify-center`}
+                src={
+                  meta.rating > 0
+                    ? "/fimgs/1369_30601.x1.svg"
+                    : "/fimgs/1369_35115.x1.svg"
+                }
+                onClick={() => {
+                  meta.onChange("rating", 1);
+                }}
               />
               <img
-                src="/fimgs/1369_35115.x1.svg"
-                class="flex items-center justify-center"
-                style="width: 30px; min-width: 30px; max-width: 30px; height: 30px; min-height: 30px; max-height: 30px;"
+                class={`flex items-center justify-center`}
+                src={
+                  meta.rating > 1
+                    ? "/fimgs/1369_30601.x1.svg"
+                    : "/fimgs/1369_35115.x1.svg"
+                }
+                onClick={() => {
+                  meta.onChange("rating", 2);
+                }}
               />
               <img
-                src="/fimgs/1369_34925.x1.svg"
-                class="flex items-center justify-center"
-                style="width: 30px; min-width: 30px; max-width: 30px; height: 30px; min-height: 30px; max-height: 30px;"
+                class={`flex items-center justify-center`}
+                src={
+                  meta.rating > 2
+                    ? "/fimgs/1369_30601.x1.svg"
+                    : "/fimgs/1369_35115.x1.svg"
+                }
+                onClick={() => {
+                  meta.onChange("rating", 3);
+                }}
               />
               <img
-                src="/fimgs/1369_34735.x1.svg"
-                class="flex items-center justify-center"
-                style="width: 30px; min-width: 30px; max-width: 30px; height: 30px; min-height: 30px; max-height: 30px;"
+                class={`flex items-center justify-center`}
+                src={
+                  meta.rating > 3
+                    ? "/fimgs/1369_30601.x1.svg"
+                    : "/fimgs/1369_35115.x1.svg"
+                }
+                onClick={() => {
+                  meta.onChange("rating", 4);
+                }}
               />
               <img
-                src="/fimgs/1369_30592.x1.svg"
-                class="flex items-center justify-center"
-                style="width: 30px; min-width: 30px; max-width: 30px; height: 30px; min-height: 30px; max-height: 30px;"
+                class={`flex items-center justify-center`}
+                src={
+                  meta.rating > 4
+                    ? "/fimgs/1369_30601.x1.svg"
+                    : "/fimgs/1369_35115.x1.svg"
+                }
+                onClick={() => {
+                  meta.onChange("rating", 5);
+                }}
               />
             </div>
             <div class="flex self-stretch items-start justify-center">
               <div class="text-sm leading-tight text-center">
-                Klik untuk menentukan ratting
+                Klik untuk menentukan rating
               </div>
             </div>
           </div>
           <button
-            class="flex items-center justify-center px-2.5 py-0.5 bg-amber-500 shadow rounded"
-            style="width: 87px; min-width: 87px; max-width: 87px; height: 32px; min-height: 32px; max-height: 32px;"
+            class={`flex items-center justify-center px-2.5 py-0.5 bg-amber-500 shadow rounded`}
+            style={`width: 87px; min-width: 87px; max-width: 87px; height: 32px; min-height: 32px; max-height: 32px;`}
+            onClick={() => {
+              meta.sendRating();
+            }}
           >
-            <div class="text-base font-bold leading-normal text-white">
-              Send
+            <div class={`text-base font-bold leading-normal text-white`}>
+              {meta.rating === 0 ? "Send" : "Update"}
             </div>
           </button>
         </div>
