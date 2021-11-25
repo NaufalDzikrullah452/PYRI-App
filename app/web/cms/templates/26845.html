@@ -12,6 +12,62 @@
       pages: 0,
       page_id: 1,
       page_length: 0,
+      loading_page: false,
+
+      loading(val) {
+        if (val) {
+          runInAction(() => {
+            this.loading_page = val;
+          });
+        } else {
+          setTimeout(() => {
+            runInAction(() => {
+              this.loading_page = val;
+            });
+          }, 500);
+        }
+      },
+
+      history() {
+        // read last history
+        if (params.book_id !== undefined && window.user.role !== "guest") {
+          api("/api/history-book", {
+            viewBook: {
+              viewBook_book_id: parseInt(params.book_id),
+              viewBook_user_id: window.user.user.user_id,
+              viewBook_chapter_id: this.chapter_id,
+              viewBook_page_id: this.page_id,
+            },
+            e: "ReadByAllId",
+          }).then((res) => {
+            // console.log(res)
+            if (res.viewBook === null) {
+              api("/api/history-book", {
+                viewBook: {
+                  viewBook_book_id: parseInt(params.book_id),
+                  viewBook_user_id: window.user.user.user_id,
+                  viewBook_chapter_id: this.chapter_id,
+                  viewBook_page_id: this.page_id,
+                  viewBook_access_date: new Date(),
+                },
+                e: "Create",
+              }).then((res) => {
+                console.log(res.res);
+              });
+            } else if (res.viewBook !== null) {
+              api("/api/history-book", {
+                viewBook: {
+                  viewBook_id: res.viewBook.viewBook_id,
+                  viewBook_access_date: new Date(),
+                },
+                e: "Update",
+              }).then((res) => {
+                console.log(res.res);
+              });
+            }
+          });
+        }
+      },
 
       async back() {
         var book_id = "";
@@ -21,41 +77,82 @@
 
       async changePage(key) {
         if (key === "next" && this.pages < this.page_chapter.length) {
+          this.loading(true);
           runInAction(() => {
             this.pages++;
             this.page_id = this.page_chapter[this.pages - 1].page_id;
           });
+          this.history();
+          this.loading(false);
         } else if (key === "prev" && this.pages > 1) {
+          this.loading(true);
           runInAction(() => {
             this.pages--;
             this.page_id = this.page_chapter[this.pages - 1].page_id;
           });
+          this.history();
+          this.loading(false);
         }
       },
 
       async onChange(key, value) {
-        runInAction(() => {
-          this[key] = value;
-        }); // get page by chapter
+        if (this[key] !== value) {
+          this.loading(true);
+          runInAction(() => {
+            this[key] = value;
+          });
+          console.log(key + " : " + value); // get page by chapter
 
-        var page_chapter = [];
-        this.page.map((value) => {
-          if (value.page_chapter_id === this.chapter_id) {
-            page_chapter.push(value);
-            this.pages = 1;
+          var page_chapter = [];
+          this.page.map((value) => {
+            if (value.page_chapter_id === this.chapter_id) {
+              page_chapter.push(value);
+            }
+          });
+          this.page_chapter = page_chapter;
+
+          if (page_chapter.length !== 0) {
+            // read last pages in chapter
+            await api("/api/history-book", {
+              viewBook: {
+                viewBook_book_id: parseInt(params.book_id),
+                viewBook_user_id: window.user.user.user_id,
+                viewBook_chapter_id: this.chapter_id,
+              },
+              e: "ReadLatestPages",
+            }).then((res) => {
+              // console.log(res)
+              if (res.viewBook !== null) {
+                this.page_chapter.map((value, i) => {
+                  if (value.page_id === res.viewBook.viewBook_page_id) {
+                    runInAction(() => {
+                      this.page_id = res.viewBook.viewBook_page_id;
+                      this.pages = i + 1;
+                    });
+                  }
+                });
+              } else {
+                this.pages = 1;
+                this.page_id = page_chapter[0].page_id;
+              }
+            });
+            this.history();
+          } else {
+            this.pages = 0;
           }
-        });
-        this.page_chapter = page_chapter;
 
-        if (page_chapter.length !== 0) {
-          this.page_id = page_chapter[0].page_id;
+          this.loading(false);
         }
-
-        console.log(key + " : " + value);
       },
     }}
     run={async () => {
       // read buku by book_id
+      var page_chapter = [];
+
+      if (window.user.role === "guest") {
+        meta.back();
+      }
+
       if (params.book_id !== undefined) {
         api("/api/books", {
           book: {
@@ -66,50 +163,73 @@
           console.log(res);
 
           if (res !== null || res.res !== "Failure") {
+            meta.loading(true);
             runInAction(() => {
               meta.book = res.book;
               meta.chapter = res.book.chapter;
               meta.category = res.book.category;
               meta.publisher = res.book.publisher;
               meta.page = res.book.page; // meta.author = res.book.author;
+              // read last chapter read
 
-              meta.chapter_id =
-                params.chapter_id !== undefined
-                  ? parseInt(params.chapter_id)
-                  : meta.chapter[0].chapter_id; // get page by chapter
+              api("/api/history-book", {
+                viewBook: {
+                  viewBook_book_id: parseInt(params.book_id),
+                  viewBook_user_id: window.user.user.user_id,
+                },
+                e: "ReadLatestChapter",
+              }).then((res) => {
+                console.log(res);
 
-              var page_chapter = [];
-              meta.page.map((value) => {
-                if (value.page_chapter_id === meta.chapter_id) {
-                  page_chapter.push(value);
+                if (res.viewBook !== null) {
+                  runInAction(() => {
+                    meta.page_id = res.viewBook.viewBook_page_id;
+                    meta.chapter_id = res.viewBook.viewBook_chapter_id;
+                  });
+                } else {
                   meta.pages = 1;
-                }
-              });
+                  meta.page_id = meta.page[0].page_id;
+                } // get page by chapter
 
-              if (page_chapter.length !== 0) {
-                meta.page_id = page_chapter[0].page_id;
-              } else {
-                meta.chapter_id = meta.chapter[0].chapter_id;
                 meta.page.map((value) => {
                   if (value.page_chapter_id === meta.chapter_id) {
                     page_chapter.push(value);
-                    meta.pages = 1;
                   }
                 });
-                meta.page_id = page_chapter[0].page_id;
-              }
 
-              meta.page_chapter = page_chapter;
+                if (page_chapter.length !== 0) {
+                  page_chapter.map((value, i) => {
+                    if (value.page_id === meta.page_id) {
+                      runInAction(() => {
+                        meta.pages = i + 1;
+                      });
+                    }
+                  });
+                } else {
+                  meta.chapter_id = meta.chapter[0].chapter_id;
+                  meta.page.map((value) => {
+                    if (value.page_chapter_id === meta.chapter_id) {
+                      page_chapter.push(value);
+                    }
+                  });
+                  meta.pages = 1;
+                  meta.page_id = page_chapter[0].page_id;
+                }
+
+                runInAction(() => {
+                  meta.page_chapter = page_chapter;
+                  meta.history();
+                });
+              });
             });
+            meta.loading(false);
           }
-        });
+        }); // console.log(meta.loading_page);
       }
-
-      console.log(params.chapter_id);
     }}
   />
   <div
-    class={`flex space-x-2.5 items-start justify-start bg-white w-full h-full`}
+    class={`flex self-stretch space-x-2.5 items-start justify-start bg-white w-full h-full`}
   >
     <div class="flex flex-1 self-stretch flex-col space-y-1 items-start justify-start">
       <div class="flex self-stretch flex-col items-start justify-start px-6 pt-9 pb-4 bg-white shadow">
@@ -156,22 +276,36 @@
         {meta.page_chapter.map((value) => {
           return (
             <div
-              class={`flex flex-1 self-stretch items-center justify-center px-4
+              class={`flex flex-1 self-stretch space-x-2.5 items-center justify-center px-4
         ${meta.page_id === value.page_id ? "" : "hidden"}`}
               id={"ch-" + meta.chapter_id + "-page-" + value.page_id}
             >
-              <img
-                src={
-                  value.page_content
-                    ? "/upload/" + value.page_content
-                    : "/fimgs/708_2600.x3.png"
-                }
-                style={`width: 379px; min-width: 379px; max-width: 379px; height: 651px; min-height: 651px; max-height: 651px;background-image: url('/fimgs/bg-41b447df617d0e6879cf62ac89bba01eb158d003');background-size:100% 100%;background-repeat:no-repeat; background:#E4E4E7;`}
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = "";
-                }}
-              />
+              {!meta.loading_page && (
+                <div
+                  class={`flex flex-1 self-stretch items-start justify-start p-2.5`}
+                >
+                  <img
+                    src={
+                      value.page_content
+                        ? "/upload/" + value.page_content
+                        : "/fimgs/708_2600.x3.png"
+                    }
+                    style={`width: 359px; min-width: 359px; max-width: 359px; height: 631px; min-height: 631px; max-height: 631px;background-image: url('/fimgs/bg-41b447df617d0e6879cf62ac89bba01eb158d003');background-size:100% 100%;background-repeat:no-repeat; background:#E4E4E7;`}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "";
+                    }}
+                  />
+                </div>
+              )}
+              {meta.loading_page && (
+                <div
+                  style={`width: 379px; min-width: 379px; max-width: 379px; height: 651px; min-height: 651px; max-height: 651px;`}
+                  class={`flex flex-1 self-stretch flex-col items-center justify-center`}
+                >
+                  <loading-box />
+                </div>
+              )}
             </div>
           );
         })}

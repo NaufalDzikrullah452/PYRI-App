@@ -1,8 +1,11 @@
 <>
   <effect
     meta={{
-      rating: 0,
       avg_rating: 0,
+      rating: 0,
+      views: 0,
+      user_rating: "",
+      isRead: false,
       author: [],
       book: [],
       chapter: [],
@@ -54,6 +57,9 @@
                 e: "Create",
               }).then((res) => {
                 console.log(res);
+                runInAction(() => {
+                  this.user_rating = res.rating;
+                });
 
                 if (res !== null) {
                   window.mobileApp.app.dialog.preloader("Rating success!");
@@ -76,7 +82,27 @@
                 if (res !== null) {
                   window.mobileApp.app.dialog.preloader(
                     "Update rating success!"
-                  );
+                  ); // read all rating by book
+
+                  api("/api/rating", {
+                    rating: {
+                      rating_book_id: parseInt(params.book_id),
+                    },
+                    e: "ReadByBookId",
+                  }).then((res) => {
+                    // console.log(res);
+                    if (res.rating.length !== 0) {
+                      var sum_rating = 0;
+                      res.rating.map((value) => {
+                        sum_rating += value.rating_point;
+                      });
+                      runInAction(() => {
+                        this.avg_rating = parseFloat(
+                          sum_rating / res.rating.length
+                        );
+                      });
+                    }
+                  });
                   setTimeout(() => {
                     window.mobileApp.app.dialog.close();
                   }, 2000);
@@ -84,6 +110,24 @@
               });
             }
           });
+        }
+      },
+
+      async readBook() {
+        if (window.user.role === "guest") {
+          window.mobileApp.app.dialog.confirm(
+            "redirect to login?",
+            "Please login before read!",
+            () => {
+              navigate("/m/login");
+            }
+          );
+        } else {
+          window.mobileApp.app.dialog.preloader();
+          setTimeout(() => {
+            window.mobileApp.app.dialog.close();
+          }, 2000);
+          navigate("/m/read-book-page/" + params.book_id + "/");
         }
       },
 
@@ -145,7 +189,7 @@
           e: "ReadByBookId",
         }).then((res) => {
           // console.log(res);
-          if (res !== null) {
+          if (res.rating.length !== 0) {
             var sum_rating = 0;
             res.rating.map((value) => {
               sum_rating += value.rating_point;
@@ -156,35 +200,68 @@
           }
         }); // read rating by user_id
 
-        api("/api/rating", {
-          rating: {
-            rating_user_id: window.user.user.user_id,
-            rating_book_id: parseInt(params.book_id),
-          },
-          e: "ReadByBooknUserId",
-        }).then((res) => {
-          // console.log(res);
-          if (res !== null && res.rating !== null) {
+        if (window.user.role !== "guest") {
+          api("/api/rating", {
+            rating: {
+              rating_user_id: window.user.user.user_id,
+              rating_book_id: parseInt(params.book_id),
+            },
+            e: "ReadByBooknUserId",
+          }).then((res) => {
+            // console.log(res);
+            if (res !== null && res.rating !== null) {
+              runInAction(() => {
+                meta.user_rating = res.rating;
+                meta.rating = res.rating.rating_point;
+              });
+            }
+          }); // read book data
+
+          api("/api/books", {
+            book: {
+              book_id: parseInt(params.book_id),
+            },
+            e: "ReadById",
+          }).then((res) => {
+            // console.log(res);
             runInAction(() => {
-              meta.rating = res.rating.rating_point;
+              meta.book = res.book;
+              meta.chapter = res.book.chapter;
+              meta.category = res.book.category;
+              meta.publisher = res.book.publisher;
+              meta.page = res.book.page; // meta.author = res.book.author;
+            });
+          });
+        } //count book views
+
+        api("/api/history-book", {
+          viewBook: {
+            viewBook_book_id: parseInt(params.book_id),
+          },
+          e: "ReadByBookId",
+        }).then((res) => {
+          if (res.viewBook !== 0) {
+            runInAction(() => {
+              meta.views =
+                res.viewBook.length > 999
+                  ? (Math.abs(res.viewBook.length) / 1000).toFixed(1) + "k"
+                  : res.viewBook.length;
             });
           }
-        }); // read book data
+        }); //read history user read this book
 
-        api("/api/books", {
-          book: {
-            book_id: parseInt(params.book_id),
+        api("/api/history-book", {
+          viewBook: {
+            viewBook_book_id: parseInt(params.book_id),
+            viewBook_user_id: window.user.user.user_id,
           },
-          e: "ReadById",
+          e: "ReadLatestChapter",
         }).then((res) => {
-          // console.log(res);
-          runInAction(() => {
-            meta.book = res.book;
-            meta.chapter = res.book.chapter;
-            meta.category = res.book.category;
-            meta.publisher = res.book.publisher;
-            meta.page = res.book.page; // meta.author = res.book.author;
-          });
+          if (res.viewBook !== null) {
+            runInAction(() => {
+              meta.isRead = true;
+            });
+          }
         });
       } // console.log("rating: "+meta.rating);
     }}
@@ -286,12 +363,12 @@
               <div class="flex items-start justify-start">
                 <img
                   src="/fimgs/1369_30601.x1.svg"
-                  style="width: 18px; min-width: 18px; max-width: 18px; height: 18px; min-height: 18px; max-height: 18px;"
-                  class="flex items-start justify-start"
+                  style="width: 18px; min-width: 18px; max-width: 18px; height: 24px; min-height: 24px; max-height: 24px;"
+                  class="flex self-stretch items-center justify-center"
                 />
                 <div class="flex items-center justify-start">
                   <div class={`text-base font-bold leading-normal`}>
-                    {meta.avg_rating}
+                    {meta.avg_rating === 0 ? "-" : meta.avg_rating.toFixed(2)}
                   </div>
                 </div>
               </div>
@@ -317,8 +394,8 @@
               <div class="flex items-center justify-center">
                 <img
                   src="/fimgs/3840_264934.x1.svg"
-                  class="flex items-center justify-center"
-                  style="width: 10.47px; min-width: 10.47px; max-width: 10.47px; height: 16px; min-height: 16px; max-height: 16px;"
+                  class="flex self-stretch items-center justify-center"
+                  style="width: 10.47px; min-width: 10.47px; max-width: 10.47px; height: 24px; min-height: 24px; max-height: 24px;"
                 />
                 <div class="flex items-center justify-start">
                   <div class="text-base font-bold leading-normal">125K</div>
@@ -350,7 +427,9 @@
                   style="width: 16px; min-width: 16px; max-width: 16px; height: 16px; min-height: 16px; max-height: 16px;"
                 />
                 <div class="flex items-center justify-start">
-                  <div class="text-base font-bold leading-normal">125K</div>
+                  <div class={`text-base font-bold leading-normal`}>
+                    {meta.views}
+                  </div>
                 </div>
               </div>
             </div>
@@ -646,7 +725,7 @@
             }}
           >
             <div class={`text-base font-bold leading-normal text-white`}>
-              {meta.rating === 0 ? "Send" : "Update"}
+              {meta.user_rating === "" ? "Send" : "Update"}
             </div>
           </button>
         </div>
@@ -664,11 +743,13 @@
         <button
           class={`flex flex-1 items-center justify-center p-2.5 bg-amber-500 shadow rounded-lg`}
           onClick={() => {
-            navigate("/m/read-book-page/" + params.book_id + "/");
+            meta.readBook();
           }}
         >
-          <div class="text-base font-bold leading-normal text-center text-white">
-            Continue Reading
+          <div
+            class={`text-base font-bold leading-normal text-center text-white`}
+          >
+            {meta.isRead ? "Continue Reading" : "Start Reading"}
           </div>
         </button>
       </div>

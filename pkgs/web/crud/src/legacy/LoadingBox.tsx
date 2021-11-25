@@ -17,7 +17,7 @@ export const LoadingBox = () => {
               #c8cad1 100%
             );
             background-repeat: no-repeat;
-            background-size: 800px 500px;
+            background-size: 1000px 1000px;
             display: inline-block;
             position: relative;
 
