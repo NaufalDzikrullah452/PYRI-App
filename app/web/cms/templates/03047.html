@@ -50,24 +50,44 @@
           this.disabled = true;
           api("/api/page", {
             page: {
-              page_id: parseInt(params.page_id),
               page_page: this.page.page_page,
-              page_date_updated: new Date(),
-              page_content: this.page.page_content || "",
               page_book_id: parseInt(params.book_id),
               page_chapter_id: parseInt(this.page.page_chapter_id),
             },
-            e: "Update",
+            e: "ReadByPageNumber",
           }).then((res) => {
-            console.log(res);
+            console.log(res.page);
 
-            if (res === null) {
-              this.disabled = false;
-              alert("Failed insert to database!");
-            } else {
-              navigate(
-                `/w-books/${params.book_id}/detail/${params.chapter_id}/page`
+            if (res.page !== null) {
+              alert(
+                `This number book${
+                  "{" + this.page.page_page + "}"
+                } already taken`
               );
+              this.disabled = false;
+            } else {
+              api("/api/page", {
+                page: {
+                  page_id: parseInt(params.page_id),
+                  page_page: this.page.page_page,
+                  page_date_updated: new Date(),
+                  page_content: this.page.page_content || "",
+                  page_book_id: parseInt(params.book_id),
+                  page_chapter_id: parseInt(this.page.page_chapter_id),
+                },
+                e: "Update",
+              }).then((res) => {
+                console.log(res);
+
+                if (res === null) {
+                  this.disabled = false;
+                  alert("Failed insert to database!");
+                } else {
+                  navigate(
+                    `/w-books/${params.book_id}/detail/${params.chapter_id}/page`
+                  );
+                }
+              });
             }
           });
         }
