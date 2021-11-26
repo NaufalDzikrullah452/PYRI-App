@@ -1,0 +1,72 @@
+<>
+  <effect meta={{}} run={async () => {}} />
+  <div class="flex flex-col items-start justify-start bg-white">
+    <div class="flex flex-1 self-stretch flex-col space-y-5 items-start justify-start">
+      <div
+        class={`flex self-stretch flex-col items-start justify-center px-6 pt-9 pb-4 bg-white shadow`}
+      >
+        <div class="flex self-stretch space-x-4 items-center justify-start">
+          <div class="flex self-stretch items-center justify-start">
+            <ficon
+              aria-label="Back"
+              iconName="Back"
+              style="font-size:23px; color:black;"
+              onClick={() => {
+                back();
+              }}
+              class={`flex self-stretch items-center justify-start`}
+            />
+          </div>
+          <div class="flex flex-1 items-center justify-center">
+            <div class={`text-xl font-bold leading-loose text-center`}>
+              {children || "Romance"}
+            </div>
+          </div>
+          <div />
+        </div>
+      </div>
+      <div class="flex flex-1 self-stretch flex-col items-center justify-start px-6">
+        <div class="flex self-stretch flex-col items-start justify-start">
+          <div class="flex self-stretch items-center justify-start">
+            <div
+              class={`flex flex-col space-y-1 items-start justify-start p-1 bg-white shadow shadow-inner rounded`}
+            >
+              <img
+                src="/fimgs/1583_189526.x1.png"
+                class={`flex items-center justify-center`}
+              />
+              <div class="flex flex-1 self-stretch flex-col space-y-1 items-start justify-start p-0.5">
+                <div class="flex flex-1 self-stretch items-start justify-start">
+                  <div class="text-sm leading-tight">One Piece</div>
+                </div>
+                <div class="flex self-stretch space-x-2 items-center justify-start">
+                  <div class="flex items-center justify-center">
+                    <div class="flex items-center justify-center pr-0.5">
+                      <ficon
+                        aria-label="FavoriteStarFill"
+                        iconName="FavoriteStarFill"
+                        style="font-size:10px; color: #ff9f43;"
+                        class={`flex items-center justify-center pr-1`}
+                      />
+                      <div class="text-xs leading-none text-amber-500">4.9</div>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-center">
+                    <img
+                      src="/fimgs/3995_348232.x1.svg"
+                      class="flex flex-col items-start justify-start pr-0.5"
+                      style="width: 16px; min-width: 16px; max-width: 16px; height: 9px; min-height: 9px; max-height: 9px;"
+                    />
+                    <div class="text-xs leading-none text-center text-amber-500">
+                      123
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</>
