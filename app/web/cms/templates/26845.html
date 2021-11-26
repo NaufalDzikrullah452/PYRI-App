@@ -1,6 +1,7 @@
 <>
   <effect
     meta={{
+      ptr: "",
       author: [],
       book: [],
       chapter: [],
@@ -12,9 +13,10 @@
       pages: 0,
       page_id: 1,
       page_length: 0,
+      hide_bar: false,
       loading_page: false,
 
-      loading(val) {
+      async loading(val) {
         if (val) {
           runInAction(() => {
             this.loading_page = val;
@@ -28,7 +30,19 @@
         }
       },
 
-      history() {
+      async hideBar() {
+        if (this.hide_bar) {
+          runInAction(() => {
+            this.hide_bar = false;
+          });
+        } else {
+          runInAction(() => {
+            this.hide_bar = true;
+          });
+        }
+      },
+
+      async history() {
         // read last history
         if (params.book_id !== undefined && window.user.role !== "guest") {
           api("/api/history-book", {
@@ -40,7 +54,7 @@
             },
             e: "ReadByAllId",
           }).then((res) => {
-            // console.log(res)
+            // console.log(res);
             if (res.viewBook === null) {
               api("/api/history-book", {
                 viewBook: {
@@ -52,7 +66,7 @@
                 },
                 e: "Create",
               }).then((res) => {
-                console.log(res.res);
+                // console.log(res.res);
               });
             } else if (res.viewBook !== null) {
               api("/api/history-book", {
@@ -62,11 +76,16 @@
                 },
                 e: "Update",
               }).then((res) => {
-                console.log(res.res);
+                // console.log(res.res);
               });
             }
           });
         }
+      },
+
+      async nextPage() {
+        meta.ptr.done();
+        console.log("PTR WORK");
       },
 
       async back() {
@@ -76,11 +95,13 @@
       },
 
       async changePage(key) {
-        if (key === "next" && this.pages < this.page_chapter.length) {
+        // console.log("clicked")
+        if (key === "next" && this.pages < this.page.length) {
           this.loading(true);
           runInAction(() => {
             this.pages++;
-            this.page_id = this.page_chapter[this.pages - 1].page_id;
+            this.page_id = this.page[this.pages - 1].page_id;
+            this.chapter_id = this.page[this.pages - 1].page_chapter_id;
           });
           this.history();
           this.loading(false);
@@ -88,60 +109,88 @@
           this.loading(true);
           runInAction(() => {
             this.pages--;
-            this.page_id = this.page_chapter[this.pages - 1].page_id;
+            this.page_id = this.page[this.pages - 1].page_id;
+            this.chapter_id = this.page[this.pages - 1].page_chapter_id;
           });
           this.history();
           this.loading(false);
-        }
+        } // console.log(this.chapter_id);
       },
 
       async onChange(key, value) {
-        if (this[key] !== value) {
+        var page_chapter = "";
+        await api("/api/page", {
+          page: {
+            page_chapter_id: value,
+            page_book_id: parseInt(params.book_id),
+          },
+          e: "ReadByBookChapterId",
+        }).then((res) => {
+          console.log(res);
+          page_chapter = res.page;
+        });
+
+        if (this[key] !== value && page_chapter.length !== 0) {
           this.loading(true);
           runInAction(() => {
             this[key] = value;
           });
-          console.log(key + " : " + value); // get page by chapter
+          console.log(key + " : " + value); // read last pages in chapter
 
-          var page_chapter = [];
-          this.page.map((value) => {
-            if (value.page_chapter_id === this.chapter_id) {
-              page_chapter.push(value);
+          await api("/api/history-book", {
+            viewBook: {
+              viewBook_book_id: parseInt(params.book_id),
+              viewBook_user_id: window.user.user.user_id,
+              viewBook_chapter_id: this.chapter_id,
+            },
+            e: "ReadLatestPages",
+          }).then((res) => {
+            console.log(res);
+
+            if (res.viewBook !== null) {
+              this.page.map((value, i) => {
+                if (value.page_id === res.viewBook.viewBook_page_id) {
+                  runInAction(() => {
+                    this.page_id = res.viewBook.viewBook_page_id;
+                    this.page.map((value, index) => {
+                      if (value.page_id === res.viewBook.viewBook_page_id) {
+                        this.pages = index + 1;
+                      }
+                    });
+                  });
+                }
+              });
+            } else {
+              runInAction(() => {
+                this.pages = 1;
+              });
+              page_chapter = [];
+              this.page.map((value, index) => {
+                if (value.page_chapter_id === this.chapter_id) {
+                  page_chapter.push(value);
+                }
+              });
+              this.page.some((value, index) => {
+                runInAction(() => {
+                  this.pages = index + 1;
+                });
+
+                if (value.page_id === page_chapter[0].page_id) {
+                  return true;
+                }
+              });
+              runInAction(() => {
+                this.page_id = page_chapter[0].page_id;
+              });
             }
           });
-          this.page_chapter = page_chapter;
-
-          if (page_chapter.length !== 0) {
-            // read last pages in chapter
-            await api("/api/history-book", {
-              viewBook: {
-                viewBook_book_id: parseInt(params.book_id),
-                viewBook_user_id: window.user.user.user_id,
-                viewBook_chapter_id: this.chapter_id,
-              },
-              e: "ReadLatestPages",
-            }).then((res) => {
-              // console.log(res)
-              if (res.viewBook !== null) {
-                this.page_chapter.map((value, i) => {
-                  if (value.page_id === res.viewBook.viewBook_page_id) {
-                    runInAction(() => {
-                      this.page_id = res.viewBook.viewBook_page_id;
-                      this.pages = i + 1;
-                    });
-                  }
-                });
-              } else {
-                this.pages = 1;
-                this.page_id = page_chapter[0].page_id;
-              }
-            });
-            this.history();
-          } else {
-            this.pages = 0;
-          }
-
+          this.history();
           this.loading(false);
+        } else if (page_chapter.length === 0) {
+          window.mobileApp.app.dialog.alert(
+            null,
+            "This chapter doesn't have pages"
+          );
         }
       },
     }}
@@ -160,8 +209,7 @@
           },
           e: "ReadById",
         }).then((res) => {
-          console.log(res);
-
+          // console.log(res);
           if (res !== null || res.res !== "Failure") {
             meta.loading(true);
             runInAction(() => {
@@ -169,8 +217,20 @@
               meta.chapter = res.book.chapter;
               meta.category = res.book.category;
               meta.publisher = res.book.publisher;
-              meta.page = res.book.page; // meta.author = res.book.author;
-              // read last chapter read
+              meta.page = res.book.page;
+              page_chapter = res.book.page; // meta.author = res.book.author;
+
+              page_chapter.sort(function (a, b) {
+                var aNum = parseInt(a.page_page);
+                var bNum = parseInt(b.page_page);
+                return aNum - bNum;
+              });
+              page_chapter.sort(function (a, b) {
+                var aNum = parseInt(a.page_chapter_id);
+                var bNum = parseInt(b.page_chapter_id);
+                return aNum - bNum;
+              });
+              meta.page = page_chapter; // read last chapter read
 
               api("/api/history-book", {
                 viewBook: {
@@ -183,228 +243,229 @@
 
                 if (res.viewBook !== null) {
                   runInAction(() => {
+                    meta.page.map((value, index) => {
+                      if (value.page_id === res.viewBook.viewBook_page_id) {
+                        meta.pages = index + 1;
+                      }
+                    });
                     meta.page_id = res.viewBook.viewBook_page_id;
                     meta.chapter_id = res.viewBook.viewBook_chapter_id;
                   });
                 } else {
                   meta.pages = 1;
                   meta.page_id = meta.page[0].page_id;
+                  meta.chapter_id = meta.page[0].page_chapter_id;
                 } // get page by chapter
 
-                meta.page.map((value) => {
-                  if (value.page_chapter_id === meta.chapter_id) {
-                    page_chapter.push(value);
-                  }
-                });
-
-                if (page_chapter.length !== 0) {
-                  page_chapter.map((value, i) => {
-                    if (value.page_id === meta.page_id) {
-                      runInAction(() => {
-                        meta.pages = i + 1;
-                      });
-                    }
-                  });
-                } else {
-                  meta.chapter_id = meta.chapter[0].chapter_id;
-                  meta.page.map((value) => {
-                    if (value.page_chapter_id === meta.chapter_id) {
-                      page_chapter.push(value);
-                    }
-                  });
-                  meta.pages = 1;
-                  meta.page_id = page_chapter[0].page_id;
-                }
-
                 runInAction(() => {
-                  meta.page_chapter = page_chapter;
                   meta.history();
                 });
               });
             });
             meta.loading(false);
           }
-        }); // console.log(meta.loading_page);
+        });
       }
     }}
   />
-  <div
-    class={`flex self-stretch space-x-2.5 items-start justify-start bg-white w-full h-full`}
-  >
-    <div class="flex flex-1 self-stretch flex-col space-y-1 items-start justify-start">
-      <div class="flex self-stretch flex-col items-start justify-start px-6 pt-9 pb-4 bg-white shadow">
-        <div class="flex self-stretch items-center justify-start">
-          <div class="flex flex-1 self-stretch items-center justify-start">
+  <div class={`flex items-start justify-start bg-white w-full h-full`}>
+    <div class={`flex flex-1 self-stretch items-start justify-start w-full`}>
+      <div
+        class={`flex flex-col space-y-1 items-start justify-start w-full`}
+        style={`height: 823px; min-height: 823px; max-height: 823px; overflow:hidden`}
+      >
+        <div
+          class={`flex self-stretch flex-col items-start justify-start px-6 pt-9 pb-4 bg-white shadow`}
+          style={`${meta.hide_bar ? "transform: translateY(-100px);" : ""}
+    
+    transition: 0.5s;`}
+        >
+          <div class="flex self-stretch items-center justify-start">
+            <div class="flex flex-1 self-stretch items-center justify-start">
+              <img
+                src="/fimgs/1554_504662.x1.svg"
+                class={`flex self-stretch items-center justify-start`}
+                style={`width: 24px; min-width: 24px; max-width: 24px; height: 36px; min-height: 36px; max-height: 36px;`}
+                onClick={() => {
+                  meta.back();
+                }}
+              />
+            </div>
+            <div />
             <img
-              src="/fimgs/1554_504662.x1.svg"
-              class={`flex self-stretch items-center justify-start`}
-              style={`width: 24px; min-width: 24px; max-width: 24px; height: 36px; min-height: 36px; max-height: 36px;`}
-              onClick={() => {
-                meta.back();
-              }}
-            />
-          </div>
-          <div />
-          <img
-            src="/fimgs/1554_504666.x1.svg"
-            style="width: 41px; min-width: 41px; max-width: 41px; height: 36px; min-height: 36px; max-height: 36px;"
-          />
-          <m-button
-            panelOpen={meta.chapter.length === 0 ? "#" : "right"}
-            class={`flex flex-col items-start justify-start`}
-          >
-            <img
-              src="/fimgs/1554_504668.x1.svg"
-              class="flex items-center justify-center"
+              src="/fimgs/1554_504666.x1.svg"
               style="width: 41px; min-width: 41px; max-width: 41px; height: 36px; min-height: 36px; max-height: 36px;"
             />
-          </m-button>
+            <m-button
+              panelOpen={meta.chapter.length === 0 ? "#" : "right"}
+              class={`flex flex-col items-start justify-start`}
+            >
+              <img
+                src="/fimgs/1554_504668.x1.svg"
+                class="flex items-center justify-center"
+                style="width: 41px; min-width: 41px; max-width: 41px; height: 36px; min-height: 36px; max-height: 36px;"
+              />
+            </m-button>
+          </div>
         </div>
-      </div>
-      {meta.page_chapter.length === 0 && (
+        {meta.page.length === 0 && (
+          <div
+            class={`flex flex-1 self-stretch items-center justify-center w-full`}
+          >
+            <div class={`text-base font-bold leading-normal`}>
+              {meta.chapter.length === 0
+                ? "This book has no chapter yet"
+                : "No pages"}
+            </div>
+          </div>
+        )}
         <div
-          class={`flex flex-1 self-stretch items-center justify-center w-full`}
+          class={`flex flex-1 self-stretch items-center justify-center w-full h-full`}
+          onClick={() => {
+            meta.hideBar();
+          }}
         >
-          <div class={`text-base font-bold leading-normal`}>
-            {meta.chapter.length === 0
-              ? "This book has no chapter yet"
-              : "No pages"}
-          </div>
-        </div>
-      )}
-      <div class={`flex flex-1 self-stretch items-start justify-start w-full`}>
-        {meta.page_chapter.map((value) => {
-          return (
-            <div
-              class={`flex flex-1 self-stretch space-x-2.5 items-center justify-center px-4
-        ${meta.page_id === value.page_id ? "" : "hidden"}`}
-              id={"ch-" + meta.chapter_id + "-page-" + value.page_id}
-            >
-              {!meta.loading_page && (
-                <div
-                  class={`flex flex-1 self-stretch items-start justify-start p-2.5`}
-                >
-                  <img
-                    src={
-                      value.page_content
-                        ? "/upload/" + value.page_content
-                        : "/fimgs/708_2600.x3.png"
-                    }
-                    style={`width: 359px; min-width: 359px; max-width: 359px; height: 631px; min-height: 631px; max-height: 631px;background-image: url('/fimgs/bg-41b447df617d0e6879cf62ac89bba01eb158d003');background-size:100% 100%;background-repeat:no-repeat; background:#E4E4E7;`}
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = "";
-                    }}
-                  />
-                </div>
-              )}
-              {meta.loading_page && (
-                <div
-                  style={`width: 379px; min-width: 379px; max-width: 379px; height: 651px; min-height: 651px; max-height: 651px;`}
-                  class={`flex flex-1 self-stretch flex-col items-center justify-center`}
-                >
-                  <loading-box />
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-      <div class="flex self-stretch flex-col items-center justify-center p-6 bg-white shadow-inner">
-        <div class="flex self-stretch space-x-4 items-center justify-center">
-          <div class="flex flex-1 items-start justify-start">
-            <div class={`text-xs font-bold leading-none text-gray-500`}>
-              Page {meta.pages || 0} / {meta.page_chapter.length || 0}
-            </div>
-          </div>
-          <div class="flex space-x-4 items-center justify-center">
-            <m-button
-              class={`flex flex-col items-center justify-center bg-white border rounded border-gray-500`}
-              onClick={() => {
-                meta.changePage("prev");
-              }}
-            >
-              <img
-                src="/fimgs/3378_77663.x1.svg"
-                style="width: 23.20px; min-width: 23.20px; max-width: 23.20px; height: 23.98px; min-height: 23.98px; max-height: 23.98px;"
-              />
-            </m-button>
-            <div class="flex flex-col items-start justify-start">
-              <div class={`text-base font-bold leading-normal`}>
-                {meta.pages || 0}
-              </div>
-            </div>
-            <m-button
-              class={`flex flex-col items-center justify-center bg-white border rounded border-gray-500`}
-              onClick={() => {
-                meta.changePage("next");
-              }}
-            >
-              <img
-                src="/fimgs/3378_77669.x1.svg"
-                class="flex items-start justify-start"
-                style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
-              />
-            </m-button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <m-panel
-      class={`flex self-stretch flex-col items-start justify-start`}
-      style={`box-shadow: -0.05px 0px 5px grey;`}
-      right={true}
-    >
-      <div class="flex flex-1 self-stretch flex-col space-y-2.5 items-start justify-start px-6 pt-9 pb-6">
-        <div class="flex self-stretch flex-col space-y-2.5 items-center justify-start py-6 bg-white shadow">
-          <img
-            class={`bg-gray-200`}
-            src={
-              meta.book.book_picture
-                ? "/upload/" + meta.book.book_picture
-                : "/fimgs/3902_27574.x1.png"
-            }
-            style={`width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;`}
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = "/fimgs/3902_27574.x1.png";
-            }}
-          />
-          <div class="flex self-stretch items-start justify-center">
-            <div class={`text-2xl font-medium leading-9 text-center`}>
-              {meta.book.book_title || "Book title"}
-            </div>
-          </div>
-          <div class="flex self-stretch items-start justify-center">
-            <div
-              class={`text-base font-bold leading-normal text-center text-gray-500`}
-            >
-              {"Author"}
-            </div>
-          </div>
-        </div>
-        <m-list
-          class={`flex self-stretch flex-col items-center justify-start flex-col list list-none w-full`}
-        >
-          {meta.chapter.map((value) => {
+          {meta.page.map((value) => {
             return (
-              <m-list-item
-                class={`flex self-stretch items-start justify-start bg-white rounded w-full`}
-                title={value.chapter_name}
-                id={`chapter-${value.chapter_id}`}
-                onClick={() => {
-                  meta.onChange("chapter_id", value.chapter_id);
-                }}
-                style={`width:100%; ${
-                  meta.chapter_id === value.chapter_id
-                    ? "background-color:#FFEDD5; "
-                    : ":active { background-color: #FFEDD5;};"
-                }`}
-              />
+              <div
+                class={`flex flex-1 self-stretch space-x-2.5 items-center justify-center px-4
+        ${meta.page_id === value.page_id ? "" : "hidden"}`}
+                id={"ch-" + meta.chapter_id + "-page-" + value.page_id}
+              >
+                {!meta.loading_page && (
+                  <div
+                    class={`flex flex-1 self-stretch items-center justify-center`}
+                  >
+                    <img
+                      class={"w-full h-full"}
+                      draggable={false}
+                      src={
+                        value.page_content
+                          ? "/upload/" + value.page_content
+                          : "/fimgs/708_2600.x3.png"
+                      }
+                      style={`background-image: url('/fimgs/bg-41b447df617d0e6879cf62ac89bba01eb158d003');background-size:100% 100%;background-repeat:no-repeat; background:none; object-fit:contain`}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "";
+                      }}
+                    />
+                  </div>
+                )}
+                {meta.loading_page && (
+                  <div
+                    style={`width: 379px; min-width: 379px; max-width: 379px; height: 651px; min-height: 651px; max-height: 651px;`}
+                    class={`flex flex-1 self-stretch flex-col items-center justify-center ptr-content`}
+                  >
+                    <loading-box />
+                  </div>
+                )}
+              </div>
             );
           })}
-        </m-list>
+        </div>
+        <div
+          class={`flex self-stretch flex-col items-center justify-center p-6 bg-white shadow-inner`}
+          style={`${meta.hide_bar ? "transform: translateY(200px);" : ""}
+    transition: 0.5s;`}
+        >
+          <div class="flex self-stretch space-x-4 items-center justify-center">
+            <div class="flex flex-1 items-start justify-start">
+              <div class={`text-xs font-bold leading-none text-gray-500`}>
+                Page {meta.pages || 0} / {meta.page.length || 0}
+              </div>
+            </div>
+            <div class="flex space-x-4 items-center justify-center">
+              <m-button
+                class={`flex flex-col items-center justify-center bg-white border rounded border-gray-500`}
+                onClick={() => {
+                  meta.changePage("prev");
+                }}
+              >
+                <img
+                  src="/fimgs/3378_77663.x1.svg"
+                  style="width: 23.20px; min-width: 23.20px; max-width: 23.20px; height: 23.98px; min-height: 23.98px; max-height: 23.98px;"
+                />
+              </m-button>
+              <div class="flex flex-col items-start justify-start">
+                <div class={`text-base font-bold leading-normal`}>
+                  {meta.pages || 0}
+                </div>
+              </div>
+              <m-button
+                class={`flex flex-col items-center justify-center bg-white border rounded border-gray-500`}
+                onClick={() => {
+                  meta.changePage("next");
+                }}
+              >
+                <img
+                  src="/fimgs/3378_77669.x1.svg"
+                  class="flex items-start justify-start"
+                  style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
+                />
+              </m-button>
+            </div>
+          </div>
+        </div>
       </div>
-    </m-panel>
+      <m-panel
+        class={`flex flex-col items-start justify-start`}
+        style={`box-shadow: -0.05px 0px 5px grey;`}
+        right={true}
+        reveal={true}
+        swipeNoFollow={true}
+      >
+        <div class="flex flex-1 self-stretch flex-col space-y-2.5 items-start justify-start px-6 pt-9 pb-6">
+          <div class="flex self-stretch flex-col space-y-2.5 items-center justify-start py-6 bg-white shadow">
+            <img
+              class={`bg-gray-200`}
+              src={
+                meta.book.book_picture
+                  ? "/upload/" + meta.book.book_picture
+                  : "/fimgs/3902_27574.x1.png"
+              }
+              style={`width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;`}
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = "/fimgs/3902_27574.x1.png";
+              }}
+            />
+            <div class="flex self-stretch items-start justify-center">
+              <div class={`text-2xl font-medium leading-9 text-center`}>
+                {meta.book.book_title || "Book title"}
+              </div>
+            </div>
+            <div class="flex self-stretch items-start justify-center">
+              <div
+                class={`text-base font-bold leading-normal text-center text-gray-500`}
+              >
+                {"Author"}
+              </div>
+            </div>
+          </div>
+          <m-list
+            class={`flex self-stretch flex-col items-center justify-start flex-col list list-none w-full`}
+          >
+            {meta.chapter.map((value) => {
+              return (
+                <m-list-item
+                  class={`flex self-stretch items-start justify-start bg-white rounded w-full`}
+                  title={value.chapter_name}
+                  id={`chapter-${value.chapter_id}`}
+                  onClick={() => {
+                    meta.onChange("chapter_id", value.chapter_id);
+                  }}
+                  style={`width:100%; ${
+                    meta.chapter_id === value.chapter_id
+                      ? "background-color:#FFEDD5; "
+                      : ":active { background-color: #FFEDD5;};"
+                  }`}
+                />
+              );
+            })}
+          </m-list>
+        </div>
+      </m-panel>
+    </div>
   </div>
 </>
