@@ -58,11 +58,14 @@
           }).then((res) => {
             console.log(res.page);
 
-            if (res.page !== null) {
+            if (
+              res.page !== null &&
+              res.page.page_id !== parseInt(params.page_id)
+            ) {
               alert(
                 `This number book${
                   "{" + this.page.page_page + "}"
-                } already taken`
+                } already taken in chapter: ` + res.page.chapter.chapter_name
               );
               this.disabled = false;
             } else {
