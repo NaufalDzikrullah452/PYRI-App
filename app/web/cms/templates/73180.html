@@ -30,8 +30,8 @@
       async sendRating() {
         if (window.user.role === "guest") {
           window.mobileApp.app.dialog.confirm(
-            null,
-            "Please login first!",
+            "redirect to login?",
+            "Please login before rate!",
             () => {
               navigate("/m/login");
             }
@@ -215,24 +215,38 @@
                 meta.rating = res.rating.rating_point;
               });
             }
-          }); // read book data
+          }); //read history user read this book
 
-          api("/api/books", {
-            book: {
-              book_id: parseInt(params.book_id),
+          api("/api/history-book", {
+            viewBook: {
+              viewBook_book_id: parseInt(params.book_id),
+              viewBook_user_id: window.user.user.user_id,
             },
-            e: "ReadById",
+            e: "ReadLatestChapter",
           }).then((res) => {
-            // console.log(res);
-            runInAction(() => {
-              meta.book = res.book;
-              meta.chapter = res.book.chapter;
-              meta.category = res.book.category;
-              meta.publisher = res.book.publisher;
-              meta.page = res.book.page; // meta.author = res.book.author;
-            });
+            if (res.viewBook !== null) {
+              runInAction(() => {
+                meta.isRead = true;
+              });
+            }
           });
-        } //count book views
+        } // read book data
+
+        api("/api/books", {
+          book: {
+            book_id: parseInt(params.book_id),
+          },
+          e: "ReadById",
+        }).then((res) => {
+          // console.log(res);
+          runInAction(() => {
+            meta.book = res.book;
+            meta.chapter = res.book.chapter;
+            meta.category = res.book.category;
+            meta.publisher = res.book.publisher;
+            meta.page = res.book.page; // meta.author = res.book.author;
+          });
+        }); //count book views
 
         api("/api/history-book", {
           viewBook: {
@@ -246,20 +260,6 @@
                 res.viewBook.length > 999
                   ? (Math.abs(res.viewBook.length) / 1000).toFixed(1) + "k"
                   : res.viewBook.length;
-            });
-          }
-        }); //read history user read this book
-
-        api("/api/history-book", {
-          viewBook: {
-            viewBook_book_id: parseInt(params.book_id),
-            viewBook_user_id: window.user.user.user_id,
-          },
-          e: "ReadLatestChapter",
-        }).then((res) => {
-          if (res.viewBook !== null) {
-            runInAction(() => {
-              meta.isRead = true;
             });
           }
         });
@@ -663,7 +663,17 @@
                     : "/fimgs/1369_35115.x1.svg"
                 }
                 onClick={() => {
-                  meta.onChange("rating", 1);
+                  if (window.user.role === "guest") {
+                    window.mobileApp.app.dialog.confirm(
+                      "redirect to login?",
+                      "Please login before rate!",
+                      () => {
+                        navigate("/m/login");
+                      }
+                    );
+                  } else {
+                    meta.onChange("rating", 1);
+                  }
                 }}
               />
               <img
@@ -674,7 +684,17 @@
                     : "/fimgs/1369_35115.x1.svg"
                 }
                 onClick={() => {
-                  meta.onChange("rating", 2);
+                  if (window.user.role === "guest") {
+                    window.mobileApp.app.dialog.confirm(
+                      "redirect to login?",
+                      "Please login before rate!",
+                      () => {
+                        navigate("/m/login");
+                      }
+                    );
+                  } else {
+                    meta.onChange("rating", 2);
+                  }
                 }}
               />
               <img
@@ -685,7 +705,17 @@
                     : "/fimgs/1369_35115.x1.svg"
                 }
                 onClick={() => {
-                  meta.onChange("rating", 3);
+                  if (window.user.role === "guest") {
+                    window.mobileApp.app.dialog.confirm(
+                      "redirect to login?",
+                      "Please login before rate!",
+                      () => {
+                        navigate("/m/login");
+                      }
+                    );
+                  } else {
+                    meta.onChange("rating", 3);
+                  }
                 }}
               />
               <img
@@ -696,7 +726,17 @@
                     : "/fimgs/1369_35115.x1.svg"
                 }
                 onClick={() => {
-                  meta.onChange("rating", 4);
+                  if (window.user.role === "guest") {
+                    window.mobileApp.app.dialog.confirm(
+                      "redirect to login?",
+                      "Please login before rate!",
+                      () => {
+                        navigate("/m/login");
+                      }
+                    );
+                  } else {
+                    meta.onChange("rating", 4);
+                  }
                 }}
               />
               <img
@@ -707,7 +747,17 @@
                     : "/fimgs/1369_35115.x1.svg"
                 }
                 onClick={() => {
-                  meta.onChange("rating", 5);
+                  if (window.user.role === "guest") {
+                    window.mobileApp.app.dialog.confirm(
+                      "redirect to login?",
+                      "Please login before rate!",
+                      () => {
+                        navigate("/m/login");
+                      }
+                    );
+                  } else {
+                    meta.onChange("rating", 5);
+                  }
                 }}
               />
             </div>
