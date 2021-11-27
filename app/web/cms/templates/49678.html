@@ -11,6 +11,7 @@
       book: [],
       interest: [],
       history: [],
+      bookmarks: [],
       loading: true,
       loadingInterest: true,
 
@@ -95,57 +96,95 @@
       async readHistory() {
         var page_chapter = ""; //read history read
 
-        await api("/api/history-book", {
-          viewBook: {
-            viewBook_user_id: window.user.user.user_id,
-          },
-          e: "ReadByUserId",
-        }).then((res) => {
-          // console.log(res);
-          if (res !== null && res.viewBook.length !== 0) {
-            runInAction(() => {
-              this.pages = [];
-              this.book = [];
-              this.history = res.viewBook;
-              this.history.map((value, index) => {
-                runInAction(() => {
-                  this.book.push(value.books);
-                });
-              }); // console.log(this.book[0])
-
-              if (this.book[0].page.length !== 0) {
-                this.book.map((value, index) => {
+        if (window.user.role !== "guest") {
+          await api("/api/history-book", {
+            viewBook: {
+              viewBook_user_id: window.user.user.user_id,
+            },
+            e: "ReadByUserId",
+          }).then((res) => {
+            // console.log(res);
+            if (res !== null && res.viewBook.length !== 0) {
+              runInAction(() => {
+                this.pages = [];
+                this.book = [];
+                this.history = res.viewBook;
+                this.history.map((value, index) => {
                   runInAction(() => {
-                    page_chapter = this.book[index].page;
+                    this.book.push(value.books);
                   });
-                  page_chapter.sort(function (a, b) {
-                    var aNum = parseInt(a.page_page);
-                    var bNum = parseInt(b.page_page);
-                    return aNum - bNum;
+                }); // console.log(this.book[0])
+
+                if (this.book[0].page.length !== 0) {
+                  this.book.map((value, index) => {
+                    runInAction(() => {
+                      page_chapter = this.book[index].page;
+                    });
+                    page_chapter.sort(function (a, b) {
+                      var aNum = parseInt(a.page_page);
+                      var bNum = parseInt(b.page_page);
+                      return aNum - bNum;
+                    });
+                    page_chapter.sort(function (a, b) {
+                      var aNum = parseInt(a.page_chapter_id);
+                      var bNum = parseInt(b.page_chapter_id);
+                      return aNum - bNum;
+                    });
+                    page_chapter.map((value, idx) => {
+                      if (
+                        value.page_id === this.history[index].viewBook_page_id
+                      ) {
+                        runInAction(() => {
+                          this.pages.push(idx + 1);
+                        });
+                      }
+                    });
                   });
-                  page_chapter.sort(function (a, b) {
-                    var aNum = parseInt(a.page_chapter_id);
-                    var bNum = parseInt(b.page_chapter_id);
-                    return aNum - bNum;
-                  });
-                  page_chapter.map((value, idx) => {
-                    if (
-                      value.page_id === this.history[index].viewBook_page_id
-                    ) {
-                      runInAction(() => {
-                        this.pages.push(idx + 1);
-                      });
-                    }
-                  });
-                });
-              } // console.log(this.pages);
-            });
-          }
-        });
+                } // console.log(this.pages);
+              });
+            }
+          });
+        }
+      },
+
+      async readBookmarks() {
+        if (window.user.role !== "guest") {
+          await api("/api/bookmarks", {
+            bookmark: {
+              bookmark_user_id: window.user.user.user_id,
+            },
+            e: "ReadByUserId",
+          }).then((res) => {
+            if (res !== null && res.bookmark.length !== 0) {
+              runInAction(() => {
+                this.bookmarks = res.bookmark;
+              });
+            }
+          });
+        }
+      },
+
+      async deleteBookmark(bookmark_id) {
+        if (window.user.role !== "guest") {
+          await api("/api/bookmarks", {
+            bookmark: {
+              bookmark_id: bookmark_id,
+            },
+            e: "Delete",
+          }).then((res) => {
+            if (res !== null) {
+              runInAction(() => {
+                this.readBookmarks();
+                location.reload();
+              });
+            }
+          });
+        }
       },
     }}
     run={async ({}) => {
       meta.readHistory();
+      meta.readBookmarks();
       runInAction(() => {
         meta.user = window.user.user || [];
         console.log("/m/");
@@ -158,7 +197,7 @@
     }}
   />
   <div
-    class={`flex self-stretch items-end justify-center bg-white`}
+    class={`flex items-end justify-center bg-white`}
     style={"margin-bottom: 50px;"}
   >
     <div
@@ -183,7 +222,7 @@
             meta.tabActive === "home" &&
             !meta.loading && (
               <div
-                class={`flex space-x-2 items-center justify-start p-4 bg-orange-50`}
+                class={`flex self-stretch space-x-2 items-center justify-start p-4 bg-orange-50 w-full`}
               >
                 <img
                   src="/fimgs/1198_41628.x1.svg"
@@ -1232,7 +1271,7 @@
         </m-tab>
         <m-tab id="explore" />
         <m-tab
-          class={`flex flex-1 self-stretch flex-col items-start justify-start`}
+          class={`flex flex-1 self-stretch flex-col items-start justify-start bg-white`}
           id="pyriList"
         >
           <div class="flex flex-1 self-stretch flex-col items-start justify-start">
@@ -1306,7 +1345,7 @@
               swipeable={true}
             >
               <m-tab
-                class={`flex flex-1 self-stretch flex-col items-center justify-start px-6`}
+                class={`flex flex-1 self-stretch flex-col space-y-3 items-center justify-start px-6`}
                 id="history"
                 style="margin-top:25px;"
               >
@@ -1360,60 +1399,113 @@
                     </div>
                   );
                 })}
+                {meta.history.length === 0 && (
+                  <div
+                    class={`flex flex-1 self-stretch items-start justify-center px-2 py-5 shadow shadow-inner rounded w-full h-full`}
+                  >
+                    <div
+                      class={`text-sm leading-tight text-center text-gray-600`}
+                    >
+                      No history.
+                    </div>
+                  </div>
+                )}
               </m-tab>
               <m-tab
                 class={`flex flex-1 self-stretch flex-col items-center justify-start px-6`}
                 id="read-later"
                 style="margin-top:25px;"
               >
-                <div class="flex self-stretch flex-col items-start justify-start p-2 bg-white shadow shadow-inner rounded">
-                  <div class="flex self-stretch space-x-4 items-start justify-start">
-                    <div class="flex items-start justify-start">
-                      <img
-                        src="/fimgs/3995_347820.x1.png"
-                        class="flex items-start justify-start"
-                        style="width: 65px; min-width: 65px; max-width: 65px; height: 93px; min-height: 93px; max-height: 93px;"
-                      />
-                    </div>
-                    <div class="flex flex-1 self-stretch flex-col space-y-1.5 items-start justify-start">
-                      <div class="flex flex-1 self-stretch flex-col items-start justify-start">
-                        <div class="flex self-stretch flex-col items-start justify-start">
-                          <div class="flex self-stretch items-start justify-start">
-                            <div class="text-sm font-medium leading-tight">
-                              Game Over
-                            </div>
-                          </div>
+                {meta.bookmarks.map((value, i) => {
+                  return (
+                    <div
+                      class={`flex self-stretch flex-col items-start justify-start p-2 bg-white shadow shadow-inner rounded`}
+                    >
+                      <div class="flex self-stretch space-x-4 items-start justify-start">
+                        <div class="flex items-start justify-start">
+                          <img
+                            class={`flex items-start justify-start`}
+                            style={`width: 65px; min-width: 65px; max-width: 65px; height: 93px; min-height: 93px; max-height: 93px;`}
+                            onError={(e) => {
+                              e.target.src = "/fimgs/3995_347820.x1.png";
+                            }}
+                            src="/fimgs/3995_347820.x1.png"
+                          />
                         </div>
-                        <div
-                          class={`flex self-stretch items-center justify-start`}
-                          style="margin-top:10px;"
-                        >
-                          <div class="flex items-start justify-start">
-                            <div class="flex items-center justify-center rounded-full">
-                              <div class="text-xs font-medium leading-none text-center text-gray-500">
-                                Valerie Patkar
+                        <div class="flex flex-1 self-stretch flex-col space-y-1.5 items-start justify-start">
+                          <div class="flex flex-1 self-stretch flex-col items-start justify-start">
+                            <div class="flex self-stretch flex-col items-start justify-start">
+                              <div class="flex self-stretch items-start justify-start">
+                                <div
+                                  class={`text-sm font-medium leading-tight`}
+                                >
+                                  {value.books.book_title || "Book Name"}
+                                </div>
+                              </div>
+                            </div>
+                            <div
+                              class={`flex self-stretch items-center justify-start`}
+                              style="margin-top:10px;"
+                            >
+                              <div class="flex items-start justify-start">
+                                <div class="flex items-center justify-center rounded-full">
+                                  <div
+                                    class={`text-xs font-medium leading-none text-center text-gray-500`}
+                                  >
+                                    {value.books
+                                      .authors_authorsTobooks_book_author_one_id
+                                      ? value.books
+                                          .authors_authorsTobooks_book_author_one_id
+                                          .author_name
+                                      : "Author"}{" "}
+                                    {value.books
+                                      .authors_authorsTobooks_book_author_two_id
+                                      ? value.books
+                                          .authors_authorsTobooks_book_author_two_id
+                                          .author_name
+                                      : ""}{" "}
+                                    {value.books
+                                      .authors_authorsTobooks_book_author_three_id
+                                      ? value.books
+                                          .authors_authorsTobooks_book_author_three_id
+                                          .author_name
+                                      : ""}
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      </div>
-                      <div class="flex self-stretch space-x-2 items-start justify-start">
-                        <div class="flex flex-1 items-center justify-center px-4 py-2.5 bg-white shadow border rounded border-amber-500">
-                          <div class="text-xs font-bold leading-none text-center text-amber-500">
-                            Read Now
+                          <div class="flex self-stretch space-x-2 items-start justify-start">
+                            <div
+                              class={`flex flex-1 items-center justify-center px-4 py-2.5 bg-white shadow border rounded border-amber-500`}
+                              onClick={() => {
+                                navigate(
+                                  "/m/detail-book-page/" + value.books.book_id
+                                );
+                              }}
+                            >
+                              <div class="text-xs font-bold leading-none text-center text-amber-500">
+                                Read Now
+                              </div>
+                            </div>
+                            <div
+                              class={`flex items-start justify-start px-1.5 py-1 bg-white shadow border rounded border-gray-400`}
+                              onClick={() => {
+                                meta.deleteBookmark(value.bookmark_id);
+                              }}
+                            >
+                              <img
+                                src="/fimgs/3995_347834.x1.svg"
+                                class={`flex items-center justify-center`}
+                                style={`width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;`}
+                              />
+                            </div>
                           </div>
-                        </div>
-                        <div class="flex items-start justify-start px-1.5 py-1 bg-white shadow border rounded border-gray-400">
-                          <img
-                            src="/fimgs/3995_347834.x1.svg"
-                            class="flex items-center justify-center"
-                            style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
-                          />
                         </div>
                       </div>
                     </div>
-                  </div>
-                </div>
+                  );
+                })}
               </m-tab>
             </m-tabs>
           </div>

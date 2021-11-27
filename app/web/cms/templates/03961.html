@@ -1,15 +1,122 @@
 <>
   <effect
     meta={{
-      tabActive: "categories",
+      tabActiveExplore: "categories",
       tabLink: "",
       tabGenres: true,
 
-      onClickTab(tab) {
-        this.tabActive = tab;
+      async onClickTab(tab) {
+        this.tabActiveExplore = tab;
+
+        if (this.tabActiveExplore == "categories") {
+          this.actionCategory();
+        } else if (this.tabActiveExplore == "genres") {
+          this.actionGenre();
+        }
+      },
+
+      async actionCategory() {
+        let categories;
+        await api("/api/categories", {
+          category: " ",
+          e: "ReadAll",
+        }).then((res) => {
+          categories = res.category;
+          console.log(categories);
+        });
+        document.getElementById("categories").innerHTML = "";
+        document.getElementById("categories").className =
+          "flex flex-1 self-stretch flex-col space-y-3 items-center justify-start px-6 css-1wv53zm tab";
+
+        for (let ind = 0; ind < Math.ceil(categories.length / 2); ind++) {
+          let a = document.createElement("div");
+          a.className =
+            "flex self-stretch space-x-4 items-center justify-center";
+          a.id = "rc" + ind;
+          document.getElementById("categories").appendChild(a);
+        }
+
+        for (let ind = 0; ind < categories.length; ind++) {
+          let a = document.createElement("div");
+          a.className =
+            "flex self-stretch flex-col items-start justify-start rounded-lg";
+          a.style.width = "173.50px";
+          a.style.maxWidth = "173.50px";
+          a.style.height = "96px";
+          a.style.maxHeight = "96px";
+          a.style.borderRadius = "14px";
+          a.style.backgroundImage = `url(../upload/${categories[ind].category_pictures})`;
+          a.style.backgroundSize = "100% 100%";
+          a.style.backgroundRepeat = "no-repeat";
+
+          a.onclick = () => {
+            navigate("/m/explore/categories/" + categories[ind].category_id);
+          };
+
+          let b = document.createElement("div");
+          b.className =
+            "flex flex-1 self-stretch flex-col items-center justify-center px-4 bg-black bg-opacity-60 css-j3shp6";
+          b.style.borderRadius = "14px";
+          let c = document.createElement("div");
+          c.className =
+            "text-base font-bold leading-normal text-center text-white";
+          c.innerText = categories[ind].category_name;
+          b.appendChild(c);
+          a.appendChild(b);
+          document.getElementById("rc" + Math.floor(ind / 2)).appendChild(a);
+        }
+      },
+
+      async actionGenre() {
+        let genres;
+        await api("/api/tags", {
+          tags: " ",
+          e: "ReadAll",
+        }).then((res) => {
+          genres = res.tags;
+          console.log(genres);
+        });
+        document.getElementById("genres").innerHTML = "";
+        document.getElementById("genres").className =
+          "flex flex-1 self-stretch flex-col space-y-3 items-center justify-start px-6 mt-4 css-10rbni4 tab";
+
+        for (let ind = 0; ind < Math.ceil(genres.length / 3); ind++) {
+          let a = document.createElement("div");
+          a.className = "flex self-stretch space-x-4 items-start justify-start";
+          a.id = "rc" + ind;
+          document.getElementById("genres").appendChild(a);
+        }
+
+        for (let ind = 0; ind < genres.length; ind++) {
+          let a = document.createElement("div");
+          a.className =
+            "flex flex-col space-y-2.5 items-center justify-start px-6 py-4 bg-gray-50 shadow rounded-lg";
+
+          a.onclick = () => {
+            navigate("/m/explore/genre/" + genres[ind].tag_id);
+          };
+
+          let bi = document.createElement("img");
+          bi.className =
+            "flex items-center justify-center bg-white rounded-full css-m6pyji";
+          bi.setAttribute("src", "/upload/" + genres[ind].tag_picture);
+          bi.style.width = "64px";
+          bi.style.maxWidth = "64px";
+          bi.style.height = "64px";
+          bi.style.maxHeight = "64px";
+          let c = document.createElement("div");
+          c.className = "text-sm font-bold leading-tight";
+          c.innerText = genres[ind].tag_name;
+          a.appendChild(bi);
+          a.appendChild(c);
+          document.getElementById("rc" + Math.floor(ind / 3)).appendChild(a);
+        }
       },
     }}
-    run={async () => {}}
+    run={async () => {
+      meta.onClickTab(meta.tabActiveExplore);
+      console.log("End of code");
+    }}
   />
   <div class="flex flex-col items-start justify-start bg-white">
     <div class="flex flex-1 self-stretch flex-col items-start justify-start">
@@ -29,25 +136,30 @@
           <m-link
             class={`flex flex-1 self-stretch flex-col space-y-2.5 items-start justify-start`}
             tabLink="#categories"
-            onClick={(e) => meta.onClickTab("categories")}
+            onClick={(e) => {
+              meta.onClickTab("categories");
+            }}
             tabLinkActive={meta.tabActive === "categories"}
+            href={""}
           >
-            {meta.tabActive === "categories" && (
+            {meta.tabActiveExplore === "categories" && (
               <div
                 class={`flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-center bg-white`}
                 style={`padding:8px; border-bottom: 3px solid black; border-bottom-color: #feca57`}
+                onClick={(e) => meta.onClickTab("categories")}
               >
                 <div class="text-base leading-normal text-center text-amber-500">
                   Categories
                 </div>
               </div>
             )}
-            {meta.tabActive !== "categories" && (
+            {meta.tabActiveExplore !== "categories" && (
               <div
                 class={`flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-center`}
                 style={
                   "padding:8px; border-bottom: 3px solid black; border-bottom-color: #f5f6fa"
                 }
+                onClick={(e) => meta.onClickTab("categories")}
               >
                 <div class="text-base leading-normal text-center text-gray-900">
                   Categories
@@ -60,8 +172,9 @@
             tabLink="#genres"
             onClick={(e) => meta.onClickTab("genres")}
             tabLinkActive={meta.tabActive === "genres"}
+            href={""}
           >
-            {meta.tabActive === "genres" && (
+            {meta.tabActiveExplore === "genres" && (
               <div
                 class={`flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-center`}
                 style={
@@ -73,7 +186,7 @@
                 </div>
               </div>
             )}
-            {meta.tabActive !== "genres" && (
+            {meta.tabActiveExplore !== "genres" && (
               <div
                 class={`flex self-stretch flex-col space-y-2.5 items-center justify-center bg-white`}
                 style={`padding:8px; border-bottom: 3px solid black; border-bottom-color: #f5f6fa;`}
@@ -91,159 +204,18 @@
         swipeable={true}
       >
         <m-tab
-          class={`flex flex-1 self-stretch flex-col space-y-3 items-center justify-start px-6`}
+          class={`flex flex-1 self-stretch flex-col items-center justify-start px-6`}
           id="categories"
           style="margin-top:25px;"
         >
-          <div class="flex self-stretch space-x-4 items-center justify-center">
-            <div
-              class={`flex flex-1 self-stretch flex-col items-start justify-start rounded-lg`}
-              style={`width: 173.50px; min-width: 173.50px; max-width: 173.50px; height: 96px; min-height: 96px; max-height: 96px;background-image: url('/fimgs/bg-a6fa4b24612d31938183833666e361e2179d3f89');background-size:100% 100%;background-repeat:no-repeat; border-radius:8%;`}
-            >
-              <div
-                class={`flex flex-1 self-stretch flex-col items-center justify-center px-4 bg-black bg-opacity-60`}
-                style="border-radius:8%;"
-              >
-                <div class="text-base font-bold leading-normal text-center text-white">
-                  Encyclopedia
-                </div>
-              </div>
-            </div>
-            <div
-              class={`flex flex-1 self-stretch flex-col items-start justify-start rounded-lg`}
-              style={`width: 173.50px; min-width: 173.50px; max-width: 173.50px; height: 96px; min-height: 96px; max-height: 96px;background-image: url('/fimgs/bg-22c9c9f6c85b10137561dcb0416e0a11da4d9dd5');background-size:100% 100%;background-repeat:no-repeat; border-radius:8%;`}
-            >
-              <div
-                class={`flex flex-1 self-stretch flex-col items-center justify-center px-4 bg-black bg-opacity-60`}
-                style="border-radius:8%;"
-              >
-                <div class="text-base font-bold leading-normal text-center text-white">
-                  Scientific Articles
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="flex self-stretch space-x-4 items-center justify-center">
-            <div
-              class={`flex flex-1 self-stretch flex-col items-start justify-start rounded-lg`}
-              style={`width: 173.50px; min-width: 173.50px; max-width: 173.50px; height: 96px; min-height: 96px; max-height: 96px;background-image: url('/fimgs/bg-1a8e9a5a58134bb96e55a88fa2bef1054608575d');background-size:100% 100%;background-repeat:no-repeat; border-radius:8%;`}
-            >
-              <div
-                class={`flex flex-1 self-stretch flex-col items-center justify-center px-4 bg-black bg-opacity-60`}
-                style="border-radius:8%;"
-              >
-                <div class="text-base font-bold leading-normal text-center text-white">
-                  Dictionary
-                </div>
-              </div>
-            </div>
-            <div
-              class={`flex flex-1 self-stretch flex-col items-start justify-start rounded-lg`}
-              style={`width: 173.50px; min-width: 173.50px; max-width: 173.50px; height: 96px; min-height: 96px; max-height: 96px;background-image: url('/fimgs/bg-4b0acd70e23ce81212e303e41946d86e2796efa8');background-size:100% 100%;background-repeat:no-repeat; border-radius:8%;`}
-            >
-              <div
-                class={`flex flex-1 self-stretch flex-col items-center justify-center px-4 bg-black bg-opacity-60`}
-                style="border-radius:8%;"
-              >
-                <div class="text-base font-bold leading-normal text-center text-white">
-                  Magazine
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="flex self-stretch space-x-4 items-center justify-center">
-            <div
-              class={`flex self-stretch flex-col items-start justify-start rounded-lg`}
-              style={`width: 173.50px; min-width: 173.50px; max-width: 173.50px; height: 96px; min-height: 96px; max-height: 96px;background-image: url('/fimgs/bg-708c9c649e1957177220357d0f19765cea6e2726');background-size:100% 100%;background-repeat:no-repeat; border-radius:8%;`}
-            >
-              <div
-                class={`flex flex-1 self-stretch flex-col items-center justify-center px-4 bg-black bg-opacity-60`}
-                style="border-radius:8%;"
-              >
-                <div class="text-base font-bold leading-normal text-center text-white">
-                  Novel
-                </div>
-              </div>
-            </div>
-            <div
-              class={`flex self-stretch flex-col items-start justify-start rounded-lg`}
-              style={`width: 173.50px; min-width: 173.50px; max-width: 173.50px; height: 96px; min-height: 96px; max-height: 96px;background-image: url('/fimgs/bg-7c5073755fb61c6043e2f5332a01f7dcb3f5a37a');background-size:100% 100%;background-repeat:no-repeat; border-radius:8%;`}
-            >
-              <div
-                class={`flex flex-1 self-stretch flex-col items-center justify-center px-4 bg-black bg-opacity-60`}
-                style="border-radius:8%;"
-              >
-                <div class="text-base font-bold leading-normal text-center text-white">
-                  Biography
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="flex self-stretch items-center justify-start">
-            <div
-              class={`flex flex-col items-start justify-center rounded`}
-              style={`width: 173.50px; min-width: 173.50px; max-width: 173.50px; height: 96px; min-height: 96px; max-height: 96px;background-image: url('/fimgs/bg-6959cbbd6a23dcca8f4885c3d74924750e2bbb9f');background-size:100% 100%;background-repeat:no-repeat; border-radius:8%;`}
-            >
-              <div
-                class={`flex flex-1 self-stretch flex-col items-center justify-center px-4 bg-black bg-opacity-60`}
-                style="border-radius:8%;"
-              >
-                <div class="text-base font-bold leading-normal text-center text-white">
-                  Book
-                </div>
-              </div>
-            </div>
-          </div>
+          <div />
         </m-tab>
         <m-tab
-          class={`flex flex-1 self-stretch flex-col space-y-3 items-center justify-start px-6`}
+          class={`flex flex-1 self-stretch flex-col items-center justify-start px-6`}
           id="genres"
           style="margin-top:25px;"
         >
-          <div class="flex self-stretch space-x-4 items-start justify-start">
-            <div class="flex flex-col space-y-2.5 items-center justify-start px-6 py-4 bg-gray-50 shadow rounded-lg">
-              <img
-                src="/fimgs/3857_18440.x1.svg"
-                class="flex items-center justify-center bg-white rounded-full"
-                style="width: 60px; min-width: 60px; max-width: 60px; height: 60px; min-height: 60px; max-height: 60px;"
-              />
-              <div class="text-sm font-bold leading-tight">Romance</div>
-            </div>
-            <div class="flex flex-col space-y-2.5 items-center justify-start px-6 py-4 bg-gray-50 shadow rounded-lg">
-              <img
-                src="/fimgs/3857_18448.x1.svg"
-                class="flex items-center justify-center bg-white rounded-full"
-                style="width: 60px; min-width: 60px; max-width: 60px; height: 60px; min-height: 60px; max-height: 60px;"
-              />
-              <div class="text-sm font-bold leading-tight">Horror</div>
-            </div>
-            <div class="flex flex-col space-y-2.5 items-center justify-start px-6 py-4 bg-gray-50 shadow rounded-lg">
-              <img
-                src="/fimgs/3857_18455.x1.svg"
-                class="flex items-center justify-center bg-white rounded-full"
-                style="width: 60px; min-width: 60px; max-width: 60px; height: 60px; min-height: 60px; max-height: 60px;"
-              />
-              <div class="text-sm font-bold leading-tight">Sci - Fi</div>
-            </div>
-          </div>
-          <div class="flex self-stretch space-x-4 items-start justify-start">
-            <div class="flex flex-col space-y-2.5 items-center justify-start px-6 py-4 bg-gray-50 shadow rounded-lg">
-              <img
-                src="/fimgs/3857_18529.x1.svg"
-                class="flex items-center justify-center bg-white rounded-full"
-                style="width: 60px; min-width: 60px; max-width: 60px; height: 60px; min-height: 60px; max-height: 60px;"
-              />
-              <div class="text-sm font-bold leading-tight">Historical</div>
-            </div>
-            <div class="flex flex-col space-y-2.5 items-center justify-start px-6 py-4 bg-gray-50 shadow rounded-lg">
-              <img
-                src="/fimgs/3857_18540.x1.svg"
-                class="flex items-center justify-center bg-white rounded-full"
-                style="width: 60px; min-width: 60px; max-width: 60px; height: 60px; min-height: 60px; max-height: 60px;"
-              />
-              <div class="text-sm font-bold leading-tight">Magic</div>
-            </div>
-          </div>
+          <div />
         </m-tab>
       </m-tabs>
     </div>

@@ -177,6 +177,42 @@
         if (params.book_id !== undefined) book_id = params.book_id;
         navigate("/m/comment-page/" + book_id);
       },
+
+      async addBookmark(book_id) {
+        if (window.user.role === "guest") {
+          window.mobileApp.app.dialog.confirm(
+            "redirect to login?",
+            "Please login before adding bookmark!",
+            () => {
+              navigate("/m/login");
+            }
+          );
+        } else {
+          api("/api/bookmarks", {
+            bookmark: {
+              bookmark_user_id: window.user.user.user_id,
+              bookmark_book_id: parseInt(params.book_id),
+            },
+            e: "ReadByBookNUserId",
+          }).then((res) => {
+            console.log(res);
+
+            if (res.bookmark == null) {
+              api("/api/bookmarks", {
+                bookmark: {
+                  bookmark_user_id: window.user.user.user_id,
+                  bookmark_book_id: parseInt(params.book_id),
+                  bookmark_date: new Date(),
+                },
+                e: "Create",
+              }).then((res) => {
+                console.log(res);
+                navigate("/m/");
+              });
+            }
+          });
+        }
+      },
     }}
     run={async () => {
       // read buku by book_id
@@ -218,6 +254,20 @@
           }); //read history user read this book
 
           api("/api/history-book", {
+            viewBook: {
+              viewBook_book_id: parseInt(params.book_id),
+              viewBook_user_id: window.user.user.user_id,
+            },
+            e: "ReadLatestChapter",
+          }).then((res) => {
+            if (res.viewBook !== null) {
+              runInAction(() => {
+                meta.isRead = true;
+              });
+            }
+          }); //read book bookmark status of this user
+
+          api("/api/bookmarks", {
             viewBook: {
               viewBook_book_id: parseInt(params.book_id),
               viewBook_user_id: window.user.user.user_id,
@@ -784,7 +834,12 @@
         class={`fixed w-full bottom-0 flex self-stretch space-x-2 items-center justify-center px-6 py-4 bg-white bg-opacity-50`}
         style="backdrop-filter: blur(10px);"
       >
-        <div class="flex self-stretch items-center justify-center bg-white shadow border rounded-lg border-amber-500">
+        <div
+          class={`flex self-stretch items-center justify-center bg-white shadow border rounded-lg border-amber-500`}
+          onClick={() => {
+            meta.addBookmark(params.book_id);
+          }}
+        >
           <img
             style="width: 35.71px; min-width: 35.71px; max-width: 35.71px; height: 44px; min-height: 44px; max-height: 44px;"
             src="/fimgs/I991_7676_991_7671.x1.svg"

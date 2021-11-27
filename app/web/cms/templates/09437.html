@@ -1,31 +1,31 @@
 <>
   <effect
     meta={{
-      category_name: "",
+      genre_name: "",
       rating_score: [],
       views_count: [],
       books: [],
     }}
     run={async () => {
       let books;
-      let category;
+      let genre;
       let viewsCount;
       let ratingScore;
       await api("/api/books", {
         book: {
-          category_id: params.id,
+          genre_id: params.id,
         },
-        e: "ReadByCategoryId",
+        e: "ReadByGenreId",
       }).then((res) => {
         books = res.book;
       });
-      await api("/api/categories", {
-        category: {
-          category_id: params.id,
+      await api("/api/tags", {
+        tags: {
+          tag_id: params.id,
         },
         e: "ReadById",
       }).then((res) => {
-        category = res.category;
+        genre = res.tags;
       });
       await api("/api/history-book", {
         viewBook: {
@@ -44,7 +44,7 @@
         ratingScore = res.rating;
       });
       runInAction(() => {
-        meta.category_name = category.category_name;
+        meta.genre_name = genre.tag_name;
         meta.books = books;
         meta.views_count = viewsCount;
         console.log(meta.views_count);
@@ -78,7 +78,7 @@
           </div>
           <div class="flex flex-1 items-center justify-center">
             <div class={`text-xl font-bold leading-loose text-center`}>
-              {meta.category_name || children}
+              {meta.genre_name || children}
             </div>
           </div>
           <div />
@@ -153,7 +153,7 @@
                           </div>
                           <div class="flex items-center justify-center">
                             <img
-                              src="/fimgs/3721_18175.x1.svg"
+                              src="/fimgs/4000_79452.x1.svg"
                               class="flex flex-col items-start justify-start pr-0.5"
                               style="width: 16px; min-width: 16px; max-width: 16px; height: 9px; min-height: 9px; max-height: 9px;"
                             />
