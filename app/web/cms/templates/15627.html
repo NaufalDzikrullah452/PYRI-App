@@ -65,7 +65,9 @@
 
             if (res.page !== null) {
               alert(
-                `This number book${"{" + this.page_page + "}"} already taken`
+                `This number book${
+                  "{" + this.page_page + "}"
+                } already taken in chapter: ` + res.page.chapter.chapter_name
               );
               this.disabled = false;
             } else {

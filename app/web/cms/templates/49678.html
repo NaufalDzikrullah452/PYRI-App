@@ -16,6 +16,10 @@
 
       onClickTabPyri(tab) {
         // console.log(tab);
+        if (tab === "pyriList") {
+          this.readHistory();
+        }
+
         this.tabActivePyri = tab;
       },
 
@@ -97,8 +101,7 @@
           },
           e: "ReadByUserId",
         }).then((res) => {
-          console.log(res);
-
+          // console.log(res);
           if (res !== null && res.viewBook.length !== 0) {
             runInAction(() => {
               this.pages = [];
@@ -135,15 +138,14 @@
                     }
                   });
                 });
-              }
-
-              console.log(this.pages);
+              } // console.log(this.pages);
             });
           }
         });
       },
     }}
     run={async ({}) => {
+      meta.readHistory();
       runInAction(() => {
         meta.user = window.user.user || [];
         console.log("/m/");
@@ -228,53 +230,70 @@
           class={`flex flex-1 self-stretch flex-col items-start justify-start`}
           id="home"
         >
-          {window.user.role !== "guest" && meta.tabActive === "home" && (
-            <div
-              class={`flex self-stretch flex-col space-y-2.5 items-start justify-start p-6`}
-            >
-              {!meta.loading && (
-                <div
-                  class={`flex self-stretch flex-col items-start justify-start p-4 shadow rounded`}
-                  style={`background-image: url('/fimgs/bg-8d8ddb80570065b889eef54faf9c419dd251956e');background-size:100% 100%;background-repeat:no-repeat;`}
-                >
-                  <div class="flex self-stretch space-x-2 items-center justify-start rounded">
-                    <img
-                      src="/fimgs/2640_1336744.x1.png"
-                      class="flex items-start justify-start"
-                      style="width: 36.40px; min-width: 36.40px; max-width: 36.40px; height: 52px; min-height: 52px; max-height: 52px;"
-                    />
-                    <div class="flex flex-1 space-x-0.5 items-center justify-center px-2">
-                      <div class="flex flex-1 self-stretch flex-col space-y-0.5 items-start justify-start">
-                        <div class="flex self-stretch items-start justify-start">
-                          <div class="text-base font-bold leading-normal">
-                            Continue Reading
+          {window.user.role !== "guest" &&
+            meta.tabActive === "home" &&
+            meta.history.length !== 0 && (
+              <div
+                class={`flex self-stretch flex-col space-y-2.5 items-start justify-start p-6`}
+              >
+                {!meta.loading && (
+                  <div
+                    class={`flex self-stretch flex-col items-start justify-start p-4 shadow rounded`}
+                    style={`background-image: url('/fimgs/bg-8d8ddb80570065b889eef54faf9c419dd251956e');background-size:100% 100%;background-repeat:no-repeat;`}
+                  >
+                    <div class="flex self-stretch space-x-2 items-center justify-start rounded">
+                      <img
+                        src={
+                          meta.history[0].books.book_picture
+                            ? "/upload/" + meta.history[0].books.book_picture
+                            : "/fimgs/2640_1336744.x1.png"
+                        }
+                        onError={(e) => {
+                          e.target.src = "";
+                          e.target.src = "/fimgs/2640_1336744.x1.png";
+                        }}
+                        class={`flex items-start justify-start`}
+                        style={`width: 36.40px; min-width: 36.40px; max-width: 36.40px; height: 52px; min-height: 52px; max-height: 52px;`}
+                      />
+                      <div class="flex flex-1 space-x-0.5 items-center justify-center px-2">
+                        <div class="flex flex-1 self-stretch flex-col space-y-0.5 items-start justify-start">
+                          <div class="flex self-stretch items-start justify-start">
+                            <div class="text-base font-bold leading-normal">
+                              Continue Reading
+                            </div>
                           </div>
-                        </div>
-                        <div class="flex self-stretch items-start justify-start">
-                          <div class="text-xs font-medium leading-none">
-                            The Design of Everyday Things
+                          <div class="flex self-stretch items-start justify-start">
+                            <div class={`text-xs font-medium leading-none`}>
+                              {meta.history[0].books.book_title || "Book title"}
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="flex items-start justify-start px-4 py-0.5 bg-amber-500 shadow rounded">
-                      <div class="text-xs font-bold leading-none text-white">
-                        Continue
-                      </div>
+                      <m-button
+                        class={`flex items-center justify-center px-4 py-0.5 bg-amber-500 shadow rounded`}
+                        onClick={() => {
+                          navigate(
+                            "/m/read-book-page/" + meta.history[0].books.book_id
+                          );
+                        }}
+                      >
+                        <div class="text-xs font-bold leading-none text-white">
+                          Continue
+                        </div>
+                      </m-button>
                     </div>
                   </div>
-                </div>
-              )}
-              {meta.loading && (
-                <div
-                  class={`flex self-stretch flex-col items-start justify-start w-full`}
-                  style={`height: 84px; min-height: 84px; max-height: 84px;`}
-                >
-                  <loading-box class="shadow" />
-                </div>
-              )}
-            </div>
-          )}
+                )}
+                {meta.loading && (
+                  <div
+                    class={`flex self-stretch flex-col items-start justify-start w-full`}
+                    style={`height: 84px; min-height: 84px; max-height: 84px;`}
+                  >
+                    <loading-box class="shadow" />
+                  </div>
+                )}
+              </div>
+            )}
           {window.user.role !== "guest" && meta.tabActive === "home" && (
             <div
               class={`flex self-stretch flex-col space-y-2 items-start justify-start py-6 bg-orange-50`}
@@ -1213,7 +1232,7 @@
         </m-tab>
         <m-tab id="explore" />
         <m-tab
-          class={`flex flex-1 self-stretch flex-col items-start justify-start bg-white`}
+          class={`flex flex-1 self-stretch flex-col items-start justify-start`}
           id="pyriList"
         >
           <div class="flex flex-1 self-stretch flex-col items-start justify-start">
@@ -1295,6 +1314,9 @@
                   return (
                     <div
                       class={`flex space-x-4 items-start justify-start p-2 bg-white shadow shadow-inner rounded`}
+                      onClick={() => {
+                        navigate("/m/read-book-page/" + value.books.book_id);
+                      }}
                     >
                       <div
                         class="flex items-start justify-start"
