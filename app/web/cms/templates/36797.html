@@ -221,7 +221,10 @@
           captionDiv.className = "flex flex-1 items-start justify-start";
           let textDiv = document.createElement("div");
           textDiv.className = "text-xl font-medium leading-loose";
-          textDiv.innerHTML = kategori[i].category_name;
+          textDiv.innerHTML =
+            kategori[i].category_name.length > 13
+              ? kategori[i].category_name.substring(0, 13) + "..."
+              : kategori[i].category_name;
           captionDiv.appendChild(textDiv);
           contentDiv.appendChild(captionDiv);
           let imageDiv = document.createElement("div");
