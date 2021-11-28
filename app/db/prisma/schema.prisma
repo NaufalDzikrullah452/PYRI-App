@@ -59,8 +59,8 @@ model interests {
   interest_id Int   @id @default(autoincrement())
   user_id     Int
   tag_id      Int
-  tags        tags  @relation(fields: [tag_id], references: [tag_id])
-  users       users @relation(fields: [user_id], references: [user_id])
+  tags        tags  @relation(fields: [tag_id], references: [tag_id] )
+  users       users @relation(fields: [user_id], references: [user_id] )
 }
 
 model publisher {
@@ -92,14 +92,14 @@ model books {
   book_genre_two_id                           Int?
   book_genre_three_id                         Int?
   book_isbn                                   String?     @db.VarChar(50)
-  authors_authorsTobooks_book_author_one_id   authors?    @relation("authorsTobooks_book_author_one_id", fields: [book_author_one_id], references: [author_id])
-  authors_authorsTobooks_book_author_three_id authors?    @relation("authorsTobooks_book_author_three_id", fields: [book_author_three_id], references: [author_id])
-  authors_authorsTobooks_book_author_two_id   authors?    @relation("authorsTobooks_book_author_two_id", fields: [book_author_two_id], references: [author_id])
-  category                                    category    @relation(fields: [book_category_id], references: [category_id])
-  tags_books_book_genre_one_idTotags          tags?       @relation("books_book_genre_one_idTotags", fields: [book_genre_one_id], references: [tag_id])
-  tags_books_book_genre_three_idTotags        tags?       @relation("books_book_genre_three_idTotags", fields: [book_genre_three_id], references: [tag_id])
-  tags_books_book_genre_two_idTotags          tags?       @relation("books_book_genre_two_idTotags", fields: [book_genre_two_id], references: [tag_id])
-  publisher                                   publisher   @relation(fields: [book_publisher_id], references: [publisher_id])
+  authors_authorsTobooks_book_author_one_id   authors?    @relation("authorsTobooks_book_author_one_id", fields: [book_author_one_id], references: [author_id] )
+  authors_authorsTobooks_book_author_three_id authors?    @relation("authorsTobooks_book_author_three_id", fields: [book_author_three_id], references: [author_id] )
+  authors_authorsTobooks_book_author_two_id   authors?    @relation("authorsTobooks_book_author_two_id", fields: [book_author_two_id], references: [author_id] )
+  category                                    category    @relation(fields: [book_category_id], references: [category_id] )
+  tags_books_book_genre_one_idTotags          tags?       @relation("books_book_genre_one_idTotags", fields: [book_genre_one_id], references: [tag_id] )
+  tags_books_book_genre_three_idTotags        tags?       @relation("books_book_genre_three_idTotags", fields: [book_genre_three_id], references: [tag_id] )
+  tags_books_book_genre_two_idTotags          tags?       @relation("books_book_genre_two_idTotags", fields: [book_genre_two_id], references: [tag_id] )
+  publisher                                   publisher   @relation(fields: [book_publisher_id], references: [publisher_id] )
   bookmarks                                   bookmarks[]
   chapter                                     chapter[]
   page                                        page[]
@@ -114,7 +114,7 @@ model chapter {
   chapter_date_created DateTime   @default(now()) @db.Timestamp(6)
   chapter_date_updated DateTime   @db.Timestamp(6)
   chapter_number       Int?
-  books                books      @relation(fields: [chapter_book_id], references: [book_id])
+  books                books      @relation(fields: [chapter_book_id], references: [book_id] )
   page                 page[]
   viewBook             viewBook[]
 }
@@ -128,8 +128,8 @@ model page {
   page_date_created DateTime   @default(now()) @db.Timestamp(6)
   page_date_updated DateTime   @db.Timestamp(6)
   page_note         Int?
-  books             books      @relation(fields: [page_book_id], references: [book_id])
-  chapter           chapter    @relation(fields: [page_chapter_id], references: [chapter_id])
+  books             books      @relation(fields: [page_book_id], references: [book_id] )
+  chapter           chapter    @relation(fields: [page_chapter_id], references: [chapter_id] )
   viewBook          viewBook[]
 }
 
@@ -140,8 +140,8 @@ model rating {
   rating_user_id      Int
   rating_date_created DateTime @default(now()) @db.Timestamp(6)
   rating_date_updated DateTime @db.Timestamp(6)
-  books               books    @relation(fields: [rating_book_id], references: [book_id])
-  users               users    @relation(fields: [rating_user_id], references: [user_id])
+  books               books    @relation(fields: [rating_book_id], references: [book_id] )
+  users               users    @relation(fields: [rating_user_id], references: [user_id] )
 }
 
 model viewBook {
@@ -151,10 +151,10 @@ model viewBook {
   viewBook_chapter_id  Int
   viewBook_page_id     Int
   viewBook_access_date DateTime @db.Timestamp(6)
-  books                books    @relation(fields: [viewBook_book_id], references: [book_id])
-  chapter              chapter  @relation(fields: [viewBook_chapter_id], references: [chapter_id])
-  page                 page     @relation(fields: [viewBook_page_id], references: [page_id])
-  users                users    @relation(fields: [viewBook_user_id], references: [user_id])
+  books                books    @relation(fields: [viewBook_book_id], references: [book_id] )
+  chapter              chapter  @relation(fields: [viewBook_chapter_id], references: [chapter_id] )
+  page                 page     @relation(fields: [viewBook_page_id], references: [page_id] )
+  users                users    @relation(fields: [viewBook_user_id], references: [user_id] )
 }
 
 model bookmarks {
@@ -162,8 +162,8 @@ model bookmarks {
   bookmark_user_id Int
   bookmark_book_id Int
   bookmark_date    DateTime @db.Timestamp(6)
-  books            books    @relation(fields: [bookmark_book_id], references: [book_id])
-  users            users    @relation(fields: [bookmark_user_id], references: [user_id])
+  books            books    @relation(fields: [bookmark_book_id], references: [book_id] )
+  users            users    @relation(fields: [bookmark_user_id], references: [user_id] )
 }
 
 enum user_gender {

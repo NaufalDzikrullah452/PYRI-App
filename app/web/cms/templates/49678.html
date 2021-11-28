@@ -3,8 +3,10 @@
     meta={{
       tabActive: "home",
       tabActivePyri: "history",
+      tabActiveExplore: "categories",
       tabLink: "",
       pages: [],
+      tabGenres: true,
       tabRead: true,
       tabProfile: true,
       user: [],
@@ -15,16 +17,26 @@
       loading: true,
       loadingInterest: true,
 
-      onClickTabPyri(tab) {
+      async onClickTabPyri(tab) {
         // console.log(tab);
-        if (tab === "pyriList") {
+        if (tab === "pyriList" && tab != this.tabActivePyri) {
           this.readHistory();
         }
 
         this.tabActivePyri = tab;
       },
 
-      onClickTab(tab) {
+      async onClickTabExplore(tab) {
+        if (tab === "categories") {
+          this.actionCategory();
+        } else if (tab === "genres" && tab !== this.tabActiveExplore) {
+          this.actionGenre();
+        }
+
+        this.tabActiveExplore = tab;
+      },
+
+      async onClickTab(tab) {
         // console.log(tab);
         if (window.user.role === "guest" && tab === "profile") {
           window.mobileApp.app.dialog.confirm(
@@ -63,9 +75,13 @@
               this.loadingInterest = false;
             }); // window.mobileApp.app.dialog.close();
           }); // console.log(tag.result)
-        } else if (tab !== "profile") {
+        } else if (tab !== "profile" && tab !== this.tabActive) {
           if (tab === "pyriList") {
+            this.tabActivePyri = "history";
             this.readHistory();
+          } else if (tab === "explore" && tab !== this.tabActive) {
+            this.tabActiveExplore = "categories";
+            this.onClickTabExplore(this.tabActiveExplore);
           }
 
           this.tabProfile = true;
@@ -179,6 +195,104 @@
               });
             }
           });
+        }
+      },
+
+      async actionCategory() {
+        let categories;
+        await api("/api/categories", {
+          category: " ",
+          e: "ReadAll",
+        }).then((res) => {
+          categories = res.category;
+          console.log(categories);
+        });
+        document.getElementById("categories").innerHTML = "";
+        document.getElementById("categories").className =
+          "flex flex-1 self-stretch flex-col space-y-3 items-center justify-start px-6 css-1wv53zm tab";
+
+        for (let ind = 0; ind < Math.ceil(categories.length / 2); ind++) {
+          let a = document.createElement("div");
+          a.className =
+            "flex self-stretch space-x-4 items-center justify-center";
+          a.id = "rc" + ind;
+          document.getElementById("categories").appendChild(a);
+        }
+
+        for (let ind = 0; ind < categories.length; ind++) {
+          let a = document.createElement("div");
+          a.className =
+            "flex self-stretch flex-col items-start justify-start rounded-lg";
+          a.style.width = "173.50px";
+          a.style.maxWidth = "173.50px";
+          a.style.height = "96px";
+          a.style.maxHeight = "96px";
+          a.style.borderRadius = "14px";
+          a.style.backgroundImage = `url(../upload/${categories[ind].category_pictures})`;
+          a.style.backgroundSize = "100% 100%";
+          a.style.backgroundRepeat = "no-repeat";
+
+          a.onclick = () => {
+            navigate("/m/explore/categories/" + categories[ind].category_id);
+          };
+
+          let b = document.createElement("div");
+          b.className =
+            "flex flex-1 self-stretch flex-col items-center justify-center px-4 bg-black bg-opacity-60 css-j3shp6";
+          b.style.borderRadius = "14px";
+          let c = document.createElement("div");
+          c.className =
+            "text-base font-bold leading-normal text-center text-white";
+          c.innerText = categories[ind].category_name;
+          b.appendChild(c);
+          a.appendChild(b);
+          document.getElementById("rc" + Math.floor(ind / 2)).appendChild(a);
+        }
+      },
+
+      async actionGenre() {
+        let genres;
+        await api("/api/tags", {
+          tags: " ",
+          e: "ReadAll",
+        }).then((res) => {
+          genres = res.tags;
+          console.log(genres);
+        });
+        document.getElementById("genres").innerHTML = "";
+        document.getElementById("genres").className =
+          "flex flex-1 self-stretch flex-col space-y-3 items-center justify-start px-6 mt-4 css-10rbni4 tab";
+
+        for (let ind = 0; ind < Math.ceil(genres.length / 3); ind++) {
+          let a = document.createElement("div");
+          a.className = "flex self-stretch space-x-4 items-start justify-start";
+          a.id = "rc" + ind;
+          document.getElementById("genres").appendChild(a);
+        }
+
+        for (let ind = 0; ind < genres.length; ind++) {
+          let a = document.createElement("div");
+          a.className =
+            "flex flex-col space-y-2.5 items-center justify-start px-6 py-4 bg-gray-50 shadow rounded-lg";
+
+          a.onclick = () => {
+            navigate("/m/explore/genre/" + genres[ind].tag_id);
+          };
+
+          let bi = document.createElement("img");
+          bi.className =
+            "flex items-center justify-center bg-white rounded-full css-m6pyji";
+          bi.setAttribute("src", "/upload/" + genres[ind].tag_picture);
+          bi.style.width = "64px";
+          bi.style.maxWidth = "64px";
+          bi.style.height = "64px";
+          bi.style.maxHeight = "64px";
+          let c = document.createElement("div");
+          c.className = "text-sm font-bold leading-tight";
+          c.innerText = genres[ind].tag_name;
+          a.appendChild(bi);
+          a.appendChild(c);
+          document.getElementById("rc" + Math.floor(ind / 3)).appendChild(a);
         }
       },
     }}
@@ -1269,9 +1383,103 @@
             )}
           </div>
         </m-tab>
-        <m-tab id="explore" />
         <m-tab
-          class={`flex flex-1 self-stretch flex-col items-start justify-start bg-white`}
+          class={`flex self-stretch flex-col items-start justify-start`}
+          id="explore"
+        >
+          <div class="flex flex-1 self-stretch flex-col items-start justify-start">
+            <div class="flex self-stretch flex-col items-start justify-start">
+              <div
+                class={`flex self-stretch items-center justify-center`}
+                style={"margin-top:20px;"}
+              >
+                <m-link
+                  class={`flex flex-1 self-stretch flex-col space-y-2.5 items-start justify-start`}
+                  tabLink="#categories"
+                  onClick={(e) => {
+                    meta.onClickTabExplore("categories");
+                  }}
+                  tabLinkActive={meta.tabActiveExplore === "categories"}
+                  href={""}
+                >
+                  {meta.tabActiveExplore === "categories" && (
+                    <div
+                      class={`flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-center bg-white`}
+                      style={`padding:8px; border-bottom: 3px solid black; border-bottom-color: #feca57`}
+                    >
+                      <div class="text-base leading-normal text-center text-amber-500">
+                        Categories
+                      </div>
+                    </div>
+                  )}
+                  {meta.tabActiveExplore !== "categories" && (
+                    <div
+                      class={`flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-center`}
+                      style={
+                        "padding:8px; border-bottom: 3px solid black; border-bottom-color: #f5f6fa"
+                      }
+                    >
+                      <div class="text-base leading-normal text-center text-gray-900">
+                        Categories
+                      </div>
+                    </div>
+                  )}
+                </m-link>
+                <m-link
+                  class={`flex flex-1 self-stretch flex-col space-y-2.5 items-start justify-start`}
+                  tabLink="#genres"
+                  onClick={(e) => meta.onClickTabExplore("genres")}
+                  tabLinkActive={meta.tabActiveExplore === "genres"}
+                  href={""}
+                >
+                  {meta.tabActiveExplore === "genres" && (
+                    <div
+                      class={`flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-center`}
+                      style={
+                        "padding:8px; border-bottom: 3px solid black; border-bottom-color: #feca57;"
+                      }
+                    >
+                      <div class="text-base leading-normal text-center text-amber-500">
+                        Genres
+                      </div>
+                    </div>
+                  )}
+                  {meta.tabActiveExplore !== "genres" && (
+                    <div
+                      class={`flex self-stretch flex-col space-y-2.5 items-center justify-center bg-white`}
+                      style={`padding:8px; border-bottom: 3px solid black; border-bottom-color: #f5f6fa;`}
+                    >
+                      <div class="text-base leading-normal text-center text-gray-900">
+                        Genres
+                      </div>
+                    </div>
+                  )}
+                </m-link>
+              </div>
+            </div>
+            <m-tabs
+              class={`flex flex-1 self-stretch flex-col items-center justify-center pt-4`}
+              swipeable={true}
+            >
+              <m-tab
+                class={`flex flex-1 self-stretch flex-col items-center justify-start px-6`}
+                id="categories"
+                style="margin-top:25px;"
+              >
+                <div />
+              </m-tab>
+              <m-tab
+                class={`flex flex-1 self-stretch flex-col items-center justify-start px-6`}
+                id="genres"
+                style="margin-top:25px;"
+              >
+                <div />
+              </m-tab>
+            </m-tabs>
+          </div>
+        </m-tab>
+        <m-tab
+          class={`flex flex-1 self-stretch flex-col items-start justify-start`}
           id="pyriList"
         >
           <div class="flex flex-1 self-stretch flex-col items-start justify-start">
@@ -1694,7 +1902,8 @@
           </div>
           {window.user.role !== "guest" && (
             <div
-              class={`flex self-stretch flex-col items-start justify-start transform -rotate-180`}
+              class={`flex self-stretch flex-col items-start justify-start transform rotate-180`}
+              style={`--tw-rotate: 0deg;`}
             >
               <btnlogout
                 class={`flex flex-col items-center justify-center transform -rotate-180 py-1.5 pl-4 pr-6 bg-red-600 shadow rounded`}
