@@ -265,20 +265,6 @@
                 meta.isRead = true;
               });
             }
-          }); //read book bookmark status of this user
-
-          api("/api/bookmarks", {
-            viewBook: {
-              viewBook_book_id: parseInt(params.book_id),
-              viewBook_user_id: window.user.user.user_id,
-            },
-            e: "ReadLatestChapter",
-          }).then((res) => {
-            if (res.viewBook !== null) {
-              runInAction(() => {
-                meta.isRead = true;
-              });
-            }
           });
         } // read book data
 
@@ -304,7 +290,7 @@
           },
           e: "ReadByBookId",
         }).then((res) => {
-          if (res.viewBook !== 0) {
+          if (res.viewBook.length !== 0) {
             runInAction(() => {
               meta.views =
                 res.viewBook.length > 999
