@@ -75,7 +75,7 @@ model publisher {
 model books {
   book_id                                     Int         @id @default(autoincrement())
   book_title                                  String      @db.VarChar(256)
-  book_description                            String?     @db.VarChar(256)
+  book_description                            String?     @db.VarChar(1000)
   book_publisher_id                           Int
   book_category_id                            Int
   book_notes                                  String?
