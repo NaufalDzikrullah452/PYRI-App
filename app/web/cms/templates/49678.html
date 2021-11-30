@@ -467,65 +467,69 @@
                 class={`flex self-stretch items-start justify-center px-6 over`}
               >
                 <div class="flex flex-1 flex-col space-y-2 items-center justify-end">
-                  {!meta.loading && (
-                    <div
-                      class={`flex self-stretch space-x-4 items-start justify-start p-4 bg-white shadow rounded`}
-                      onClick={() => {
-                        navigate("/m/detail-book-page");
-                      }}
-                    >
+                  <div
+                    class={`flex self-stretch items-center justify-start overflow-x-auto`}
+                  >
+                    {!meta.loading && (
                       <div
-                        src="/fimgs/I1545_47723_1718_147206.x1.png"
-                        class={`flex items-start justify-start`}
+                        class={`flex flex-1 self-stretch space-x-4 items-start justify-start p-4 bg-white shadow rounded`}
+                        onClick={() => {
+                          navigate("/m/detail-book-page");
+                        }}
                       >
-                        <img
-                          src="/fimgs/I1545_47723_1812_36071.x1.png"
-                          style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;"
-                        />
-                      </div>
-                      <div class="flex flex-1 self-stretch flex-col items-start justify-center">
-                        <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
-                          <div class="flex self-stretch flex-col items-start justify-start">
-                            <div class="flex self-stretch space-x-2 items-start justify-start">
-                              <div class="text-base font-bold leading-normal">
-                                Game Over
+                        <div
+                          src="/fimgs/I1545_47723_1718_147206.x1.png"
+                          class={`flex items-start justify-start`}
+                        >
+                          <img
+                            src="/fimgs/4162_344848.x1.png"
+                            style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;"
+                          />
+                        </div>
+                        <div class="flex flex-1 self-stretch flex-col items-start justify-center">
+                          <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
+                            <div class="flex self-stretch flex-col items-start justify-start">
+                              <div class="flex self-stretch space-x-2 items-start justify-start">
+                                <div class="text-base font-bold leading-normal">
+                                  Game Over
+                                </div>
+                                <div class="flex self-stretch items-center justify-start">
+                                  <img
+                                    src="/fimgs/1718_227292.x1.svg"
+                                    style="width: 14px; min-width: 14px; max-width: 14px; height: 14px; min-height: 14px; max-height: 14px;"
+                                  />
+                                  <div class="text-sm font-medium leading-tight text-amber-500">
+                                    {" "}
+                                    4.5
+                                  </div>
+                                </div>
                               </div>
                               <div class="flex self-stretch items-center justify-start">
-                                <img
-                                  src="/fimgs/1718_227292.x1.svg"
-                                  style="width: 14px; min-width: 14px; max-width: 14px; height: 14px; min-height: 14px; max-height: 14px;"
-                                />
-                                <div class="text-sm font-medium leading-tight text-amber-500">
-                                  {" "}
-                                  4.5
-                                </div>
-                              </div>
-                            </div>
-                            <div class="flex self-stretch items-center justify-start">
-                              <div class="flex space-x-2 items-start justify-start">
-                                <div class="flex items-center justify-center rounded-full">
-                                  <div class="text-xs font-medium leading-none text-center text-gray-500">
-                                    Romance
+                                <div class="flex space-x-2 items-start justify-start">
+                                  <div class="flex items-center justify-center rounded-full">
+                                    <div class="text-xs font-medium leading-none text-center text-gray-500">
+                                      Romance
+                                    </div>
                                   </div>
-                                </div>
-                                <div class="flex items-center justify-center rounded-full">
-                                  <div class="text-xs font-medium leading-none text-center text-gray-500">
-                                    Fiction
+                                  <div class="flex items-center justify-center rounded-full">
+                                    <div class="text-xs font-medium leading-none text-center text-gray-500">
+                                      Fiction
+                                    </div>
                                   </div>
                                 </div>
                               </div>
                             </div>
-                          </div>
-                          <div class="flex self-stretch items-start justify-start">
-                            <div class="text-sm font-medium leading-tight text-gray-600">
-                              Glendi Adijunior adalah seadanya. Jaera Nindya
-                              adalah seadainya. Di permainan ini ...
+                            <div class="flex self-stretch items-start justify-start">
+                              <div class="text-sm font-medium leading-tight text-gray-600">
+                                Glendi Adijunior adalah seadanya. Jaera Nindya
+                                adalah seadainya. Di permainan ini ...
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                   {meta.loading && (
                     <div
                       class={`flex self-stretch space-x-4 items-start justify-start p-4 shadow rounded`}

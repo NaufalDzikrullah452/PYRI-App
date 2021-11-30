@@ -8,6 +8,7 @@
       isRead: false,
       author: [],
       book: [],
+      tags: [],
       chapter: [],
       category: [],
       page: [],
@@ -44,8 +45,7 @@
             },
             e: "ReadByBooknUserId",
           }).then((res) => {
-            console.log(res);
-
+            // console.log(res);
             if (res === null || res.rating === null) {
               api("/api/rating", {
                 rating: {
@@ -77,8 +77,7 @@
                 },
                 e: "Update",
               }).then((res) => {
-                console.log(res);
-
+                // console.log(res);
                 if (res !== null) {
                   window.mobileApp.app.dialog.preloader(
                     "Update rating success!"
@@ -195,8 +194,7 @@
             },
             e: "ReadByBookNUserId",
           }).then((res) => {
-            console.log(res);
-
+            // console.log(res);
             if (res.bookmark == null) {
               api("/api/bookmarks", {
                 bookmark: {
@@ -268,6 +266,8 @@
           });
         } // read book data
 
+        var author = [];
+        var tags = [];
         api("/api/books", {
           book: {
             book_id: parseInt(params.book_id),
@@ -276,7 +276,48 @@
         }).then((res) => {
           console.log(res);
           runInAction(() => {
-            meta.author.push;
+            if (res.book.authors_authorsTobooks_book_author_one_id !== null) {
+              runInAction(() => {
+                meta.author.push(
+                  res.book.authors_authorsTobooks_book_author_one_id
+                );
+              });
+            }
+
+            if (res.book.authors_authorsTobooks_book_author_two_id !== null) {
+              runInAction(() => {
+                meta.author.push(
+                  res.book.authors_authorsTobooks_book_author_two_id
+                );
+              });
+            }
+
+            if (res.book.authors_authorsTobooks_book_author_three_id !== null) {
+              runInAction(() => {
+                meta.author.push(
+                  res.book.authors_authorsTobooks_book_author_three_id
+                );
+              });
+            }
+
+            if (res.book.tags_books_book_genre_one_idTotags !== null) {
+              runInAction(() => {
+                meta.tags.push(res.book.tags_books_book_genre_one_idTotags);
+              });
+            }
+
+            if (res.book.tags_books_book_genre_two_idTotags !== null) {
+              runInAction(() => {
+                meta.tags.push(res.book.tags_books_book_genre_two_idTotags);
+              });
+            }
+
+            if (res.book.tags_books_book_genre_three_idTotags !== null) {
+              runInAction(() => {
+                meta.tags.push(res.book.tags_books_book_genre_three_idTotags);
+              });
+            }
+
             meta.book = res.book;
             meta.chapter = res.book.chapter;
             meta.category = res.book.category;
@@ -301,7 +342,7 @@
             });
           }
         });
-      } // console.log("rating: "+meta.rating);
+      }
     }}
   />
   <div class={`flex self-stretch items-start justify-start bg-white`}>
@@ -358,7 +399,7 @@
               </div>
               <div class="flex self-stretch items-start justify-start">
                 <div class={`text-sm font-bold leading-tight text-gray-500`}>
-                  By {meta.author.author_name || "Author"}
+                  By {meta.author[0] ? meta.author[0].author_name : "Author"}
                 </div>
               </div>
               <div class="flex self-stretch items-start justify-start">
@@ -538,15 +579,19 @@
               {meta.book.book_description || "Description preview"}
             </div>
           </div>
-          <div class="flex self-stretch space-x-1.5 items-center justify-start">
-            <span-genres
-              class={`flex items-center justify-center px-2.5 py-0.5 bg-orange-300 rounded`}
-              style={"background-color: #"}
-            />
-            <span-genres
-              class={`flex items-center justify-center px-2.5 py-0.5 bg-orange-300 rounded`}
-              style={"background-color: #"}
-            />
+          <div class="flex self-stretch items-center justify-start">
+            {meta.tags.map((value, index) => {
+              return (
+                <div
+                  class={`flex items-center justify-center px-2.5 py-0.5 bg-orange-300 rounded`}
+                  style={"background-color: #; margin-right: 10px"}
+                >
+                  <div class={`text-sm font-bold leading-tight`}>
+                    {value.tag_name || "Genre"}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
