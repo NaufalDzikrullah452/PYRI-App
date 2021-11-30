@@ -415,7 +415,9 @@
         reveal={true}
         swipeNoFollow={true}
       >
-        <div class="flex flex-1 self-stretch flex-col space-y-2.5 items-start justify-start px-6 pt-9 pb-6">
+        <div
+          class={`flex flex-1 self-stretch flex-col space-y-2.5 items-start justify-start px-6 pt-9 pb-6 overflow-y-auto`}
+        >
           <div class="flex self-stretch flex-col space-y-2.5 items-center justify-start py-6 bg-white shadow">
             <img
               class={`bg-gray-200`}
@@ -444,7 +446,7 @@
             </div>
           </div>
           <m-list
-            class={`flex self-stretch flex-col items-center justify-start flex-col list list-none w-full`}
+            class={`flex self-stretch flex-col items-center justify-start flex-col list list-none w-full overflow-y-auto`}
           >
             {meta.chapter.map((value) => {
               return (

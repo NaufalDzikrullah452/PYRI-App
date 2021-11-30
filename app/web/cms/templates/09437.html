@@ -54,7 +54,7 @@
       console.log(meta.books);
     }}
   />
-  <div class="flex self-stretch flex-col items-start justify-start bg-white">
+  <div class="flex flex-col items-start justify-start bg-white">
     <div class="flex flex-1 self-stretch flex-col space-y-5 items-start justify-start relative overflow-y-auto">
       <div
         class={`flex self-stretch flex-col items-start justify-center px-6 pt-9 pb-4 bg-white shadow`}
@@ -86,7 +86,7 @@
         </div>
       </div>
       <div class="flex self-stretch flex-col items-start justify-start px-6 relative overflow-y-auto">
-        <div class="flex self-stretch flex-col items-start justify-start">
+        <div class="flex self-stretch flex-col space-y-4 items-start justify-start">
           {meta.books.map((numList, i) => {
             return (
               <div
@@ -181,6 +181,13 @@
               </div>
             );
           })}
+          {meta.books.length === 0 && (
+            <div class={`flex self-stretch items-center justify-center`}>
+              <div class={`text-base font-medium leading-normal text-center`}>
+                No data found
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

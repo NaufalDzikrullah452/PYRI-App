@@ -64,19 +64,22 @@
               "flex self-stretch flex-col items-start justify-start";
 
             for (let ind = this.first_entries; ind < this.last_entries; ind++) {
+              var odd = (ind + 1) % 2;
               let a = document.createElement("div");
               a.className =
-                "flex self-stretch space-x-6 items-center justify-start px-4 py-2 bg-white rounded css-3d9z0n";
+                "flex self-stretch space-x-6 items-center justify-start px-4 py-2 bg-white rounded css-3d9z0n " +
+                (odd === 0 ? "bg-orange-100" : "");
               let bi = document.createElement("img");
               bi.className = "flex items-start justify-start css-5nv48v";
               bi.setAttribute("src", "/fimgs/3135_52607.x1.svg");
               let c = document.createElement("div");
               c.className = "flex flex-1 items-start justify-start";
+              c.style = "cursor: pointer; ";
               let d = document.createElement("div");
               d.className = "text-base font-medium leading-normal";
               d.innerText = chapter[ind].chapter_name;
 
-              d.onclick = () => {
+              c.onclick = () => {
                 navigate(
                   `/w-books/${params.book_id}/detail/${chapter[ind].chapter_id}/page`
                 );
@@ -89,7 +92,7 @@
               f.className =
                 "flex self-stretch items-center justify-center rounded";
               let gi = document.createElement("img");
-              gi.className = "css-5nv48v";
+              gi.className = "css-5nv48v cursor-pointer";
               gi.setAttribute("src", "/fimgs/3135_52614.x1.svg");
 
               gi.onclick = () => {
@@ -100,7 +103,7 @@
 
               let hi = document.createElement("img");
               hi.className =
-                "flex self-stretch items-center justify-center rounded css-vke9og";
+                "flex self-stretch items-center justify-center rounded css-vke9og cursor-pointer";
               hi.setAttribute("src", "/fimgs/3135_52615.x1.svg");
 
               hi.onclick = () => {
@@ -154,19 +157,22 @@
                   ind < this.last_entries;
                   ind++
                 ) {
+                  var odd = (ind + 1) % 2;
                   let a = document.createElement("div");
                   a.className =
-                    "flex self-stretch space-x-6 items-center justify-start px-4 py-2 bg-white rounded css-3d9z0n";
+                    "flex self-stretch space-x-6 items-center justify-start px-4 py-2 bg-white rounded css-3d9z0n " +
+                    (odd === 0 ? "bg-orange-100" : "");
                   let bi = document.createElement("img");
                   bi.className = "flex items-start justify-start css-5nv48v";
                   bi.setAttribute("src", "/fimgs/3135_52607.x1.svg");
                   let c = document.createElement("div");
                   c.className = "flex flex-1 items-start justify-start";
+                  c.style = "cursor: pointer; ";
                   let d = document.createElement("div");
                   d.className = "text-base font-medium leading-normal";
                   d.innerText = chapter[ind].chapter_name;
 
-                  d.onclick = () => {
+                  c.onclick = () => {
                     navigate(
                       `/w-books/${params.book_id}/detail/${chapter[ind].chapter_id}/page`
                     );
@@ -179,7 +185,7 @@
                   f.className =
                     "flex self-stretch items-center justify-center rounded";
                   let gi = document.createElement("img");
-                  gi.className = "css-5nv48v";
+                  gi.className = "css-5nv48v cursor-pointer";
                   gi.setAttribute("src", "/fimgs/3135_52614.x1.svg");
 
                   gi.onclick = () => {
@@ -190,7 +196,7 @@
 
                   let hi = document.createElement("img");
                   hi.className =
-                    "flex self-stretch items-center justify-center rounded css-vke9og";
+                    "flex self-stretch items-center justify-center rounded css-vke9og cursor-pointer";
                   hi.setAttribute("src", "/fimgs/3135_52615.x1.svg");
 
                   hi.onclick = () => {
@@ -240,19 +246,22 @@
               "flex self-stretch flex-col items-start justify-start";
 
             for (let ind = this.first_entries; ind < this.last_entries; ind++) {
+              var odd = (ind + 1) % 2;
               let a = document.createElement("div");
               a.className =
-                "flex self-stretch space-x-6 items-center justify-start px-4 py-2 bg-white rounded css-3d9z0n";
+                "flex self-stretch space-x-6 items-center justify-start px-4 py-2 bg-white rounded css-3d9z0n " +
+                (odd === 0 ? "bg-orange-100" : "");
               let bi = document.createElement("img");
               bi.className = "flex items-start justify-start css-5nv48v";
               bi.setAttribute("src", "/fimgs/3135_52607.x1.svg");
               let c = document.createElement("div");
               c.className = "flex flex-1 items-start justify-start";
+              c.style = "cursor: pointer; ";
               let d = document.createElement("div");
               d.className = "text-base font-medium leading-normal";
               d.innerText = chapter[ind].chapter_name;
 
-              d.onclick = () => {
+              c.onclick = () => {
                 navigate(
                   `/w-books/${params.book_id}/detail/${chapter[ind].chapter_id}/page`
                 );
@@ -265,7 +274,7 @@
               f.className =
                 "flex self-stretch items-center justify-center rounded";
               let gi = document.createElement("img");
-              gi.className = "css-5nv48v";
+              gi.className = "css-5nv48v cursor-pointer";
               gi.setAttribute("src", "/fimgs/3135_52614.x1.svg");
 
               gi.onclick = () => {
@@ -276,7 +285,7 @@
 
               let hi = document.createElement("img");
               hi.className =
-                "flex self-stretch items-center justify-center rounded css-vke9og";
+                "flex self-stretch items-center justify-center rounded css-vke9og cursor-pointer";
               hi.setAttribute("src", "/fimgs/3135_52615.x1.svg");
 
               hi.onclick = () => {
@@ -457,13 +466,15 @@
           },
           e: "ReadByBookId",
         }).then((res) => {
+          console.log(res);
+
           if (res.res !== "Failure" || res === null) {
             chapter = res.chapter;
           }
         });
         runInAction(() => {
           meta.books = buku;
-          meta.chapter = buku.chapter;
+          meta.chapter = chapter;
           meta.book_title = buku.book_title;
           meta.book_year_of_release = buku.book_year_of_release;
           meta.book_picture = buku.book_picture;
@@ -508,21 +519,24 @@
         "flex self-stretch flex-col items-start justify-start";
 
       for (let ind = meta.first_entries; ind < meta.last_entries; ind++) {
+        var odd = (ind + 1) % 2;
         let a = document.createElement("div");
         a.className =
-          "flex self-stretch space-x-6 items-center justify-start px-4 py-2 bg-white rounded css-3d9z0n";
+          "flex self-stretch space-x-6 items-center justify-start px-4 py-2 bg-white rounded css-3d9z0n " +
+          (odd === 0 ? "bg-orange-100" : "");
         let bi = document.createElement("img");
         bi.className = "flex items-start justify-start css-5nv48v";
         bi.setAttribute("src", "/fimgs/3135_52607.x1.svg");
         let c = document.createElement("div");
         c.className = "flex flex-1 items-start justify-start";
+        c.style = "cursor: pointer;";
         let d = document.createElement("div");
         d.className = "text-base font-medium leading-normal";
-        d.innerText = buku.chapter[ind].chapter_name;
+        d.innerText = meta.chapter[ind].chapter_name;
 
-        d.onclick = () => {
+        c.onclick = () => {
           navigate(
-            `/w-books/${params.book_id}/detail/${buku.chapter[ind].chapter_id}/page`
+            `/w-books/${params.book_id}/detail/${meta.chapter[ind].chapter_id}/page`
           );
         };
 
@@ -531,22 +545,22 @@
         let f = document.createElement("div");
         f.className = "flex self-stretch items-center justify-center rounded";
         let gi = document.createElement("img");
-        gi.className = "css-5nv48v";
+        gi.className = "css-5nv48v cursor-pointer";
         gi.setAttribute("src", "/fimgs/3135_52614.x1.svg");
 
         gi.onclick = () => {
           navigate(
-            `/w-books/${params.book_id}/chapter/edit/${buku.chapter[ind].chapter_id}`
+            `/w-books/${params.book_id}/chapter/edit/${meta.chapter[ind].chapter_id}`
           );
         };
 
         let hi = document.createElement("img");
         hi.className =
-          "flex self-stretch items-center justify-center rounded css-vke9og";
+          "flex self-stretch items-center justify-center rounded css-vke9og cursor-pointer";
         hi.setAttribute("src", "/fimgs/3135_52615.x1.svg");
 
         hi.onclick = () => {
-          meta.deleteChapter(buku.chapter[ind].chapter_id);
+          meta.deleteChapter(meta.chapter[ind].chapter_id);
         };
 
         f.appendChild(gi);
@@ -956,7 +970,9 @@
                 </div>
               </div>
               <div class="flex self-stretch flex-col items-start justify-start bg-white shadow rounded-lg">
-                <div class="flex self-stretch space-x-4 items-center justify-end px-9 py-6 bg-white rounded-tl-lg rounded-tr-lg">
+                <div
+                  class={`flex self-stretch space-x-4 items-center justify-end px-9 py-6 bg-white rounded-tl-lg rounded-tr-lg`}
+                >
                   <div class="flex flex-1 flex-col items-start justify-center">
                     <div class="text-xl font-bold leading-loose">
                       Informasi Buku
@@ -1281,7 +1297,7 @@
                     <div id="cc" />
                     {meta.chapter.length === 0 && (
                       <tr
-                        class={`w-full flex self-stretch items-center justify-center px-4 py-2 bg-white rounded`}
+                        class={`w-full flex self-stretch items-center justify-center px-4 py-2 rounded`}
                         style={""}
                       >
                         <div class="text-base leading-normal">

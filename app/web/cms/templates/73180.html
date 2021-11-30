@@ -288,8 +288,9 @@
           viewBook: {
             viewBook_book_id: parseInt(params.book_id),
           },
-          e: "ReadByBookId",
+          e: "CountView",
         }).then((res) => {
+          // console.log(res);
           if (res.viewBook.length !== 0) {
             runInAction(() => {
               meta.views =
