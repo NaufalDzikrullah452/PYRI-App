@@ -36,34 +36,35 @@
               length: this.sum_pages,
             }).map(Number.call, Number); // dom manipulation
 
+            this.loadKategori();
             this.loading_page = false;
           });
         } else if (key === "searching") {
           runInAction(() => {
             this[key] = value;
-            api("/api/page", {
-              page: {
-                page_page: value,
-                page_chapter_id: parseInt(params.chapter_id),
+            api("/api/categories", {
+              category: {
+                category_name: value,
               },
               e: "Searching",
             }).then((res) => {
-              // console.log(res.page);
+              // console.log(res);
               runInAction(() => {
-                this.page = res.page;
-                this.page.sort(function (a, b) {
-                  var aNum = parseInt(a.page_page);
-                  var bNum = parseInt(b.page_page);
-                  return aNum - bNum;
-                });
+                this.categories = res.category;
                 this.first_entries = 0;
                 this.pages = 1;
-                this.last_entries = parseInt(this.entries);
-                this.sum_pages = Math.ceil(this.page.length / this.entries); // meta.categories_array = new Array(meta.sum_page);
+                this.last_entries =
+                  parseInt(this.entries) < this.categories.length
+                    ? parseInt(this.entries)
+                    : this.categories.length;
+                this.sum_pages = Math.ceil(
+                  this.categories.length / this.entries
+                ); // meta.categories_array = new Array(meta.sum_page);
 
                 this.pages_array = Array.apply(null, {
                   length: this.sum_pages,
                 }).map(Number.call, Number);
+                this.loadKategori();
                 this.loading_page = false;
               });
             });
@@ -89,6 +90,8 @@
               this.first_entries -= parseInt(this.entries) * Math.abs(gap);
               this.last_entries -= parseInt(this.entries) * Math.abs(gap);
             }
+
+            this.loadKategori();
           });
           console.log(key + " : " + value); // console.log("first_entries : " + this.first_entries);
           // console.log("last_entries : " + this.last_entries);
@@ -128,6 +131,74 @@
           }).then((res) => {
             navigate("/login-admin");
           }));
+      },
+
+      async loadKategori() {
+        document.getElementById("kotak").innerHTML = "";
+        document.getElementById("kotak").classList.add("flex-wrap");
+        document.getElementById("kotak").style.justifyContent = "flex-start";
+        document.getElementById("kotak").classList.add("space-y-6");
+        document.getElementById("kotak").classList.add("space-x-6"); // Loop each kategori and appendchild it to id "kotak"
+
+        for (let i = this.first_entries; i < this.last_entries; i++) {
+          let mainDiv = document.createElement("div");
+          mainDiv.className =
+            "flex flex-1 flex-col items-center justify-start p-9 bg-gray-50 shadow rounded-lg css-1nc2z6h";
+          mainDiv.style.flex = "0 0 30%";
+          let bgImg = document.createElement("img");
+          bgImg.setAttribute(
+            "src",
+            "upload/" +
+              (this.categories[i].category_pictures !== ""
+                ? this.categories[i].category_pictures
+                : "user_icon/default.png")
+          );
+          bgImg.style.width = "200px";
+          bgImg.style.height = "150px";
+          bgImg.style.objectFit = "contain";
+          mainDiv.appendChild(bgImg);
+          let contentDiv = document.createElement("div");
+          contentDiv.className =
+            "flex self-stretch space-x-2.5 items-center justify-start";
+          let captionDiv = document.createElement("div");
+          captionDiv.className = "flex flex-1 items-start justify-start";
+          let textDiv = document.createElement("div");
+          textDiv.className = "text-xl font-medium leading-loose";
+          textDiv.innerHTML =
+            this.categories[i].category_name.length > 13
+              ? this.categories[i].category_name.substring(0, 13) + "..."
+              : this.categories[i].category_name;
+          captionDiv.appendChild(textDiv);
+          contentDiv.appendChild(captionDiv);
+          let imageDiv = document.createElement("div");
+          imageDiv.className =
+            "flex self-stretch space-x-2.5 items-center justify-center rounded";
+          let editBtn = document.createElement("img");
+          editBtn.className = "css-5nv48v";
+          editBtn.setAttribute("src", "/fimgs/2309_60058.x1.svg");
+
+          editBtn.onclick = () => {
+            this.editKategori(this.categories[i].category_id);
+          };
+
+          editBtn.style.cursor = "pointer";
+          imageDiv.appendChild(editBtn);
+          let delBtn = document.createElement("img");
+          delBtn.className = "css-1b79tb0";
+          delBtn.setAttribute("src", "/fimgs/2309_60065.x1.svg");
+
+          delBtn.onclick = () => {
+            this.deleteKategori(this.categories[i].category_id);
+          };
+
+          delBtn.style.cursor = "pointer";
+          imageDiv.appendChild(delBtn);
+          contentDiv.appendChild(imageDiv);
+          mainDiv.appendChild(contentDiv);
+          document.getElementById("kotak").appendChild(mainDiv);
+        }
+
+        this.loading_page = false;
       },
     }}
     run={async () => {
@@ -191,69 +262,7 @@
           meta.last_entries < meta.categories.length
             ? meta.last_entries
             : meta.categories.length;
-        meta.loading_page = false;
-        document.getElementById("kotak").classList.add("flex-wrap");
-        document.getElementById("kotak").style.justifyContent = "flex-start";
-        document.getElementById("kotak").classList.add("space-y-6");
-        document.getElementById("kotak").classList.add("space-x-6"); // Loop each kategori and appendchild it to id "kotak"
-
-        for (let i = 0; i < kategori.length; i++) {
-          let mainDiv = document.createElement("div");
-          mainDiv.className =
-            "flex flex-1 flex-col items-center justify-start p-9 bg-gray-50 shadow rounded-lg css-1nc2z6h";
-          mainDiv.style.flex = "0 0 30%";
-          let bgImg = document.createElement("img");
-          bgImg.setAttribute(
-            "src",
-            "upload/" +
-              (kategori[i].category_pictures !== ""
-                ? kategori[i].category_pictures
-                : "user_icon/default.png")
-          );
-          bgImg.style.width = "200px";
-          bgImg.style.height = "150px";
-          bgImg.style.objectFit = "contain";
-          mainDiv.appendChild(bgImg);
-          let contentDiv = document.createElement("div");
-          contentDiv.className =
-            "flex self-stretch space-x-2.5 items-center justify-start";
-          let captionDiv = document.createElement("div");
-          captionDiv.className = "flex flex-1 items-start justify-start";
-          let textDiv = document.createElement("div");
-          textDiv.className = "text-xl font-medium leading-loose";
-          textDiv.innerHTML =
-            kategori[i].category_name.length > 13
-              ? kategori[i].category_name.substring(0, 13) + "..."
-              : kategori[i].category_name;
-          captionDiv.appendChild(textDiv);
-          contentDiv.appendChild(captionDiv);
-          let imageDiv = document.createElement("div");
-          imageDiv.className =
-            "flex self-stretch space-x-2.5 items-center justify-center rounded";
-          let editBtn = document.createElement("img");
-          editBtn.className = "css-5nv48v";
-          editBtn.setAttribute("src", "/fimgs/2309_60058.x1.svg");
-
-          editBtn.onclick = () => {
-            meta.editKategori(kategori[i].category_id);
-          };
-
-          editBtn.style.cursor = "pointer";
-          imageDiv.appendChild(editBtn);
-          let delBtn = document.createElement("img");
-          delBtn.className = "css-1b79tb0";
-          delBtn.setAttribute("src", "/fimgs/2309_60065.x1.svg");
-
-          delBtn.onclick = () => {
-            meta.deleteKategori(kategori[i].category_id);
-          };
-
-          delBtn.style.cursor = "pointer";
-          imageDiv.appendChild(delBtn);
-          contentDiv.appendChild(imageDiv);
-          mainDiv.appendChild(contentDiv);
-          document.getElementById("kotak").appendChild(mainDiv);
-        }
+        meta.loadKategori();
       });
     }}
   />
