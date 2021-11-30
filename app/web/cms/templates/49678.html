@@ -1630,14 +1630,16 @@
                       class={`flex self-stretch flex-col items-start justify-start p-2 bg-white shadow shadow-inner rounded`}
                     >
                       <div class="flex self-stretch space-x-4 items-start justify-start">
-                        <div class="flex items-start justify-start">
+                        <div class="flex self-stretch items-start justify-start">
                           <img
-                            class={`flex items-start justify-start`}
-                            style={`width: 65px; min-width: 65px; max-width: 65px; height: 93px; min-height: 93px; max-height: 93px;`}
+                            src={
+                              "/upload/" + value.books.book_picture ||
+                              "/fimgs/3790_234402.x1.png"
+                            }
+                            style={`border-radius:8%; width:65px; height:93px;`}
                             onError={(e) => {
-                              e.target.src = "/fimgs/3995_347820.x1.png";
+                              e.target.src = "/fimgs/3790_234402.x1.png";
                             }}
-                            src="/fimgs/3995_347820.x1.png"
                           />
                         </div>
                         <div class="flex flex-1 self-stretch flex-col space-y-1.5 items-start justify-start">
@@ -1702,10 +1704,11 @@
                                 meta.deleteBookmark(value.bookmark_id);
                               }}
                             >
-                              <img
-                                src="/fimgs/3995_347834.x1.svg"
+                              <ficon
+                                aria-label="Delete"
+                                iconName="Delete"
                                 class={`flex items-center justify-center`}
-                                style={`width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;`}
+                                style="font-size:14px; "
                               />
                             </div>
                           </div>
@@ -1902,7 +1905,7 @@
           </div>
           {window.user.role !== "guest" && (
             <div
-              class={`flex self-stretch flex-col items-start justify-start transform rotate-180`}
+              class={`flex self-stretch flex-col items-start justify-start transform -rotate-180`}
               style={`--tw-rotate: 0deg;`}
             >
               <btnlogout
