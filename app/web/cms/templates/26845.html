@@ -2,6 +2,7 @@
   <effect
     meta={{
       ptr: "",
+      full_name: "",
       author: [],
       book: [],
       chapter: [],
@@ -9,6 +10,7 @@
       page: [],
       page_chapter: [],
       publisher: [],
+      tags: [],
       chapter_id: 1,
       pages: 0,
       page_id: 1,
@@ -126,7 +128,7 @@
           },
           e: "ReadByBookChapterId",
         }).then((res) => {
-          console.log(res);
+          // console.log(res);
           page_chapter = res.page;
         });
 
@@ -145,8 +147,7 @@
             },
             e: "ReadLatestPages",
           }).then((res) => {
-            console.log(res);
-
+            // console.log(res);
             if (res.viewBook !== null) {
               this.page.map((value, i) => {
                 if (value.page_id === res.viewBook.viewBook_page_id) {
@@ -213,6 +214,50 @@
           if (res !== null || res.res !== "Failure") {
             meta.loading(true);
             runInAction(() => {
+              if (res.book.authors_authorsTobooks_book_author_one_id !== null) {
+                runInAction(() => {
+                  meta.author.push(
+                    res.book.authors_authorsTobooks_book_author_one_id
+                  );
+                });
+              }
+
+              if (res.book.authors_authorsTobooks_book_author_two_id !== null) {
+                runInAction(() => {
+                  meta.author.push(
+                    res.book.authors_authorsTobooks_book_author_two_id
+                  );
+                });
+              }
+
+              if (
+                res.book.authors_authorsTobooks_book_author_three_id !== null
+              ) {
+                runInAction(() => {
+                  meta.author.push(
+                    res.book.authors_authorsTobooks_book_author_three_id
+                  );
+                });
+              }
+
+              if (res.book.tags_books_book_genre_one_idTotags !== null) {
+                runInAction(() => {
+                  meta.tags.push(res.book.tags_books_book_genre_one_idTotags);
+                });
+              }
+
+              if (res.book.tags_books_book_genre_two_idTotags !== null) {
+                runInAction(() => {
+                  meta.tags.push(res.book.tags_books_book_genre_two_idTotags);
+                });
+              }
+
+              if (res.book.tags_books_book_genre_three_idTotags !== null) {
+                runInAction(() => {
+                  meta.tags.push(res.book.tags_books_book_genre_three_idTotags);
+                });
+              }
+
               meta.book = res.book;
               meta.chapter = res.book.chapter;
               meta.category = res.book.category;
@@ -226,11 +271,12 @@
                 return aNum - bNum;
               });
               page_chapter.sort(function (a, b) {
-                var aNum = parseInt(a.page_chapter_id);
-                var bNum = parseInt(b.page_chapter_id);
+                var aNum = parseInt(a.chapter.chapter_number);
+                var bNum = parseInt(b.chapter.chapter_number);
                 return aNum - bNum;
               });
-              meta.page = page_chapter; // read last chapter read
+              meta.page = page_chapter;
+              console.log(page_chapter); // read last chapter read
 
               api("/api/history-book", {
                 viewBook: {
@@ -260,6 +306,21 @@
                 runInAction(() => {
                   meta.history();
                 });
+
+                if (meta.author[0]) {
+                  var full_name = meta.author[0].author_name.split(" ");
+                  full_name.map((val, i) => {
+                    if (i < 2) {
+                      runInAction(() => {
+                        meta.full_name += val + " ";
+                      });
+                    } else {
+                      runInAction(() => {
+                        meta.full_name += val[0] + ". ";
+                      });
+                    }
+                  });
+                }
               });
             });
             meta.loading(false);
@@ -271,7 +332,10 @@
   <div
     class={`flex self-stretch items-start justify-start bg-white w-full h-full`}
   >
-    <div class={`flex flex-1 self-stretch items-start justify-start w-full`}>
+    <div
+      class={`flex flex-1 self-stretch items-start justify-start w-full`}
+      style={meta.darkMode ? "background-color: #3d3d3d" : ""}
+    >
       <div
         class={`flex flex-col space-y-1 items-start justify-start w-full`}
         style={`height: 823px; min-height: 823px; max-height: 823px; overflow:hidden`}
@@ -372,7 +436,7 @@
     transition: 0.5s;`}
         >
           <div class="flex self-stretch space-x-4 items-center justify-center">
-            <div class="flex flex-1 items-start justify-start">
+            <div class="flex flex-1 self-stretch items-center justify-start">
               <div class={`text-xs font-bold leading-none text-gray-500`}>
                 Page {meta.pages || 0} / {meta.page.length || 0}
               </div>
@@ -416,6 +480,7 @@
         right={true}
         swipeNoFollow={true}
         swipe={true}
+        backdrop={true}
       >
         <div
           class={`flex flex-1 self-stretch flex-col space-y-2.5 items-start justify-start px-6 pt-9 pb-6 overflow-y-auto`}
@@ -442,8 +507,11 @@
             <div class="flex self-stretch items-start justify-center">
               <div
                 class={`text-base font-bold leading-normal text-center text-gray-500`}
+                style={`width: 200px;
+  height: 1.5em;   
+  overflow: hidden;`}
               >
-                {"Author"}
+                {meta.full_name || "Author"}
               </div>
             </div>
           </div>
