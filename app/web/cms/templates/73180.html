@@ -3,11 +3,14 @@
     meta={{
       avg_rating: 0,
       rating: 0,
-      views: 0,
+      views: "0",
+      saves: "0",
       user_rating: "",
       isRead: false,
+      isBookmark: false,
       author: [],
       book: [],
+      comment: [],
       tags: [],
       chapter: [],
       category: [],
@@ -17,6 +20,7 @@
       save_info: false,
       star_info: false,
       read_info: false,
+      loading: true,
 
       async onChange(key, value) {
         if (key === "rating") {
@@ -130,6 +134,45 @@
         }
       },
 
+      async readComment() {
+        var comment = [];
+        api("/api/comment", {
+          comment: {
+            comment_book_id: parseInt(params.book_id),
+          },
+          e: "ReadByBookId",
+        }).then((res) => {
+          // console.log(res)
+          if (
+            res !== null &&
+            res.comment.length !== 0 &&
+            res.comment !== null
+          ) {
+            res.comment.map((value, i) => {
+              if (value.users.user_id === window.user.user.user_id) {
+                comment.push(value);
+              }
+            });
+            res.comment.map((value, i) => {
+              if (value.users.user_id !== window.user.user.user_id) {
+                comment.push(value);
+              }
+            });
+          }
+
+          runInAction(() => {
+            this.comment = comment;
+            this.user_comment = "";
+          });
+          setTimeout(() => {
+            window.mobileApp.app.dialog.close();
+          }, 2000);
+          runInAction(() => {
+            this.loading = false;
+          });
+        });
+      },
+
       async showInfo(key) {
         if (key === "page_info" && !this[key]) {
           this.page_info = true;
@@ -195,7 +238,8 @@
             e: "ReadByBookNUserId",
           }).then((res) => {
             // console.log(res);
-            if (res.bookmark == null) {
+            if (res.bookmark === null) {
+              window.mobileApp.app.dialog.preloader("Added to read later...");
               api("/api/bookmarks", {
                 bookmark: {
                   bookmark_user_id: window.user.user.user_id,
@@ -204,9 +248,44 @@
                 },
                 e: "Create",
               }).then((res) => {
-                console.log(res);
-                navigate("/m/");
+                // console.log(res);
+                setTimeout(function () {
+                  window.mobileApp.app.dialog.close();
+                }, 2000);
+                runInAction(() => {
+                  this.isBookmark = true;
+                }); // navigate("/m/");
               });
+            } else {
+              window.mobileApp.app.dialog.confirm(
+                "This book already added to read later.",
+                "Remove from read later?",
+                () => {
+                  api("/api/bookmarks", {
+                    bookmark: {
+                      bookmark_id: res.bookmark.bookmark_id,
+                    },
+                    e: "Delete",
+                  }).then((res) => {
+                    if (res.res === "Failure" || res === null) {
+                      window.mobileApp.app.dialog.alert(
+                        null,
+                        "Failed to remove this book from read later"
+                      );
+                    } else {
+                      window.mobileApp.app.dialog.preloader(
+                        "Remove complete ..."
+                      );
+                      setTimeout(function () {
+                        window.mobileApp.app.dialog.close();
+                      }, 2000);
+                      runInAction(() => {
+                        this.isBookmark = false;
+                      });
+                    }
+                  });
+                }
+              );
             }
           });
         }
@@ -274,7 +353,7 @@
           },
           e: "ReadDetailById",
         }).then((res) => {
-          console.log(res);
+          // console.log(res);
           runInAction(() => {
             if (res.book.authors_authorsTobooks_book_author_one_id !== null) {
               runInAction(() => {
@@ -337,11 +416,48 @@
             runInAction(() => {
               meta.views =
                 res.viewBook.length > 999
-                  ? (Math.abs(res.viewBook.length) / 1000).toFixed(1) + "k"
-                  : res.viewBook.length;
+                  ? String((Math.abs(res.viewBook.length) / 1000).toFixed(1)) +
+                    "k"
+                  : String(res.viewBook.length);
+            });
+          }
+        }); // read bookmark
+
+        api("/api/bookmarks", {
+          bookmark: {
+            bookmark_user_id: window.user.user.user_id,
+            bookmark_book_id: parseInt(params.book_id),
+          },
+          e: "ReadByBookNUserId",
+        }).then((res) => {
+          // console.log(res);
+          if (res.bookmark !== null) {
+            runInAction(() => {
+              meta.isBookmark = true;
+            });
+          }
+        }); // count sum bookmark
+
+        api("/api/bookmarks", {
+          bookmark: {
+            bookmark_book_id: parseInt(params.book_id),
+          },
+          e: "ReadByBookId",
+        }).then((res) => {
+          // console.log(res);
+          if (res.bookmark.length !== 0) {
+            runInAction(() => {
+              meta.saves =
+                res.bookmark.length > 999
+                  ? String((Math.abs(res.bookmark.length) / 1000).toFixed(1)) +
+                    "k"
+                  : String(res.bookmark.length);
             });
           }
         });
+        meta.readComment();
+      } else {
+        navigate("/m/");
       }
     }}
   />
@@ -440,7 +556,7 @@
                   </div>
                 </div>
               )}
-              <div class="flex items-start justify-start">
+              <div class="flex space-x-1 items-start justify-start">
                 <img
                   src="/fimgs/1369_30601.x1.svg"
                   style="width: 18px; min-width: 18px; max-width: 18px; height: 24px; min-height: 24px; max-height: 24px;"
@@ -471,19 +587,21 @@
                   </div>
                 </div>
               )}
-              <div class="flex items-center justify-center">
+              <div class="flex space-x-1 items-center justify-center">
                 <img
                   src="/fimgs/3840_264934.x1.svg"
                   class="flex self-stretch items-center justify-center"
                   style="width: 10.47px; min-width: 10.47px; max-width: 10.47px; height: 24px; min-height: 24px; max-height: 24px;"
                 />
                 <div class="flex items-center justify-start">
-                  <div class="text-base font-bold leading-normal">125K</div>
+                  <div class={`text-base font-bold leading-normal`}>
+                    {meta.saves}
+                  </div>
                 </div>
               </div>
             </div>
             <div
-              class={`flex flex-1 flex-col items-center justify-center`}
+              class={`flex flex-1 flex-col items-center justify-center p-2.5`}
               onClick={() => {
                 meta.showInfo("read_info");
               }}
@@ -500,7 +618,7 @@
                   </div>
                 </div>
               )}
-              <div class="flex space-x-0.5 items-center justify-center">
+              <div class="flex space-x-1 items-center justify-center">
                 <img
                   src="/fimgs/3840_264942.x1.svg"
                   class="flex items-start justify-start"
@@ -514,7 +632,7 @@
               </div>
             </div>
             <div
-              class={`flex flex-1 flex-col items-center justify-center`}
+              class={`flex flex-1 flex-col items-center justify-center p-2.5`}
               onClick={() => {
                 meta.showInfo("page_info");
               }}
@@ -529,7 +647,7 @@
                   </div>
                 </div>
               )}
-              <div class={`flex space-x-0.5 items-center justify-center`}>
+              <div class={`flex space-x-1 items-center justify-center`}>
                 <ficon
                   aria-label="Page"
                   iconName="PageSolid"
@@ -607,9 +725,14 @@
             class={`flex flex-1 self-stretch items-center justify-start`}
             onClick={meta.commentPage}
           >
-            <div class="text-xs font-bold leading-none">19 People</div>
+            <div class={`text-xs font-bold leading-none`}>
+              {meta.comment.length} People
+            </div>
           </div>
-          <div class="flex self-stretch items-center justify-center">
+          <div
+            class={`flex self-stretch items-center justify-center`}
+            onClick={meta.commentPage}
+          >
             <img
               class={`flex items-start justify-start`}
               src="/fimgs/1022_25715.x1.svg"
@@ -617,121 +740,189 @@
             />
           </div>
         </div>
-        <div class="flex self-stretch flex-col items-start justify-start">
-          <div class="flex self-stretch space-x-2.5 items-start justify-start pb-1 bg-white">
-            <div
-              src="/fimgs/1718_63660_1718_63628.x1.png"
-              class={`flex items-start justify-start p-2.5`}
-            >
-              <img
-                src="/fimgs/1718_127188.x1.png"
-                class={`rounded-full`}
-                style={`background-image: url('/fimgs/bg-9a38e49e10277e6e852b4067665aec6e437bde6f');background-size:100% 100%;background-repeat:no-repeat;`}
-              />
-            </div>
-            <div class="flex flex-1 flex-col items-start justify-start">
-              <div class="flex self-stretch space-x-2 items-center justify-start">
-                <div class="flex items-start justify-start">
-                  <div class="text-base font-bold leading-normal">Mayomee</div>
-                </div>
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-xs font-bold leading-none text-gray-500">
-                    March 30,2020
-                  </div>
-                </div>
-              </div>
-              <div class="flex self-stretch items-start justify-start">
-                <div class={`text-base leading-normal text-gray-800`}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Velit
-                  aliquet id feugiat facilisi feugiat. Odio tortor.
-                </div>
-              </div>
-              <div class="flex self-stretch space-x-2 items-center justify-start pt-2">
-                <div
-                  class={`flex flex-1 items-center justify-center py-0.5 bg-gray-200`}
-                  style={""}
-                >
-                  <div class="text-xs leading-none text-center">EDIT</div>
-                </div>
-                <div class="flex flex-1 items-center justify-center py-0.5 bg-gray-200">
-                  <div class="text-xs leading-none text-center">DELETE</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class={`flex self-stretch space-x-2.5 items-start justify-start bg-white`}
-            style="margin-top:16px;"
-          >
-            <div class="flex items-start justify-start p-2.5">
-              <img
-                src="/fimgs/1718_127188.x1.png"
-                class={`rounded-full`}
-                style={`background-image: url('/fimgs/bg-9a38e49e10277e6e852b4067665aec6e437bde6f');background-size:100% 100%;background-repeat:no-repeat;`}
-              />
-            </div>
-            <div class="flex flex-1 flex-col items-start justify-start">
-              <div class="flex self-stretch space-x-2 items-center justify-start">
-                <div class="flex items-start justify-start">
-                  <div class="text-base font-bold leading-normal">
-                    Nida Zahra
-                  </div>
-                </div>
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-xs font-bold leading-none text-gray-500">
-                    March 17, 2020
-                  </div>
-                </div>
-              </div>
-              <div class="flex self-stretch items-start justify-start">
-                <div class="text-base leading-normal text-gray-800">
-                  Pertama tama,senyum dulu dooong kak....nah begitu..oke
-                  sip..lanjut...
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            class={`flex self-stretch space-x-2.5 items-start justify-start bg-white`}
-            style="margin-top:16px;"
-          >
-            <div class="flex items-start justify-start p-2.5">
-              <img
-                src="/fimgs/1718_127188.x1.png"
-                class={`rounded-full`}
-                style={`background-image: url('/fimgs/bg-9a38e49e10277e6e852b4067665aec6e437bde6f');background-size:100% 100%;background-repeat:no-repeat;`}
-              />
-            </div>
-            <div class="flex flex-1 flex-col items-start justify-start">
-              <div class="flex self-stretch space-x-2 items-center justify-start">
-                <div class="flex items-start justify-start">
-                  <div class="text-base font-bold leading-normal">
-                    Nida Zahra
-                  </div>
-                </div>
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-xs font-bold leading-none text-gray-500">
-                    March 17, 2020
-                  </div>
-                </div>
-              </div>
-              <div class="flex self-stretch items-start justify-start">
-                <div class="text-base leading-normal text-gray-800">
-                  Pertama tama,senyum dulu dooong kak....nah begitu..oke
-                  sip..lanjut...
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          class={`flex items-center justify-start`}
-          onClick={meta.commentPage}
+        <m-list
+          class={`flex flex-1 self-stretch flex-col space-y-2 items-start justify-start overflow-x-auto`}
         >
-          <div class="text-base font-bold leading-normal text-amber-500">
-            See all comment
+          {!meta.loading &&
+            meta.comment.slice(0, 3).map((value, index) => {
+              return (
+                <m-list-item
+                  class={`flex self-stretch space-x-2.5 items-start justify-start pb-1 bg-white`}
+                  swipeout={true}
+                  style={`margin-left : -50px`}
+                >
+                  <div
+                    class={`flex flex-1 self-stretch items-start justify-start swipeout-content`}
+                  >
+                    <div
+                      class={`flex flex-1 flex-col items-start justify-start item-content`}
+                    >
+                      <div
+                        class={`flex flex-1 self-stretch space-x-2.5 items-center justify-start item-inner`}
+                      >
+                        <div
+                          class={`flex self-stretch items-start justify-start p-2.5`}
+                        >
+                          <img
+                            class={`rounded-full h-24 w-24 `}
+                            style={`width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;background-image: url('/fimgs/bg-9a38e49e10277e6e852b4067665aec6e437bde6f');background-size:100% 100%;background-repeat:no-repeat;`}
+                            src={
+                              value.users.user_picture
+                                ? "/upload/" + value.users.user_picture
+                                : "/fimgs/1718_127188.x1.png"
+                            }
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = "/fimgs/1718_127188.x1.png";
+                            }}
+                            onClick={meta.commentPage}
+                          />
+                        </div>
+                        <div
+                          class={`flex flex-1 self-stretch flex-col space-y-1.5 items-start justify-start`}
+                          onClick={meta.commentPage}
+                        >
+                          <div
+                            class={`flex self-stretch space-x-2 items-center justify-start w-full`}
+                          >
+                            <div class="flex items-start justify-start">
+                              <div
+                                class={`text-base font-bold leading-normal name`}
+                              >
+                                {value.users.user_name ===
+                                window.user.user.user_name
+                                  ? "Your Comment"
+                                  : value.users.user_name}
+                              </div>
+                            </div>
+                            <div
+                              class={`flex flex-1 items-center justify-end w-full`}
+                            >
+                              <div
+                                class={`text-xs font-bold leading-none text-gray-500`}
+                              >
+                                {dateFormat(
+                                  value.comment_date_updated,
+                                  "MMMM dd, yyyy"
+                                ) || "MMMM dd, yyyy"}
+                              </div>
+                            </div>
+                          </div>
+                          <div class="flex self-stretch items-start justify-start">
+                            <div
+                              class={`text-base leading-normal text-gray-800`}
+                            >
+                              {value.comment_description.length < 100
+                                ? value.comment_description
+                                : value.comment_description.slice(0, 100) +
+                                  "..."}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {false && value.users.user_id === window.user.user.user_id && (
+                    <m-swipeout-actions
+                      right={true}
+                      class={`flex self-stretch items-start justify-start bg-white`}
+                      style={`max-height: 102px`}
+                    >
+                      <m-swipeout-button
+                        class={`flex self-stretch flex-col items-center justify-center bg-white`}
+                        color={"green"}
+                        onClick={() => {
+                          meta.editComment(value.comment_id);
+                        }}
+                      >
+                        {"Edit"}
+                      </m-swipeout-button>
+                      <m-swipeout-button
+                        class={`flex self-stretch flex-col items-center justify-center bg-white`}
+                        color={"red"}
+                        overswipe={() => {
+                          meta.deleteComment(value.comment_id);
+                        }}
+                        onClick={() => {
+                          meta.deleteComment(value.comment_id);
+                        }}
+                      >
+                        {"Delete"}
+                      </m-swipeout-button>
+                    </m-swipeout-actions>
+                  )}
+                </m-list-item>
+              );
+            })}
+          {meta.comment.length === 0 && !meta.loading && (
+            <div
+              class={`flex flex-1 self-stretch items-center justify-center pb-1 bg-white h-full`}
+              style={`padding-top:24px`}
+            >
+              <div class="flex flex-1 self-stretch flex-col space-y-4 items-center justify-center">
+                <img
+                  src={`/fimgs/4392_2995205.x1.svg`}
+                  class={`flex flex-col items-start justify-start`}
+                />
+                <div class="text-base leading-normal text-right text-gray-600">
+                  No comment yet ~
+                </div>
+              </div>
+            </div>
+          )}
+          {meta.loading && (
+            <div class={`flex self-stretch items-start justify-start pb-1`}>
+              <div
+                class={`flex flex-1 self-stretch space-x-2.5 items-center justify-start item-inner`}
+              >
+                <div class={`flex items-start justify-start p-2.5`}>
+                  <div
+                    class="flex flex-1 self-stretch items-start justify-start rounded-full"
+                    style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
+                  >
+                    <loading-box class={"rounded-full"} />
+                  </div>
+                </div>
+                <div class="flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-center py-2.5">
+                  <div
+                    class={`flex self-stretch space-x-16 items-start justify-start`}
+                    style={`height: 15px; min-height: 15px; max-height: 15px;display: flex;
+  justify-content: space-between`}
+                  >
+                    <div
+                      class="flex flex-1 self-stretch items-start justify-start bg-white"
+                      style="width: 111.50px; min-width: 111.50px; max-width: 111.50px; height: 15px; min-height: 15px; max-height: 15px;"
+                    >
+                      <loading-box />
+                    </div>
+                    <div
+                      class="flex flex-1 self-stretch items-start justify-start bg-white"
+                      style="width: 111.50px; min-width: 111.50px; max-width: 111.50px; height: 15px; min-height: 15px; max-height: 15px;"
+                    >
+                      <loading-box />
+                    </div>
+                  </div>
+                  <div
+                    class="flex self-stretch items-start justify-start bg-white"
+                    style="height: 45px; min-height: 45px; max-height: 45px;"
+                  >
+                    <loading-box />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </m-list>
+        {
+          <div
+            class={`flex items-center justify-start`}
+            onClick={meta.commentPage}
+          >
+            <div class="text-base font-bold leading-normal text-amber-500">
+              See all comment
+            </div>
           </div>
-        </div>
+        }
       </div>
       <div
         class={`mb-10 flex self-stretch flex-col space-y-4 items-start justify-start px-6`}
@@ -872,18 +1063,23 @@
       </div>
       <div
         class={`fixed w-full bottom-0 flex self-stretch space-x-2 items-center justify-center px-6 py-4 bg-white bg-opacity-50`}
-        style="backdrop-filter: blur(10px);"
+        style="backdrop-filter: blur(10px); z-index:1"
       >
         <div
-          class={`flex self-stretch items-center justify-center bg-white shadow border rounded-lg border-amber-500`}
+          class={`flex self-stretch space-x-2.5 items-center justify-center bg-white shadow border rounded-lg border-amber-500`}
           onClick={() => {
             meta.addBookmark(params.book_id);
           }}
+          style="width: 50px; min-width: 50px; max-width: 50px; height: 44px; min-height: 44px; max-height: 44px;"
         >
-          <img
-            style="width: 35.71px; min-width: 35.71px; max-width: 35.71px; height: 44px; min-height: 44px; max-height: 44px;"
-            src="/fimgs/I991_7676_991_7671.x1.svg"
-          />
+          {!meta.isBookmark && <img src="/fimgs/I991_7676_991_7671.x1.svg" />}
+          {meta.isBookmark && (
+            <img
+              class={""}
+              style={`width: 35.71px; min-width: 35.71px; max-width: 35.71px; height: 44px; min-height: 44px; max-height: 44px;`}
+              src="/fimgs/4379_20313.x1.svg"
+            />
+          )}
         </div>
         <button
           class={`flex flex-1 items-center justify-center p-2.5 bg-amber-500 shadow rounded-lg`}

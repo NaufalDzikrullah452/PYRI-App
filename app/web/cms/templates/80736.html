@@ -2,14 +2,135 @@
   <effect
     meta={{
       book: [],
+      comment: [],
       author: [],
       publisher: [],
       category: [],
+      user_comment: "",
+      loading: true,
+
+      async onChange(e, key) {
+        let value = e.target.value;
+
+        if (key === "user_comment" && value.length < 501) {
+          runInAction(() => {
+            this[key] = value;
+          });
+        } // console.log(key + " : " + value);
+      },
 
       async back() {
         var book_id = "";
         if (params.book_id !== undefined) book_id = params.book_id;
         navigate("/m/detail-book-page/" + book_id);
+      },
+
+      async readComment() {
+        var comment = [];
+        api("/api/comment", {
+          comment: {
+            comment_book_id: parseInt(params.book_id),
+          },
+          e: "ReadByBookId",
+        }).then((res) => {
+          // console.log(res)
+          if (
+            res !== null &&
+            res.comment.length !== 0 &&
+            res.comment !== null
+          ) {
+            res.comment.map((value, i) => {
+              if (value.users.user_id === window.user.user.user_id) {
+                comment.push(value);
+              }
+            });
+            res.comment.map((value, i) => {
+              if (value.users.user_id !== window.user.user.user_id) {
+                comment.push(value);
+              }
+            });
+          }
+
+          runInAction(() => {
+            this.comment = comment;
+            this.user_comment = "";
+          });
+          setTimeout(() => {
+            window.mobileApp.app.dialog.close();
+          }, 2000);
+          runInAction(() => {
+            this.loading = false;
+          });
+        });
+      },
+
+      async addComment() {
+        var comment = document.getElementById("addComment");
+
+        if (this.user_comment === "") {
+          comment.firstElementChild.focus();
+        } else {
+          window.mobileApp.app.dialog.confirm(null, "Confirm ?", () => {
+            window.mobileApp.app.dialog.preloader("Loading...");
+            comment.firstElementChild.value = "";
+            api("/api/comment", {
+              comment: {
+                comment_description: this.user_comment,
+                comment_book_id: parseInt(params.book_id),
+                comment_user_id: window.user.user.user_id,
+                comment_date_updated: new Date(),
+              },
+              e: "Create",
+            }).then((res) => {
+              if (res !== null) {
+                this.readComment();
+              }
+            });
+          });
+        }
+      },
+
+      async editComment(id) {
+        console.log("edit comment: " + id);
+      },
+
+      async deleteComment(id) {
+        window.mobileApp.app.dialog.confirm(null, "Confirm delete ?", () => {
+          // console.log("comment deleted: "+id);
+          window.mobileApp.app.dialog.preloader("Loading...");
+          api("/api/comment", {
+            comment: {
+              comment_id: parseInt(id),
+            },
+            e: "Delete",
+          }).then((res) => {
+            window.mobileApp.app.dialog.close();
+
+            if (res !== null) {
+              this.readComment(); // location.reload();
+
+              window.mobileApp.app.dialog.alert(
+                null,
+                "Comment successfully deleted"
+              );
+            } else {
+              window.mobileApp.app.dialog.alert(null, "Error onDelete");
+            }
+          });
+        });
+      },
+
+      async shortName(name) {
+        var full_name = name.split(" ");
+        var temp_name = "";
+        full_name.map((val, i) => {
+          if (i === 0) {
+            temp_name += val + " ";
+          } else {
+            temp_name += val[0].toUpperCase() + ". ";
+          }
+        });
+        return temp_name;
       },
     }}
     run={async () => {
@@ -21,18 +142,22 @@
           },
           e: "ReadById",
         }).then((res) => {
-          console.log(res);
+          // console.log(res);
           runInAction(() => {
-            meta.book = res.book;
-            meta.publisher = res.book.publisher; // meta.author = res.book.author;
+            if (res !== null) {
+              meta.book = res.book;
+              meta.publisher = res.book.publisher; // meta.author = res.book.author;
 
-            meta.category = res.book.category;
+              meta.category = res.book.category;
+            }
           });
-        });
+        }); // read comment
+
+        meta.readComment();
       }
     }}
   />
-  <div class="flex flex-col items-start justify-start bg-white">
+  <div class="flex self-stretch flex-col items-start justify-start bg-white">
     <div class="flex flex-1 self-stretch flex-col space-y-1 items-start justify-start">
       <div
         class={`flex self-stretch flex-col items-start justify-center px-6 pt-9 pb-4 bg-white shadow`}
@@ -44,7 +169,7 @@
               class={`flex self-stretch items-center justify-start`}
               style={`width: 24px; min-width: 24px; max-width: 24px; height: 40px; min-height: 40px; max-height: 40px;`}
               onClick={() => {
-                meta.back();
+                back();
               }}
             />
           </div>
@@ -56,185 +181,219 @@
       </div>
       <div class="flex flex-1 self-stretch flex-col space-y-4 items-start justify-start px-6 pt-4">
         <div class="flex self-stretch items-center justify-start px-6 py-3 bg-white border rounded border-gray-200">
-          <div class="flex flex-1 items-start justify-start p-2.5">
-            <div class="text-xs leading-none">Add Comment...</div>
-          </div>
+          <m-input
+            class={`flex flex-1 items-start justify-start p-2.5`}
+            type="textarea"
+            resizable={true}
+            placeholder="Add Comment..."
+            onChange={(e) => {
+              meta.onChange(e, "user_comment");
+            }}
+            maxlength="501"
+            id="addComment"
+          />
           <div class="flex flex-col items-center justify-center">
-            <div class="flex items-center justify-center bg-gray-100">
+            <m-button
+              class={`flex items-center justify-center bg-gray-100`}
+              onClick={() => {
+                meta.addComment();
+              }}
+            >
               <img
                 src="/fimgs/1718_30652.x1.svg"
                 class="flex items-start justify-start bg-white"
                 style="width: 20px; min-width: 20px; max-width: 20px; height: 20px; min-height: 20px; max-height: 20px;"
               />
-            </div>
+            </m-button>
             <div class="flex items-start justify-start">
-              <div class="text-xs font-medium leading-3 text-gray-500">
-                0/500
+              <div
+                class={`text-xs font-medium leading-3 text-gray-500`}
+                style={meta.user_comment.length === 500 ? "color:red" : ""}
+              >
+                {meta.user_comment.length} /500
               </div>
             </div>
           </div>
         </div>
-        <div
-          class={`flex flex-1 self-stretch flex-col space-y-2 items-start justify-start overflow-x-auto`}
+        <m-list
+          class={`flex flex-1 self-stretch flex-col space-y-2 items-start justify-start overflow-y-auto h-full`}
+          style={`padding-top: 10px`}
         >
-          <div class="flex self-stretch space-x-2.5 items-start justify-start pb-1 bg-white">
-            <div class={`flex items-start justify-start p-2.5`}>
-              <img
-                class={`rounded-full h-24 w-24 `}
-                style={`width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;background-image: url('/fimgs/bg-9a38e49e10277e6e852b4067665aec6e437bde6f');background-size:100% 100%;background-repeat:no-repeat;`}
-                src="/fimgs/1718_127188.x1.png"
-              />
-            </div>
-            <div class="flex flex-1 flex-col space-y-1.5 items-start justify-start">
-              <div class="flex self-stretch space-x-2 items-center justify-start">
-                <div class="flex items-start justify-start">
-                  <div class="text-base font-bold leading-normal">Mayomee</div>
-                </div>
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-xs font-bold leading-none text-gray-500">
-                    March 30,2020
-                  </div>
-                </div>
-              </div>
-              <div class="flex self-stretch items-start justify-start">
-                <div class={`text-base leading-normal text-gray-800`}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Velit
-                  aliquet id feugiat facilisi feugiat. Odio tortor.
-                </div>
-              </div>
-              <div class="flex self-stretch space-x-2 items-center justify-start">
-                <div
-                  class={`flex flex-1 items-center justify-center py-0.5 bg-gray-200`}
-                  style={""}
+          {!meta.loading &&
+            meta.comment.map((value, index) => {
+              return (
+                <m-list-item
+                  class={`flex self-stretch space-x-2.5 items-start justify-start pb-1 bg-white`}
+                  swipeout={value.users.user_id === window.user.user.user_id}
+                  style={
+                    value.users.user_id === window.user.user.user_id
+                      ? `margin-left : -50px`
+                      : "margin-left : -25px"
+                  }
                 >
-                  <div class="text-xs leading-none text-center">EDIT</div>
-                </div>
-                <div class="flex flex-1 items-center justify-center py-0.5 bg-gray-200">
-                  <div class="text-xs leading-none text-center">DELETE</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="flex self-stretch space-x-2.5 items-start justify-start bg-white">
+                  <div
+                    class={`flex flex-1 self-stretch items-start justify-start swipeout-content`}
+                  >
+                    <div
+                      class={`flex flex-1 flex-col items-start justify-start item-content`}
+                    >
+                      <div
+                        class={`flex flex-1 self-stretch space-x-2.5 items-center justify-start item-inner`}
+                        style={
+                          value.users.user_id !== window.user.user.user_id
+                            ? "padding-right: 0px!important"
+                            : ""
+                        }
+                      >
+                        <div
+                          class={`flex self-stretch items-start justify-start p-2.5`}
+                        >
+                          <img
+                            class={`rounded-full h-24 w-24 `}
+                            style={`width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;background-image: url('/fimgs/bg-9a38e49e10277e6e852b4067665aec6e437bde6f');background-size:100% 100%;background-repeat:no-repeat;`}
+                            src={
+                              value.users.user_picture
+                                ? "/upload/" + value.users.user_picture
+                                : "/fimgs/1718_127188.x1.png"
+                            }
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = "/fimgs/1718_127188.x1.png";
+                            }}
+                          />
+                        </div>
+                        <div
+                          class={`flex flex-1 self-stretch flex-col space-y-1.5 items-start justify-start`}
+                        >
+                          <div
+                            class={`flex self-stretch space-x-2 items-center justify-start w-full`}
+                          >
+                            <div class="flex items-start justify-start">
+                              <div
+                                class={`text-base font-bold leading-normal name`}
+                              >
+                                {value.users.user_name ===
+                                window.user.user.user_name
+                                  ? "Your Comment"
+                                  : value.users.user_name}
+                              </div>
+                            </div>
+                            <div
+                              class={`flex flex-1 items-center justify-end w-full`}
+                            >
+                              <div
+                                class={`text-xs font-bold leading-none text-gray-500`}
+                              >
+                                {dateFormat(
+                                  value.comment_date_updated,
+                                  "MMMM dd, yyyy"
+                                ) || "MMMM dd, yyyy"}
+                              </div>
+                            </div>
+                          </div>
+                          <div class="flex self-stretch items-start justify-start">
+                            <div
+                              class={`text-base leading-normal text-gray-800`}
+                            >
+                              {value.comment_description || ""}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {value.users.user_id === window.user.user.user_id && (
+                    <m-swipeout-actions
+                      right={true}
+                      class={`flex self-stretch items-start justify-start bg-white`}
+                      style={`max-height: 102px`}
+                    >
+                      <m-swipeout-button
+                        class={`flex self-stretch flex-col items-center justify-center bg-white`}
+                        color={"green"}
+                        onClick={() => {
+                          meta.editComment(value.comment_id);
+                        }}
+                      >
+                        {"Edit"}
+                      </m-swipeout-button>
+                      <m-swipeout-button
+                        class={`flex self-stretch flex-col items-center justify-center bg-white`}
+                        color={"red"}
+                        overswipe={() => {
+                          meta.deleteComment(value.comment_id);
+                        }}
+                        onClick={() => {
+                          meta.deleteComment(value.comment_id);
+                        }}
+                      >
+                        {"Delete"}
+                      </m-swipeout-button>
+                    </m-swipeout-actions>
+                  )}
+                </m-list-item>
+              );
+            })}
+          {meta.comment.length === 0 && !meta.loading && (
             <div
-              src="/fimgs/1718_127188.x1.png"
-              class={`flex items-start justify-start p-2.5`}
+              class={`flex flex-1 self-stretch items-center justify-center pb-1 bg-white h-full`}
+              style={`padding-top:124px`}
             >
-              <img
-                class={`rounded-full h-24 w-24`}
-                src="/fimgs/I1718_44470_1718_127190.x1.png"
-                style={`width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;background-image: url('/fimgs/bg-9a38e49e10277e6e852b4067665aec6e437bde6f');background-size:100% 100%;background-repeat:no-repeat;`}
-              />
-            </div>
-            <div class="flex flex-1 flex-col space-y-1.5 items-start justify-start">
-              <div class="flex self-stretch space-x-2 items-center justify-start">
-                <div class="flex items-start justify-start">
-                  <div class="text-base font-bold leading-normal">
-                    Nida Zahra
-                  </div>
-                </div>
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-xs font-bold leading-none text-gray-500">
-                    March 17, 2020
-                  </div>
-                </div>
-              </div>
-              <div class="flex self-stretch items-start justify-start">
-                <div class="text-base leading-normal text-gray-800">
-                  Pertama tama,senyum dulu dooong kak....nah begitu..oke
-                  sip..lanjut...
+              <div class="flex flex-1 self-stretch flex-col space-y-4 items-center justify-center">
+                <img
+                  src="/fimgs/4392_2995205.x1.svg"
+                  class="flex flex-col items-start justify-start"
+                  style="width: 177px; min-width: 177px; max-width: 177px; height: 138.26px; min-height: 138.26px; max-height: 138.26px;"
+                />
+                <div class="text-base leading-normal text-right text-gray-600">
+                  No comment yet ~
                 </div>
               </div>
             </div>
-          </div>
-          <div class="flex self-stretch space-x-2.5 items-start justify-start bg-white">
-            <div class={`flex items-start justify-start p-2.5`}>
-              <img
-                class={`rounded-full h-24 w-24`}
-                src="/fimgs/I1718_44956_1718_127190.x1.png"
-                style={`width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;background-image: url('/fimgs/bg-9a38e49e10277e6e852b4067665aec6e437bde6f');background-size:100% 100%;background-repeat:no-repeat;`}
-              />
-            </div>
-            <div class="flex flex-1 flex-col space-y-1.5 items-start justify-start">
-              <div class="flex self-stretch space-x-2 items-center justify-start">
-                <div class="flex items-start justify-start">
-                  <div class="text-base font-bold leading-normal">
-                    Nida Zahra
+          )}
+          {meta.loading && (
+            <div class={`flex self-stretch items-start justify-start pb-1`}>
+              <div
+                class={`flex flex-1 self-stretch space-x-2.5 items-center justify-start item-inner`}
+              >
+                <div class={`flex items-start justify-start p-2.5`}>
+                  <div
+                    class="flex flex-1 self-stretch items-start justify-start rounded-full"
+                    style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
+                  >
+                    <loading-box class={"rounded-full"} />
                   </div>
                 </div>
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-xs font-bold leading-none text-gray-500">
-                    March 17, 2020
+                <div class="flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-center py-2.5">
+                  <div
+                    class={`flex self-stretch space-x-16 items-start justify-start`}
+                    style={`height: 15px; min-height: 15px; max-height: 15px;display: flex;
+  justify-content: space-between`}
+                  >
+                    <div
+                      class="flex flex-1 self-stretch items-start justify-start bg-white"
+                      style="width: 111.50px; min-width: 111.50px; max-width: 111.50px; height: 15px; min-height: 15px; max-height: 15px;"
+                    >
+                      <loading-box />
+                    </div>
+                    <div
+                      class="flex flex-1 self-stretch items-start justify-start bg-white"
+                      style="width: 111.50px; min-width: 111.50px; max-width: 111.50px; height: 15px; min-height: 15px; max-height: 15px;"
+                    >
+                      <loading-box />
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="flex self-stretch items-start justify-start">
-                <div class="text-base leading-normal text-gray-800">
-                  Pertama tama,senyum dulu dooong kak....nah begitu..oke
-                  sip..lanjut...
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="flex self-stretch space-x-2.5 items-start justify-start bg-white">
-            <div class={`flex items-start justify-start p-2.5`}>
-              <img
-                class={`rounded-full h-24 w-24`}
-                src="/fimgs/I1718_45157_1718_127190.x1.png"
-                style={`width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;background-image: url('/fimgs/bg-9a38e49e10277e6e852b4067665aec6e437bde6f');background-size:100% 100%;background-repeat:no-repeat;`}
-              />
-            </div>
-            <div class="flex flex-1 flex-col space-y-1.5 items-start justify-start">
-              <div class="flex self-stretch space-x-2 items-center justify-start">
-                <div class="flex items-start justify-start">
-                  <div class="text-base font-bold leading-normal">
-                    Nida Zahra
-                  </div>
-                </div>
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-xs font-bold leading-none text-gray-500">
-                    March 17, 2020
+                  <div
+                    class="flex self-stretch items-start justify-start bg-white"
+                    style="height: 45px; min-height: 45px; max-height: 45px;"
+                  >
+                    <loading-box />
                   </div>
                 </div>
               </div>
-              <div class="flex self-stretch items-start justify-start">
-                <div class="text-base leading-normal text-gray-800">
-                  Pertama tama,senyum dulu dooong kak....nah begitu..oke
-                  sip..lanjut...
-                </div>
-              </div>
             </div>
-          </div>
-          <div class="flex self-stretch space-x-2.5 items-start justify-start bg-white">
-            <div class={`flex items-start justify-start p-2.5`}>
-              <img
-                class={`rounded-full h-24 w-24`}
-                src="/fimgs/I1718_45358_1718_127190.x1.png"
-                style={`width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;background-image: url('/fimgs/bg-9a38e49e10277e6e852b4067665aec6e437bde6f');background-size:100% 100%;background-repeat:no-repeat;`}
-              />
-            </div>
-            <div class="flex flex-1 flex-col space-y-1.5 items-start justify-start">
-              <div class="flex self-stretch space-x-2 items-center justify-start">
-                <div class="flex items-start justify-start">
-                  <div class="text-base font-bold leading-normal">
-                    Nida Zahra
-                  </div>
-                </div>
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-xs font-bold leading-none text-gray-500">
-                    March 17, 2020
-                  </div>
-                </div>
-              </div>
-              <div class="flex self-stretch items-start justify-start">
-                <div class="text-base leading-normal text-gray-800">
-                  Pertama tama,senyum dulu dooong kak....nah begitu..oke
-                  sip..lanjut...
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+          )}
+        </m-list>
       </div>
     </div>
   </div>

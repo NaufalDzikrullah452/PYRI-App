@@ -365,14 +365,16 @@
                 </div>
               </div>
             )}
-          {meta.loading && meta.tabActive === "home" && (
-            <div
-              class={`flex flex-col items-start justify-start p-5 w-full`}
-              style={`height: 124px; min-height: 124px; max-height: 124px;`}
-            >
-              <loading-box class="shadow" />
-            </div>
-          )}
+          {window.user.role === "guest" &&
+            meta.loading &&
+            meta.tabActive === "home" && (
+              <div
+                class={`flex flex-col items-start justify-start p-5 w-full`}
+                style={`height: 124px; min-height: 124px; max-height: 124px;`}
+              >
+                <loading-box class="shadow" />
+              </div>
+            )}
         </div>
       </div>
       <m-tabs
@@ -468,21 +470,29 @@
               >
                 <div class="flex flex-1 flex-col space-y-2 items-center justify-end">
                   <div
-                    class={`flex self-stretch items-center justify-start overflow-x-auto`}
+                    class={`flex self-stretch items-center justify-start`}
+                    pagination={true}
+                    navigation={true}
+                    scrollbar={true}
                   >
                     {!meta.loading && (
                       <div
-                        class={`flex flex-1 self-stretch space-x-4 items-start justify-start p-4 bg-white shadow rounded`}
+                        class={`flex flex-1 self-stretch space-x-4 items-start justify-start p-4 bg-white shadow rounded w-full`}
                         onClick={() => {
                           navigate("/m/detail-book-page");
                         }}
+                        style={`background: #fff;
+  font-size: 18px;
+  line-height: 200px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;`}
                       >
                         <div
                           src="/fimgs/I1545_47723_1718_147206.x1.png"
                           class={`flex items-start justify-start`}
                         >
                           <img
-                            src="/fimgs/4162_344848.x1.png"
+                            src="/fimgs/4391_2874739.x1.png"
                             style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;"
                           />
                         </div>
@@ -1483,7 +1493,7 @@
           </div>
         </m-tab>
         <m-tab
-          class={`flex flex-1 self-stretch flex-col items-start justify-start`}
+          class={`flex flex-1 self-stretch flex-col items-start justify-start bg-white`}
           id="pyriList"
         >
           <div class="flex flex-1 self-stretch flex-col items-start justify-start">
@@ -1566,7 +1576,7 @@
                     <div
                       class={`flex space-x-4 items-start justify-start p-2 bg-white shadow shadow-inner rounded`}
                       onClick={() => {
-                        navigate("/m/read-book-page/" + value.books.book_id);
+                        navigate("/m/detail-book-page/" + value.books.book_id);
                       }}
                     >
                       <div
