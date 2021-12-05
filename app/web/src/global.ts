@@ -33,18 +33,18 @@ export const dateFormat = (
   }
 }
 
-const encrypt = (value) => {
+export const encrypt = (value) => {
   return md5(value)
 }
-const validateEmail = (value) => {
+export const validateEmail = (value) => {
   return validator.isEmail(value);
 }
-const validateDate = (value) => {
+export const validateDate = (value) => {
   var validate = validator({ format: 'yyyy-mm-dd' });
   return validate(value);
 }
 
-const validatePass = (value) => {
+export const validatePass = (value) => {
   // Create a schema
   var schema = new passwordValidator();
   schema
@@ -56,7 +56,7 @@ const validatePass = (value) => {
 
   return schema.validate(value);
 }
-const _FormData = () => {
+export const _FormData = () => {
   return new FormData();
 }
 
