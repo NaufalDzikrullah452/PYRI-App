@@ -148,16 +148,20 @@
             res.comment.length !== 0 &&
             res.comment !== null
           ) {
-            res.comment.map((value, i) => {
-              if (value.users.user_id === window.user.user.user_id) {
-                comment.push(value);
-              }
-            });
-            res.comment.map((value, i) => {
-              if (value.users.user_id !== window.user.user.user_id) {
-                comment.push(value);
-              }
-            });
+            if (window.user.role !== "guest") {
+              res.comment.map((value, i) => {
+                if (value.users.user_id === window.user.user.user_id) {
+                  comment.push(value);
+                }
+              });
+              res.comment.map((value, i) => {
+                if (value.users.user_id !== window.user.user.user_id) {
+                  comment.push(value);
+                }
+              });
+            } else {
+              comment = res.comment;
+            }
           }
 
           runInAction(() => {
@@ -217,7 +221,12 @@
       async commentPage() {
         var book_id = "";
         if (params.book_id !== undefined) book_id = params.book_id;
-        navigate("/m/comment-page/" + book_id);
+        navigate("/m/comment-page/" + book_id).then(() => {
+          setTimeout(() => {
+            var comment = document.getElementById("addComment");
+            comment.firstElementChild.focus(); // console.log(comment);
+          }, 1000);
+        });
       },
 
       async addBookmark(book_id) {
@@ -423,45 +432,49 @@
           }
         }); // read bookmark
 
-        api("/api/bookmarks", {
-          bookmark: {
-            bookmark_user_id: window.user.user.user_id,
-            bookmark_book_id: parseInt(params.book_id),
-          },
-          e: "ReadByBookNUserId",
-        }).then((res) => {
-          // console.log(res);
-          if (res.bookmark !== null) {
-            runInAction(() => {
-              meta.isBookmark = true;
-            });
-          }
-        }); // count sum bookmark
+        if (window.user.role !== "guest") {
+          api("/api/bookmarks", {
+            bookmark: {
+              bookmark_user_id: window.user.user.user_id,
+              bookmark_book_id: parseInt(params.book_id),
+            },
+            e: "ReadByBookNUserId",
+          }).then((res) => {
+            // console.log(res);
+            if (res.bookmark !== null) {
+              runInAction(() => {
+                meta.isBookmark = true;
+              });
+            }
+          }); // count sum bookmark
 
-        api("/api/bookmarks", {
-          bookmark: {
-            bookmark_book_id: parseInt(params.book_id),
-          },
-          e: "ReadByBookId",
-        }).then((res) => {
-          // console.log(res);
-          if (res.bookmark.length !== 0) {
-            runInAction(() => {
-              meta.saves =
-                res.bookmark.length > 999
-                  ? String((Math.abs(res.bookmark.length) / 1000).toFixed(1)) +
-                    "k"
-                  : String(res.bookmark.length);
-            });
-          }
-        });
+          api("/api/bookmarks", {
+            bookmark: {
+              bookmark_book_id: parseInt(params.book_id),
+            },
+            e: "ReadByBookId",
+          }).then((res) => {
+            // console.log(res);
+            if (res.bookmark.length !== 0) {
+              runInAction(() => {
+                meta.saves =
+                  res.bookmark.length > 999
+                    ? String(
+                        (Math.abs(res.bookmark.length) / 1000).toFixed(1)
+                      ) + "k"
+                    : String(res.bookmark.length);
+              });
+            }
+          });
+        } //read comment
+
         meta.readComment();
       } else {
         navigate("/m/");
       }
     }}
   />
-  <div class={`flex self-stretch items-start justify-start bg-white`}>
+  <div class={`flex items-start justify-start bg-white`}>
     <div
       class={`flex flex-1 self-stretch flex-col space-y-4 items-start justify-start`}
     >
@@ -476,7 +489,7 @@
                 class={`flex self-stretch items-center justify-start`}
                 style={`width: 24px; min-width: 24px; max-width: 24px; height: 30px; min-height: 30px; max-height: 30px;`}
                 onClick={() => {
-                  meta.back();
+                  back();
                 }}
               />
             </div>
@@ -792,8 +805,9 @@
                                 <div
                                   class={`text-base font-bold leading-normal name`}
                                 >
-                                  {value.users.user_name ===
-                                  window.user.user.user_name
+                                  {window.user.role !== "guest" &&
+                                  value.users.user_name ===
+                                    window.user.user.user_name
                                     ? "Your Comment"
                                     : value.users.user_name}
                                 </div>

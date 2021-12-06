@@ -395,6 +395,11 @@
                   <div
                     class={`flex self-stretch flex-col items-start justify-start p-4 shadow rounded`}
                     style={`background-image: url('/fimgs/bg-8d8ddb80570065b889eef54faf9c419dd251956e');background-size:100% 100%;background-repeat:no-repeat;`}
+                    onClick={() => {
+                      navigate(
+                        "/m/detail-book-page/" + meta.history[0].books.book_id
+                      );
+                    }}
                   >
                     <div class="flex self-stretch space-x-2 items-center justify-start rounded">
                       <img
@@ -431,6 +436,7 @@
                             "/m/read-book-page/" + meta.history[0].books.book_id
                           );
                         }}
+                        style={`z-index: 1`}
                       >
                         <div class="text-xs font-bold leading-none text-white">
                           Continue
@@ -469,12 +475,7 @@
                 class={`flex self-stretch items-start justify-center px-6 over`}
               >
                 <div class="flex flex-1 flex-col space-y-2 items-center justify-end">
-                  <div
-                    class={`flex self-stretch items-center justify-start`}
-                    pagination={true}
-                    navigation={true}
-                    scrollbar={true}
-                  >
+                  <div class={`flex self-stretch items-center justify-start`}>
                     {!meta.loading && (
                       <div
                         class={`flex flex-1 self-stretch space-x-4 items-start justify-start p-4 bg-white shadow rounded w-full`}
@@ -1493,7 +1494,7 @@
           </div>
         </m-tab>
         <m-tab
-          class={`flex flex-1 self-stretch flex-col items-start justify-start bg-white`}
+          class={`flex flex-1 self-stretch flex-col items-start justify-start`}
           id="pyriList"
         >
           <div class="flex flex-1 self-stretch flex-col items-start justify-start">

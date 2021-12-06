@@ -14,6 +14,7 @@
       edit_comment: 0,
       hide_replies: 0,
       loading: true,
+      backNavigation: false,
 
       async onChange(e, key) {
         let value = e.target.value;
@@ -95,21 +96,24 @@
             res.comment.length !== 0 &&
             res.comment !== null
           ) {
-            res.comment.map((value, i) => {
-              if (value.users.user_id === window.user.user.user_id) {
-                comment.push(value);
-              }
-            });
-            res.comment.map((value, i) => {
-              if (value.users.user_id !== window.user.user.user_id) {
-                comment.push(value);
-              }
-            }); // comment = res.comment
+            if (window.user.role !== "guest") {
+              res.comment.map((value, i) => {
+                if (value.users.user_id === window.user.user.user_id) {
+                  comment.push(value);
+                }
+              });
+              res.comment.map((value, i) => {
+                if (value.users.user_id !== window.user.user.user_id) {
+                  comment.push(value);
+                }
+              });
+            } else {
+              comment = res.comment;
+            } // comment = res.comment
           }
 
           runInAction(() => {
-            this.comment = comment;
-            this.user_comment = ""; // console.log(this.comment);
+            this.comment = comment; // console.log(this.comment);
           });
           setTimeout(() => {
             window.mobileApp.app.dialog.close();
@@ -121,9 +125,22 @@
       },
 
       async addComment() {
-        var comment = document.getElementById("addComment");
+        var comment = document.getElementById("addComment"); // console.log(this.user_comment)
 
-        if (this.user_comment === "") {
+        if (window.user.role === "guest") {
+          window.mobileApp.app.dialog.confirm(
+            "Need to be Login first. Redirect to login page?",
+            "Can't add new comment!",
+            () => {
+              navigate("/m/login");
+            }
+          );
+        } else if (this.user_comment_edit.length !== 0) {
+          window.mobileApp.app.dialog.alert(
+            "Please close edit comment first.",
+            "Can't add new comment!"
+          );
+        } else if (this.user_comment === "") {
           comment.firstElementChild.focus();
         } else {
           window.mobileApp.app.dialog.confirm(null, "Confirm ?", () => {
@@ -284,16 +301,22 @@
         class={`flex self-stretch flex-col items-start justify-center px-6 pt-9 pb-4 bg-white shadow`}
       >
         <div class="flex self-stretch space-x-4 items-center justify-start">
-          <div class="flex self-stretch items-center justify-start">
+          <m-button
+            class={`flex self-stretch items-center justify-start`}
+            disabled={meta.backNavigation}
+            onClick={() => {
+              runInAction(() => {
+                meta.backNavigation = true;
+              });
+              back();
+            }}
+          >
             <img
               src="/fimgs/1554_540928.x1.svg"
               class={`flex self-stretch items-center justify-start`}
               style={`width: 24px; min-width: 24px; max-width: 24px; height: 40px; min-height: 40px; max-height: 40px;`}
-              onClick={() => {
-                back();
-              }}
             />
-          </div>
+          </m-button>
           <div class="flex flex-1 items-center justify-start pb-2.5">
             <div class={`text-xl font-bold leading-loose`}>
               Komentar ( {meta.comment.length} )
@@ -305,10 +328,12 @@
       <div
         class={`flex flex-1 self-stretch flex-col space-y-4 items-start justify-start px-6 pt-4 h-full`}
       >
-        <div class="flex self-stretch items-center justify-start px-6 py-3 bg-white border rounded border-gray-200">
+        <div class="flex self-stretch space-x-2.5 items-center justify-center px-6 py-3 bg-white border rounded border-gray-200">
           <m-input
             disabled={
-              meta.edit_comment !== 0 || meta.reply_comment.length !== 0
+              meta.edit_comment !== 0 ||
+              meta.reply_comment.length !== 0 ||
+              window.user.role === "guest"
             }
             class={`flex flex-1 items-start justify-start p-2.5`}
             type="textarea"
@@ -399,8 +424,9 @@
                                     <div
                                       class={`text-base font-bold leading-normal name`}
                                     >
-                                      {value.users.user_name ===
-                                      window.user.user.user_name
+                                      {window.user.role !== "guest" &&
+                                      value.users.user_name ===
+                                        window.user.user.user_name
                                         ? "Your Comment"
                                         : value.users.user_name}
                                     </div>
@@ -460,47 +486,48 @@
                                           {meta.user_comment_edit.length} /500
                                         </div>
                                       </div>
-                                      {value.users.user_id ===
-                                        window.user.user.user_id && (
-                                        <div
-                                          class={`flex self-stretch space-x-4 items-center justify-start`}
-                                          style="height: 22px; min-height: 22px; max-height: 22px;"
-                                        >
+                                      {window.user.role !== "guest" &&
+                                        value.users.user_id ===
+                                          window.user.user.user_id && (
                                           <div
-                                            class={`flex flex-1 self-stretch items-center justify-center py-0.5 bg-gray-200 rounded-md`}
-                                            style={""}
-                                            onClick={() => {
-                                              meta.editComment(
-                                                0,
-                                                "edit",
-                                                value.comment_description
-                                              );
-                                            }}
+                                            class={`flex self-stretch space-x-4 items-center justify-start`}
+                                            style={`height: 22px; min-height: 22px; max-height: 22px;`}
                                           >
                                             <div
-                                              class={`text-xs leading-none text-center`}
+                                              class={`flex flex-1 self-stretch items-center justify-center py-0.5 bg-gray-200 rounded-md`}
+                                              style={""}
+                                              onClick={() => {
+                                                meta.editComment(
+                                                  0,
+                                                  "edit",
+                                                  value.comment_description
+                                                );
+                                              }}
                                             >
-                                              Cancel
+                                              <div
+                                                class={`text-xs leading-none text-center`}
+                                              >
+                                                Cancel
+                                              </div>
                                             </div>
-                                          </div>
-                                          <div
-                                            class={`flex flex-1 self-stretch items-center justify-center py-0.5 bg-gray-200 rounded-md`}
-                                            onClick={() => {
-                                              meta.editComment(
-                                                value.comment_id,
-                                                "save",
-                                                value.comment_description
-                                              );
-                                            }}
-                                          >
                                             <div
-                                              class={`text-xs leading-none text-center`}
+                                              class={`flex flex-1 self-stretch items-center justify-center py-0.5 bg-gray-200 rounded-md`}
+                                              onClick={() => {
+                                                meta.editComment(
+                                                  value.comment_id,
+                                                  "save",
+                                                  value.comment_description
+                                                );
+                                              }}
                                             >
-                                              Save
+                                              <div
+                                                class={`text-xs leading-none text-center`}
+                                              >
+                                                Save
+                                              </div>
                                             </div>
                                           </div>
-                                        </div>
-                                      )}
+                                        )}
                                     </div>
                                   )}
                                 </div>
@@ -512,7 +539,7 @@
                           meta.reply_comment.length === 0 && (
                             <m-swipeout-actions
                               right={true}
-                              class={`flex self-stretch items-start justify-start bg-white`}
+                              class={`flex self-stretch items-start justify-start bg-white swipe`}
                               style={`max-height: 80px`}
                             >
                               {false && (
@@ -527,39 +554,41 @@
                                   {"Reply"}
                                 </m-swipeout-button>
                               )}
-                              {value.users.user_id ===
-                                window.user.user.user_id && (
-                                <m-swipeout-button
-                                  class={`flex self-stretch flex-col items-center justify-center bg-white`}
-                                  color={"green"}
-                                  onClick={() => {
-                                    meta.editComment(
-                                      value.comment_id,
-                                      "edit",
-                                      value.comment_description
-                                    );
-                                  }}
-                                  close={true}
-                                >
-                                  {"Edit"}
-                                </m-swipeout-button>
-                              )}
-                              {value.users.user_id ===
-                                window.user.user.user_id && (
-                                <m-swipeout-button
-                                  class={`flex self-stretch flex-col items-center justify-center bg-white`}
-                                  color={"red"}
-                                  overswipe={() => {
-                                    meta.deleteComment(value.comment_id);
-                                  }}
-                                  onClick={() => {
-                                    meta.deleteComment(value.comment_id);
-                                  }}
-                                  close={true}
-                                >
-                                  {"Delete"}
-                                </m-swipeout-button>
-                              )}
+                              {window.user.role !== "guest" &&
+                                value.users.user_id ===
+                                  window.user.user.user_id && (
+                                  <m-swipeout-button
+                                    class={`flex self-stretch flex-col items-center justify-center bg-white`}
+                                    color={"green"}
+                                    onClick={() => {
+                                      meta.editComment(
+                                        value.comment_id,
+                                        "edit",
+                                        value.comment_description
+                                      );
+                                    }}
+                                    close={true}
+                                  >
+                                    {"Edit"}
+                                  </m-swipeout-button>
+                                )}
+                              {window.user.role !== "guest" &&
+                                value.users.user_id ===
+                                  window.user.user.user_id && (
+                                  <m-swipeout-button
+                                    class={`flex self-stretch flex-col items-center justify-center bg-white`}
+                                    color={"red"}
+                                    overswipe={() => {
+                                      meta.deleteComment(value.comment_id);
+                                    }}
+                                    onClick={() => {
+                                      meta.deleteComment(value.comment_id);
+                                    }}
+                                    close={true}
+                                  >
+                                    {"Delete"}
+                                  </m-swipeout-button>
+                                )}
                             </m-swipeout-actions>
                           )}
                       </div>
