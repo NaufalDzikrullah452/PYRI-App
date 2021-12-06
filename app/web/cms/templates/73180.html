@@ -744,119 +744,122 @@
           class={`flex flex-1 self-stretch flex-col space-y-2 items-start justify-start overflow-x-auto`}
         >
           {!meta.loading &&
-            meta.comment.slice(0, 3).map((value, index) => {
-              return (
-                <m-list-item
-                  class={`flex self-stretch space-x-2.5 items-start justify-start pb-1 bg-white`}
-                  swipeout={true}
-                  style={`margin-left : -50px`}
-                >
-                  <div
-                    class={`flex flex-1 self-stretch items-start justify-start swipeout-content`}
+            meta.comment.length !== 0 &&
+            meta.comment
+              .slice(0, meta.comment.length > 3 ? 3 : meta.comment.length)
+              .map((value, index) => {
+                return (
+                  <m-list-item
+                    class={`flex self-stretch space-x-2.5 items-start justify-start pb-1 bg-white`}
+                    swipeout={true}
+                    style={`margin-left : -50px`}
                   >
                     <div
-                      class={`flex flex-1 flex-col items-start justify-start item-content`}
+                      class={`flex flex-1 self-stretch items-start justify-start swipeout-content`}
                     >
                       <div
-                        class={`flex flex-1 self-stretch space-x-2.5 items-center justify-start item-inner`}
+                        class={`flex flex-1 flex-col items-start justify-start item-content`}
                       >
                         <div
-                          class={`flex self-stretch items-start justify-start p-2.5`}
-                        >
-                          <img
-                            class={`rounded-full h-24 w-24 `}
-                            style={`width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;background-image: url('/fimgs/bg-9a38e49e10277e6e852b4067665aec6e437bde6f');background-size:100% 100%;background-repeat:no-repeat;`}
-                            src={
-                              value.users.user_picture
-                                ? "/upload/" + value.users.user_picture
-                                : "/fimgs/1718_127188.x1.png"
-                            }
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.src = "/fimgs/1718_127188.x1.png";
-                            }}
-                            onClick={meta.commentPage}
-                          />
-                        </div>
-                        <div
-                          class={`flex flex-1 self-stretch flex-col space-y-1.5 items-start justify-start`}
-                          onClick={meta.commentPage}
+                          class={`flex flex-1 self-stretch space-x-2.5 items-center justify-start item-inner`}
                         >
                           <div
-                            class={`flex self-stretch space-x-2 items-center justify-start w-full`}
+                            class={`flex self-stretch items-start justify-start p-2.5`}
                           >
-                            <div class="flex items-start justify-start">
-                              <div
-                                class={`text-base font-bold leading-normal name`}
-                              >
-                                {value.users.user_name ===
-                                window.user.user.user_name
-                                  ? "Your Comment"
-                                  : value.users.user_name}
-                              </div>
-                            </div>
-                            <div
-                              class={`flex flex-1 items-center justify-end w-full`}
-                            >
-                              <div
-                                class={`text-xs font-bold leading-none text-gray-500`}
-                              >
-                                {dateFormat(
-                                  value.comment_date_updated,
-                                  "MMMM dd, yyyy"
-                                ) || "MMMM dd, yyyy"}
-                              </div>
-                            </div>
+                            <img
+                              class={`rounded-full h-24 w-24 `}
+                              style={`width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;background-image: url('/fimgs/bg-9a38e49e10277e6e852b4067665aec6e437bde6f');background-size:100% 100%;background-repeat:no-repeat;`}
+                              src={
+                                value.users.user_picture
+                                  ? "/upload/" + value.users.user_picture
+                                  : "/fimgs/1718_127188.x1.png"
+                              }
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = "/fimgs/1718_127188.x1.png";
+                              }}
+                              onClick={meta.commentPage}
+                            />
                           </div>
-                          <div class="flex self-stretch items-start justify-start">
+                          <div
+                            class={`flex flex-1 self-stretch flex-col space-y-1.5 items-start justify-start`}
+                            onClick={meta.commentPage}
+                          >
                             <div
-                              class={`text-base leading-normal text-gray-800`}
+                              class={`flex self-stretch space-x-2 items-center justify-start w-full`}
                             >
-                              {value.comment_description.length < 100
-                                ? value.comment_description
-                                : value.comment_description.slice(0, 100) +
-                                  "..."}
+                              <div class="flex items-start justify-start">
+                                <div
+                                  class={`text-base font-bold leading-normal name`}
+                                >
+                                  {value.users.user_name ===
+                                  window.user.user.user_name
+                                    ? "Your Comment"
+                                    : value.users.user_name}
+                                </div>
+                              </div>
+                              <div
+                                class={`flex flex-1 items-center justify-end w-full`}
+                              >
+                                <div
+                                  class={`text-xs font-bold leading-none text-gray-500`}
+                                >
+                                  {dateFormat(
+                                    value.comment_date_updated,
+                                    "MMMM dd, yyyy"
+                                  ) || "MMMM dd, yyyy"}
+                                </div>
+                              </div>
+                            </div>
+                            <div class="flex self-stretch items-start justify-start">
+                              <div
+                                class={`text-base leading-normal text-gray-800`}
+                              >
+                                {value.comment_description.length < 100
+                                  ? value.comment_description
+                                  : value.comment_description.slice(0, 100) +
+                                    "..."}
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  {false && value.users.user_id === window.user.user.user_id && (
-                    <m-swipeout-actions
-                      right={true}
-                      class={`flex self-stretch items-start justify-start bg-white`}
-                      style={`max-height: 102px`}
-                    >
-                      <m-swipeout-button
-                        class={`flex self-stretch flex-col items-center justify-center bg-white`}
-                        color={"green"}
-                        onClick={() => {
-                          meta.editComment(value.comment_id);
-                        }}
+                    {false && value.users.user_id === window.user.user.user_id && (
+                      <m-swipeout-actions
+                        right={true}
+                        class={`flex self-stretch items-start justify-start bg-white`}
+                        style={`max-height: 102px`}
                       >
-                        {"Edit"}
-                      </m-swipeout-button>
-                      <m-swipeout-button
-                        class={`flex self-stretch flex-col items-center justify-center bg-white`}
-                        color={"red"}
-                        overswipe={() => {
-                          meta.deleteComment(value.comment_id);
-                        }}
-                        onClick={() => {
-                          meta.deleteComment(value.comment_id);
-                        }}
-                      >
-                        {"Delete"}
-                      </m-swipeout-button>
-                    </m-swipeout-actions>
-                  )}
-                </m-list-item>
-              );
-            })}
+                        <m-swipeout-button
+                          class={`flex self-stretch flex-col items-center justify-center bg-white`}
+                          color={"green"}
+                          onClick={() => {
+                            meta.editComment(value.comment_id);
+                          }}
+                        >
+                          {"Edit"}
+                        </m-swipeout-button>
+                        <m-swipeout-button
+                          class={`flex self-stretch flex-col items-center justify-center bg-white`}
+                          color={"red"}
+                          overswipe={() => {
+                            meta.deleteComment(value.comment_id);
+                          }}
+                          onClick={() => {
+                            meta.deleteComment(value.comment_id);
+                          }}
+                        >
+                          {"Delete"}
+                        </m-swipeout-button>
+                      </m-swipeout-actions>
+                    )}
+                  </m-list-item>
+                );
+              })}
           {meta.comment.length === 0 && !meta.loading && (
             <div
-              class={`flex flex-1 self-stretch items-center justify-center pb-1 bg-white h-full`}
+              class={`flex flex-1 self-stretch items-center justify-center pb-1 h-full`}
               style={`padding-top:24px`}
             >
               <div class="flex flex-1 self-stretch flex-col space-y-4 items-center justify-center">
@@ -918,8 +921,8 @@
             class={`flex items-center justify-start`}
             onClick={meta.commentPage}
           >
-            <div class="text-base font-bold leading-normal text-amber-500">
-              See all comment
+            <div class={`text-base font-bold leading-normal text-amber-500`}>
+              {meta.comment.length === 0 ? "Add comment" : "See all comment"}
             </div>
           </div>
         }

@@ -169,14 +169,20 @@ model bookmarks {
 }
 
 model comment {
-  comment_id           Int      @id @default(autoincrement())
-  comment_description  String   @db.VarChar(255)
-  comment_book_id      Int
-  comment_user_id      Int
-  comment_date_created DateTime @default(now()) @db.Timestamp(6)
-  comment_date_updated DateTime @db.Timestamp(6)
-  books                books    @relation(fields: [comment_book_id], references: [book_id])
-  users                users    @relation(fields: [comment_user_id], references: [user_id])
+  comment_id                                        Int       @id @default(autoincrement())
+  comment_description                               String    @db.VarChar(1000)
+  comment_book_id                                   Int
+  comment_user_id                                   Int
+  comment_date_created                              DateTime  @default(now()) @db.Timestamp(6)
+  comment_date_updated                              DateTime  @db.Timestamp(6)
+  comment_parrent_id                                Int?
+  comment_reply_id                                  Int?
+  books                                             books     @relation(fields: [comment_book_id], references: [book_id])
+  comment_commentTocomment_comment_parrent_id       comment?  @relation("commentTocomment_comment_parrent_id", fields: [comment_parrent_id], references: [comment_id])
+  comment_commentTocomment_comment_reply_id         comment?  @relation("commentTocomment_comment_reply_id", fields: [comment_reply_id], references: [comment_id])
+  users                                             users     @relation(fields: [comment_user_id], references: [user_id])
+  other_comment_commentTocomment_comment_parrent_id comment[] @relation("commentTocomment_comment_parrent_id")
+  other_comment_commentTocomment_comment_reply_id   comment[] @relation("commentTocomment_comment_reply_id")
 }
 
 enum user_gender {

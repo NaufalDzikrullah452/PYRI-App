@@ -6,17 +6,73 @@
       author: [],
       publisher: [],
       category: [],
+      reply_comment: [],
       user_comment: "",
+      user_comment_edit: "",
+      username_comment_reply: "",
+      user_comment_reply: "",
+      edit_comment: 0,
+      hide_replies: 0,
       loading: true,
 
       async onChange(e, key) {
         let value = e.target.value;
 
-        if (key === "user_comment" && value.length < 501) {
+        if (value.length < 501) {
           runInAction(() => {
             this[key] = value;
           });
         } // console.log(key + " : " + value);
+      },
+
+      async replyComment(data) {
+        setTimeout(() => {
+          var comment = document.getElementById("replyComment"); // console.log(comment);
+
+          comment.firstElementChild.focus();
+        });
+        runInAction(() => {
+          this.reply_comment = data;
+          console.log(data);
+          this.username_comment_reply =
+            "@" + this.reply_comment.users.user_name + " ";
+        });
+      },
+
+      async saveReply() {
+        if (this.user_comment_reply == "") {
+          setTimeout(() => {
+            var comment = document.getElementById("replyComment"); // console.log(comment);
+
+            comment.firstElementChild.focus();
+          });
+        } else {
+          window.mobileApp.app.dialog.confirm(null, "Confirm reply?", () => {
+            window.mobileApp.app.dialog.preloader("Loading...");
+            setTimeout(() => {
+              var comment = document.getElementById("replyComment"); // console.log(comment);
+
+              comment.firstElementChild.value = "";
+            });
+            api("/api/comment", {
+              comment: {
+                comment_description: this.user_comment_reply,
+                comment_book_id: parseInt(params.book_id),
+                comment_user_id: window.user.user.user_id,
+                comment_parrent_id: this.reply_comment.comment_id,
+                comment_date_updated: new Date(),
+              },
+              e: "Create",
+            }).then((res) => {
+              if (res !== null) {
+                this.readComment();
+                runInAction(() => {
+                  this.reply_comment = [];
+                });
+              }
+            });
+          });
+        }
       },
 
       async back() {
@@ -48,16 +104,16 @@
               if (value.users.user_id !== window.user.user.user_id) {
                 comment.push(value);
               }
-            });
+            }); // comment = res.comment
           }
 
           runInAction(() => {
             this.comment = comment;
-            this.user_comment = "";
+            this.user_comment = ""; // console.log(this.comment);
           });
           setTimeout(() => {
             window.mobileApp.app.dialog.close();
-          }, 2000);
+          }, 1500);
           runInAction(() => {
             this.loading = false;
           });
@@ -90,31 +146,94 @@
         }
       },
 
-      async editComment(id) {
-        console.log("edit comment: " + id);
+      async editComment(id, key, value) {
+        if (key === "edit") {
+          if (id === 0) {
+            if (this.user_comment_edit !== value) {
+              window.mobileApp.app.dialog.confirm(
+                "Discard your  changes ?",
+                "Comments have changed.",
+                () => {
+                  runInAction(() => {
+                    this.user_comment_edit = "";
+                    this.edit_comment = id;
+                  });
+                }
+              );
+            } else {
+              runInAction(() => {
+                this.user_comment_edit = "";
+                this.edit_comment = id;
+              });
+            }
+          } else {
+            // console.log(comment.firstElementChild);
+            setTimeout(() => {
+              var comment = document.getElementById("editComment"); // console.log(comment);
+
+              comment.firstElementChild.focus();
+            });
+            runInAction(() => {
+              this.edit_comment = id;
+              this.user_comment_edit = value; // comment.firstElementChild.focus();
+            });
+          }
+        } else if (key === "save") {
+          // console.log(this.user_comment_edit);
+          if (this.user_comment_edit === value) {
+            runInAction(() => {
+              this.user_comment_edit = "";
+              this.edit_comment = 0;
+            });
+          } else {
+            window.mobileApp.app.dialog.preloader("Loading...");
+            api("/api/comment", {
+              comment: {
+                comment_id: parseInt(id),
+                comment_description: this.user_comment_edit,
+                comment_date_updated: new Date(),
+              },
+              e: "Update",
+            }).then((res) => {
+              if (res.res !== "Failure" && res !== null) {
+                setTimeout(() => {
+                  window.mobileApp.app.dialog.close();
+                }, 1000);
+                runInAction(() => {
+                  this.user_comment_edit = "";
+                  this.edit_comment = 0;
+                  this.readComment();
+                });
+              } else {
+                setTimeout(() => {
+                  window.mobileApp.app.dialog.close();
+                  window.mobileApp.app.dialog.alert(null, "Failed to save");
+                }, 1000);
+              }
+            }); // window.mobileApp.app.dialog.close();
+          }
+        } // console.log(key + " : " + id);
       },
 
       async deleteComment(id) {
         window.mobileApp.app.dialog.confirm(null, "Confirm delete ?", () => {
           // console.log("comment deleted: "+id);
-          window.mobileApp.app.dialog.preloader("Loading...");
           api("/api/comment", {
             comment: {
               comment_id: parseInt(id),
             },
             e: "Delete",
           }).then((res) => {
-            window.mobileApp.app.dialog.close();
+            window.mobileApp.app.dialog.close(); // console.log(res)
 
-            if (res !== null) {
-              this.readComment(); // location.reload();
-
-              window.mobileApp.app.dialog.alert(
-                null,
-                "Comment successfully deleted"
-              );
+            if (res !== null && res.res !== "Failure") {
+              window.mobileApp.app.dialog.preloader("Success delete...");
+              this.readComment();
+              setTimeout(() => {
+                window.mobileApp.app.dialog.close();
+              }, 1500);
             } else {
-              window.mobileApp.app.dialog.alert(null, "Error onDelete");
+              window.mobileApp.app.dialog.alert(null, "Error ondelete");
             }
           });
         });
@@ -157,8 +276,10 @@
       }
     }}
   />
-  <div class="flex self-stretch flex-col items-start justify-start bg-white">
-    <div class="flex flex-1 self-stretch flex-col space-y-1 items-start justify-start">
+  <div class="flex flex-col items-start justify-start bg-white">
+    <div
+      class={`flex flex-1 self-stretch flex-col space-y-1 items-start justify-start`}
+    >
       <div
         class={`flex self-stretch flex-col items-start justify-center px-6 pt-9 pb-4 bg-white shadow`}
       >
@@ -174,14 +295,21 @@
             />
           </div>
           <div class="flex flex-1 items-center justify-start pb-2.5">
-            <div class={`text-xl font-bold leading-loose`}>Komentar (20)</div>
+            <div class={`text-xl font-bold leading-loose`}>
+              Komentar ( {meta.comment.length} )
+            </div>
           </div>
           <div />
         </div>
       </div>
-      <div class="flex flex-1 self-stretch flex-col space-y-4 items-start justify-start px-6 pt-4">
+      <div
+        class={`flex flex-1 self-stretch flex-col space-y-4 items-start justify-start px-6 pt-4 h-full`}
+      >
         <div class="flex self-stretch items-center justify-start px-6 py-3 bg-white border rounded border-gray-200">
           <m-input
+            disabled={
+              meta.edit_comment !== 0 || meta.reply_comment.length !== 0
+            }
             class={`flex flex-1 items-start justify-start p-2.5`}
             type="textarea"
             resizable={true}
@@ -200,9 +328,8 @@
               }}
             >
               <img
-                src="/fimgs/1718_30652.x1.svg"
-                class="flex items-start justify-start bg-white"
-                style="width: 20px; min-width: 20px; max-width: 20px; height: 20px; min-height: 20px; max-height: 20px;"
+                src={`/fimgs/1718_30652.x1.svg`}
+                class={`flex items-start justify-start bg-white`}
               />
             </m-button>
             <div class="flex items-start justify-start">
@@ -223,120 +350,318 @@
             meta.comment.map((value, index) => {
               return (
                 <m-list-item
-                  class={`flex self-stretch space-x-2.5 items-start justify-start pb-1 bg-white`}
-                  swipeout={value.users.user_id === window.user.user.user_id}
-                  style={
-                    value.users.user_id === window.user.user.user_id
-                      ? `margin-left : -50px`
-                      : "margin-left : -25px"
-                  }
+                  class={`flex self-stretch items-start justify-start pb-1 bg-white`}
+                  swipeout={true}
+                  style={`margin-left: -50px;`}
                 >
                   <div
-                    class={`flex flex-1 self-stretch items-start justify-start swipeout-content`}
+                    class={`flex flex-1 self-stretch flex-col items-start justify-start`}
+                    style={""}
                   >
-                    <div
-                      class={`flex flex-1 flex-col items-start justify-start item-content`}
-                    >
+                    <div class="flex self-stretch flex-col space-y-2.5 items-start justify-start">
                       <div
-                        class={`flex flex-1 self-stretch space-x-2.5 items-center justify-start item-inner`}
-                        style={
-                          value.users.user_id !== window.user.user.user_id
-                            ? "padding-right: 0px!important"
-                            : ""
-                        }
+                        class={`flex self-stretch space-x-2.5 items-start justify-start w-full`}
                       >
                         <div
-                          class={`flex self-stretch items-start justify-start p-2.5`}
-                        >
-                          <img
-                            class={`rounded-full h-24 w-24 `}
-                            style={`width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;background-image: url('/fimgs/bg-9a38e49e10277e6e852b4067665aec6e437bde6f');background-size:100% 100%;background-repeat:no-repeat;`}
-                            src={
-                              value.users.user_picture
-                                ? "/upload/" + value.users.user_picture
-                                : "/fimgs/1718_127188.x1.png"
-                            }
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.src = "/fimgs/1718_127188.x1.png";
-                            }}
-                          />
-                        </div>
-                        <div
-                          class={`flex flex-1 self-stretch flex-col space-y-1.5 items-start justify-start`}
+                          class={`flex flex-1 self-stretch items-start justify-start swipeout-content`}
                         >
                           <div
-                            class={`flex self-stretch space-x-2 items-center justify-start w-full`}
+                            class={`flex flex-1 self-stretch flex-col items-start justify-start item-content`}
                           >
-                            <div class="flex items-start justify-start">
-                              <div
-                                class={`text-base font-bold leading-normal name`}
-                              >
-                                {value.users.user_name ===
-                                window.user.user.user_name
-                                  ? "Your Comment"
-                                  : value.users.user_name}
-                              </div>
-                            </div>
                             <div
-                              class={`flex flex-1 items-center justify-end w-full`}
+                              class={`flex flex-1 self-stretch space-x-2.5 items-center justify-start item-inner`}
+                              style={""}
                             >
                               <div
-                                class={`text-xs font-bold leading-none text-gray-500`}
+                                class={`flex self-stretch items-start justify-start p-2.5`}
                               >
-                                {dateFormat(
-                                  value.comment_date_updated,
-                                  "MMMM dd, yyyy"
-                                ) || "MMMM dd, yyyy"}
+                                <img
+                                  class={`rounded-full h-24 w-24 `}
+                                  style={`width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;background-image: url('/fimgs/bg-9a38e49e10277e6e852b4067665aec6e437bde6f');background-size:100% 100%;background-repeat:no-repeat;`}
+                                  src={
+                                    value.users.user_picture
+                                      ? "/upload/" + value.users.user_picture
+                                      : "/fimgs/1718_127188.x1.png"
+                                  }
+                                  onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = "/fimgs/1718_127188.x1.png";
+                                  }}
+                                />
                               </div>
-                            </div>
-                          </div>
-                          <div class="flex self-stretch items-start justify-start">
-                            <div
-                              class={`text-base leading-normal text-gray-800`}
-                            >
-                              {value.comment_description || ""}
+                              <div
+                                class={`flex flex-1 self-stretch flex-col space-y-1.5 items-start justify-start`}
+                              >
+                                <div
+                                  class={`flex self-stretch space-x-2 items-center justify-start w-full`}
+                                >
+                                  <div class="flex items-start justify-start">
+                                    <div
+                                      class={`text-base font-bold leading-normal name`}
+                                    >
+                                      {value.users.user_name ===
+                                      window.user.user.user_name
+                                        ? "Your Comment"
+                                        : value.users.user_name}
+                                    </div>
+                                  </div>
+                                  <div
+                                    class={`flex flex-1 items-center justify-end w-full`}
+                                  >
+                                    <div
+                                      class={`text-xs font-bold leading-none text-right text-gray-500`}
+                                    >
+                                      {dateFormat(
+                                        value.comment_date_updated,
+                                        "MMMM dd, yyyy"
+                                      ) || "MMMM dd, yyyy"}
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="flex self-stretch flex-col space-y-2.5 items-start justify-start">
+                                  {meta.edit_comment !== value.comment_id && (
+                                    <div
+                                      class={`text-base leading-normal text-gray-800`}
+                                    >
+                                      {value.comment_parrent_id === null
+                                        ? value.comment_description
+                                        : "[reply: @" +
+                                          value.comment_parrent_id +
+                                          "]  " +
+                                          value.comment_description}
+                                    </div>
+                                  )}
+                                  {meta.edit_comment === value.comment_id && (
+                                    <div
+                                      class={`flex flex-1 self-stretch flex-col space-y-1 items-start justify-start bg-white`}
+                                    >
+                                      <m-input
+                                        class={`flex flex-1 self-stretch items-start justify-start p-2.5 border-2`}
+                                        type="textarea"
+                                        resizable={true}
+                                        placeholder="Edit Comment..."
+                                        onChange={(e) => {
+                                          meta.onChange(e, "user_comment_edit");
+                                        }}
+                                        value={meta.user_comment_edit}
+                                        maxlength="501"
+                                        id="editComment"
+                                      />
+                                      <div class="flex items-start justify-start">
+                                        <div
+                                          class={`text-xs font-medium leading-3 text-gray-500`}
+                                          style={
+                                            meta.user_comment_edit.length ===
+                                            500
+                                              ? "color:red"
+                                              : ""
+                                          }
+                                        >
+                                          {meta.user_comment_edit.length} /500
+                                        </div>
+                                      </div>
+                                      {value.users.user_id ===
+                                        window.user.user.user_id && (
+                                        <div
+                                          class={`flex self-stretch space-x-4 items-center justify-start`}
+                                          style="height: 22px; min-height: 22px; max-height: 22px;"
+                                        >
+                                          <div
+                                            class={`flex flex-1 self-stretch items-center justify-center py-0.5 bg-gray-200 rounded-md`}
+                                            style={""}
+                                            onClick={() => {
+                                              meta.editComment(
+                                                0,
+                                                "edit",
+                                                value.comment_description
+                                              );
+                                            }}
+                                          >
+                                            <div
+                                              class={`text-xs leading-none text-center`}
+                                            >
+                                              Cancel
+                                            </div>
+                                          </div>
+                                          <div
+                                            class={`flex flex-1 self-stretch items-center justify-center py-0.5 bg-gray-200 rounded-md`}
+                                            onClick={() => {
+                                              meta.editComment(
+                                                value.comment_id,
+                                                "save",
+                                                value.comment_description
+                                              );
+                                            }}
+                                          >
+                                            <div
+                                              class={`text-xs leading-none text-center`}
+                                            >
+                                              Save
+                                            </div>
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
+                        {meta.edit_comment === 0 &&
+                          meta.reply_comment.length === 0 && (
+                            <m-swipeout-actions
+                              right={true}
+                              class={`flex self-stretch items-start justify-start bg-white`}
+                              style={`max-height: 80px`}
+                            >
+                              {false && (
+                                <m-swipeout-button
+                                  class={`flex self-stretch flex-col items-center justify-center bg-white`}
+                                  color={"blue"}
+                                  onClick={() => {
+                                    meta.replyComment(value);
+                                  }}
+                                  close={true}
+                                >
+                                  {"Reply"}
+                                </m-swipeout-button>
+                              )}
+                              {value.users.user_id ===
+                                window.user.user.user_id && (
+                                <m-swipeout-button
+                                  class={`flex self-stretch flex-col items-center justify-center bg-white`}
+                                  color={"green"}
+                                  onClick={() => {
+                                    meta.editComment(
+                                      value.comment_id,
+                                      "edit",
+                                      value.comment_description
+                                    );
+                                  }}
+                                  close={true}
+                                >
+                                  {"Edit"}
+                                </m-swipeout-button>
+                              )}
+                              {value.users.user_id ===
+                                window.user.user.user_id && (
+                                <m-swipeout-button
+                                  class={`flex self-stretch flex-col items-center justify-center bg-white`}
+                                  color={"red"}
+                                  overswipe={() => {
+                                    meta.deleteComment(value.comment_id);
+                                  }}
+                                  onClick={() => {
+                                    meta.deleteComment(value.comment_id);
+                                  }}
+                                  close={true}
+                                >
+                                  {"Delete"}
+                                </m-swipeout-button>
+                              )}
+                            </m-swipeout-actions>
+                          )}
                       </div>
+                      {meta.reply_comment.length !== 0 &&
+                        meta.reply_comment.comment_id == value.comment_id && (
+                          <div
+                            class={`flex self-stretch flex-col space-y-2.5 items-start justify-start`}
+                            style={`margin-left: 20px`}
+                          >
+                            <div class={`flex items-start justify-start`}>
+                              <div
+                                style={`width: 363px; min-width: 363px; max-width: 363px; height: 26px; min-height: 26px; max-height: 26px; background-color: #E4E4E7; border-radius: 5px;`}
+                                class={`flex items-center justify-start px-2 rounded`}
+                              >
+                                <div class="flex flex-1 self-stretch items-center justify-start">
+                                  <div
+                                    class={`text-xs leading-none text-gray-800`}
+                                  >
+                                    Reply to:{" "}
+                                    {meta.reply_comment.users.user_name ===
+                                    window.user.user.user_name
+                                      ? "@Your Comment"
+                                      : meta.username_comment_reply}
+                                  </div>
+                                </div>
+                                <m-button
+                                  class={`flex self-stretch flex-col items-center justify-center`}
+                                  style={`width: 21px; min-width: 21px; max-width: 21px; height: 26px; min-height: 26px; max-height: 26px;`}
+                                  onClick={() => {
+                                    runInAction(() => {
+                                      meta.reply_comment = [];
+                                    });
+                                  }}
+                                >
+                                  <ficon
+                                    aria-label="ChromeClose"
+                                    iconName="ChromeClose"
+                                    style={`color:#71717A`}
+                                  />
+                                </m-button>
+                              </div>
+                            </div>
+                            <div
+                              class={`flex flex-1 self-stretch flex-col items-start justify-start pr-1.5`}
+                            >
+                              <div
+                                class={`flex flex-1 self-stretch items-center justify-center bg-white`}
+                              >
+                                <m-input
+                                  class={`w-full border-2 editComment`}
+                                  style={`padding: 0px 6px`}
+                                  type="textarea"
+                                  resizable={true}
+                                  placeholder="Reply Comment..."
+                                  onChange={(e) => {
+                                    meta.onChange(e, "user_comment_reply");
+                                  }}
+                                  focus={meta.edit_comment === value.comment_id}
+                                  value={meta.user_comment_reply}
+                                  maxlength="501"
+                                  id="replyComment"
+                                />
+                                <div
+                                  class="flex flex-col items-center justify-center"
+                                  style="width: 53px; min-width: 53px; max-width: 53px;"
+                                >
+                                  <m-button
+                                    class={`flex items-center justify-center bg-gray-100`}
+                                    onClick={() => {
+                                      meta.saveReply();
+                                    }}
+                                  >
+                                    <img
+                                      src={`/fimgs/1718_30652.x1.svg`}
+                                      class={`flex items-start justify-start bg-white`}
+                                    />
+                                  </m-button>
+                                  <div class="flex items-start justify-start">
+                                    <div
+                                      class={`text-xs font-medium leading-3 text-gray-500`}
+                                      style={
+                                        meta.user_comment_reply.length === 500
+                                          ? "color:red"
+                                          : ""
+                                      }
+                                    >
+                                      {meta.user_comment_reply.length} /500
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                     </div>
                   </div>
-                  {value.users.user_id === window.user.user.user_id && (
-                    <m-swipeout-actions
-                      right={true}
-                      class={`flex self-stretch items-start justify-start bg-white`}
-                      style={`max-height: 102px`}
-                    >
-                      <m-swipeout-button
-                        class={`flex self-stretch flex-col items-center justify-center bg-white`}
-                        color={"green"}
-                        onClick={() => {
-                          meta.editComment(value.comment_id);
-                        }}
-                      >
-                        {"Edit"}
-                      </m-swipeout-button>
-                      <m-swipeout-button
-                        class={`flex self-stretch flex-col items-center justify-center bg-white`}
-                        color={"red"}
-                        overswipe={() => {
-                          meta.deleteComment(value.comment_id);
-                        }}
-                        onClick={() => {
-                          meta.deleteComment(value.comment_id);
-                        }}
-                      >
-                        {"Delete"}
-                      </m-swipeout-button>
-                    </m-swipeout-actions>
-                  )}
                 </m-list-item>
               );
             })}
           {meta.comment.length === 0 && !meta.loading && (
             <div
-              class={`flex flex-1 self-stretch items-center justify-center pb-1 bg-white h-full`}
+              class={`flex flex-1 self-stretch items-center justify-center pb-1 h-full`}
               style={`padding-top:124px`}
             >
               <div class="flex flex-1 self-stretch flex-col space-y-4 items-center justify-center">
