@@ -49,6 +49,7 @@ model users {
   user_note              String?
   user_picture           String?         @db.VarChar(256)
   user_blocked           Boolean         @default(false)
+  user_username          String?         @db.VarChar(256)
   bookmarks              bookmarks[]
   comment                comment[]
   interests              interests[]

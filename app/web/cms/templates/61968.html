@@ -7,8 +7,10 @@
       changeProfile: (open) => {},
       changeManagement: (open) => {},
       changeMasterData: (open) => {},
+      admin: [],
       user_id: "",
       user_name: "",
+      user_username: "",
       user_email: "",
       user_password: "",
       user_confirm_password: "",
@@ -23,6 +25,7 @@
       pass_type: "password",
       pass_confirm_type: "password",
       disabled: false,
+      display_info: false,
       max_date: new Date(new Date().setFullYear(new Date().getFullYear() - 12)),
 
       async showHidePass(key) {
@@ -77,6 +80,8 @@
             ? "Please reselect your birthdate! 12 Years old++."
             : this.user_level === "" || this.user_level === null
             ? "Please select role!"
+            : this.user_level && this.user_username == ""
+            ? "Username cant be empty!"
             : this.user_password === "" || this.user_password === null
             ? "Password cant be empty!"
             : !validatePass(this.user_password)
@@ -101,6 +106,7 @@
           runInAction(() => (this.disabled = true));
           let user = {
             user_name: this.user_name,
+            user_username: this.user_username == "" ? null : this.user_username,
             user_email: this.user_email,
             user_password: encrypt(this.user_password),
             user_gender: this.user_gender,
@@ -136,6 +142,8 @@
                     navigate("/w-master-user");
                   }
                 });
+              } else {
+                runInAction(() => (this.disabled = false));
               }
             }
           }); //
@@ -153,6 +161,14 @@
       },
     }}
     run={async () => {
+      if (window.user.roleAdmin !== "admin") {
+        navigate("/login-admin");
+      } else {
+        runInAction(() => {
+          meta.admin = window.user.admin;
+        });
+      }
+
       meta.action = {
         changeMasterData: (open) => {
           meta.showMasterData = open;
@@ -424,7 +440,8 @@
                 <div class="flex flex-col items-end justify-end">
                   <div class="flex items-center justify-end px-4">
                     <div
-                      class={`flex space-x-2.5 items-center justify-center cursor-pointer`}
+                      class={`flex space-x-2.5 items-center justify-center`}
+                      style={"cursor:pointer;"}
                       onClick={() => {
                         if (meta.showProfile == false) {
                           meta.action.changeProfile(true);
@@ -433,20 +450,34 @@
                         }
                       }}
                     >
-                      <img
-                        src="/fimgs/3010_19823.x1.png"
-                        class="flex items-start justify-start p-2.5"
+                      <div
+                        class={`flex items-start justify-start p-2.5`}
                         style="width: 60px; min-width: 60px; max-width: 60px; height: 60px; min-height: 60px; max-height: 60px;"
-                      />
+                      >
+                        <img
+                          src={
+                            meta.admin.user_picture
+                              ? "/upload/" + meta.admin.user_picture
+                              : "/fimgs/4458_103716.x1.png"
+                          }
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "/fimgs/4458_103716.x1.png";
+                          }}
+                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;background-image: url('/fimgs/bg-8fb2c341eee5b05b3a5c9f2f0c33ea6665ec17fb');background-size:100% 100%;background-repeat:no-repeat; "
+                          class={`rounded-full`}
+                        />
+                      </div>
                       <div class="flex items-start justify-start">
-                        <div class="text-base font-medium leading-normal text-gray-700">
-                          Savannah Nguyen
+                        <div
+                          class={`text-base font-medium leading-normal text-gray-700`}
+                        >
+                          {meta.admin.user_name ||
+                            meta.admin.user_username ||
+                            "Admin"}
                         </div>
                       </div>
-                      <img
-                        src="/fimgs/3010_19827.x1.svg"
-                        style="width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px;"
-                      />
+                      <img src="/fimgs/4385_20950.x1.svg" />
                     </div>
                   </div>
                   {meta.showProfile && (
@@ -459,6 +490,9 @@
                       >
                         <div
                           class={`flex self-stretch items-center justify-center cursor-pointer`}
+                          onClick={() => {
+                            navigate("/w-profile-admin");
+                          }}
                         >
                           <div class="text-base font-medium leading-normal text-gray-900">
                             Edit Profile
@@ -677,6 +711,69 @@
                         </div>
                       </div>
                     </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch flex-col space-y-2 items-start justify-start`}
+                  style={`overflow: hidden; 
+    transition: margin-top 0.5s ease-in-out;
+     ${
+       meta.user_level
+         ? "height:100%;"
+         : "height:0; margin-top: -6px!important;"
+     }`}
+                >
+                  <div class="flex self-stretch space-x-2.5 items-start justify-start">
+                    <div class="text-base font-bold leading-normal">
+                      Username
+                    </div>
+                    <ficon
+                      style={`cursor:default;`}
+                      aria-label="Unknown"
+                      iconName="Unknown"
+                      onMouseEnter={() =>
+                        runInAction(() => {
+                          meta.display_info = true;
+                        })
+                      }
+                      onMouseLeave={() =>
+                        runInAction(() => {
+                          meta.display_info = false;
+                        })
+                      }
+                    />
+                    <div
+                      class={`flex flex-col items-start justify-start bg-white`}
+                      style={`overflow:hidden;
+  height: 1rem;
+
+  transition: width 0.5s ease-in-out;
+  ${meta.display_info ? "width: 100%;" : "width: 0;"}`}
+                    >
+                      <div
+                        class={`text-base font-bold leading-normal`}
+                        style={`font-size: 0.75rem;
+line-height: 1rem;
+color: gray;`}
+                      >
+                        Username digunakan untuk login admin.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex self-stretch items-center justify-start px-6 py-3 bg-white border rounded border-gray-300">
+                    {
+                      <input
+                        class={"w-full"}
+                        type={"text"}
+                        placeholder="Masukkan Username"
+                        style={`color: black;
+      background:transparent; 
+      outline: none;`}
+                        onChange={(e) => {
+                          meta.onChange("user_username", e);
+                        }}
+                      />
+                    }
                   </div>
                 </div>
                 <div class="flex self-stretch flex-col space-y-2 items-start justify-start">

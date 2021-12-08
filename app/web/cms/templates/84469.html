@@ -7,6 +7,7 @@
       changeProfile: (open) => {},
       changeManagement: (open) => {},
       changeMasterData: (open) => {},
+      admin: [],
       book_title: "",
       book_picture: "",
       book_category: "",
@@ -116,6 +117,10 @@
 
       if (window.user.roleAdmin !== "admin") {
         navigate("/login-admin");
+      } else {
+        runInAction(() => {
+          meta.admin = window.user.admin;
+        });
       } // read book
 
       let buku = "";
@@ -455,6 +460,9 @@
                         <div
                           class={`flex self-stretch items-center justify-center`}
                           style={"cursor:pointer;"}
+                          onClick={() => {
+                            navigate("/w-profile-admin");
+                          }}
                         >
                           <div class="text-base font-medium leading-normal text-gray-900">
                             Edit Profile

@@ -7,6 +7,119 @@
       changeProfile: (open) => {},
       changeManagement: (open) => {},
       changeMasterData: (open) => {},
+      admin: [],
+      disabled: false,
+      display_info: false,
+      display_foto_info: false,
+
+      async onChange(e, key) {
+        let value = e;
+
+        if (key !== "user_picture") {
+          value = e.target.value;
+        }
+
+        runInAction(() => {
+          this.admin[key] = value;
+        }); // console.log(key + " : " + value);
+      },
+
+      validation() {
+        let msg =
+          this.admin.user_name === "" || this.admin.user_name === null
+            ? "Name cant be empty!"
+            : this.admin.user_username === "" ||
+              this.admin.user_username === null
+            ? "Username cant be empty!"
+            : this.admin.user_email === "" || this.admin.user_email === null
+            ? "Email cant be empty!"
+            : !validateEmail(this.admin.user_email)
+            ? "Invalid email! (abc@xyz.com)"
+            : this.admin.user_gender === "" || this.admin.user_gender === null
+            ? "Please select your gender!"
+            : this.admin.user_birthday == [] || this.admin.user_birthday == null
+            ? "Please select your birthdate!"
+            : this.admin.max_date <= new Date(this.admin.user_birthday)
+            ? "Please reselect your birthdate! 12 Years old++."
+            : false; // console.log(msg);
+
+        return msg;
+      },
+
+      async upload(file) {
+        const formData = _FormData();
+
+        formData.append("path", "user_icon");
+        formData.append("file", file);
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+        return await response.json();
+      },
+
+      async submit() {
+        let users = {};
+        let error_msg = this.validation();
+
+        if (error_msg) {
+          alert(error_msg);
+        } else {
+          runInAction(() => (this.disabled = true));
+          let user = {
+            user_id: window.user.admin.user_id,
+            user_name: this.admin.user_name,
+            user_username: this.admin.user_username,
+            user_email: this.admin.user_email,
+            user_gender: this.admin.user_gender,
+            user_birthday: new Date(this.admin.user_birthday.toString()),
+            user_forgot_token: this.admin.user_forgot_token,
+            user_membership_status: this.admin.user_membership_status,
+            user_level: this.admin.user_level,
+            user_date_created: this.admin.user_date_created,
+            user_picture: this.admin.user_picture,
+            user_note: this.admin.user_note,
+          };
+          api("/api/api-users", {
+            users: { ...user },
+            e: "FindEmail",
+          }).then((res) => {
+            if (
+              res.users !== null &&
+              res.users.user_id !== window.user.admin.user_id
+            ) {
+              alert("Email Already Registered!");
+              runInAction(() => (this.disabled = false));
+            } else {
+              runInAction(() => (this.disabled = true));
+              var conf = confirm("Confirm your data?");
+
+              if (conf) {
+                api("/api/api-users", {
+                  users: { ...user },
+                  e: "Update",
+                }).then((res) => {
+                  if (res === null) {
+                    runInAction(() => (this.disabled = false));
+                    alert("Database insert Failed!");
+                  } else {
+                    // console.log(res);
+                    window.user = {
+                      role: window.user.role,
+                      user: window.user.user || "",
+                      roleAdmin: "admin",
+                      admin: res.users,
+                    };
+                    navigate("/w-profile-admin");
+                  }
+                });
+              } else {
+                runInAction(() => (this.disabled = false));
+              }
+            }
+          }); //
+        } // console.log(users);
+      },
 
       async logout() {
         confirm("Logout of admin?") &&
@@ -47,11 +160,15 @@
 
       if (window.user.roleAdmin !== "admin") {
         navigate("/login-admin");
+      } else {
+        runInAction(() => {
+          meta.admin = window.user.admin;
+        });
       }
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex items-start justify-start bg-white`}>
+    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
       <div class={`w-full flex items-start justify-start`}>
         <div
           class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -315,20 +432,34 @@
                         }
                       }}
                     >
-                      <img
-                        src="/fimgs/4385_20946.x1.png"
-                        class="flex items-start justify-start p-2.5"
+                      <div
+                        class={`flex items-start justify-start p-2.5`}
                         style="width: 60px; min-width: 60px; max-width: 60px; height: 60px; min-height: 60px; max-height: 60px;"
-                      />
+                      >
+                        <img
+                          src={
+                            window.user.admin.user_picture
+                              ? "/upload/" + window.user.admin.user_picture
+                              : "/fimgs/4458_103716.x1.png"
+                          }
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "/fimgs/4458_103716.x1.png";
+                          }}
+                          style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;background-image: url('/fimgs/bg-8fb2c341eee5b05b3a5c9f2f0c33ea6665ec17fb');background-size:100% 100%;background-repeat:no-repeat; "
+                          class={`rounded-full`}
+                        />
+                      </div>
                       <div class="flex items-start justify-start">
-                        <div class="text-base font-medium leading-normal text-gray-700">
-                          Savannah Nguyen
+                        <div
+                          class={`text-base font-medium leading-normal text-gray-700`}
+                        >
+                          {window.user.admin.user_name ||
+                            window.user.admin.user_username ||
+                            "Admin"}
                         </div>
                       </div>
-                      <img
-                        src="/fimgs/4385_20950.x1.svg"
-                        style="width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px;"
-                      />
+                      <img src="/fimgs/4385_20950.x1.svg" />
                     </div>
                   </div>
                   {meta.showProfile && (
@@ -342,6 +473,9 @@
                         <div
                           class={`flex self-stretch items-center justify-center`}
                           style={"cursor:pointer;"}
+                          onClick={() => {
+                            navigate("/w-profile-admin");
+                          }}
                         >
                           <div class="text-base font-medium leading-normal text-gray-900">
                             Edit Profile
@@ -420,22 +554,89 @@
                   </div>
                 </div>
                 <div class="flex self-stretch space-x-6 items-start justify-start">
-                  <div class="flex flex-col space-y-6 items-center justify-start">
-                    <div class="flex flex-col items-center justify-start shadow rounded-lg">
-                      <img
-                        src="/fimgs/4458_103716.x1.png"
-                        style="border-radius:8px;"
-                      />
-                    </div>
-                    <label
-                      for="upload"
-                      class={`flex space-x-2.5 items-center justify-center px-3 py-1 shadow border rounded-lg border-gray-500 cursor-pointer`}
-                    >
-                      <div class="text-sm leading-tight text-gray-500">
-                        Ubah foto
+                  <div class="flex self-stretch flex-col space-y-2.5 items-start justify-start">
+                    <div class="flex flex-col space-y-6 items-center justify-start">
+                      <div
+                        class="flex flex-col items-center justify-start shadow rounded-lg"
+                        style="width: 150px; min-width: 150px; max-width: 150px; height: 150px; min-height: 150px; max-height: 150px;"
+                      >
+                        <img
+                          src={
+                            meta.admin.user_picture
+                              ? "/upload/" + meta.admin.user_picture
+                              : "/fimgs/4458_103716.x1.png"
+                          }
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "/fimgs/4458_103716.x1.png";
+                          }}
+                          style={`border-radius:8px;
+  
+    width: 100%;
+    height: 100%;
+    object-fit: cover;`}
+                        />
                       </div>
-                      <input type="file" id="upload" hidden="true" />
-                    </label>
+                      <label
+                        for="upload"
+                        class={`flex space-x-2.5 items-center justify-center px-3 py-1 shadow border rounded-lg border-gray-500 cursor-pointer`}
+                      >
+                        <div class="text-sm leading-tight text-gray-500">
+                          Ubah foto
+                        </div>
+                        <input
+                          type="file"
+                          id="upload"
+                          hidden="true"
+                          onChange={(e) => {
+                            runInAction(async () => {
+                              const upload = await meta.upload(
+                                e.target.files[0]
+                              );
+                              runInAction(() => {
+                                meta.onChange(upload.path, "user_picture");
+                              });
+                            });
+                          }}
+                        />
+                      </label>
+                    </div>
+                    <div
+                      class="flex self-stretch space-x-2.5 items-start justify-start"
+                      style="width: 150px; min-width: 150px; max-width: 150px;"
+                    >
+                      <ficon
+                        style={`cursor:default;`}
+                        aria-label="Unknown"
+                        iconName="Unknown"
+                        onMouseEnter={() =>
+                          runInAction(() => {
+                            meta.display_foto_info = true;
+                          })
+                        }
+                        onMouseLeave={() =>
+                          runInAction(() => {
+                            meta.display_foto_info = false;
+                          })
+                        }
+                      />
+                      <div
+                        class={`flex flex-col items-start justify-start bg-white`}
+                        style={`overflow:hidden;
+  transition: height 0.5s ease-in-out;
+  ${meta.display_foto_info ? "height: 100%;" : "height: 0;"}`}
+                      >
+                        <div
+                          class={`text-xs font-bold leading-none`}
+                          style={`font-size: 0.75rem;
+line-height: 1rem;
+color: gray;`}
+                        >
+                          Klik tombol simpan untuk menyimpan foto ke dalam
+                          database.
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   <div class="flex flex-1 flex-col space-y-4 items-start justify-start rounded-lg">
                     <div class="flex self-stretch flex-col space-y-4 items-start justify-start">
@@ -453,6 +654,72 @@
                             style={`color: black;
       background:transparent; 
       outline: none;`}
+                            value={
+                              meta.admin.user_name ? meta.admin.user_name : ""
+                            }
+                            onChange={(e) => {
+                              meta.onChange(e, "user_name");
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <div
+                        class={`flex self-stretch flex-col space-y-2 items-start justify-start`}
+                        style={``}
+                      >
+                        <div class="flex self-stretch space-x-2.5 items-start justify-start">
+                          <div class="text-base font-bold leading-normal">
+                            Username
+                          </div>
+                          <ficon
+                            style={`cursor:default;`}
+                            aria-label="Unknown"
+                            iconName="Unknown"
+                            onMouseEnter={() =>
+                              runInAction(() => {
+                                meta.display_info = true;
+                              })
+                            }
+                            onMouseLeave={() =>
+                              runInAction(() => {
+                                meta.display_info = false;
+                              })
+                            }
+                          />
+                          <div
+                            class={`flex flex-col items-start justify-start bg-white`}
+                            style={`overflow:hidden;
+  height: 1rem;
+
+  transition: width 0.5s ease-in-out;
+  ${meta.display_info ? "width: 100%;" : "width: 0;"}`}
+                          >
+                            <div
+                              class={`text-base font-bold leading-normal`}
+                              style={`font-size: 0.75rem;
+line-height: 1rem;
+color: gray;`}
+                            >
+                              Username digunakan untuk login admin.
+                            </div>
+                          </div>
+                        </div>
+                        <div class="flex self-stretch items-center justify-start px-6 py-3 bg-white border rounded border-gray-300">
+                          <input
+                            class={"w-full"}
+                            type={"text"}
+                            placeholder="Masukkan Username"
+                            style={`color: black;
+      background:transparent; 
+      outline: none;`}
+                            value={
+                              meta.admin.user_username
+                                ? meta.admin.user_username
+                                : ""
+                            }
+                            onChange={(e) => {
+                              meta.onChange(e, "user_username");
+                            }}
                           />
                         </div>
                       </div>
@@ -470,6 +737,12 @@
                             style={`color: black;
       background:transparent; 
       outline: none;`}
+                            value={
+                              meta.admin.user_email ? meta.admin.user_email : ""
+                            }
+                            onChange={(e) => {
+                              meta.onChange(e, "user_email");
+                            }}
                           />
                         </div>
                       </div>
@@ -487,9 +760,15 @@
                             style={`color: black; 
       outline:none;
       background:transparent;`}
-                            value={"Pilih Jenis Kelamin"}
+                            value={
+                              meta.admin.user_gender
+                                ? meta.admin.user_gender
+                                : "Pilih Jenis Kelamin"
+                            }
+                            onChange={(e) => {
+                              meta.onChange(e, "user_gender");
+                            }}
                           >
-                            <option value={""} hidden={true} />
                             <option
                               value={"Pilih Jenis Kelamin"}
                               disabled={true}
@@ -500,7 +779,6 @@
                             </option>
                             <option
                               value={"male"}
-                              hidden={true}
                               class={`flex self-stretch flex-col items-start justify-start`}
                               style="color: black"
                             >
@@ -508,7 +786,6 @@
                             </option>
                             <option
                               value={"female"}
-                              hidden={true}
                               class={`flex self-stretch flex-col items-start justify-start`}
                               style="color: black"
                             >
@@ -516,7 +793,6 @@
                             </option>
                             <option
                               value={"unknown"}
-                              hidden={true}
                               class={`flex self-stretch flex-col items-start justify-start`}
                               style="color: black"
                             >
@@ -541,13 +817,31 @@
                           style={`color: black;
       background:transparent; 
       outline: none;`}
+                          value={
+                            meta.admin.user_birthday
+                              ? dateFormat(
+                                  meta.admin.user_birthday,
+                                  "yyyy-MM-dd"
+                                )
+                              : ""
+                          }
+                          onChange={(e) => {
+                            meta.onChange(e, "user_birthday");
+                          }}
+                          max={new Date()}
                         />
                       </div>
                     </div>
                   </div>
                 </div>
                 <div class="flex items-start justify-start">
-                  <button class="flex items-start justify-start px-6 py-2 bg-amber-500 shadow rounded">
+                  <button
+                    class={`flex items-start justify-start px-6 py-2 bg-amber-500 shadow rounded`}
+                    onClick={() => {
+                      meta.submit();
+                    }}
+                    disabled={meta.disabled}
+                  >
                     <div class="text-base font-bold leading-normal text-white">
                       Simpan
                     </div>
