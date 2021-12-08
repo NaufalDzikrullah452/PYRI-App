@@ -10,6 +10,7 @@
       admin: [],
       user_id: "",
       user_name: "",
+      user_username: "",
       user_email: "",
       user_old_password: "",
       user_password: "",
@@ -28,6 +29,7 @@
       new_pass_confirm_type: "password",
       disabled: false,
       display_info: false,
+      display_username_info: false,
       max_date: new Date(new Date().setFullYear(new Date().getFullYear() - 12)),
 
       async showHidePass(key) {
@@ -83,6 +85,8 @@
             ? "Please reselect your birthdate! 12 Years old++."
             : this.user_level === "" || this.user_level === null
             ? "Please select role!"
+            : this.user_level && this.user_username == ""
+            ? "Username cant be empty!"
             : false; // console.log(msg);
         // check pass issfilled
 
@@ -125,6 +129,7 @@
             user = {
               user_id: this.user_id,
               user_name: this.user_name,
+              user_username: this.user_username,
               user_email: this.user_email,
               user_gender: this.user_gender,
               user_birthday: new Date(this.user_birthday.toString()),
@@ -139,6 +144,7 @@
             user = {
               user_id: this.user_id,
               user_name: this.user_name,
+              user_username: this.user_username,
               user_email: this.user_email,
               user_password: encrypt(this.user_new_password),
               user_gender: this.user_gender,
@@ -228,6 +234,7 @@
           runInAction(() => {
             meta.user_id = res.users.user_id;
             meta.user_name = res.users.user_name;
+            meta.user_username = res.users.user_username;
             meta.user_email = res.users.user_email;
             meta.user_old_password = res.users.user_password;
             meta.user_gender = res.users.user_gender;
@@ -246,7 +253,7 @@
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
+    <div class={`w-full flex items-start justify-start bg-white`}>
       <div class={`w-full flex items-start justify-start`}>
         <div
           class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -790,6 +797,70 @@
                             </div>
                           </div>
                         </div>
+                      </div>
+                    </div>
+                    <div
+                      class={`flex self-stretch flex-col space-y-2 items-start justify-start`}
+                      style={`overflow: hidden; 
+    transition: margin-top 0.5s ease-in-out;
+     ${
+       meta.user_level
+         ? "height:100%;"
+         : "height:0; margin-top: -6px!important;"
+     }`}
+                    >
+                      <div class="flex self-stretch space-x-2.5 items-start justify-start">
+                        <div class="text-base font-bold leading-normal">
+                          Username
+                        </div>
+                        <ficon
+                          style={`cursor:default;`}
+                          aria-label="Unknown"
+                          iconName="Unknown"
+                          onMouseEnter={() =>
+                            runInAction(() => {
+                              meta.display_username_info = true;
+                            })
+                          }
+                          onMouseLeave={() =>
+                            runInAction(() => {
+                              meta.display_username_info = false;
+                            })
+                          }
+                        />
+                        <div
+                          class={`flex flex-col items-start justify-start bg-white`}
+                          style={`overflow:hidden;
+  height: 1rem;
+
+  transition: width 0.5s ease-in-out;
+  ${meta.display_username_info ? "width: 100%;" : "width: 0;"}`}
+                        >
+                          <div
+                            class={`text-base font-bold leading-normal`}
+                            style={`font-size: 0.75rem;
+line-height: 1rem;
+color: gray;`}
+                          >
+                            Username digunakan untuk login admin.
+                          </div>
+                        </div>
+                      </div>
+                      <div class="flex self-stretch items-center justify-start px-6 py-3 bg-white border rounded border-gray-300">
+                        {
+                          <input
+                            class={"w-full"}
+                            type={"text"}
+                            placeholder="Masukkan Username"
+                            style={`color: black;
+      background:transparent; 
+      outline: none;`}
+                            value={meta.user_username}
+                            onChange={(e) => {
+                              meta.onChange("user_username", e);
+                            }}
+                          />
+                        }
                       </div>
                     </div>
                   </div>

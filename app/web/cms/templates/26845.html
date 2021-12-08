@@ -17,6 +17,7 @@
       page_length: 0,
       hide_bar: false,
       loading_page: false,
+      isBookmark: false,
 
       async loading(val) {
         if (val) {
@@ -194,6 +195,75 @@
           );
         }
       },
+
+      async addBookmark(book_id) {
+        if (window.user.role === "guest") {
+          window.mobileApp.app.dialog.confirm(
+            "redirect to login?",
+            "Please login before adding bookmark!",
+            () => {
+              navigate("/m/login");
+            }
+          );
+        } else {
+          api("/api/bookmarks", {
+            bookmark: {
+              bookmark_user_id: window.user.user.user_id,
+              bookmark_book_id: parseInt(params.book_id),
+            },
+            e: "ReadByBookNUserId",
+          }).then((res) => {
+            // console.log(res);
+            if (res.bookmark === null) {
+              window.mobileApp.app.dialog.preloader("Added to read later...");
+              api("/api/bookmarks", {
+                bookmark: {
+                  bookmark_user_id: window.user.user.user_id,
+                  bookmark_book_id: parseInt(params.book_id),
+                  bookmark_date: new Date(),
+                },
+                e: "Create",
+              }).then((res) => {
+                // console.log(res);
+                setTimeout(function () {
+                  window.mobileApp.app.dialog.close();
+                }, 2000);
+                runInAction(() => {
+                  this.isBookmark = true;
+                }); // navigate("/m/");
+              });
+            } else {
+              window.mobileApp.app.dialog.confirm(
+                "This book already added to read later.",
+                "Remove from read later?",
+                () => {
+                  api("/api/bookmarks", {
+                    bookmark: {
+                      bookmark_id: res.bookmark.bookmark_id,
+                    },
+                    e: "Delete",
+                  }).then((res) => {
+                    if (res.res === "Failure" || res === null) {
+                      window.mobileApp.app.dialog.alert(
+                        null,
+                        "Failed to remove this book from read later"
+                      );
+                    } else {
+                      window.mobileApp.app.dialog.preloader("Removing ...");
+                      setTimeout(function () {
+                        window.mobileApp.app.dialog.close();
+                      }, 2000);
+                      runInAction(() => {
+                        this.isBookmark = false;
+                      });
+                    }
+                  });
+                }
+              );
+            }
+          });
+        }
+      },
     }}
     run={async () => {
       // read buku by book_id
@@ -201,6 +271,21 @@
 
       if (window.user.role === "guest") {
         meta.back();
+      } else {
+        api("/api/bookmarks", {
+          bookmark: {
+            bookmark_user_id: window.user.user.user_id,
+            bookmark_book_id: parseInt(params.book_id),
+          },
+          e: "ReadByBookNUserId",
+        }).then((res) => {
+          // console.log(res);
+          if (res.bookmark !== null) {
+            runInAction(() => {
+              meta.isBookmark = true;
+            });
+          }
+        });
       }
 
       if (params.book_id !== undefined) {
@@ -356,10 +441,20 @@
               />
             </div>
             <div />
-            <img
-              src="/fimgs/1554_504666.x1.svg"
-              style="width: 41px; min-width: 41px; max-width: 41px; height: 36px; min-height: 36px; max-height: 36px;"
-            />
+            <m-button
+              class={`flex flex-col items-start justify-start`}
+              style={`margin-top:-10px; z-index:1; overflow:inherit`}
+              onClick={() => {
+                meta.addBookmark(params.book_id);
+              }}
+            >
+              {!meta.isBookmark && (
+                <img src="/fimgs/I991_7676_991_7671.x1.svg" />
+              )}
+              {meta.isBookmark && (
+                <img class={""} style={``} src="/fimgs/4379_20313.x1.svg" />
+              )}
+            </m-button>
             <m-button
               panelOpen={meta.chapter.length === 0 ? "#" : "right"}
               class={`flex flex-col items-start justify-start`}

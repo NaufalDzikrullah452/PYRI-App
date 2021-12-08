@@ -24,6 +24,7 @@
         // console.log(tab);
         if (tab === "pyriList" && tab != this.tabActivePyri) {
           this.readHistory();
+          this.readBookmarks();
         }
 
         this.tabActivePyri = tab;
@@ -204,19 +205,30 @@
 
       async deleteBookmark(bookmark_id) {
         if (window.user.role !== "guest") {
-          await api("/api/bookmarks", {
-            bookmark: {
-              bookmark_id: bookmark_id,
-            },
-            e: "Delete",
-          }).then((res) => {
-            if (res !== null) {
-              runInAction(() => {
-                this.readBookmarks();
-                location.reload();
+          window.mobileApp.app.dialog.confirm(
+            "Remove book from read later.",
+            "Confirm delete?",
+            () => {
+              window.mobileApp.app.dialog.preloader("Loading...");
+              api("/api/bookmarks", {
+                bookmark: {
+                  bookmark_id: bookmark_id,
+                },
+                e: "Delete",
+              }).then((res) => {
+                if (res !== null) {
+                  setTimeout(() => {
+                    window.mobileApp.app.dialog.close();
+                  }, 1000);
+                  runInAction(() => {
+                    this.readBookmarks(); // location.reload();
+                  });
+                } else {
+                  window.mobileApp.app.dialog.close();
+                }
               });
             }
-          });
+          );
         }
       },
 
@@ -357,7 +369,7 @@
     }}
   />
   <div
-    class={`flex self-stretch items-end justify-center bg-white`}
+    class={`flex items-end justify-center bg-white`}
     style={"margin-bottom: 50px;"}
   >
     <div

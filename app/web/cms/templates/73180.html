@@ -282,9 +282,7 @@
                         "Failed to remove this book from read later"
                       );
                     } else {
-                      window.mobileApp.app.dialog.preloader(
-                        "Remove complete ..."
-                      );
+                      window.mobileApp.app.dialog.preloader("Removing ...");
                       setTimeout(function () {
                         window.mobileApp.app.dialog.close();
                       }, 2000);
@@ -1083,20 +1081,21 @@
         style="backdrop-filter: blur(10px); z-index:1"
       >
         <div
-          class={`flex self-stretch space-x-2.5 items-center justify-center bg-white shadow border rounded-lg border-amber-500`}
+          class={`flex self-stretch items-center justify-center bg-white shadow border rounded-lg border-amber-500`}
           onClick={() => {
             meta.addBookmark(params.book_id);
           }}
           style="width: 50px; min-width: 50px; max-width: 50px; height: 44px; min-height: 44px; max-height: 44px;"
         >
-          {!meta.isBookmark && <img src="/fimgs/I991_7676_991_7671.x1.svg" />}
-          {meta.isBookmark && (
-            <img
-              class={""}
-              style={`width: 35.71px; min-width: 35.71px; max-width: 35.71px; height: 44px; min-height: 44px; max-height: 44px;`}
-              src="/fimgs/4379_20313.x1.svg"
-            />
-          )}
+          <div class="flex items-start justify-start">
+            {meta.isBookmark && (
+              <img
+                class={""}
+                style={`width: 35.71px; min-width: 35.71px; max-width: 35.71px; height: 44px; min-height: 44px; max-height: 44px;`}
+                src="/fimgs/4379_20313.x1.svg"
+              />
+            )}
+          </div>
         </div>
         <button
           class={`flex flex-1 items-center justify-center p-2.5 bg-amber-500 shadow rounded-lg`}

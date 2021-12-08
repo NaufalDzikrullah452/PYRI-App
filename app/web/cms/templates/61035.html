@@ -9,6 +9,10 @@
       changeMasterData: (open) => {},
       users: [],
       admin: [],
+      filter: {
+        role: "ROLE",
+        dataRole: [],
+      },
       searching: "",
       entries: 5,
       last_entries: 5,
@@ -17,6 +21,48 @@
       sum_pages: 0,
       pages_array: [],
       loading_page: true,
+
+      async onFilter(key, e) {
+        let value = e.target.value;
+        runInAction(() => {
+          this.filter[key] = value;
+        });
+
+        if (key === "role" && this.filter.role !== "ROLE") {
+          runInAction(() => {
+            var role = this.filter.role === "Admin";
+            this.filter.dataRole = [];
+            this.users.map((value, index) => {
+              if (value.user_level === role) {
+                this.filter.dataRole.push(value);
+              }
+            });
+            this.first_entries = 0;
+            this.pages = 1;
+            this.last_entries = parseInt(this.entries);
+            this.sum_pages = Math.ceil(
+              this.filter.dataRole.length / this.entries
+            ); // meta.page_array = new Array(meta.sum_page);
+
+            this.pages_array = Array.apply(null, {
+              length: this.sum_pages,
+            }).map(Number.call, Number);
+            this.loading_page = false;
+          });
+        } else if (key === "role" && this.filter.role === "ROLE") {
+          runInAction(() => {
+            this.first_entries = 0;
+            this.pages = 1;
+            this.last_entries = parseInt(this.entries);
+            this.sum_pages = Math.ceil(this.users.length / this.entries); // meta.page_array = new Array(meta.sum_page);
+
+            this.pages_array = Array.apply(null, {
+              length: this.sum_pages,
+            }).map(Number.call, Number);
+            this.loading_page = false;
+          });
+        }
+      },
 
       async onChange(key, e) {
         this.loading_page = true;
@@ -659,9 +705,52 @@
                       class={`flex self-stretch items-center justify-start px-2.5`}
                       style={"width: 5%"}
                     >
-                      <div class="text-base font-bold leading-normal text-white">
-                        ROLE
-                      </div>
+                      <select
+                        class={`flex flex-col space-y-2.5 items-start justify-start text-base font-bold leading-normal text-white`}
+                        defaultValue={"ROLE"}
+                        style={`border: none;
+  color: white;
+  outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+    background-color: transparent;`}
+                        id={"filterRole"}
+                        onChange={(e) => {
+                          runInAction(() => {
+                            meta.onFilter("role", e);
+                          });
+
+                          if (meta.filter.role !== "ROLE") {
+                            document.getElementById("filterRole").style.color =
+                              "#FF8F00";
+                          } else {
+                            document.getElementById("filterRole").style.color =
+                              "white";
+                          }
+                        }}
+                      >
+                        <option
+                          class={`text-base font-bold leading-normal text-white`}
+                          value={"ROLE"}
+                          style={`color:black`}
+                        >
+                          ROLE
+                        </option>
+                        <option
+                          class={`text-base font-bold leading-normal`}
+                          value={"User"}
+                          style={`color:black`}
+                        >
+                          User
+                        </option>
+                        <option
+                          class={`text-base font-bold leading-normal`}
+                          value={"Admin"}
+                          style={`color:black`}
+                        >
+                          Admin
+                        </option>
+                      </select>
                     </th>
                     <th
                       class={`flex self-stretch items-center justify-start`}
@@ -698,189 +787,382 @@
                   </tr>
                 </thead>
                 <tbody class="flex self-stretch flex-col items-start justify-start">
-                  {meta.users
-                    .slice(meta.first_entries, meta.last_entries)
-                    .map((numList, i) => {
-                      var odd = (i + 1) % 2;
-                      return (
-                        <tr
-                          class={`w-full flex self-stretch space-x-3 items-center justify-start px-4 py-2.5 bg-white rounded ${
-                            odd === 0 ? "bg-orange-100" : "bg-white"
-                          }`}
-                          style={":hover {background-color: #ffbe76;"}
-                        >
-                          <td
-                            class={`flex self-stretch flex-col items-center justify-center pl-2.5`}
-                            style={"width: 3%"}
+                  {meta.filter.role === "ROLE" &&
+                    meta.users
+                      .slice(meta.first_entries, meta.last_entries)
+                      .map((numList, i) => {
+                        var odd = (i + 1) % 2;
+                        return (
+                          <tr
+                            class={`w-full flex self-stretch space-x-3 items-center justify-start px-4 py-2.5 bg-white rounded ${
+                              odd === 0 ? "bg-orange-100" : "bg-white"
+                            }`}
+                            style={":hover {background-color: #ffbe76;"}
                           >
-                            <div class={`text-base leading-normal`}>
-                              {i + meta.first_entries + 1}
-                            </div>
-                          </td>
-                          <td
-                            class={`flex self-stretch space-x-3 items-center justify-start`}
-                            style={`width: 20%`}
-                          >
-                            <img
-                              src={
-                                numList.user_picture
-                                  ? "/upload/" + numList.user_picture
-                                  : "/fimgs/3201_185125.x1.png"
-                              }
-                              onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.src = "/fimgs/3201_185125.x1.png";
-                              }}
-                              style={`width: 44px; min-width: 44px; max-width: 44px; height: 44px; min-height: 44px; max-height: 44px;background-image: url('/fimgs/bg-b734a5be3aee0fd453c592a0baf71a7e7f723cd8');background-size:100% 100%;background-repeat:no-repeat; border-radius:50%; background-image:none;`}
-                            />
-                            <div
-                              class={`flex flex-col items-start justify-center`}
-                              style={"padding: 8px;"}
+                            <td
+                              class={`flex self-stretch flex-col items-center justify-center pl-2.5`}
+                              style={"width: 3%"}
                             >
-                              <div
-                                class={`text-base font-medium leading-normal`}
-                              >
-                                {numList.user_name || "Name"}
+                              <div class={`text-base leading-normal`}>
+                                {i + meta.first_entries + 1}
                               </div>
+                            </td>
+                            <td
+                              class={`flex self-stretch space-x-3 items-center justify-start`}
+                              style={`width: 20%`}
+                            >
+                              <img
+                                src={
+                                  numList.user_picture
+                                    ? "/upload/" + numList.user_picture
+                                    : "/fimgs/3201_185125.x1.png"
+                                }
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = "/fimgs/3201_185125.x1.png";
+                                }}
+                                style={`width: 44px; min-width: 44px; max-width: 44px; height: 44px; min-height: 44px; max-height: 44px;background-image: url('/fimgs/bg-b734a5be3aee0fd453c592a0baf71a7e7f723cd8');background-size:100% 100%;background-repeat:no-repeat; border-radius:50%; background-image:none;`}
+                              />
                               <div
-                                class={`text-sm leading-tight text-gray-600`}
-                              >
-                                {numList.user_email.length > 20
-                                  ? numList.user_email.substring(0, 20) + "..."
-                                  : numList.user_email || "Email"}
-                              </div>
-                            </div>
-                          </td>
-                          <td
-                            class={`flex self-stretch items-center justify-center`}
-                            style={"padding-left:15px; width: 20%"}
-                          >
-                            <div
-                              class={`text-base font-medium leading-normal text-gray-600`}
-                            >
-                              {dateFormat(
-                                numList.user_birthday,
-                                "dd MMM yyyy"
-                              ) || "-"}
-                            </div>
-                          </td>
-                          <td
-                            class={`flex flex-1 self-stretch items-center justify-center`}
-                            style={`width: 5%`}
-                          >
-                            <div
-                              class={`text-base font-medium leading-normal text-gray-600`}
-                            >
-                              {numList.user_level ? "Admin" : "User" || "User"}
-                            </div>
-                          </td>
-                          <td
-                            class={`flex flex-1 self-stretch items-center justify-start pr-3`}
-                            style={"width: 5%"}
-                          >
-                            <div
-                              class={`text-base font-bold leading-normal text-gray-600`}
-                            >
-                              {numList.user_gender || "Unknown"}
-                            </div>
-                          </td>
-                          <td
-                            class={`flex flex-1 self-stretch items-center justify-center`}
-                            style={"width: 20%"}
-                          >
-                            <div
-                              class={`text-base font-bold leading-normal text-gray-600`}
-                            >
-                              {dateFormat(
-                                numList.user_date_created,
-                                "dd MMM yyyy"
-                              ) || "-"}
-                            </div>
-                          </td>
-                          <td
-                            class={`flex flex-1 self-stretch space-x-2.5 items-center justify-center`}
-                            style={"width: 5%"}
-                          >
-                            {numList.user_membership_status === "Active" && (
-                              <div
-                                class={`flex items-start justify-start px-3 py-1 bg-amber-500 rounded-full`}
-                              >
-                                <div class="text-base font-bold leading-normal text-white">
-                                  Aktif
-                                </div>
-                              </div>
-                            )}
-                            {numList.user_membership_status === "NonActive" && (
-                              <div
-                                class={`flex items-start justify-start px-3 py-1 border rounded-full border-gray-400`}
+                                class={`flex flex-col items-start justify-center`}
+                                style={"padding: 8px;"}
                               >
                                 <div
-                                  class={`text-base font-bold leading-normal text-gray-600`}
+                                  class={`text-base font-medium leading-normal`}
                                 >
-                                  Tidak
+                                  {numList.user_name || "Name"}
+                                </div>
+                                <div
+                                  class={`text-sm leading-tight text-gray-600`}
+                                >
+                                  {numList.user_email.length > 20
+                                    ? numList.user_email.substring(0, 20) +
+                                      "..."
+                                    : numList.user_email || "Email"}
                                 </div>
                               </div>
-                            )}
-                          </td>
-                          <td
-                            class={`flex flex-1 self-stretch items-center justify-center`}
-                            style={"width: 17%"}
-                          >
-                            <div class="flex flex-1 self-stretch space-x-1 items-center justify-center">
+                            </td>
+                            <td
+                              class={`flex self-stretch items-center justify-center`}
+                              style={"padding-left:15px; width: 20%"}
+                            >
                               <div
-                                class={`flex items-center justify-center rounded cursor-pointer`}
-                                onClick={() => {
-                                  navigate(
-                                    "/w-master-user/edit/" + numList.user_id
-                                  );
-                                }}
+                                class={`text-base font-medium leading-normal text-gray-600`}
                               >
+                                {dateFormat(
+                                  numList.user_birthday,
+                                  "dd MMM yyyy"
+                                ) || "-"}
+                              </div>
+                            </td>
+                            <td
+                              class={`flex flex-1 self-stretch items-center justify-center`}
+                              style={`width: 5%`}
+                            >
+                              <div
+                                class={`text-base font-medium leading-normal text-gray-600`}
+                              >
+                                {numList.user_level
+                                  ? "Admin"
+                                  : "User" || "User"}
+                              </div>
+                            </td>
+                            <td
+                              class={`flex flex-1 self-stretch items-center justify-start pr-3`}
+                              style={"width: 5%"}
+                            >
+                              <div
+                                class={`text-base font-bold leading-normal text-gray-600`}
+                              >
+                                {numList.user_gender || "Unknown"}
+                              </div>
+                            </td>
+                            <td
+                              class={`flex flex-1 self-stretch items-center justify-center`}
+                              style={"width: 20%"}
+                            >
+                              <div
+                                class={`text-base font-bold leading-normal text-gray-600`}
+                              >
+                                {dateFormat(
+                                  numList.user_date_created,
+                                  "dd MMM yyyy"
+                                ) || "-"}
+                              </div>
+                            </td>
+                            <td
+                              class={`flex flex-1 self-stretch space-x-2.5 items-center justify-center`}
+                              style={"width: 5%"}
+                            >
+                              {numList.user_membership_status === "Active" && (
+                                <div
+                                  class={`flex items-start justify-start px-3 py-1 bg-amber-500 rounded-full`}
+                                >
+                                  <div class="text-base font-bold leading-normal text-white">
+                                    Aktif
+                                  </div>
+                                </div>
+                              )}
+                              {numList.user_membership_status ===
+                                "NonActive" && (
+                                <div
+                                  class={`flex items-start justify-start px-3 py-1 border rounded-full border-gray-400`}
+                                >
+                                  <div
+                                    class={`text-base font-bold leading-normal text-gray-600`}
+                                  >
+                                    Tidak
+                                  </div>
+                                </div>
+                              )}
+                            </td>
+                            <td
+                              class={`flex flex-1 self-stretch items-center justify-center`}
+                              style={"width: 17%"}
+                            >
+                              <div class="flex flex-1 self-stretch space-x-1 items-center justify-center">
+                                <div
+                                  class={`flex items-center justify-center rounded cursor-pointer`}
+                                  onClick={() => {
+                                    navigate(
+                                      "/w-master-user/edit/" + numList.user_id
+                                    );
+                                  }}
+                                >
+                                  <img
+                                    src="/fimgs/3201_185142.x1.svg"
+                                    style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
+                                  />
+                                </div>
                                 <img
-                                  src="/fimgs/3201_185142.x1.svg"
-                                  style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
+                                  src="/fimgs/3201_185143.x1.svg"
+                                  class={`flex items-center justify-center rounded`}
+                                  style={`cursor: pointer`}
+                                  onClick={() => {
+                                    var res = false;
+
+                                    if (numList.user_level) {
+                                      alert("Cant delete Admin !");
+                                    } else {
+                                      res = true;
+                                    }
+
+                                    if (res) {
+                                      meta.onDelete(numList.user_id);
+                                    }
+                                  }}
+                                />
+                                <img
+                                  src="/fimgs/3201_185145.x1.svg"
+                                  class={`flex items-start justify-start cursor-pointer`}
+                                  style={`width: 20px; min-width: 20px; max-width: 20px; height: 20px; min-height: 20px; max-height: 20px;`}
+                                  onClick={() => {
+                                    var res = false;
+
+                                    if (numList.user_level) {
+                                      alert("Cant block Admin !");
+                                    } else {
+                                      res = true;
+                                    }
+
+                                    if (res) {
+                                      meta.userBlock(numList.user_id);
+                                    }
+                                  }}
                                 />
                               </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                  {meta.filter.role !== "ROLE" &&
+                    meta.filter.dataRole
+                      .slice(meta.first_entries, meta.last_entries)
+                      .map((numList, i) => {
+                        var odd = (i + 1) % 2;
+                        return (
+                          <tr
+                            class={`w-full flex self-stretch space-x-3 items-center justify-start px-4 py-2.5 rounded ${
+                              odd === 0 ? "bg-orange-100" : "bg-white"
+                            }`}
+                            style={":hover {background-color: #ffbe76;"}
+                          >
+                            <td
+                              class={`flex self-stretch flex-col items-center justify-center pl-2.5`}
+                              style={"width: 3%"}
+                            >
+                              <div class={`text-base leading-normal`}>
+                                {i + meta.first_entries + 1}
+                              </div>
+                            </td>
+                            <td
+                              class={`flex self-stretch space-x-3 items-center justify-start`}
+                              style={`width: 20%`}
+                            >
                               <img
-                                src="/fimgs/3201_185143.x1.svg"
-                                class={`flex items-center justify-center rounded`}
-                                style={`cursor: pointer`}
-                                onClick={() => {
-                                  var res = false;
-
-                                  if (numList.user_level) {
-                                    alert("Cant delete Admin !");
-                                  } else {
-                                    res = true;
-                                  }
-
-                                  if (res) {
-                                    meta.onDelete(numList.user_id);
-                                  }
+                                src={
+                                  numList.user_picture
+                                    ? "/upload/" + numList.user_picture
+                                    : "/fimgs/3201_185125.x1.png"
+                                }
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = "/fimgs/3201_185125.x1.png";
                                 }}
+                                style={`width: 44px; min-width: 44px; max-width: 44px; height: 44px; min-height: 44px; max-height: 44px;background-image: url('/fimgs/bg-b734a5be3aee0fd453c592a0baf71a7e7f723cd8');background-size:100% 100%;background-repeat:no-repeat; border-radius:50%; background-image:none;`}
                               />
-                              <img
-                                src="/fimgs/3201_185145.x1.svg"
-                                class={`flex items-start justify-start cursor-pointer`}
-                                style={`width: 20px; min-width: 20px; max-width: 20px; height: 20px; min-height: 20px; max-height: 20px;`}
-                                onClick={() => {
-                                  var res = false;
+                              <div
+                                class={`flex flex-col items-start justify-center`}
+                                style={"padding: 8px;"}
+                              >
+                                <div
+                                  class={`text-base font-medium leading-normal`}
+                                >
+                                  {numList.user_name || "Name"}
+                                </div>
+                                <div
+                                  class={`text-sm leading-tight text-gray-600`}
+                                >
+                                  {numList.user_email.length > 20
+                                    ? numList.user_email.substring(0, 20) +
+                                      "..."
+                                    : numList.user_email || "Email"}
+                                </div>
+                              </div>
+                            </td>
+                            <td
+                              class={`flex self-stretch items-center justify-center`}
+                              style={"padding-left:15px; width: 20%"}
+                            >
+                              <div
+                                class={`text-base font-medium leading-normal text-gray-600`}
+                              >
+                                {dateFormat(
+                                  numList.user_birthday,
+                                  "dd MMM yyyy"
+                                ) || "-"}
+                              </div>
+                            </td>
+                            <td
+                              class={`flex flex-1 self-stretch items-center justify-center`}
+                              style={`width: 5%`}
+                            >
+                              <div
+                                class={`text-base font-medium leading-normal text-gray-600`}
+                              >
+                                {numList.user_level
+                                  ? "Admin"
+                                  : "User" || "User"}
+                              </div>
+                            </td>
+                            <td
+                              class={`flex flex-1 self-stretch items-center justify-start pr-3`}
+                              style={"width: 5%"}
+                            >
+                              <div
+                                class={`text-base font-bold leading-normal text-gray-600`}
+                              >
+                                {numList.user_gender || "Unknown"}
+                              </div>
+                            </td>
+                            <td
+                              class={`flex flex-1 self-stretch items-center justify-center`}
+                              style={"width: 20%"}
+                            >
+                              <div
+                                class={`text-base font-bold leading-normal text-gray-600`}
+                              >
+                                {dateFormat(
+                                  numList.user_date_created,
+                                  "dd MMM yyyy"
+                                ) || "-"}
+                              </div>
+                            </td>
+                            <td
+                              class={`flex flex-1 self-stretch space-x-2.5 items-center justify-center`}
+                              style={"width: 5%"}
+                            >
+                              {numList.user_membership_status === "Active" && (
+                                <div
+                                  class={`flex items-start justify-start px-3 py-1 bg-amber-500 rounded-full`}
+                                >
+                                  <div class="text-base font-bold leading-normal text-white">
+                                    Aktif
+                                  </div>
+                                </div>
+                              )}
+                              {numList.user_membership_status ===
+                                "NonActive" && (
+                                <div
+                                  class={`flex items-start justify-start px-3 py-1 border rounded-full border-gray-400`}
+                                >
+                                  <div
+                                    class={`text-base font-bold leading-normal text-gray-600`}
+                                  >
+                                    Tidak
+                                  </div>
+                                </div>
+                              )}
+                            </td>
+                            <td
+                              class={`flex flex-1 self-stretch items-center justify-center`}
+                              style={"width: 17%"}
+                            >
+                              <div class="flex flex-1 self-stretch space-x-1 items-center justify-center">
+                                <div
+                                  class={`flex items-center justify-center rounded cursor-pointer`}
+                                  onClick={() => {
+                                    navigate(
+                                      "/w-master-user/edit/" + numList.user_id
+                                    );
+                                  }}
+                                >
+                                  <img
+                                    src="/fimgs/4490_1316079.x1.svg"
+                                    style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
+                                  />
+                                </div>
+                                <img
+                                  src="/fimgs/4490_1316080.x1.svg"
+                                  class={`flex items-center justify-center rounded`}
+                                  style={`cursor: pointer`}
+                                  onClick={() => {
+                                    var res = false;
 
-                                  if (numList.user_level) {
-                                    alert("Cant block Admin !");
-                                  } else {
-                                    res = true;
-                                  }
+                                    if (numList.user_level) {
+                                      alert("Cant delete Admin !");
+                                    } else {
+                                      res = true;
+                                    }
 
-                                  if (res) {
-                                    meta.userBlock(numList.user_id);
-                                  }
-                                }}
-                              />
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                                    if (res) {
+                                      meta.onDelete(numList.user_id);
+                                    }
+                                  }}
+                                />
+                                <img
+                                  src="/fimgs/4490_1316082.x1.svg"
+                                  class={`flex items-start justify-start cursor-pointer`}
+                                  style={`width: 20px; min-width: 20px; max-width: 20px; height: 20px; min-height: 20px; max-height: 20px;`}
+                                  onClick={() => {
+                                    var res = false;
+
+                                    if (numList.user_level) {
+                                      alert("Cant block Admin !");
+                                    } else {
+                                      res = true;
+                                    }
+
+                                    if (res) {
+                                      meta.userBlock(numList.user_id);
+                                    }
+                                  }}
+                                />
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
                   {meta.users.length === 0 && (
                     <tr
                       class={`w-full flex self-stretch items-center justify-center px-4 py-2.5 rounded`}
@@ -894,14 +1176,25 @@
                 </tbody>
               </table>
               <div class="flex self-stretch space-x-2.5 items-center justify-start bg-white">
-                <div class="flex flex-1 items-start justify-start">
-                  <div
-                    class={`text-base leading-normal text-orange-900`}
-                  >{`Showing ${meta.first_entries + 1} to ${
-                    meta.last_entries <= meta.users.length
-                      ? meta.last_entries
-                      : meta.users.length
-                  } of ${meta.users.length} entries`}</div>
+                <div class="flex flex-1 space-x-2.5 items-start justify-start">
+                  {meta.filter.role === "ROLE" && (
+                    <div
+                      class={`text-base leading-normal text-orange-900`}
+                    >{`Showing ${meta.first_entries + 1} to 
+${
+  meta.last_entries <= meta.users.length ? meta.last_entries : meta.users.length
+} of ${meta.users.length} entries`}</div>
+                  )}
+                  {meta.filter.role !== "ROLE" && (
+                    <div class={`text-base leading-normal`}>{`Showing ${
+                      meta.first_entries + 1
+                    } to 
+${
+  meta.last_entries <= meta.filter.dataRole.length
+    ? meta.last_entries
+    : meta.filter.dataRole.length
+} of ${meta.filter.dataRole.length} entries`}</div>
+                  )}
                 </div>
                 <div class="flex space-x-2 items-start justify-start">
                   <div
