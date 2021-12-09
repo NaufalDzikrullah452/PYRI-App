@@ -1,0 +1,332 @@
+<>
+  <effect
+    meta={{
+      selectCard1: false,
+      selectCard2: false,
+      selectCard3: false,
+      changeCard1: (select) => {},
+      changeCard2: (select) => {},
+      changeCard3: (select) => {},
+    }}
+    run={async () => {
+      meta.action = {
+        changeCard1: (select) => {
+          meta.selectCard1 = select;
+          let card = document.getElementById("card_plan1");
+
+          if (select == true) {
+            card.setAttribute(
+              "style",
+              "background-color:rgb(243, 156, 18, 0.05); border-color:orange; box-shadow: 8px 5px 10px grey;"
+            );
+          } else {
+            card.setAttribute("style", "border-color:#dfe4ea;");
+          }
+        },
+        changeCard2: (select) => {
+          meta.selectCard2 = select;
+          let card = document.getElementById("card_plan2");
+
+          if (select == true) {
+            card.setAttribute(
+              "style",
+              "background-color:rgb(243, 156, 18, 0.05); border-color:orange; box-shadow: 8px 5px 10px grey;"
+            );
+          } else {
+            card.setAttribute("style", "border-color:#dfe4ea;");
+          }
+        },
+        changeCard3: (select) => {
+          meta.selectCard3 = select;
+          let card = document.getElementById("card_plan3");
+
+          if (select == true) {
+            card.setAttribute(
+              "style",
+              "background-color:rgb(243, 156, 18, 0.05); border-color:orange; box-shadow: 8px 5px 10px grey;"
+            );
+          } else {
+            card.setAttribute("style", "border-color:#dfe4ea;");
+          }
+        },
+      };
+    }}
+  />
+  <div class="flex flex-col items-start justify-start bg-white">
+    <div class="flex self-stretch flex-col space-y-1 items-start justify-start relative overflow-y-auto">
+      <div
+        class={`flex self-stretch flex-col items-start justify-start px-6 pt-9 pb-4 bg-white shadow`}
+      >
+        <div class="flex self-stretch space-x-4 items-center justify-start">
+          <div class="flex self-stretch items-center justify-start">
+            <ficon
+              aria-label="ChromeBack"
+              iconName="ChromeBack"
+              style="font-size:20px;"
+            />
+          </div>
+          <div class="flex flex-1 space-x-1 items-center justify-center">
+            <ficon
+              aria-label="CircleFill"
+              iconName="CircleFill"
+              style="font-size:25px; color:orange;"
+            >
+              <div class="bg-amber-500 rounded-full" />
+            </ficon>
+            <div class={`text-xl font-bold leading-loose text-center`}>
+              {children || "Premium"}
+            </div>
+          </div>
+          <div />
+        </div>
+      </div>
+      <div class="flex self-stretch flex-col space-y-6 items-start justify-start p-6 relative overflow-y-auto">
+        <div class="flex self-stretch flex-col space-y-4 items-start justify-start">
+          <div class="flex self-stretch flex-col items-center justify-center">
+            <img
+              src="/fimgs/4528_14752.x1.svg"
+              class="flex items-center justify-center"
+              style="width: 151px; min-width: 151px; max-width: 151px; height: 178px; min-height: 178px; max-height: 178px;"
+            />
+          </div>
+          <div class="text-base font-bold leading-normal text-center">
+            Read Book As Much As You Want Without Limitation
+          </div>
+        </div>
+        <div class="flex self-stretch flex-col space-y-4 items-start justify-start p-4 bg-gray-100 rounded-lg">
+          <div class="text-2xl font-bold leading-9">
+            Why read the book at pyri?
+          </div>
+          <div class="flex self-stretch flex-col space-y-1 items-start justify-start">
+            <div class="flex self-stretch space-x-3 items-start justify-start">
+              <ficon
+                aria-label="SkypeCircleCheck"
+                iconName="SkypeCircleCheck"
+                style="font-size:18px; color:orange;"
+              >
+                <div class="flex items-start justify-start p-0.5">
+                  <div class="bg-amber-500" />
+                </div>
+              </ficon>
+              <div class="text-base leading-normal">
+                Help reduce the practice of book piracy
+              </div>
+            </div>
+            <div class="flex self-stretch space-x-3 items-start justify-start">
+              <ficon
+                aria-label="SkypeCircleCheck"
+                iconName="SkypeCircleCheck"
+                style="font-size:18px; color:orange;"
+              >
+                <div class="flex items-start justify-start p-0.5">
+                  <div class="bg-amber-500" />
+                </div>
+              </ficon>
+              <div class="text-base leading-normal">
+                To appreciate the copying of books to continue to work
+              </div>
+            </div>
+            <div class="flex self-stretch space-x-3 items-start justify-start">
+              <ficon
+                aria-label="SkypeCircleCheck"
+                iconName="SkypeCircleCheck"
+                style="font-size:18px; color:orange;"
+              >
+                <div class="flex items-start justify-start p-0.5">
+                  <div class="bg-amber-500" />
+                </div>
+              </ficon>
+              <div class="text-base leading-normal">
+                Read legal books without quantity
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="flex self-stretch flex-col space-y-4 items-start justify-start">
+          <div class="text-2xl font-bold leading-9">Chose premium package</div>
+          <div class="flex self-stretch flex-col space-y-9 items-start justify-start">
+            <div class="flex self-stretch flex-col space-y-4 items-start justify-start">
+              <div
+                class={`flex self-stretch items-center justify-start bg-white border rounded-lg border-gray-300`}
+                id="card_plan1"
+                onClick={() => {
+                  if (meta.selectCard1 == false) {
+                    meta.action.changeCard1(true);
+                    meta.action.changeCard2(false);
+                    meta.action.changeCard3(false);
+                  } else {
+                    meta.action.changeCard1(false);
+                    meta.action.changeCard2(false);
+                    meta.action.changeCard3(false);
+                  }
+                }}
+              >
+                <div class="flex flex-1 self-stretch flex-col items-start justify-start">
+                  <div class="flex self-stretch items-end justify-start px-4 pt-4">
+                    <div class="text-2xl font-bold leading-9 text-amber-500">
+                      Bibliophile
+                    </div>
+                  </div>
+                  <div class="flex self-stretch items-center justify-start px-4 pb-6">
+                    <div class="flex flex-1 items-end justify-start">
+                      <div class="flex items-start justify-start">
+                        <div class="text-xl font-bold leading-loose text-center">
+                          IDR60,00.00/
+                        </div>
+                      </div>
+                      <div class="flex items-start justify-start">
+                        <div class="text-sm leading-tight text-center text-gray-600">
+                          month
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex self-stretch flex-col items-center justify-center p-4">
+                  <div class="text-xl font-medium leading-loose text-right">
+                    1 Month
+                  </div>
+                </div>
+              </div>
+              <div
+                class={`flex self-stretch items-center justify-start border rounded-lg border-gray-300`}
+                id="card_plan2"
+                onClick={() => {
+                  if (meta.selectCard2 == false) {
+                    meta.action.changeCard1(false);
+                    meta.action.changeCard2(true);
+                    meta.action.changeCard3(false);
+                  } else {
+                    meta.action.changeCard1(false);
+                    meta.action.changeCard2(false);
+                    meta.action.changeCard3(false);
+                  }
+                }}
+              >
+                <div class="flex flex-1 self-stretch flex-col items-start justify-start">
+                  <div class="flex self-stretch flex-col items-start justify-center px-4 pt-4">
+                    <div class="flex items-start justify-start px-2.5 py-0.5 bg-gradient-to-r from-red-600 via-amber-500 to-yellow-400 shadow rounded">
+                      <div class="text-sm font-bold leading-tight text-white">
+                        Best value
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex self-stretch items-end justify-start px-4 pt-2">
+                    <div class="text-2xl font-bold leading-9 text-amber-500">
+                      Bibliomania
+                    </div>
+                  </div>
+                  <div class="flex flex-col items-start justify-start px-4 pb-6">
+                    <div class="flex self-stretch items-end justify-start">
+                      <div class="flex items-start justify-start">
+                        <div class="text-xl font-bold leading-loose text-center">
+                          IDR45,00.00/
+                        </div>
+                      </div>
+                      <div class="flex items-start justify-start">
+                        <div class="text-sm leading-tight text-center text-gray-600">
+                          month
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex self-stretch items-start justify-start">
+                      <div class="text-sm leading-tight text-gray-600">
+                        Billed annually at
+                      </div>
+                    </div>
+                    <div class="flex self-stretch items-end justify-start">
+                      <div class="flex items-start justify-start">
+                        <div class="text-base font-medium leading-normal text-center text-gray-900">
+                          IDR540,00.00/
+                        </div>
+                      </div>
+                      <div class="flex items-start justify-start">
+                        <div class="text-sm leading-tight text-center text-gray-600">
+                          year
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex self-stretch flex-col items-center justify-center p-4">
+                  <div class="text-xl font-medium leading-loose text-right">
+                    1 Year
+                  </div>
+                </div>
+              </div>
+              <div
+                class={`flex self-stretch items-center justify-start bg-white border rounded-lg border-gray-300`}
+                id="card_plan3"
+                onClick={() => {
+                  if (meta.selectCard3 == false) {
+                    meta.action.changeCard1(false);
+                    meta.action.changeCard2(false);
+                    meta.action.changeCard3(true);
+                  } else {
+                    meta.action.changeCard1(false);
+                    meta.action.changeCard2(false);
+                    meta.action.changeCard3(false);
+                  }
+                }}
+              >
+                <div class="flex flex-1 self-stretch flex-col items-start justify-start">
+                  <div class="flex self-stretch items-end justify-start px-4 pt-4">
+                    <div class="text-2xl font-bold leading-9 text-amber-500">
+                      Bibliognost
+                    </div>
+                  </div>
+                  <div class="flex self-stretch flex-col items-start justify-start px-4 pb-6">
+                    <div class="flex self-stretch items-end justify-start">
+                      <div class="flex items-start justify-start">
+                        <div class="text-xl font-bold leading-loose text-center">
+                          IDR54,00.00/
+                        </div>
+                      </div>
+                      <div class="flex items-start justify-start">
+                        <div class="text-sm leading-tight text-center text-gray-600">
+                          month
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex self-stretch items-start justify-start">
+                      <div class="text-sm leading-tight text-gray-600">
+                        Billed bi-annually at
+                      </div>
+                    </div>
+                    <div class="flex self-stretch items-end justify-start">
+                      <div class="flex items-start justify-start">
+                        <div class="text-base font-medium leading-normal text-center text-gray-900">
+                          IDR324,00.00/
+                        </div>
+                      </div>
+                      <div class="flex items-start justify-start">
+                        <div class="text-sm leading-tight text-center text-gray-600">
+                          6 month
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex self-stretch flex-col items-center justify-center p-4">
+                  <div class="text-xl font-medium leading-loose text-right">
+                    6 Months
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button
+              class={`flex self-stretch flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-amber-500 rounded rounded-md`}
+              style="height: 60px; min-height: 60px; max-height: 60px; background-color: #FF8F00"
+            >
+              <div
+                class={`text-xl font-bold leading-loose text-center text-white`}
+              >
+                {children || "Go Premium"}
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</>
