@@ -369,7 +369,7 @@
     }}
   />
   <div
-    class={`flex items-end justify-center bg-white`}
+    class={`flex self-stretch items-end justify-center bg-white`}
     style={"margin-bottom: 50px;"}
   >
     <div
@@ -454,9 +454,15 @@
                     class={`flex self-stretch flex-col items-start justify-start p-4 shadow rounded`}
                     style={`background-image: url('/fimgs/bg-8d8ddb80570065b889eef54faf9c419dd251956e');background-size:100% 100%;background-repeat:no-repeat;`}
                     onClick={() => {
+                      window.mobileApp.app.dialog.preloader("Loading...");
                       navigate(
-                        "/m/detail-book-page/" + meta.history[0].books.book_id
+                        "/m/read-book-page/" +
+                          meta.history[0].books.book_id +
+                          "/history"
                       );
+                      setTimeout(() => {
+                        window.mobileApp.app.dialog.close();
+                      }, 2000);
                     }}
                   >
                     <div class="flex self-stretch space-x-2 items-center justify-start rounded">
@@ -490,9 +496,15 @@
                       <m-button
                         class={`flex items-center justify-center px-4 py-0.5 bg-amber-500 shadow rounded`}
                         onClick={() => {
+                          window.mobileApp.app.dialog.preloader("Loading...");
                           navigate(
-                            "/m/read-book-page/" + meta.history[0].books.book_id
+                            "/m/read-book-page/" +
+                              meta.history[0].books.book_id +
+                              "/history"
                           );
+                          setTimeout(() => {
+                            window.mobileApp.app.dialog.close();
+                          }, 2000);
                         }}
                         style={`z-index: 1`}
                       >
@@ -1442,7 +1454,15 @@
                     <div
                       class={`flex space-x-4 items-start justify-start p-2 bg-white shadow shadow-inner rounded`}
                       onClick={() => {
-                        navigate("/m/detail-book-page/" + value.books.book_id);
+                        window.mobileApp.app.dialog.preloader("Loading...");
+                        navigate(
+                          "/m/read-book-page/" +
+                            value.books.book_id +
+                            "/history"
+                        );
+                        setTimeout(() => {
+                          window.mobileApp.app.dialog.close();
+                        }, 2000);
                       }}
                     >
                       <div

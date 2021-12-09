@@ -86,7 +86,12 @@
               <div
                 class={`flex self-stretch space-x-4 items-start justify-start bg-white shadow shadow-inner rounded my-2`}
               >
-                <div class="flex items-start justify-start">
+                <div
+                  class={`flex items-start justify-start`}
+                  onClick={() => {
+                    navigate("/m/detail-book-page/" + numList.book_id);
+                  }}
+                >
                   {numList.book_picture !== "-" && numList.book_picture !== "" && (
                     <img
                       src={`/upload/${numList.book_picture}`}
@@ -99,15 +104,15 @@
                   )}
                 </div>
                 <div class="flex flex-1 self-stretch flex-col items-start justify-center">
-                  <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
+                  <div
+                    class={`flex self-stretch flex-col space-y-2 items-start justify-start`}
+                    onClick={() => {
+                      navigate("/m/detail-book-page/" + numList.book_id);
+                    }}
+                  >
                     <div class="flex self-stretch flex-col items-start justify-start">
                       <div class="flex self-stretch items-start justify-start">
-                        <div
-                          class={`text-base font-medium leading-normal`}
-                          onClick={() => {
-                            navigate("/m/detail-book-page/" + numList.book_id);
-                          }}
-                        >
+                        <div class={`text-base font-medium leading-normal`}>
                           {numList.book_title}
                         </div>
                       </div>

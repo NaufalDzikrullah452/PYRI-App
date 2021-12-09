@@ -205,6 +205,9 @@
       },
     }}
     run={async () => {
+      runInAction(() => {
+        meta.showManagement = true;
+      });
       meta.action = {
         changeMasterData: (open) => {
           meta.showMasterData = open;
@@ -318,68 +321,76 @@
               style={`width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px; margin-right:25px !important;`}
             />
           </div>
-          {meta.showMasterData && (
-            <div
-              class={`flex self-stretch flex-col space-y-1 items-start justify-start`}
-            >
+          <div class="flex self-stretch flex-col items-start justify-start">
+            {
               <div
-                class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer}"
-                onClick={() => {
-                  navigate("/w-master-kategori");
-                }}
+                class={`flex self-stretch flex-col space-y-1 items-start justify-start`}
+                style={`overflow:hidden;
+  ${
+    meta.showMasterData
+      ? "transition: height 0.5s ease-in-out;height: 100%"
+      : "height: 0"
+  }`}
               >
-                <div />
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-base font-bold leading-normal text-gray-50">
-                    Kategori Buku
+                <div
+                  class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer}"
+                  onClick={() => {
+                    navigate("/w-master-kategori");
+                  }}
+                >
+                  <div />
+                  <div class="flex flex-1 items-start justify-start">
+                    <div class="text-base font-bold leading-normal text-gray-50">
+                      Kategori Buku
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer}"
+                  onClick={() => {
+                    navigate("/w-master-genre");
+                  }}
+                >
+                  <div />
+                  <div class="flex flex-1 items-start justify-start">
+                    <div class="text-base font-bold leading-normal text-gray-50">
+                      Genre Buku
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer}"
+                  onClick={() => {
+                    navigate("/w-master-author");
+                  }}
+                >
+                  <div />
+                  <div class="flex flex-1 items-start justify-start">
+                    <div class="text-base font-bold leading-normal text-white">
+                      Author{" "}
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer}"
+                  onClick={() => {
+                    navigate("/w-master-publisher");
+                  }}
+                >
+                  <div />
+                  <div class="flex flex-1 items-start justify-start">
+                    <div class="text-base font-bold leading-normal text-gray-50">
+                      Publisher
+                    </div>
                   </div>
                 </div>
               </div>
-              <div
-                class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer}"
-                onClick={() => {
-                  navigate("/w-master-genre");
-                }}
-              >
-                <div />
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-base font-bold leading-normal text-gray-50">
-                    Genre Buku
-                  </div>
-                </div>
-              </div>
-              <div
-                class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer}"
-                onClick={() => {
-                  navigate("/w-master-author");
-                }}
-              >
-                <div />
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-base font-bold leading-normal text-white">
-                    Author{" "}
-                  </div>
-                </div>
-              </div>
-              <div
-                class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer}"
-                onClick={() => {
-                  navigate("/w-master-publisher");
-                }}
-              >
-                <div />
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-base font-bold leading-normal text-gray-50">
-                    Publisher
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+            }
+          </div>
           <div
             class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
             style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
@@ -408,51 +419,62 @@
               style={`width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px;`}
             />
           </div>
-          {meta.showManagement && (
-            <div
-              class={`flex self-stretch flex-col space-y-1 items-start justify-start`}
-            >
+          <div class="flex self-stretch flex-col items-start justify-start">
+            {
               <div
-                class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
-                onClick={() => {
-                  navigate("/w-master-user");
-                }}
+                class={`flex self-stretch flex-col space-y-1 items-start justify-start`}
+                style={`overflow:hidden;
+  ${
+    meta.showManagement
+      ? "transition: height 0.5s ease-in-out; height: 100%"
+      : "height: 0"
+  }`}
               >
-                <div />
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-base font-bold leading-normal text-gray-50">
-                    Data User
+                <div
+                  class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                  style="background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;"
+                  onClick={() => {
+                    navigate("/w-master-user");
+                  }}
+                >
+                  <div />
+                  <div class="flex flex-1 items-start justify-start">
+                    <div
+                      class={`text-base font-bold leading-normal text-gray-50`}
+                      style={`color:#FF8F00`}
+                    >
+                      Data User
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
+                  onClick={() => {
+                    navigate("/w-master-user-blocked");
+                  }}
+                >
+                  <div />
+                  <div class="flex flex-1 items-start justify-start">
+                    <div class="text-base font-bold leading-normal text-gray-50">
+                      Blocked User
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
+                >
+                  <div />
+                  <div class="flex flex-1 items-start justify-start">
+                    <div class="text-base font-bold leading-normal text-gray-50">
+                      Subcription
+                    </div>
                   </div>
                 </div>
               </div>
-              <div
-                class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
-                onClick={() => {
-                  navigate("/w-master-user-blocked");
-                }}
-              >
-                <div />
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-base font-bold leading-normal text-gray-50">
-                    Blocked User
-                  </div>
-                </div>
-              </div>
-              <div
-                class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
-              >
-                <div />
-                <div class="flex flex-1 items-start justify-start">
-                  <div class="text-base font-bold leading-normal text-gray-50">
-                    Subcription
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+            }
+          </div>
           <div
             class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
             style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
@@ -679,40 +701,37 @@
                   >
                     <th
                       class={`flex self-stretch flex-col items-start justify-center`}
-                      style={`width: 3%`}
                     >
                       <div class="text-base font-bold leading-normal text-white">
                         NO
                       </div>
                     </th>
                     <th
-                      class={`flex self-stretch items-center justify-start pr-6`}
-                      style={"width: 26%"}
+                      class={`flex self-stretch items-center justify-start pr-6 w-full`}
+                      style={"min-width: 210px;"}
                     >
                       <div class="text-base font-bold leading-normal text-white">
                         USER
                       </div>
                     </th>
                     <th
-                      class={`flex self-stretch items-center justify-start`}
-                      style={"width: 20%"}
+                      class={`flex self-stretch items-center justify-start w-full`}
+                      style={"min-width: 150px"}
                     >
                       <div class="text-base font-bold leading-normal text-white">
                         TANGGAL LAHIR
                       </div>
                     </th>
                     <th
-                      class={`flex self-stretch items-center justify-start px-2.5`}
-                      style={"width: 5%"}
+                      class={`flex self-stretch items-center justify-start px-2.5 w-full`}
+                      style={"min-width: 50px"}
                     >
                       <select
-                        class={`flex flex-col space-y-2.5 items-start justify-start text-base font-bold leading-normal text-white`}
+                        class={`flex flex-col space-y-2.5 items-start justify-start text-base font-bold leading-normal text-white cursor-pointer`}
                         defaultValue={"ROLE"}
                         style={`border: none;
   color: white;
   outline: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
     background-color: transparent;`}
                         id={"filterRole"}
                         onChange={(e) => {
@@ -753,32 +772,32 @@
                       </select>
                     </th>
                     <th
-                      class={`flex self-stretch items-center justify-start`}
-                      style={"width: 10%"}
+                      class={`flex self-stretch items-center justify-center w-full`}
+                      style={"min-width: 130px; "}
                     >
                       <div class="text-base font-bold leading-normal text-white">
                         JENIS KELAMIN
                       </div>
                     </th>
                     <th
-                      class={`flex self-stretch items-center justify-center`}
-                      style={"width: 20%"}
+                      class={`flex self-stretch items-center justify-center w-full`}
+                      style={"min-width: 150px"}
                     >
                       <div class="text-base font-bold leading-normal text-center text-white">
                         TANGGAL GABUNG
                       </div>
                     </th>
                     <th
-                      class={`flex self-stretch items-center justify-center pl-2.5`}
-                      style={"width: 6%"}
+                      class={`flex self-stretch items-center justify-start pl-2.5 w-full`}
+                      style={"min-width: 50px"}
                     >
                       <div class="text-base font-bold leading-normal text-white">
                         PREMIUM
                       </div>
                     </th>
                     <th
-                      class={`flex self-stretch items-center justify-center`}
-                      style={"width: 10%"}
+                      class={`flex self-stretch items-center justify-center w-full`}
+                      style={"min-width: 105px"}
                     >
                       <div class="text-base font-bold leading-normal text-white">
                         AKSI
@@ -794,14 +813,16 @@
                         var odd = (i + 1) % 2;
                         return (
                           <tr
-                            class={`w-full flex self-stretch space-x-3 items-center justify-start px-4 py-2.5 bg-white rounded ${
+                            class={`w-full flex self-stretch space-x-3 items-center justify-start px-4 py-2.5 rounded ${
                               odd === 0 ? "bg-orange-100" : "bg-white"
                             }`}
                             style={":hover {background-color: #ffbe76;"}
                           >
                             <td
                               class={`flex self-stretch flex-col items-center justify-center pl-2.5`}
-                              style={"width: 3%"}
+                              style={
+                                "width: 15px;min-width: 15px;max-width: 15px;"
+                              }
                             >
                               <div class={`text-base leading-normal`}>
                                 {i + meta.first_entries + 1}
@@ -809,7 +830,7 @@
                             </td>
                             <td
                               class={`flex self-stretch space-x-3 items-center justify-start`}
-                              style={`width: 20%`}
+                              style={`min-width: 210px`}
                             >
                               <img
                                 src={
@@ -835,16 +856,16 @@
                                 <div
                                   class={`text-sm leading-tight text-gray-600`}
                                 >
-                                  {numList.user_email.length > 20
-                                    ? numList.user_email.substring(0, 20) +
+                                  {numList.user_email.length > 17
+                                    ? numList.user_email.substring(0, 17) +
                                       "..."
                                     : numList.user_email || "Email"}
                                 </div>
                               </div>
                             </td>
                             <td
-                              class={`flex self-stretch items-center justify-center`}
-                              style={"padding-left:15px; width: 20%"}
+                              class={`flex self-stretch items-center justify-center w-full`}
+                              style={"width: 150px"}
                             >
                               <div
                                 class={`text-base font-medium leading-normal text-gray-600`}
@@ -856,8 +877,8 @@
                               </div>
                             </td>
                             <td
-                              class={`flex flex-1 self-stretch items-center justify-center`}
-                              style={`width: 5%`}
+                              class={`flex flex-1 self-stretch items-center justify-center w-full`}
+                              style={`min-width: 50px`}
                             >
                               <div
                                 class={`text-base font-medium leading-normal text-gray-600`}
@@ -868,18 +889,18 @@
                               </div>
                             </td>
                             <td
-                              class={`flex flex-1 self-stretch items-center justify-start pr-3`}
-                              style={"width: 5%"}
+                              class={`flex flex-1 self-stretch items-center justify-center pr-3 w-full`}
+                              style={"min-width: 130px"}
                             >
                               <div
-                                class={`text-base font-bold leading-normal text-gray-600`}
+                                class={`text-base font-bold leading-normal text-center text-gray-600`}
                               >
                                 {numList.user_gender || "Unknown"}
                               </div>
                             </td>
                             <td
-                              class={`flex flex-1 self-stretch items-center justify-center`}
-                              style={"width: 20%"}
+                              class={`flex flex-1 self-stretch items-center justify-end w-full`}
+                              style={"min-width: 150px"}
                             >
                               <div
                                 class={`text-base font-bold leading-normal text-gray-600`}
@@ -891,8 +912,8 @@
                               </div>
                             </td>
                             <td
-                              class={`flex flex-1 self-stretch space-x-2.5 items-center justify-center`}
-                              style={"width: 5%"}
+                              class={`flex flex-1 self-stretch space-x-2.5 items-center justify-center w-full`}
+                              style={"min-width: 50px"}
                             >
                               {numList.user_membership_status === "Active" && (
                                 <div
@@ -917,8 +938,8 @@
                               )}
                             </td>
                             <td
-                              class={`flex flex-1 self-stretch items-center justify-center`}
-                              style={"width: 17%"}
+                              class={`flex flex-1 self-stretch items-center justify-center w-full`}
+                              style={"min-width: 105px"}
                             >
                               <div class="flex flex-1 self-stretch space-x-1 items-center justify-center">
                                 <div
@@ -982,14 +1003,16 @@
                         var odd = (i + 1) % 2;
                         return (
                           <tr
-                            class={`w-full flex self-stretch space-x-3 items-center justify-start px-4 py-2.5 rounded ${
+                            class={`w-full flex self-stretch space-x-3 items-center justify-start px-4 py-2.5 bg-white rounded ${
                               odd === 0 ? "bg-orange-100" : "bg-white"
                             }`}
                             style={":hover {background-color: #ffbe76;"}
                           >
                             <td
                               class={`flex self-stretch flex-col items-center justify-center pl-2.5`}
-                              style={"width: 3%"}
+                              style={
+                                "width: 15px;min-width: 15px;max-width: 15px;"
+                              }
                             >
                               <div class={`text-base leading-normal`}>
                                 {i + meta.first_entries + 1}
@@ -997,7 +1020,7 @@
                             </td>
                             <td
                               class={`flex self-stretch space-x-3 items-center justify-start`}
-                              style={`width: 20%`}
+                              style={`min-width: 210px`}
                             >
                               <img
                                 src={
@@ -1023,16 +1046,16 @@
                                 <div
                                   class={`text-sm leading-tight text-gray-600`}
                                 >
-                                  {numList.user_email.length > 20
-                                    ? numList.user_email.substring(0, 20) +
+                                  {numList.user_email.length > 17
+                                    ? numList.user_email.substring(0, 17) +
                                       "..."
                                     : numList.user_email || "Email"}
                                 </div>
                               </div>
                             </td>
                             <td
-                              class={`flex self-stretch items-center justify-center`}
-                              style={"padding-left:15px; width: 20%"}
+                              class={`flex self-stretch items-center justify-center w-full`}
+                              style={"width: 150px"}
                             >
                               <div
                                 class={`text-base font-medium leading-normal text-gray-600`}
@@ -1044,8 +1067,8 @@
                               </div>
                             </td>
                             <td
-                              class={`flex flex-1 self-stretch items-center justify-center`}
-                              style={`width: 5%`}
+                              class={`flex flex-1 self-stretch items-center justify-center w-full`}
+                              style={`min-width: 50px`}
                             >
                               <div
                                 class={`text-base font-medium leading-normal text-gray-600`}
@@ -1056,18 +1079,18 @@
                               </div>
                             </td>
                             <td
-                              class={`flex flex-1 self-stretch items-center justify-start pr-3`}
-                              style={"width: 5%"}
+                              class={`flex flex-1 self-stretch items-center justify-center pr-3 w-full`}
+                              style={"min-width: 130px"}
                             >
                               <div
-                                class={`text-base font-bold leading-normal text-gray-600`}
+                                class={`text-base font-bold leading-normal text-center text-gray-600`}
                               >
                                 {numList.user_gender || "Unknown"}
                               </div>
                             </td>
                             <td
-                              class={`flex flex-1 self-stretch items-center justify-center`}
-                              style={"width: 20%"}
+                              class={`flex flex-1 self-stretch items-center justify-end w-full`}
+                              style={"min-width: 150px"}
                             >
                               <div
                                 class={`text-base font-bold leading-normal text-gray-600`}
@@ -1079,8 +1102,8 @@
                               </div>
                             </td>
                             <td
-                              class={`flex flex-1 self-stretch space-x-2.5 items-center justify-center`}
-                              style={"width: 5%"}
+                              class={`flex flex-1 self-stretch space-x-2.5 items-center justify-center w-full`}
+                              style={"min-width: 50px"}
                             >
                               {numList.user_membership_status === "Active" && (
                                 <div
@@ -1105,8 +1128,8 @@
                               )}
                             </td>
                             <td
-                              class={`flex flex-1 self-stretch items-center justify-center`}
-                              style={"width: 17%"}
+                              class={`flex flex-1 self-stretch items-center justify-center w-full`}
+                              style={"min-width: 105px"}
                             >
                               <div class="flex flex-1 self-stretch space-x-1 items-center justify-center">
                                 <div
@@ -1118,12 +1141,12 @@
                                   }}
                                 >
                                   <img
-                                    src="/fimgs/4490_1316079.x1.svg"
-                                    style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
+                                    src="/fimgs/3201_185142.x1.svg"
+                                    class={`flex items-start justify-start`}
                                   />
                                 </div>
                                 <img
-                                  src="/fimgs/4490_1316080.x1.svg"
+                                  src="/fimgs/3201_185143.x1.svg"
                                   class={`flex items-center justify-center rounded`}
                                   style={`cursor: pointer`}
                                   onClick={() => {
@@ -1141,9 +1164,9 @@
                                   }}
                                 />
                                 <img
-                                  src="/fimgs/4490_1316082.x1.svg"
+                                  src="/fimgs/3201_185145.x1.svg"
                                   class={`flex items-start justify-start cursor-pointer`}
-                                  style={`width: 20px; min-width: 20px; max-width: 20px; height: 20px; min-height: 20px; max-height: 20px;`}
+                                  style={``}
                                   onClick={() => {
                                     var res = false;
 
