@@ -7,6 +7,83 @@
       changeProfile: (open) => {},
       changeManagement: (open) => {},
       changeMasterData: (open) => {},
+      users: [],
+      admin: [],
+      searching: "",
+      entries: 5,
+      last_entries: 5,
+      first_entries: 0,
+      pages: 1,
+      sum_pages: 0,
+      pages_array: [],
+      loading_page: true,
+
+      async onChange(key, e) {
+        this.loading_page = true;
+        let value = e.target.value;
+
+        if (key === "entries") {
+          runInAction(() => {
+            this[key] = value;
+            this.first_entries = 0;
+            this.pages = 1;
+            this.last_entries = parseInt(value);
+            this.sum_pages = Math.ceil(this.users.length / this.entries);
+            this.pages_array = Array.apply(null, {
+              length: this.sum_pages,
+            }).map(Number.call, Number);
+            this.loading_page = false;
+          });
+        } else if (key === "searching") {
+          runInAction(() => {
+            this[key] = value;
+          });
+          api("/api/api-users", {
+            users: {
+              user_name: value,
+            },
+            e: "SearchingUserSubscription",
+          }).then((res) => {
+            // console.log(res.users);
+            runInAction(() => {
+              this.users = res.users;
+              this.first_entries = 0;
+              this.pages = 1;
+              this.last_entries = parseInt(this.entries);
+              this.sum_pages = Math.ceil(this.users.length / this.entries); // meta.page_array = new Array(meta.sum_page);
+
+              this.pages_array = Array.apply(null, {
+                length: this.sum_pages,
+              }).map(Number.call, Number);
+              this.loading_page = false;
+            });
+          });
+        } // console.log(key + " : " + this[key]);
+        // console.log("page : " + this.page);
+        // console.log("last_entries : " + this.last_entries);
+      },
+
+      async onClickPages(key, value) {
+        if (value !== this.pages && value !== 0 && value <= this.sum_pages) {
+          const last_pages = this.pages;
+          const gap = value - last_pages;
+          const res = gap > 0;
+          runInAction(() => {
+            this.pages = value;
+
+            if (res) {
+              this.first_entries += parseInt(this.entries) * Math.abs(gap);
+              this.last_entries += parseInt(this.entries) * Math.abs(gap);
+            } else {
+              this.first_entries -= parseInt(this.entries) * Math.abs(gap);
+              this.last_entries -= parseInt(this.entries) * Math.abs(gap);
+            }
+          }); // console.log(key + " : " + value);
+          // console.log("first_entries : " + this.first_entries);
+          // console.log("last_entries : " + this.last_entries);
+          // console.log("gap : " + res);
+        }
+      },
 
       async logout() {
         confirm("Logout of admin?") &&
@@ -47,6 +124,24 @@
 
       if (window.user.roleAdmin !== "admin") {
         navigate("/login-admin");
+      } else {
+        var user = "";
+        await api("/api/api-users", {
+          e: "ReadUserSubscription",
+        }).then((res) => {
+          // console.log(res);
+          user = res.users;
+        });
+        runInAction(() => {
+          meta.admin = window.user.admin;
+          meta.users = user;
+          meta.sum_pages = Math.ceil(meta.users.length / meta.entries); // meta.page_array = new Array(meta.sum_page);
+
+          meta.pages_array = Array.apply(null, {
+            length: meta.sum_pages,
+          }).map(Number.call, Number);
+          meta.loading_page = false;
+        });
       }
     }}
   />
@@ -321,20 +416,34 @@
                         }
                       }}
                     >
-                      <img
-                        src="/fimgs/4385_21935.x1.png"
-                        class="flex items-start justify-start p-2.5"
+                      <div
+                        class={`flex items-start justify-start p-2.5`}
                         style="width: 60px; min-width: 60px; max-width: 60px; height: 60px; min-height: 60px; max-height: 60px;"
-                      />
+                      >
+                        <img
+                          src={
+                            meta.admin.user_picture
+                              ? "/upload/" + meta.admin.user_picture
+                              : "/fimgs/4458_103716.x1.png"
+                          }
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "/fimgs/4458_103716.x1.png";
+                          }}
+                          style="background-image: url('/fimgs/bg-8fb2c341eee5b05b3a5c9f2f0c33ea6665ec17fb');background-size:100% 100%;background-repeat:no-repeat; "
+                          class={`rounded-full`}
+                        />
+                      </div>
                       <div class="flex items-start justify-start">
-                        <div class="text-base font-medium leading-normal text-gray-700">
-                          Savannah Nguyen
+                        <div
+                          class={`text-base font-medium leading-normal text-gray-700`}
+                        >
+                          {meta.admin.user_name ||
+                            meta.admin.user_username ||
+                            "Admin"}
                         </div>
                       </div>
-                      <img
-                        src="/fimgs/4385_21939.x1.svg"
-                        style="width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px;"
-                      />
+                      <img src="/fimgs/4385_20950.x1.svg" />
                     </div>
                   </div>
                   {meta.showProfile && (
@@ -348,6 +457,9 @@
                         <div
                           class={`flex self-stretch items-center justify-center`}
                           style={"cursor:pointer;"}
+                          onClick={() => {
+                            navigate("/w-profile-admin");
+                          }}
                         >
                           <div class="text-base font-medium leading-normal text-gray-900">
                             Edit Profile
@@ -362,7 +474,7 @@
                             Logout
                           </div>
                           <img
-                            src="/fimgs/I4385_21942_1048_3884.x1.svg"
+                            src="/fimgs/I4608_14792_1048_3884.x1.svg"
                             class={`flex items-start justify-start`}
                             style={`width: 18px; min-width: 18px; max-width: 18px; height: 18px; min-height: 18px; max-height: 18px;`}
                           />
@@ -389,12 +501,11 @@
                 </div>
                 <div
                   class={`w-full flex space-x-4 items-center justify-start px-4 py-2 bg-gray-100 rounded-lg`}
-                  style="width: 300px; min-width: 300px; max-width: 300px; height: 40px; min-height: 40px; max-height: 40px;"
+                  style="width: 300px; min-width: 300px; max-width: 300px;"
                 >
                   <img
                     src="/fimgs/4496_26234.x1.svg"
-                    class="flex items-start justify-start"
-                    style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
+                    class={`flex items-start justify-start`}
                   />
                   <input
                     class={"w-full"}
@@ -406,7 +517,6 @@
                     onChange={(e) => {
                       meta.onChange("searching", e);
                     }}
-                    value={meta.searching}
                   />
                 </div>
               </div>
@@ -419,30 +529,33 @@
                     <select
                       class={`flex flex-col space-y-2.5 items-center justify-start px-6 py-1 bg-white border rounded border-gray-500`}
                       style={`width: 95.87px; min-width: 95.87px; max-width: 95.87px;`}
-                      defaultValue="5"
+                      value={meta.entries}
+                      onChange={(e) => {
+                        meta.onChange("entries", e);
+                      }}
                     >
                       <option class={`hidden`} />
                       <option
                         value="5"
-                        class={`flex flex-1 self-stretch flex-col items-start justify-start`}
+                        class={`flex flex-1 self-stretch flex-col items-start justify-start bg-white`}
                       >
                         5
                       </option>
                       <option
                         value="10"
-                        class="flex flex-1 self-stretch flex-col items-start justify-start"
+                        class="flex flex-1 self-stretch flex-col items-start justify-start bg-white"
                       >
                         10
                       </option>
                       <option
                         value="25"
-                        class="flex flex-1 self-stretch flex-col items-start justify-start"
+                        class="flex flex-1 self-stretch flex-col items-start justify-start bg-white"
                       >
                         25
                       </option>
                       <option
                         value="50"
-                        class="flex flex-1 self-stretch flex-col items-start justify-start"
+                        class="flex flex-1 self-stretch flex-col items-start justify-start bg-white"
                       >
                         50
                       </option>
@@ -503,90 +616,184 @@
                       </th>
                     </tr>
                   </thead>
-                  <tbody class="flex flex-col items-start justify-start">
-                    <tr
-                      class={`w-full flex space-x-3 items-center justify-start px-4 py-2.5 bg-white rounded`}
-                      style=":hover {background-color: #ffbe76;"
-                    >
-                      <td
-                        class={`flex flex-col items-center justify-center pl-2`}
-                        style={"width:3% padding-left:10px;"}
-                      >
-                        <div class="text-base leading-normal">1</div>
-                      </td>
-                      <td
-                        class={`flex space-x-3 items-center justify-start pl-2`}
-                        style="width:27%;"
-                      >
-                        <img
-                          src="/fimgs/4385_21969.x1.png"
-                          style="border-radius:50px;"
-                        />
-                        <td
-                          class={`flex flex-col items-start justify-center`}
-                          style={"padding: 8px;"}
+                  <tbody class="flex flex-col space-y-2.5 items-start justify-start">
+                    {meta.users.map((value, index) => {
+                      return (
+                        <tr
+                          class={`w-full flex space-x-3 items-center justify-start px-4 py-2.5 bg-white rounded`}
+                          style=":hover {background-color: #ffbe76;"
                         >
-                          <div class={`text-base font-medium leading-normal`}>
-                            Nillasanti Puspita
-                          </div>
-                          <div class="text-sm leading-tight text-gray-600">
-                            bill.sanders@example.com
-                          </div>
+                          <td
+                            class={`flex flex-col items-center justify-center pl-2`}
+                            style={"width:3% padding-left:10px;"}
+                          >
+                            <div class={`text-base leading-normal`}>
+                              {index + 1}
+                            </div>
+                          </td>
+                          <td
+                            class={`flex space-x-3 items-center justify-start pl-2`}
+                            style="width:27%;"
+                          >
+                            <img
+                              src={
+                                value.users.user_picture
+                                  ? "/upload" + value.users.user_email
+                                  : "/fimgs/4385_21969.x1.png"
+                              }
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = "/fimgs/4385_21969.x1.png";
+                              }}
+                              style="width: 44px; min-width: 44px; max-width: 44px; height: 44px; min-height: 44px; max-height: 44px;background-image: url('/fimgs/bg-b734a5be3aee0fd453c592a0baf71a7e7f723cd8');background-size:100% 100%;background-repeat:no-repeat; border-radius:50px;"
+                            />
+                            <td
+                              class={`flex flex-col items-start justify-center`}
+                              style={"padding: 8px;"}
+                            >
+                              <div
+                                class={`text-base font-medium leading-normal`}
+                              >
+                                {value.users.user_name || "Name"}
+                              </div>
+                              <div
+                                class={`text-sm leading-tight text-gray-600`}
+                              >
+                                {value.users.user_email || "email"}
+                              </div>
+                            </td>
+                          </td>
+                          <td
+                            class={`flex flex-1 self-stretch items-center justify-start`}
+                            style="width:20%; padding-left:20px;"
+                          >
+                            <div class="flex items-start justify-start px-3 py-1 bg-amber-500 rounded-full">
+                              <div class="text-base font-bold leading-normal text-white">
+                                Aktif
+                              </div>
+                            </div>
+                          </td>
+                          <td
+                            class={`flex flex-1 self-stretch items-center justify-start`}
+                            style="width:20%;"
+                          >
+                            <div
+                              class={`text-base font-medium leading-normal text-gray-600`}
+                            >
+                              {dateFormat(value.join_date, "dd MMMM yyyy") ||
+                                "-"}
+                            </div>
+                          </td>
+                          <td
+                            class={`flex flex-1 self-stretch items-center justify-start`}
+                            style="width:30%;"
+                          >
+                            <div
+                              class={`text-base font-bold leading-normal text-gray-600`}
+                            >
+                              {dateFormat(value.expired_date, "dd MMMM yyyy") ||
+                                "-"}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                    {meta.users.length === 0 && (
+                      <tr
+                        class={`w-full flex self-stretch items-center justify-center px-4 py-2.5 rounded`}
+                        style={""}
+                      >
+                        <td class={`text-base leading-normal`}>
+                          Data not found!
                         </td>
-                      </td>
-                      <td
-                        class={`flex flex-1 self-stretch items-center justify-start`}
-                        style="width:20%; padding-left:20px;"
-                      >
-                        <div class="flex items-start justify-start px-3 py-1 bg-amber-500 rounded-full">
-                          <div class="text-base font-bold leading-normal text-white">
-                            Aktif
-                          </div>
-                        </div>
-                      </td>
-                      <td
-                        class={`flex flex-1 self-stretch items-center justify-start`}
-                        style="width:20%;"
-                      >
-                        <div class="text-base font-medium leading-normal text-gray-600">
-                          22 Juni 2021
-                        </div>
-                      </td>
-                      <td
-                        class={`flex flex-1 self-stretch items-center justify-start`}
-                        style="width:30%;"
-                      >
-                        <div class="text-base font-bold leading-normal text-gray-600">
-                          22 Juni 2021
-                        </div>
-                      </td>
-                    </tr>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
                 <div class="flex self-stretch space-x-2.5 items-center justify-start bg-white">
-                  <div class="flex flex-1 items-start justify-start">
-                    <div class="text-base leading-normal text-orange-900">
-                      Showing 1 to 6 of 6 entries
-                    </div>
+                  <div class="flex flex-1 space-x-2.5 items-start justify-start">
+                    {
+                      <div
+                        class={`text-base leading-normal text-orange-900`}
+                      >{`Showing ${meta.first_entries + 1} to 
+${
+  meta.last_entries <= meta.users.length ? meta.last_entries : meta.users.length
+} of ${meta.users.length} entries`}</div>
+                    }
+                    {false && meta.filter.role !== "ROLE" && (
+                      <div class={`text-base leading-normal`}>{`Showing ${
+                        meta.first_entries + 1
+                      } to 
+${
+  meta.last_entries <= meta.filter.dataRole.length
+    ? meta.last_entries
+    : meta.filter.dataRole.length
+} of ${meta.filter.dataRole.length} entries`}</div>
+                    )}
                   </div>
                   <div class="flex space-x-2 items-start justify-start">
-                    <div class="flex self-stretch flex-col items-center justify-center px-2 bg-white rounded">
-                      <img
-                        src="/fimgs/4385_22030.x1.svg"
-                        style="width: 18px; min-width: 18px; max-width: 18px; height: 14px; min-height: 14px; max-height: 14px;"
-                      />
+                    <div
+                      class={`flex self-stretch flex-col items-center justify-center px-2 bg-white rounded cursor-pointer`}
+                      style={`:hover {outline: 2px solid #ababab;`}
+                      onClick={() => {
+                        meta.onClickPages(
+                          "page" + (meta.pages - 1),
+                          meta.pages - 1
+                        );
+                      }}
+                    >
+                      <img src="/fimgs/4385_22030.x1.svg" />
                     </div>
-                    <div class="flex flex-col items-start justify-start px-2.5 py-1 bg-amber-500 rounded">
-                      <div class="text-base leading-normal">1</div>
-                    </div>
-                    <div class="flex flex-col items-start justify-start px-2.5 py-1 bg-white rounded">
-                      <div class="text-base leading-normal">2</div>
-                    </div>
-                    <div class="flex self-stretch flex-col items-center justify-center px-2 bg-white rounded">
-                      <img
-                        src="/fimgs/4385_22037.x1.svg"
-                        style="width: 18px; min-width: 18px; max-width: 18px; height: 14px; min-height: 14px; max-height: 14px;"
-                      />
+                    {meta.pages_array.map((numList, i) => {
+                      const upper =
+                        meta.pages + 2 < meta.pages_array.length
+                          ? meta.pages + 2
+                          : meta.pages_array.length;
+                      const under = meta.pages - 2 > 0 ? meta.pages - 2 : 1;
+
+                      if (
+                        (numList + 1 < upper && numList + 1 > under) ||
+                        numList + 1 === 1 ||
+                        numList + 1 === meta.pages_array.length
+                      ) {
+                        return (
+                          <div class={`flex items-start justify-start`}>
+                            {
+                              <div
+                                class={`flex flex-col items-start justify-start px-2.5 py-1 bg-white rounded`}
+                                style={`${
+                                  "page" + meta.pages === "page" + (i + 1)
+                                    ? `background: #FF8F00;`
+                                    : `:hover {background-color: #ffc780;}`
+                                }
+  cursor:pointer;`}
+                                onClick={() => {
+                                  meta.onClickPages("page" + (i + 1), i + 1);
+                                }}
+                              >
+                                <div class={`text-base leading-normal`}>
+                                  {numList + 1}
+                                </div>
+                              </div>
+                            }
+                          </div>
+                        );
+                      } else {
+                        if (numList + 1 === upper || numList + 1 === under)
+                          return "...";
+                      }
+                    })}
+                    <div
+                      class={`flex self-stretch flex-col items-center justify-center px-2 bg-white rounded cursor-pointer`}
+                      style={`:hover {outline: 2px solid #ababab;`}
+                      onClick={() => {
+                        meta.onClickPages(
+                          "page" + (meta.pages + 1),
+                          meta.pages + 1
+                        );
+                      }}
+                    >
+                      <img src="/fimgs/4385_22037.x1.svg" />
                     </div>
                   </div>
                 </div>

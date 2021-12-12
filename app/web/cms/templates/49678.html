@@ -30,25 +30,6 @@
         this.tabActivePyri = tab;
       },
 
-      async getRatingPopular(data) {
-        if (this.tabActive === "home") {
-          var avg = 0;
-          var sum = 0;
-
-          if (data.length !== 0) {
-            data.map((value, index) => {
-              sum += value.rating_point;
-            });
-            avg = parseFloat(sum / data.length);
-          } // console.log(sum + "/" + data.length + " = " + avg)
-          // console.log(avg)
-
-          runInAction(() => {
-            this.get_rating_popular.push(avg);
-          });
-        }
-      },
-
       async onClickTabExplore(tab) {
         if (tab === "categories") {
           this.actionCategory();
@@ -358,8 +339,16 @@
       runInAction(() => {
         meta.user = window.user.user || [];
         meta.popularBook = popularBook;
-        meta.newReleaseBook = newReleaseBook; // console.log(popularBook);
-
+        meta.newReleaseBook = newReleaseBook;
+        popularBook.map((a) => {
+          var sum = 0;
+          var avg = 0;
+          a.rating.map((b) => {
+            sum += b.rating_point; // console.log(console.log(b.rating_point));
+          });
+          avg = parseFloat(sum / a.rating.length);
+          meta.get_rating_popular.push(avg);
+        });
         setTimeout(() => {
           runInAction(() => {
             meta.loading = false;
@@ -369,7 +358,7 @@
     }}
   />
   <div
-    class={`flex self-stretch items-end justify-center bg-white`}
+    class={`flex items-end justify-center bg-white`}
     style={"margin-bottom: 50px;"}
   >
     <div
@@ -695,85 +684,77 @@
                   <div
                     class={`flex flex-1 space-x-3 items-start justify-start`}
                   >
-                    {meta.popularBook
-                      .slice(
-                        0,
-                        meta.popularBook.length > 5
-                          ? 5
-                          : meta.popularBook.length
-                      )
-                      .map((value, index) => {
-                        meta.getRatingPopular(value.rating);
-                        return (
-                          <div
-                            class={`flex flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded shadow`}
-                            onClick={() => {
-                              navigate("/m/detail-book-page/" + value.book_id);
+                    {meta.popularBook.map((value, index) => {
+                      return (
+                        <div
+                          class={`flex flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded shadow`}
+                          onClick={() => {
+                            navigate("/m/detail-book-page/" + value.book_id);
+                          }}
+                        >
+                          <img
+                            src={
+                              value.book_picture
+                                ? "/upload/" + value.book_picture
+                                : "/fimgs/1718_224584.x1.png"
+                            }
+                            style={`width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat; border-radius: 4%`}
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = "/fimgs/1718_224584.x1.png";
                             }}
-                          >
-                            <img
-                              src={
-                                value.book_picture
-                                  ? "/upload/" + value.book_picture
-                                  : "/fimgs/1718_224584.x1.png"
-                              }
-                              style={`width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat; border-radius: 4%`}
-                              onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.src = "/fimgs/1718_224584.x1.png";
-                              }}
-                            />
-                            <div class="flex flex-1 self-stretch flex-col space-y-1 items-start justify-start px-2 pb-2">
-                              <div class="flex items-start justify-start">
-                                <div class="flex items-center justify-center rounded-full">
-                                  <div
-                                    class={`text-xs font-medium leading-none text-center text-gray-500`}
-                                  >
-                                    {value.tags_books_book_genre_one_idTotags
-                                      .tag_name || "Genre"}
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="flex self-stretch items-center justify-start">
+                          />
+                          <div class="flex flex-1 self-stretch flex-col space-y-1 items-start justify-start px-2 pb-2">
+                            <div class="flex items-start justify-start">
+                              <div class="flex items-center justify-center rounded-full">
                                 <div
-                                  class={`text-sm font-medium leading-tight`}
-                                  style={`height: 3.75em;     
-    overflow: hidden;`}
+                                  class={`text-xs font-medium leading-none text-center text-gray-500`}
                                 >
-                                  {value.book_title || "Book Title"}
+                                  {value.tags_books_book_genre_one_idTotags
+                                    .tag_name || "Genre"}
                                 </div>
                               </div>
-                              <div class="flex self-stretch space-x-2 items-center justify-start">
-                                <div class="flex items-center justify-center">
-                                  <div class="flex space-x-0.5 items-center justify-center pr-0.5">
-                                    <img
-                                      src="/fimgs/1718_224593.x1.svg"
-                                      class="flex items-center justify-center"
-                                      style="width: 12px; min-width: 12px; max-width: 12px; height: 12px; min-height: 12px; max-height: 12px;"
-                                    />
-                                    <div class={`text-xs leading-none`}>
-                                      {meta.get_rating_popular[index] || 0}
-                                    </div>
+                            </div>
+                            <div class="flex self-stretch items-center justify-start">
+                              <div
+                                class={`text-sm font-medium leading-tight`}
+                                style={`height: 3.75em;     
+    overflow: hidden;`}
+                              >
+                                {value.book_title || "Book Title"}
+                              </div>
+                            </div>
+                            <div class="flex self-stretch space-x-2 items-center justify-start">
+                              <div class="flex items-center justify-center">
+                                <div class="flex space-x-0.5 items-center justify-center pr-0.5">
+                                  <img
+                                    src="/fimgs/1718_224593.x1.svg"
+                                    class="flex items-center justify-center"
+                                    style="width: 12px; min-width: 12px; max-width: 12px; height: 12px; min-height: 12px; max-height: 12px;"
+                                  />
+                                  <div class={`text-xs leading-none`}>
+                                    {meta.get_rating_popular.length !== 0
+                                      ? meta.get_rating_popular[index]
+                                      : 0}
                                   </div>
                                 </div>
-                                <div class="flex items-center justify-center">
-                                  <img
-                                    src="/fimgs/4000_79452.x1.svg"
-                                    class={`flex flex-col items-start justify-start pr-0.5`}
-                                  />
-                                  <div
-                                    class={`text-xs leading-none text-center`}
-                                  >
-                                    {value.viewBook.length > 999
-                                      ? value.viewBook.length / 1000 + "k"
-                                      : value.viewBook.length}
-                                  </div>
+                              </div>
+                              <div class="flex items-center justify-center">
+                                <img
+                                  src="/fimgs/4000_79452.x1.svg"
+                                  class={`flex flex-col items-start justify-start pr-0.5`}
+                                />
+                                <div class={`text-xs leading-none text-center`}>
+                                  {value.viewBook.length > 999
+                                    ? value.viewBook.length / 1000 + "k"
+                                    : value.viewBook.length}
                                 </div>
                               </div>
                             </div>
                           </div>
-                        );
-                      })}
+                        </div>
+                      );
+                    })}
                     <div
                       class={`flex self-stretch flex-col items-center justify-center px-1 pt-1 pb-2.5 bg-white rounded`}
                       onClick={() => {
@@ -1023,6 +1004,7 @@
             {!meta.loading && (
               <div
                 class={`flex self-stretch flex-col space-y-2.5 items-start justify-start`}
+                id={`wrapper`}
               >
                 {meta.newReleaseBook.length !== 0 &&
                   meta.newReleaseBook.map((value, index) => {

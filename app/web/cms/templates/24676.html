@@ -1,39 +1,98 @@
-<>
+<m-page
+  // ptr={true}
+  // ptrMousewheel={true}
+  // onPtrRefresh={() => {
+  //   meta.loadMore();
+  // }}
+  infinite={true}
+  infiniteDistance={100}
+  infinitePreloader={true}
+  onInfinite={() => {
+    meta.loadMore();
+  }}
+>
   <effect
     meta={{
-      color: ["white", "red", "black"],
+      color: [
+        "white",
+        "red",
+        "black",
+        "Pastel",
+        "Space",
+        "Earth",
+        "Neon",
+        "Gold",
+        "Vintage",
+        "Retro",
+        "Light",
+        "Dark",
+        "Warm",
+        "Cold",
+        "Summer",
+        "Fall",
+        "Winter",
+        "Spring",
+        "Rainbow",
+        "Night",
+      ],
+      async loadMore() {
+        var temp = [];
+        this.color.map(() => {
+          temp.push(this.color[Math.floor(Math.random() * this.color.length)]);
+        });
+        setTimeout(() => {
+          runInAction(() => {
+            this.color.push(...temp);
+          });
+        }, 2000);
+      },
     }}
-    run={async () => {}}
+    run={async () => {
+      console.log(meta.color.length);
+    }}
   />
-  <div>
-    <span>Loading Carousel</span>
-    <loading-box />
-    <span>Loading Swipper</span>
-    <div style="height:100px; width:100px">
-      <loading-box />
-    </div>
-    <span>Loading List</span>
-    <loading-box />
-    <dropify
-      class={`text-xs dropify placeholder-black`}
-      onChange={(e) => {
-        console.log(e.target.files[0]);
-      }}
-    />
-    <div class="border border-blue-300 shadow rounded-md p-4 max-w-sm w-full mx-auto">
-      <div class="animate-pulse flex space-x-4">
-        <div class="rounded-full bg-blue-400 h-12 w-12"></div>
-        <div class="flex-1 space-y-4 py-1">
-          <div class="h-4 bg-blue-400 rounded w-3/4"></div>
-          <div class="space-y-2">
-            <div class="h-4 bg-blue-400 rounded"></div>
-            <div class="h-4 bg-blue-400 rounded w-5/6"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    {meta.color.map((numList) => {
-      return <span>{numList}</span>;
-    })}
+  <div class={`h-full`}>
+    <m-navbar title="Infinite Scroll"></m-navbar>
+    <m-list class={`flex flex-col list-none`}>
+      {meta.color.map((numList, i) => {
+        return (
+          <m-list-item
+            style={
+              i % 2 !== 0
+                ? "background-color:#FFFCDC"
+                : "background-color:#EDD2F3"
+            }
+          >
+            {numList}
+          </m-list-item>
+        );
+      })}
+    </m-list>
+    {/*<span>Loading Carousel</span>*/}
+    {/*<loading-box />*/}
+    {/*<span>Loading Swipper</span>*/}
+    {/*<div style="height:100px; width:100px">*/}
+    {/*<loading-box />*/}
+    {/*</div>*/}
+    {/*<span>Loading List</span>*/}
+    {/*<loading-box />*/}
+    {/*<dropify*/}
+    {/*class={`text-xs dropify placeholder-black`}*/}
+    {/*onChange={(e) => {*/}
+    {/*console.log(e.target.files[0]);*/}
+    {/*}}*/}
+    {/*/>*/}
+    {/*<div class="border border-blue-300 shadow rounded-md p-4 max-w-sm w-full mx-auto">*/}
+    {/*<div class="animate-pulse flex space-x-4">*/}
+    {/*<div class="rounded-full bg-blue-400 h-12 w-12"></div>*/}
+    {/*<div class="flex-1 space-y-4 py-1">*/}
+    {/*<div class="h-4 bg-blue-400 rounded w-3/4"></div>*/}
+    {/*<div class="space-y-2">*/}
+    {/*<div class="h-4 bg-blue-400 rounded"></div>*/}
+    {/*<div class="h-4 bg-blue-400 rounded w-5/6"></div>*/}
+    {/*</div>*/}
+    {/*</div>*/}
+    {/*</div>*/}
+    {/*</div>*/}
   </div>
-</>
+</m-page>

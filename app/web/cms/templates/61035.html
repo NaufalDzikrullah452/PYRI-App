@@ -11,7 +11,7 @@
       admin: [],
       filter: {
         role: "ROLE",
-        dataRole: [],
+        user: "USER",
       },
       searching: "",
       entries: 5,
@@ -23,50 +23,72 @@
       loading_page: true,
 
       async onFilter(key, e) {
-        let value = e.target.value;
-        runInAction(() => {
-          this.filter[key] = value;
-        });
+        let value = e;
 
-        if (key === "role" && this.filter.role !== "ROLE") {
+        if (key === "role") {
+          value = e.target.value;
           runInAction(() => {
-            var role = this.filter.role === "Admin";
-            this.filter.dataRole = [];
-            this.users.map((value, index) => {
-              if (value.user_level === role) {
-                this.filter.dataRole.push(value);
-              }
+            this.filter[key] = value;
+          });
+          this.onChange("searching", this.searching, "filter");
+        } else if (key === "user") {
+          runInAction(() => {
+            this.filter[key] = value;
+          });
+
+          if (value == "asc") {
+            runInAction(() => {
+              this.users.sort(function (a, b) {
+                if (a.user_name.toLowerCase() < b.user_name.toLowerCase()) {
+                  return -1;
+                }
+
+                if (a.user_name.toLowerCase() > b.user_name.toLowerCase()) {
+                  return 1;
+                }
+
+                return 0;
+              });
             });
-            this.first_entries = 0;
-            this.pages = 1;
-            this.last_entries = parseInt(this.entries);
-            this.sum_pages = Math.ceil(
-              this.filter.dataRole.length / this.entries
-            ); // meta.page_array = new Array(meta.sum_page);
+          } else if (value == "desc") {
+            runInAction(() => {
+              this.users.sort(function (a, b) {
+                if (a.user_name.toLowerCase() > b.user_name.toLowerCase()) {
+                  return -1;
+                }
 
-            this.pages_array = Array.apply(null, {
-              length: this.sum_pages,
-            }).map(Number.call, Number);
-            this.loading_page = false;
-          });
-        } else if (key === "role" && this.filter.role === "ROLE") {
-          runInAction(() => {
-            this.first_entries = 0;
-            this.pages = 1;
-            this.last_entries = parseInt(this.entries);
-            this.sum_pages = Math.ceil(this.users.length / this.entries); // meta.page_array = new Array(meta.sum_page);
+                if (a.user_name.toLowerCase() < b.user_name.toLowerCase()) {
+                  return 1;
+                }
 
-            this.pages_array = Array.apply(null, {
-              length: this.sum_pages,
-            }).map(Number.call, Number);
-            this.loading_page = false;
-          });
+                return 0;
+              });
+            });
+          } else {
+            runInAction(() => {
+              this.users.sort(function (a, b) {
+                if (a.user_id < b.user_id) {
+                  return -1;
+                }
+
+                if (a.user_id > b.user_id) {
+                  return 1;
+                }
+
+                return 0;
+              });
+            });
+          } // console.log(value);
         }
       },
 
-      async onChange(key, e) {
+      async onChange(key, e, filter = null) {
         this.loading_page = true;
-        let value = e.target.value;
+        let value = e;
+
+        if (filter !== "filter") {
+          value = e.target.value;
+        }
 
         if (key === "entries") {
           runInAction(() => {
@@ -81,15 +103,19 @@
             this.loading_page = false;
           });
         } else if (key === "searching") {
+          var user_searching = "";
           runInAction(() => {
             this[key] = value;
+          });
+
+          if (this.filter.role === "Admin" || this.filter.role === "User") {
             api("/api/api-users", {
               users: {
                 user_name: value,
+                user_level: this.filter.role === "Admin",
               },
               e: "SearchingNotBlocked",
             }).then((res) => {
-              // console.log(res.page);
               runInAction(() => {
                 this.users = res.users;
                 this.first_entries = 0;
@@ -102,11 +128,38 @@
                 }).map(Number.call, Number);
                 this.loading_page = false;
               });
-            });
-          });
-        }
 
-        console.log(key + " : " + this[key]); // console.log("page : " + this.page);
+              if (this.filter.user !== "USER") {
+                this.onFilter("user", this.filter.user);
+              }
+            });
+          } else {
+            api("/api/api-users", {
+              users: {
+                user_name: value,
+              },
+              e: "SearchingNotBlocked",
+            }).then((res) => {
+              runInAction(() => {
+                this.users = res.users;
+                this.first_entries = 0;
+                this.pages = 1;
+                this.last_entries = parseInt(this.entries);
+                this.sum_pages = Math.ceil(this.users.length / this.entries); // meta.page_array = new Array(meta.sum_page);
+
+                this.pages_array = Array.apply(null, {
+                  length: this.sum_pages,
+                }).map(Number.call, Number);
+                this.loading_page = false;
+              });
+
+              if (this.filter.user !== "USER") {
+                this.onFilter("user", this.filter.user);
+              }
+            });
+          }
+        } // console.log(key + " : " + this[key]);
+        // console.log("page : " + this.page);
         // console.log("last_entries : " + this.last_entries);
       },
 
@@ -125,8 +178,8 @@
               this.first_entries -= parseInt(this.entries) * Math.abs(gap);
               this.last_entries -= parseInt(this.entries) * Math.abs(gap);
             }
-          });
-          console.log(key + " : " + value); // console.log("first_entries : " + this.first_entries);
+          }); // console.log(key + " : " + value);
+          // console.log("first_entries : " + this.first_entries);
           // console.log("last_entries : " + this.last_entries);
           // console.log("gap : " + res);
         }
@@ -205,9 +258,12 @@
       },
     }}
     run={async () => {
-      runInAction(() => {
-        meta.showManagement = true;
-      });
+      if (window.user.roleAdmin !== "admin") {
+        navigate("/login-admin");
+      } // runInAction(() => {
+      //   meta.showManagement = true;
+      // });
+
       meta.action = {
         changeMasterData: (open) => {
           meta.showMasterData = open;
@@ -251,11 +307,13 @@
       });
     }}
   />
-  <div class={`w-full flex items-start justify-start bg-white`}>
+  <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
     <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
       <div
         class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
-        style={"background-color: black"}
+        style={
+          "background-color: black; z-index:1; width: 254px; overflow:hidden  "
+        }
       >
         <div
           class={`flex self-stretch space-x-8 items-center justify-start px-9 pt-8`}
@@ -274,7 +332,7 @@
         </div>
         <div
           class={`text-white flex flex-1 flex-col space-y-1 items-start justify-start px-2.5`}
-          style={"margin-top:50px;"}
+          style={"margin-top:50px; padding-left:40px"}
         >
           <div
             class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
@@ -318,10 +376,10 @@
               src="/fimgs/3192_19716.x1.svg"
               class={`transform rotate-180`}
               id="chevron-master"
-              style={`width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px; margin-right:25px !important;`}
+              style={`width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px; margin-right:24.5px !important;`}
             />
           </div>
-          <div class="flex self-stretch flex-col items-start justify-start">
+          <div class={`flex self-stretch flex-col items-start justify-start`}>
             {
               <div
                 class={`flex self-stretch flex-col space-y-1 items-start justify-start`}
@@ -392,7 +450,7 @@
             }
           </div>
           <div
-            class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+            class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl w-full`}
             style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
             onClick={() => {
               if (meta.showManagement == false) {
@@ -409,8 +467,13 @@
               class="flex items-start justify-start"
               style="width: 15.75px; min-width: 15.75px; max-width: 15.75px; height: 18px; min-height: 18px; max-height: 18px;"
             />
-            <div class="text-base font-bold leading-normal text-gray-50">
-              User Management
+            <div class={`flex items-start justify-start w-full`}>
+              <div
+                class={`text-base font-bold leading-normal text-gray-50`}
+                style={`white-space: nowrap;`}
+              >
+                User Management
+              </div>
             </div>
             <img
               src="/fimgs/3192_19741.x1.svg"
@@ -432,7 +495,10 @@
               >
                 <div
                   class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                  style="background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;"
+                  style={`${
+                    false &&
+                    "background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;"
+                  }`}
                   onClick={() => {
                     navigate("/w-master-user");
                   }}
@@ -441,7 +507,7 @@
                   <div class="flex flex-1 items-start justify-start">
                     <div
                       class={`text-base font-bold leading-normal text-gray-50`}
-                      style={`color:#FF8F00`}
+                      style={false && `color:#FF8F00`}
                     >
                       Data User
                     </div>
@@ -710,8 +776,59 @@
                       class={`flex self-stretch items-center justify-start pr-6 w-full`}
                       style={"min-width: 210px;"}
                     >
-                      <div class="text-base font-bold leading-normal text-white">
-                        USER
+                      <div
+                        class={`flex space-x-2.5 items-start justify-start cursor-pointer`}
+                        onClick={() => {
+                          if (!meta.loading) {
+                            var key =
+                              meta.filter.user === "USER"
+                                ? "asc"
+                                : meta.filter.user === "asc"
+                                ? "desc"
+                                : "USER";
+                            meta.onFilter("user", key);
+                          }
+                        }}
+                      >
+                        <div
+                          class={`text-base font-bold leading-normal text-white`}
+                          style={
+                            `  -webkit-user-select: none;  
+  -moz-user-select: none;    
+  -ms-user-select: none;      
+  user-select: none;` +
+                            (meta.filter.user === "USER"
+                              ? "color: white"
+                              : "color: #FF8F00")
+                          }
+                        >
+                          USER
+                        </div>
+                        <ficon
+                          aria-label={
+                            meta.filter.user === "USER"
+                              ? "Sort"
+                              : meta.filter.user === "asc"
+                              ? "SortUp"
+                              : "SortDown"
+                          }
+                          iconName={
+                            meta.filter.user === "USER"
+                              ? "Sort"
+                              : meta.filter.user === "asc"
+                              ? "SortUp"
+                              : "SortDown"
+                          }
+                          style={
+                            `  -webkit-user-select: none;  
+  -moz-user-select: none;    
+  -ms-user-select: none;      
+  user-select: none;` +
+                            (meta.filter.user === "USER"
+                              ? "color: white"
+                              : "color: #FF8F00")
+                          }
+                        />
                       </div>
                     </th>
                     <th
@@ -729,6 +846,7 @@
                       <select
                         class={`flex flex-col space-y-2.5 items-start justify-start text-base font-bold leading-normal text-white cursor-pointer`}
                         defaultValue={"ROLE"}
+                        disabled={meta.loading}
                         style={`border: none;
   color: white;
   outline: none;
@@ -806,32 +924,32 @@
                   </tr>
                 </thead>
                 <tbody class="flex self-stretch flex-col items-start justify-start">
-                  {meta.filter.role === "ROLE" &&
-                    meta.users
-                      .slice(meta.first_entries, meta.last_entries)
-                      .map((numList, i) => {
-                        var odd = (i + 1) % 2;
-                        return (
-                          <tr
-                            class={`w-full flex self-stretch space-x-3 items-center justify-start px-4 py-2.5 rounded ${
-                              odd === 0 ? "bg-orange-100" : "bg-white"
-                            }`}
-                            style={":hover {background-color: #ffbe76;"}
+                  {meta.users
+                    .slice(meta.first_entries, meta.last_entries)
+                    .map((numList, i) => {
+                      var odd = (i + 1) % 2;
+                      return (
+                        <tr
+                          class={`w-full flex self-stretch space-x-3 items-center justify-start px-4 py-2.5 bg-white rounded ${
+                            odd === 0 ? "bg-orange-100" : "bg-white"
+                          }`}
+                          style={":hover {background-color: #ffbe76;"}
+                        >
+                          <td
+                            class={`flex self-stretch flex-col items-center justify-center pl-2.5`}
+                            style={
+                              "width: 15px;min-width: 15px;max-width: 15px;"
+                            }
                           >
-                            <td
-                              class={`flex self-stretch flex-col items-center justify-center pl-2.5`}
-                              style={
-                                "width: 15px;min-width: 15px;max-width: 15px;"
-                              }
-                            >
-                              <div class={`text-base leading-normal`}>
-                                {i + meta.first_entries + 1}
-                              </div>
-                            </td>
-                            <td
-                              class={`flex self-stretch space-x-3 items-center justify-start`}
-                              style={`min-width: 210px`}
-                            >
+                            <div class={`text-base leading-normal`}>
+                              {i + meta.first_entries + 1}
+                            </div>
+                          </td>
+                          <td
+                            class={`flex self-stretch space-x-3 items-start justify-start`}
+                            style={`min-width: 210px;  padding-left: 8px;`}
+                          >
+                            <div class="flex self-stretch items-center justify-start">
                               <img
                                 src={
                                   numList.user_picture
@@ -844,166 +962,208 @@
                                 }}
                                 style={`width: 44px; min-width: 44px; max-width: 44px; height: 44px; min-height: 44px; max-height: 44px;background-image: url('/fimgs/bg-b734a5be3aee0fd453c592a0baf71a7e7f723cd8');background-size:100% 100%;background-repeat:no-repeat; border-radius:50%; background-image:none;`}
                               />
+                            </div>
+                            <div
+                              class={`flex flex-col items-start justify-start`}
+                              style={"padding: 8px;"}
+                            >
                               <div
-                                class={`flex flex-col items-start justify-center`}
-                                style={"padding: 8px;"}
+                                class={`text-base font-medium leading-normal`}
                               >
+                                {numList.user_name || "Name"}
+                              </div>
+                              <div
+                                class={`text-sm leading-tight text-gray-600 text-gray-600`}
+                                id={"email-" + numList.user_id}
+                                style={
+                                  "" + meta.email_info !== undefined &&
+                                  meta.email_info !== null &&
+                                  meta.email_info === "email" + numList.user_id
+                                    ? " opacity:0;"
+                                    : "opacity: 1;"
+                                }
+                                onMouseEnter={() => {
+                                  runInAction(() => {
+                                    meta.email_info = "email" + numList.user_id;
+                                  });
+                                }}
+                                onMouseLeave={() => {
+                                  runInAction(() => {
+                                    meta.email_info = null;
+                                  });
+                                }}
+                              >
+                                {numList.user_email.length > 15
+                                  ? numList.user_email.substring(0, 15) + "..."
+                                  : numList.user_email || "-"}
+                              </div>
+                              {meta.email_info ===
+                                "email" + numList.user_id && (
                                 <div
-                                  class={`text-base font-medium leading-normal`}
+                                  class={`text-sm leading-tight`}
+                                  id={"email-" + numList.user_id}
+                                  style={
+                                    "position:absolute; margin-top : 24px; width: 160px; word-break: break-word;"
+                                  }
+                                  onMouseEnter={() => {
+                                    runInAction(() => {
+                                      meta.email_info =
+                                        "email" + numList.user_id;
+                                    });
+                                  }}
+                                  onMouseLeave={() => {
+                                    runInAction(() => {
+                                      meta.email_info = null;
+                                    });
+                                  }}
+                                  onClick={() => {
+                                    document.execCommand("copy");
+                                  }}
                                 >
-                                  {numList.user_name || "Name"}
-                                </div>
-                                <div
-                                  class={`text-sm leading-tight text-gray-600`}
-                                >
-                                  {numList.user_email.length > 17
-                                    ? numList.user_email.substring(0, 17) +
-                                      "..."
-                                    : numList.user_email || "Email"}
-                                </div>
-                              </div>
-                            </td>
-                            <td
-                              class={`flex self-stretch items-center justify-center w-full`}
-                              style={"width: 150px"}
-                            >
-                              <div
-                                class={`text-base font-medium leading-normal text-gray-600`}
-                              >
-                                {dateFormat(
-                                  numList.user_birthday,
-                                  "dd MMM yyyy"
-                                ) || "-"}
-                              </div>
-                            </td>
-                            <td
-                              class={`flex flex-1 self-stretch items-center justify-center w-full`}
-                              style={`min-width: 50px`}
-                            >
-                              <div
-                                class={`text-base font-medium leading-normal text-gray-600`}
-                              >
-                                {numList.user_level
-                                  ? "Admin"
-                                  : "User" || "User"}
-                              </div>
-                            </td>
-                            <td
-                              class={`flex flex-1 self-stretch items-center justify-center pr-3 w-full`}
-                              style={"min-width: 130px"}
-                            >
-                              <div
-                                class={`text-base font-bold leading-normal text-center text-gray-600`}
-                              >
-                                {numList.user_gender || "Unknown"}
-                              </div>
-                            </td>
-                            <td
-                              class={`flex flex-1 self-stretch items-center justify-end w-full`}
-                              style={"min-width: 150px"}
-                            >
-                              <div
-                                class={`text-base font-bold leading-normal text-gray-600`}
-                              >
-                                {dateFormat(
-                                  numList.user_date_created,
-                                  "dd MMM yyyy"
-                                ) || "-"}
-                              </div>
-                            </td>
-                            <td
-                              class={`flex flex-1 self-stretch space-x-2.5 items-center justify-center w-full`}
-                              style={"min-width: 50px"}
-                            >
-                              {numList.user_membership_status === "Active" && (
-                                <div
-                                  class={`flex items-start justify-start px-3 py-1 bg-amber-500 rounded-full`}
-                                >
-                                  <div class="text-base font-bold leading-normal text-white">
-                                    Aktif
-                                  </div>
+                                  {numList.user_email || "-"}
                                 </div>
                               )}
-                              {numList.user_membership_status ===
-                                "NonActive" && (
-                                <div
-                                  class={`flex items-start justify-start px-3 py-1 border rounded-full border-gray-400`}
-                                >
-                                  <div
-                                    class={`text-base font-bold leading-normal text-gray-600`}
-                                  >
-                                    Tidak
-                                  </div>
-                                </div>
-                              )}
-                            </td>
-                            <td
-                              class={`flex flex-1 self-stretch items-center justify-center w-full`}
-                              style={"min-width: 105px"}
+                            </div>
+                          </td>
+                          <td
+                            class={`flex self-stretch items-center justify-center w-full`}
+                            style={"width: 150px"}
+                          >
+                            <div
+                              class={`text-base font-medium leading-normal text-gray-600`}
                             >
-                              <div class="flex flex-1 self-stretch space-x-1 items-center justify-center">
-                                <div
-                                  class={`flex items-center justify-center rounded cursor-pointer`}
-                                  onClick={() => {
-                                    navigate(
-                                      "/w-master-user/edit/" + numList.user_id
-                                    );
-                                  }}
-                                >
-                                  <img
-                                    src="/fimgs/3201_185142.x1.svg"
-                                    style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
-                                  />
+                              {dateFormat(
+                                numList.user_birthday,
+                                "dd MMM yyyy"
+                              ) || "-"}
+                            </div>
+                          </td>
+                          <td
+                            class={`flex flex-1 self-stretch items-center justify-center w-full`}
+                            style={`min-width: 50px`}
+                          >
+                            <div
+                              class={`text-base font-medium leading-normal text-gray-600`}
+                            >
+                              {numList.user_level ? "Admin" : "User" || "User"}
+                            </div>
+                          </td>
+                          <td
+                            class={`flex flex-1 self-stretch items-center justify-center pr-3 w-full`}
+                            style={"min-width: 130px"}
+                          >
+                            <div
+                              class={`text-base font-bold leading-normal text-center text-gray-600`}
+                            >
+                              {numList.user_gender || "Unknown"}
+                            </div>
+                          </td>
+                          <td
+                            class={`flex flex-1 self-stretch items-center justify-end w-full`}
+                            style={"min-width: 150px"}
+                          >
+                            <div
+                              class={`text-base font-bold leading-normal text-gray-600`}
+                            >
+                              {dateFormat(
+                                numList.user_date_created,
+                                "dd MMM yyyy"
+                              ) || "-"}
+                            </div>
+                          </td>
+                          <td
+                            class={`flex flex-1 self-stretch space-x-2.5 items-center justify-center w-full`}
+                            style={"min-width: 50px"}
+                          >
+                            {numList.user_membership_status === "Active" && (
+                              <div
+                                class={`flex items-start justify-start px-3 py-1 bg-amber-500 rounded-full`}
+                              >
+                                <div class="text-base font-bold leading-normal text-white">
+                                  Aktif
                                 </div>
+                              </div>
+                            )}
+                            {numList.user_membership_status === "NonActive" && (
+                              <div
+                                class={`flex items-start justify-start px-3 py-1 border rounded-full border-gray-400`}
+                              >
+                                <div
+                                  class={`text-base font-bold leading-normal text-gray-600`}
+                                >
+                                  Tidak
+                                </div>
+                              </div>
+                            )}
+                          </td>
+                          <td
+                            class={`flex flex-1 self-stretch items-center justify-center w-full`}
+                            style={"min-width: 105px"}
+                          >
+                            <div class="flex flex-1 self-stretch space-x-1 items-center justify-center">
+                              <div
+                                class={`flex items-center justify-center rounded cursor-pointer`}
+                                onClick={() => {
+                                  navigate(
+                                    "/w-master-user/edit/" + numList.user_id
+                                  );
+                                }}
+                              >
                                 <img
-                                  src="/fimgs/3201_185143.x1.svg"
-                                  class={`flex items-center justify-center rounded`}
-                                  style={`cursor: pointer`}
-                                  onClick={() => {
-                                    var res = false;
-
-                                    if (numList.user_level) {
-                                      alert("Cant delete Admin !");
-                                    } else {
-                                      res = true;
-                                    }
-
-                                    if (res) {
-                                      meta.onDelete(numList.user_id);
-                                    }
-                                  }}
-                                />
-                                <img
-                                  src="/fimgs/3201_185145.x1.svg"
-                                  class={`flex items-start justify-start cursor-pointer`}
-                                  style={`width: 20px; min-width: 20px; max-width: 20px; height: 20px; min-height: 20px; max-height: 20px;`}
-                                  onClick={() => {
-                                    var res = false;
-
-                                    if (numList.user_level) {
-                                      alert("Cant block Admin !");
-                                    } else {
-                                      res = true;
-                                    }
-
-                                    if (res) {
-                                      meta.userBlock(numList.user_id);
-                                    }
-                                  }}
+                                  src="/fimgs/3201_185142.x1.svg"
+                                  style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
                                 />
                               </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                  {meta.filter.role !== "ROLE" &&
+                              <img
+                                src="/fimgs/3201_185143.x1.svg"
+                                class={`flex items-center justify-center rounded`}
+                                style={`cursor: pointer`}
+                                onClick={() => {
+                                  var res = false;
+
+                                  if (numList.user_level) {
+                                    alert("Cant delete Admin !");
+                                  } else {
+                                    res = true;
+                                  }
+
+                                  if (res) {
+                                    meta.onDelete(numList.user_id);
+                                  }
+                                }}
+                              />
+                              <img
+                                src="/fimgs/3201_185145.x1.svg"
+                                class={`flex items-start justify-start cursor-pointer`}
+                                style={`width: 20px; min-width: 20px; max-width: 20px; height: 20px; min-height: 20px; max-height: 20px;`}
+                                onClick={() => {
+                                  var res = false;
+
+                                  if (numList.user_level) {
+                                    alert("Cant block Admin !");
+                                  } else {
+                                    res = true;
+                                  }
+
+                                  if (res) {
+                                    meta.userBlock(numList.user_id);
+                                  }
+                                }}
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  {false &&
+                    meta.filter.role !== "ROLE" &&
                     meta.filter.dataRole
                       .slice(meta.first_entries, meta.last_entries)
                       .map((numList, i) => {
                         var odd = (i + 1) % 2;
                         return (
                           <tr
-                            class={`w-full flex self-stretch space-x-3 items-center justify-start px-4 py-2.5 bg-white rounded ${
+                            class={`w-full flex self-stretch space-x-3 items-center justify-start px-4 py-2.5 rounded ${
                               odd === 0 ? "bg-orange-100" : "bg-white"
                             }`}
                             style={":hover {background-color: #ffbe76;"}
@@ -1200,15 +1360,15 @@
               </table>
               <div class="flex self-stretch space-x-2.5 items-center justify-start bg-white">
                 <div class="flex flex-1 space-x-2.5 items-start justify-start">
-                  {meta.filter.role === "ROLE" && (
+                  {
                     <div
                       class={`text-base leading-normal text-orange-900`}
                     >{`Showing ${meta.first_entries + 1} to 
 ${
   meta.last_entries <= meta.users.length ? meta.last_entries : meta.users.length
 } of ${meta.users.length} entries`}</div>
-                  )}
-                  {meta.filter.role !== "ROLE" && (
+                  }
+                  {false && meta.filter.role !== "ROLE" && (
                     <div class={`text-base leading-normal`}>{`Showing ${
                       meta.first_entries + 1
                     } to 

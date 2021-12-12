@@ -267,68 +267,76 @@
                 style={`width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px; margin-right:25px !important;`}
               />
             </div>
-            {meta.showMasterData && (
-              <div
-                class={`flex self-stretch flex-col space-y-1 items-start justify-start`}
-              >
+            <div class="flex self-stretch flex-col items-start justify-start">
+              {
                 <div
-                  class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer}"
-                  onClick={() => {
-                    navigate("/w-master-kategori");
-                  }}
+                  class={`flex self-stretch flex-col space-y-1 items-start justify-start`}
+                  style={`overflow:hidden;
+  ${
+    meta.showMasterData
+      ? "transition: height 0.5s ease-in-out;height: 100%"
+      : "height: 0"
+  }`}
                 >
-                  <div />
-                  <div class="flex flex-1 items-start justify-start">
-                    <div class="text-base font-bold leading-normal text-gray-50">
-                      Kategori Buku
+                  <div
+                    class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                    style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer}"
+                    onClick={() => {
+                      navigate("/w-master-kategori");
+                    }}
+                  >
+                    <div />
+                    <div class="flex flex-1 items-start justify-start">
+                      <div class="text-base font-bold leading-normal text-gray-50">
+                        Kategori Buku
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                    style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer}"
+                    onClick={() => {
+                      navigate("/w-master-genre");
+                    }}
+                  >
+                    <div />
+                    <div class="flex flex-1 items-start justify-start">
+                      <div class="text-base font-bold leading-normal text-gray-50">
+                        Genre Buku
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                    style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer}"
+                    onClick={() => {
+                      navigate("/w-master-author");
+                    }}
+                  >
+                    <div />
+                    <div class="flex flex-1 items-start justify-start">
+                      <div class="text-base font-bold leading-normal text-white">
+                        Author{" "}
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                    style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer}"
+                    onClick={() => {
+                      navigate("/w-master-publisher");
+                    }}
+                  >
+                    <div />
+                    <div class="flex flex-1 items-start justify-start">
+                      <div class="text-base font-bold leading-normal text-gray-50">
+                        Publisher
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div
-                  class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer}"
-                  onClick={() => {
-                    navigate("/w-master-genre");
-                  }}
-                >
-                  <div />
-                  <div class="flex flex-1 items-start justify-start">
-                    <div class="text-base font-bold leading-normal text-gray-50">
-                      Genre Buku
-                    </div>
-                  </div>
-                </div>
-                <div
-                  class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer}"
-                  onClick={() => {
-                    navigate("/w-master-author");
-                  }}
-                >
-                  <div />
-                  <div class="flex flex-1 items-start justify-start">
-                    <div class="text-base font-bold leading-normal text-white">
-                      Author{" "}
-                    </div>
-                  </div>
-                </div>
-                <div
-                  class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer}"
-                  onClick={() => {
-                    navigate("/w-master-publisher");
-                  }}
-                >
-                  <div />
-                  <div class="flex flex-1 items-start justify-start">
-                    <div class="text-base font-bold leading-normal text-gray-50">
-                      Publisher
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+              }
+            </div>
             <div
               class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
               style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
@@ -357,51 +365,65 @@
                 style={`width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px;`}
               />
             </div>
-            {meta.showManagement && (
-              <div
-                class={`flex self-stretch flex-col space-y-1 items-start justify-start`}
-              >
+            <div class="flex self-stretch flex-col items-start justify-start">
+              {
                 <div
-                  class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
-                  onClick={() => {
-                    navigate("/w-master-user");
-                  }}
+                  class={`flex self-stretch flex-col space-y-1 items-start justify-start`}
+                  style={`overflow:hidden;
+  ${
+    meta.showManagement
+      ? "transition: height 0.5s ease-in-out; height: 100%"
+      : "height: 0"
+  }`}
                 >
-                  <div />
-                  <div class="flex flex-1 items-start justify-start">
-                    <div class="text-base font-bold leading-normal text-gray-50">
-                      Data User
+                  <div
+                    class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                    style={`${
+                      false &&
+                      "background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;"
+                    }`}
+                    onClick={() => {
+                      navigate("/w-master-user");
+                    }}
+                  >
+                    <div />
+                    <div class="flex flex-1 items-start justify-start">
+                      <div
+                        class={`text-base font-bold leading-normal text-gray-50`}
+                        style={false && `color:#FF8F00`}
+                      >
+                        Data User
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                    style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
+                    onClick={() => {
+                      navigate("/w-master-user-blocked");
+                    }}
+                  >
+                    <div />
+                    <div class="flex flex-1 items-start justify-start">
+                      <div class="text-base font-bold leading-normal text-gray-50">
+                        Blocked User
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                    style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
+                  >
+                    <div />
+                    <div class="flex flex-1 items-start justify-start">
+                      <div class="text-base font-bold leading-normal text-gray-50">
+                        Subcription
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div
-                  class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
-                  onClick={() => {
-                    navigate("/w-master-user-blocked");
-                  }}
-                >
-                  <div />
-                  <div class="flex flex-1 items-start justify-start">
-                    <div class="text-base font-bold leading-normal text-gray-50">
-                      Blocked User
-                    </div>
-                  </div>
-                </div>
-                <div
-                  class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
-                  style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
-                >
-                  <div />
-                  <div class="flex flex-1 items-start justify-start">
-                    <div class="text-base font-bold leading-normal text-gray-50">
-                      Subcription
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+              }
+            </div>
             <div
               class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
               style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
