@@ -4,9 +4,63 @@
       selectCard1: false,
       selectCard2: false,
       selectCard3: false,
+      plan_id: 0,
       changeCard1: (select) => {},
       changeCard2: (select) => {},
       changeCard3: (select) => {},
+
+      async submit() {
+        console.log("pay button called, waiting for snap");
+        snap.show();
+
+        if (this.selectCard1 === true) {
+          this.plan_id = 1;
+          api("/api/premium", {
+            tipe: "Bibliophile",
+            e: "Subscribe",
+            user_id: 32,
+          }).then((res) => {
+            console.log(res);
+            snap.pay(res.snaptoken, {
+              onSuccess: this.transaction,
+            });
+          });
+        } else if (this.selectCard2 === true) {
+          this.plan_id = 2;
+          api("/api/premium", {
+            tipe: "Bibliomania",
+            e: "Subscribe",
+            user_id: 32,
+          }).then((res) => {
+            console.log(res);
+            snap.pay(res.snaptoken, {
+              onSuccess: this.transaction,
+            });
+          });
+        } else if (this.selectCard3 === true) {
+          this.plan_id = 3;
+          api("/api/premium", {
+            tipe: "Bibliognost",
+            e: "Subscribe",
+            user_id: 32,
+          }).then((res) => {
+            console.log(res);
+            snap.pay(res.snaptoken, {
+              onSuccess: this.transaction,
+            });
+          });
+        }
+      },
+
+      transaction(result) {
+        api("/api/notification", {
+          user_id: 32,
+          plan_id: this.plan_id,
+          ...result,
+        }).then((res) => {
+          console.log(res);
+        });
+      },
     }}
     run={async () => {
       meta.action = {
@@ -50,6 +104,12 @@
           }
         },
       };
+      var head = document.getElementsByTagName("head")[0];
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src = "https://app.sandbox.midtrans.com/snap/snap.js";
+      script.setAttribute("data-client-key", "SB-Mid-client-eLuQXMo4E2x_g4u4");
+      head.appendChild(script);
     }}
   />
   <div class="flex flex-col items-start justify-start bg-white">
@@ -317,6 +377,9 @@
             <button
               class={`flex self-stretch flex-col items-center justify-center py-1.5 pl-4 pr-6 bg-amber-500 rounded rounded-md`}
               style="height: 60px; min-height: 60px; max-height: 60px; background-color: #FF8F00"
+              onClick={() => {
+                meta.submit();
+              }}
             >
               <div
                 class={`text-xl font-bold leading-loose text-center text-white`}

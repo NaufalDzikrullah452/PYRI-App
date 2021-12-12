@@ -53,7 +53,9 @@ model users {
   bookmarks              bookmarks[]
   comment                comment[]
   interests              interests[]
+  payment                payment[]
   rating                 rating[]
+  subscription           subscription[]
   viewBook               viewBook[]
 }
 
@@ -184,6 +186,38 @@ model comment {
   users                                             users     @relation(fields: [comment_user_id], references: [user_id])
   other_comment_commentTocomment_comment_parrent_id comment[] @relation("commentTocomment_comment_parrent_id")
   other_comment_commentTocomment_comment_reply_id   comment[] @relation("commentTocomment_comment_reply_id")
+}
+
+model payment {
+  payment_id        Int          @id @default(autoincrement())
+  subscription_id   Int
+  user_id           Int
+  plan_id           Int
+  mt_transaction_id String       @db.VarChar(50)
+  mt_gross_amount   String       @db.VarChar(50)
+  mt_status         String       @db.VarChar(50)
+  mt_settled_date   DateTime     @db.Timestamp(6)
+  mt_order_id       String       @db.VarChar(50)
+  plans             plans        @relation(fields: [plan_id], references: [plan_id])
+  subscription      subscription @relation(fields: [subscription_id], references: [subscription_id])
+  users             users        @relation(fields: [user_id], references: [user_id])
+}
+
+model plans {
+  plan_id       Int       @id @default(autoincrement())
+  plan_name     String    @db.VarChar(50)
+  plan_price    Int
+  plan_duration Int
+  payment       payment[]
+}
+
+model subscription {
+  subscription_id Int       @id @default(autoincrement())
+  user_id         Int
+  join_date       DateTime  @db.Timestamp(6)
+  expired_date    DateTime  @db.Timestamp(6)
+  users           users     @relation(fields: [user_id], references: [user_id])
+  payment         payment[]
 }
 
 enum user_gender {
