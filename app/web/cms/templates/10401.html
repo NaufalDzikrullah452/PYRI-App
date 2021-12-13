@@ -112,19 +112,25 @@
       head.appendChild(script);
     }}
   />
-  <div class="flex flex-col items-start justify-start bg-white">
+  <div class="flex self-stretch flex-col items-start justify-start bg-white">
     <div class="flex self-stretch flex-col space-y-1 items-start justify-start relative overflow-y-auto">
       <div
         class={`flex self-stretch flex-col items-start justify-start px-6 pt-9 pb-4 bg-white shadow`}
       >
         <div class="flex self-stretch space-x-4 items-center justify-start">
-          <div class="flex self-stretch items-center justify-start">
+          <m-button
+            class={`flex self-stretch items-center justify-start`}
+            onClick={() => {
+              // navigate("/m/");
+              back();
+            }}
+          >
             <ficon
               aria-label="ChromeBack"
               iconName="ChromeBack"
               style="font-size:20px;"
             />
-          </div>
+          </m-button>
           <div class="flex flex-1 space-x-1 items-center justify-center">
             <ficon
               aria-label="CircleFill"

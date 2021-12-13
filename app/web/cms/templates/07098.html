@@ -15,8 +15,7 @@
 
       async onChange(key, e) {
         let value = e.target.value;
-        runInAction(() => (this[key] = value));
-        console.log(key + " : " + value);
+        runInAction(() => (this[key] = value)); // console.log(key + " : " + value);
       },
 
       validation() {
@@ -47,15 +46,14 @@
           attemptuser = {
             user_email: this.user_email,
             user_password: encrypt(this.user_password),
-          };
-          console.log("here");
+          }; // console.log("here");
+
           window.mobileApp.app.dialog.preloader();
           api("/api/api-users", {
             users: { ...attemptuser },
             e: "FindEmail",
           }).then((res) => {
-            console.log(res);
-
+            // console.log(res)
             if (res === null) {
               this.timeOut(1000);
               window.mobileApp.app.dialog.alert(null, "Database error!");

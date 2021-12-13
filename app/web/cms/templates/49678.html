@@ -10,6 +10,7 @@
       tabRead: true,
       tabProfile: true,
       user: [],
+      user_premium: [],
       book: [],
       popularBook: [],
       newReleaseBook: [],
@@ -50,14 +51,14 @@
               navigate("/m/login");
             }
           );
-        } else if (tab === "profile" && this.tabProfile) {
+        } else if (tab === "profile" && this.tabProfile && this.loading) {
           this.tabActive = tab;
           this.tabProfile = false;
           this.loadingInterest = true; // window.mobileApp.app.dialog.preloader();
 
           api("/api/interests", {
             e: "show",
-            user_id: this.user.user_id,
+            user_id: window.user.user.user_id,
           }).then((res) => {
             // console.log(res.result)
             document.getElementById("kotak").className =
@@ -355,6 +356,23 @@
           });
         }, 3000);
       });
+
+      if (window.user.role !== "guest") {
+        await api("/api/api-users", {
+          users: {
+            user_id: window.user.user.user_id,
+          },
+          e: "ReadUserSubscriptionById",
+        }).then((res) => {
+          console.log(res);
+
+          if (res.users !== null) {
+            runInAction(() => {
+              meta.user_premium = res.users;
+            });
+          }
+        });
+      }
     }}
   />
   <div
@@ -1634,8 +1652,10 @@ border-radius: 8%`}
               <div class={`text-2xl font-bold leading-9`}>
                 {meta.user.user_name || "Username"}
               </div>
-              {(meta.user.user_membership_status === undefined ||
-                meta.user.user_membership_status === "NonActive") && (
+              {(meta.user_premium.length === 0 ||
+                (meta.user_premium.length !== 0 &&
+                  dateFormat(meta.user_premium.expired_date, "dd MM yyyy") >
+                    dateFormat(new Date(), "dd MM yyyy"))) && (
                 <div
                   class={`flex items-center justify-center px-4 py-0.5 bg-gray-500 border rounded border-gray-500`}
                 >
@@ -1644,15 +1664,17 @@ border-radius: 8%`}
                   </div>
                 </div>
               )}
-              {meta.user.user_membership_status === "Active" && (
-                <div
-                  class={`flex items-center justify-center px-2.5 py-0.5 border rounded`}
-                >
-                  <div class="text-xs font-bold leading-none text-center">
-                    PRO
+              {meta.user_premium.length !== 0 &&
+                dateFormat(meta.user_premium.expired_date, "dd MM yyyy") <=
+                  dateFormat(new Date(), "dd MM yyyy") && (
+                  <div
+                    class={`flex items-center justify-center px-2.5 py-0.5 border rounded`}
+                  >
+                    <div class="text-xs font-bold leading-none text-center">
+                      PRO
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
             </div>
           </div>
           <div
@@ -1725,33 +1747,62 @@ border-radius: 8%`}
                 <div class="text-base font-bold leading-normal text-gray-500">
                   Subcription
                 </div>
-                {(meta.user.user_membership_status === undefined ||
-                  meta.user.user_membership_status === "NonActive") && (
+                {(meta.user_premium.length === 0 ||
+                  (meta.user_premium.length !== 0 &&
+                    dateFormat(meta.user_premium.expired_date, "dd MM yyyy") >
+                      dateFormat(new Date(), "dd MM yyyy"))) && (
                   <div
                     class={`text-base font-bold leading-normal text-gray-900`}
                   >
                     User Free
                   </div>
                 )}
-                {meta.user.user_membership_status === "Active" && (
-                  <div class={`text-base font-bold leading-normal`}>
-                    User Pro
-                  </div>
-                )}
+                {meta.user_premium.length !== 0 &&
+                  dateFormat(meta.user_premium.expired_date, "dd MM yyyy") <=
+                    dateFormat(new Date(), "dd MM yyyy") &&
+                  meta.user_premium.length !== 0 &&
+                  dateFormat(meta.user_premium.expired_date, "dd MM yyyy") <=
+                    dateFormat(new Date(), "dd MM yyyy") && (
+                    <div class={`text-base font-bold leading-normal`}>
+                      User Pro
+                    </div>
+                  )}
               </div>
               <div class={`flex flex-col items-end justify-start`}>
-                {(meta.user.user_membership_status === undefined ||
-                  meta.user.user_membership_status === "NonActive") && (
-                  <div
+                {(meta.user_premium.length === 0 ||
+                  (meta.user_premium.length !== 0 &&
+                    dateFormat(meta.user_premium.expired_date, "dd MM yyyy") >
+                      dateFormat(new Date(), "dd MM yyyy"))) && (
+                  <m-button
                     class={`flex items-start justify-start px-2.5 py-0.5 bg-gradient-to-r from-red-600 to-yellow-400 shadow rounded`}
+                    onClick={() => {
+                      navigate("/m/premium-page");
+                    }}
                   >
                     <div
                       class={`text-base font-bold leading-normal text-white`}
                     >
                       Upgrade to Pro
                     </div>
-                  </div>
+                  </m-button>
                 )}
+                {meta.user_premium.length !== 0 &&
+                  dateFormat(meta.user_premium.expired_date, "dd MM yyyy") <=
+                    dateFormat(new Date(), "dd MM yyyy") && (
+                    <m-button
+                      class={`flex items-start justify-start px-2.5 py-0.5 shadow rounded`}
+                      style={`background: linear-gradient(90deg, #FF1000 -38.85%, #EFFF00 143.17%);`}
+                      onClick={() => {
+                        navigate("/m/premium-page");
+                      }}
+                    >
+                      <div
+                        class={`text-base font-bold leading-normal text-white`}
+                      >
+                        Premium
+                      </div>
+                    </m-button>
+                  )}
               </div>
             </div>
           </div>

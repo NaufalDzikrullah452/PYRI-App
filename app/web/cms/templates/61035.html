@@ -307,7 +307,7 @@
       });
     }}
   />
-  <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
+  <div class={`w-full flex items-start justify-start bg-white`}>
     <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
       <div
         class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -905,14 +905,16 @@
                         TANGGAL GABUNG
                       </div>
                     </th>
-                    <th
-                      class={`flex self-stretch items-center justify-start pl-2.5 w-full`}
-                      style={"min-width: 50px"}
-                    >
-                      <div class="text-base font-bold leading-normal text-white">
-                        PREMIUM
-                      </div>
-                    </th>
+                    {false && (
+                      <th
+                        class={`flex self-stretch items-center justify-start pl-2.5 w-full`}
+                        style={"min-width: 50px"}
+                      >
+                        <div class="text-base font-bold leading-normal text-white">
+                          PREMIUM
+                        </div>
+                      </th>
+                    )}
                     <th
                       class={`flex self-stretch items-center justify-center w-full`}
                       style={"min-width: 105px"}
@@ -1071,31 +1073,34 @@
                               ) || "-"}
                             </div>
                           </td>
-                          <td
-                            class={`flex flex-1 self-stretch space-x-2.5 items-center justify-center w-full`}
-                            style={"min-width: 50px"}
-                          >
-                            {numList.user_membership_status === "Active" && (
-                              <div
-                                class={`flex items-start justify-start px-3 py-1 bg-amber-500 rounded-full`}
-                              >
-                                <div class="text-base font-bold leading-normal text-white">
-                                  Aktif
-                                </div>
-                              </div>
-                            )}
-                            {numList.user_membership_status === "NonActive" && (
-                              <div
-                                class={`flex items-start justify-start px-3 py-1 border rounded-full border-gray-400`}
-                              >
+                          {false && (
+                            <td
+                              class={`flex flex-1 self-stretch space-x-2.5 items-center justify-center w-full`}
+                              style={"min-width: 50px"}
+                            >
+                              {numList.user_membership_status === "Active" && (
                                 <div
-                                  class={`text-base font-bold leading-normal text-gray-600`}
+                                  class={`flex items-start justify-start px-3 py-1 bg-amber-500 rounded-full`}
                                 >
-                                  Tidak
+                                  <div class="text-base font-bold leading-normal text-white">
+                                    Aktif
+                                  </div>
                                 </div>
-                              </div>
-                            )}
-                          </td>
+                              )}
+                              {numList.user_membership_status ===
+                                "NonActive" && (
+                                <div
+                                  class={`flex items-start justify-start px-3 py-1 border rounded-full border-gray-400`}
+                                >
+                                  <div
+                                    class={`text-base font-bold leading-normal text-gray-600`}
+                                  >
+                                    Tidak
+                                  </div>
+                                </div>
+                              )}
+                            </td>
+                          )}
                           <td
                             class={`flex flex-1 self-stretch items-center justify-center w-full`}
                             style={"min-width: 105px"}
