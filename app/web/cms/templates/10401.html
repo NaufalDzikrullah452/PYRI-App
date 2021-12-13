@@ -18,7 +18,7 @@
           api("/api/premium", {
             tipe: "Bibliophile",
             e: "Subscribe",
-            user_id: 32,
+            user_id: window.user.user.user_id,
           }).then((res) => {
             console.log(res);
             snap.pay(res.snaptoken, {
@@ -30,7 +30,7 @@
           api("/api/premium", {
             tipe: "Bibliomania",
             e: "Subscribe",
-            user_id: 32,
+            user_id: window.user.user.user_id,
           }).then((res) => {
             console.log(res);
             snap.pay(res.snaptoken, {
@@ -42,7 +42,7 @@
           api("/api/premium", {
             tipe: "Bibliognost",
             e: "Subscribe",
-            user_id: 32,
+            user_id: window.user.user.user_id,
           }).then((res) => {
             console.log(res);
             snap.pay(res.snaptoken, {
@@ -54,7 +54,7 @@
 
       transaction(result) {
         api("/api/notification", {
-          user_id: 32,
+          user_id: window.user.user.user_id,
           plan_id: this.plan_id,
           ...result,
         }).then((res) => {

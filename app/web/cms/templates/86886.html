@@ -67,6 +67,7 @@
               role: "users",
               user: { ...res.users },
               roleAdmin: window.user.roleAdmin || "",
+              admin: window.user.admin || "",
             };
             this.timeOut(1000);
             this.user_id = res.users.user_id;
@@ -228,6 +229,7 @@
                     role: "users",
                     user: res.users,
                     roleAdmin: window.user.roleAdmin || "",
+                    admin: window.user.admin || "",
                   };
                   runInAction(() => {
                     this.user = res.users;

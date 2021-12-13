@@ -607,7 +607,7 @@
                         </div>
                       </th>
                       <th
-                        class={`flex self-stretch items-center justify-start`}
+                        class={`flex self-stretch items-center justify-end`}
                         style="width:8%;"
                       >
                         <div class="text-base font-bold leading-normal text-white">
@@ -633,140 +633,144 @@
                     </tr>
                   </thead>
                   <tbody class="flex flex-col space-y-2.5 items-start justify-start">
-                    {meta.users.map((value, index) => {
-                      return (
-                        <tr
-                          class={`w-full flex space-x-3 items-center justify-start px-4 py-2.5 bg-white rounded`}
-                          style=":hover {background-color: #ffbe76;"
-                        >
-                          <td
-                            class={`flex flex-col items-start justify-center pl-2`}
-                            style="width:5%; padding-right:10px;"
+                    {meta.users
+                      .slice(meta.first_entries, meta.last_entries)
+                      .map((value, index) => {
+                        return (
+                          <tr
+                            class={`w-full flex space-x-3 items-center justify-start px-4 py-2.5 bg-white rounded`}
+                            style=":hover {background-color: #ffbe76;"
                           >
-                            <div class="text-base leading-normal">1</div>
-                          </td>
-                          <td
-                            class={`flex space-x-3 items-center justify-start`}
-                            style="width:25%;"
-                          >
-                            <img
-                              src={
-                                value.users.user_picture
-                                  ? "/upload" + value.users.user_email
-                                  : "/fimgs/4385_21969.x1.png"
-                              }
-                              onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.src = "/fimgs/4385_21969.x1.png";
-                              }}
-                              style="width: 44px; min-width: 44px; max-width: 44px; height: 44px; min-height: 44px; max-height: 44px;background-image: url('/fimgs/bg-b734a5be3aee0fd453c592a0baf71a7e7f723cd8');background-size:100% 100%;background-repeat:no-repeat; border-radius:50px;"
-                            />
                             <td
-                              class={`flex flex-col items-start justify-center`}
-                              style={"padding: 8px;"}
+                              class={`flex flex-col items-start justify-center pl-2`}
+                              style="width:5%; padding-right:10px;"
                             >
-                              <div
-                                class={`text-base font-medium leading-normal`}
-                              >
-                                {value.users.user_name || "-"}
-                              </div>
-                              <div
-                                class={`text-sm leading-tight text-gray-600`}
-                              >
-                                {value.users.user_name || "-"}
+                              <div class={`text-base leading-normal`}>
+                                {index + 1}
                               </div>
                             </td>
-                          </td>
-                          <td
-                            class={`flex flex-1 self-stretch items-center justify-start`}
-                            style="width:20%;"
-                          >
-                            <div
-                              class={`text-base font-medium leading-normal text-gray-600`}
+                            <td
+                              class={`flex space-x-3 items-center justify-start`}
+                              style="width:24%;"
                             >
-                              {value.mt_order_id || "-"}
-                            </div>
-                          </td>
-                          <td
-                            class={`flex flex-1 self-stretch items-center justify-start`}
-                            style="width:20%;"
-                          >
-                            <div class="flex items-center justify-start py-0.5 rounded-full">
-                              <div
-                                class={`text-base font-medium leading-normal text-gray-600`}
-                              >
-                                {value.plans.plan_name || "-"}
-                              </div>
-                            </div>
-                          </td>
-                          <td
-                            class={`flex self-stretch items-center justify-start`}
-                            style="width:10%;"
-                          >
-                            <div class="flex items-center justify-start py-0.5 rounded-full">
-                              <div
-                                class={`text-base font-medium leading-normal text-gray-600`}
-                              >
-                                {value.plans.plan_duration + " Hari" || "-"}
-                              </div>
-                            </div>
-                          </td>
-                          <td
-                            class={`flex self-stretch items-center justify-end`}
-                            style="width:8%;"
-                          >
-                            <div
-                              class={`text-base font-medium leading-normal text-gray-600`}
-                            >
-                              {value.plans.plan_price
-                                .toFixed(0)
-                                .replace(
-                                  /(\d)(?=(\d{3})+(?:\.\d+)?$)/g,
-                                  "$1,"
-                                ) || "-"}
-                            </div>
-                          </td>
-                          <td
-                            class={`flex self-stretch space-x-2.5 items-center justify-start pl-3`}
-                            style="width:10%;"
-                          >
-                            {value.mt_status === "capture" && (
-                              <div
-                                class={`flex items-center justify-start px-3 py-1 bg-green-200 rounded-full`}
-                                style="background-color:rgb(39, 174, 96, 0.2);"
-                              >
-                                <div class="text-sm font-bold leading-tight text-green-600">
-                                  Success
-                                </div>
-                              </div>
-                            )}
-                            {value.mt_status === "pending" && (
-                              <div
-                                class={`flex items-center justify-start px-3 py-1 rounded-full`}
-                                style="background-color: rgb(230, 126, 34, 0.2)"
-                              >
-                                <div class="text-sm font-bold leading-tight text-amber-500">
-                                  Pending
-                                </div>
-                              </div>
-                            )}
-                            {value.mt_status === "expire" && (
-                              <div
-                                class={`flex items-center justify-start px-3 py-1 rounded-full`}
-                                style="background-color: rgb(192, 57, 43, 0.2)"
+                              <img
+                                src={
+                                  value.users.user_picture
+                                    ? "/upload" + value.users.user_email
+                                    : "/fimgs/4385_21969.x1.png"
+                                }
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = "/fimgs/4385_21969.x1.png";
+                                }}
+                                style="width: 44px; min-width: 44px; max-width: 44px; height: 44px; min-height: 44px; max-height: 44px;background-image: url('/fimgs/bg-b734a5be3aee0fd453c592a0baf71a7e7f723cd8');background-size:100% 100%;background-repeat:no-repeat; border-radius:50px;"
+                              />
+                              <td
+                                class={`flex flex-col items-start justify-center`}
+                                style={"padding: 8px;"}
                               >
                                 <div
-                                  class={`text-sm font-bold leading-tight text-rose-500`}
-                                  style="color:#c0392b;"
+                                  class={`text-base font-medium leading-normal`}
                                 >
-                                  Expired
+                                  {value.users.user_name || "-"}
+                                </div>
+                                <div
+                                  class={`text-sm leading-tight text-gray-600`}
+                                >
+                                  {value.users.user_name || "-"}
+                                </div>
+                              </td>
+                            </td>
+                            <td
+                              class={`flex flex-1 self-stretch items-center justify-start`}
+                              style="width:20%;"
+                            >
+                              <div
+                                class={`text-base font-medium leading-normal text-gray-600`}
+                              >
+                                {value.mt_order_id || "-"}
+                              </div>
+                            </td>
+                            <td
+                              class={`flex flex-1 self-stretch items-center justify-center`}
+                              style="width:20%;"
+                            >
+                              <div class="flex items-center justify-start py-0.5 rounded-full">
+                                <div
+                                  class={`text-base font-medium leading-normal text-gray-600`}
+                                >
+                                  {value.plans.plan_name || "-"}
                                 </div>
                               </div>
-                            )}
-                          </td>
-                        </tr>
-                      );
-                    })}
+                            </td>
+                            <td
+                              class={`flex self-stretch items-center justify-end`}
+                              style="width:10%;"
+                            >
+                              <div class="flex items-center justify-start py-0.5 rounded-full">
+                                <div
+                                  class={`text-base font-medium leading-normal text-gray-600`}
+                                >
+                                  {value.plans.plan_duration + " Hari" || "-"}
+                                </div>
+                              </div>
+                            </td>
+                            <td
+                              class={`flex self-stretch items-center justify-end`}
+                              style="width:10%;"
+                            >
+                              <div
+                                class={`text-base font-medium leading-normal text-gray-600`}
+                              >
+                                {value.plans.plan_price
+                                  .toFixed(0)
+                                  .replace(
+                                    /(\d)(?=(\d{3})+(?:\.\d+)?$)/g,
+                                    "$1,"
+                                  ) || "-"}
+                              </div>
+                            </td>
+                            <td
+                              class={`flex self-stretch space-x-2.5 items-center justify-start pl-3`}
+                              style="width:10%;"
+                            >
+                              {value.mt_status === "capture" && (
+                                <div
+                                  class={`flex items-center justify-start px-3 py-1 bg-green-200 rounded-full`}
+                                  style="background-color:rgb(39, 174, 96, 0.2);"
+                                >
+                                  <div class="text-sm font-bold leading-tight text-green-600">
+                                    Success
+                                  </div>
+                                </div>
+                              )}
+                              {value.mt_status === "pending" && (
+                                <div
+                                  class={`flex items-center justify-start px-3 py-1 rounded-full`}
+                                  style="background-color: rgb(230, 126, 34, 0.2)"
+                                >
+                                  <div class="text-sm font-bold leading-tight text-amber-500">
+                                    Pending
+                                  </div>
+                                </div>
+                              )}
+                              {value.mt_status === "expire" && (
+                                <div
+                                  class={`flex items-center justify-start px-3 py-1 rounded-full`}
+                                  style="background-color: rgb(192, 57, 43, 0.2)"
+                                >
+                                  <div
+                                    class={`text-sm font-bold leading-tight text-rose-500`}
+                                    style="color:#c0392b;"
+                                  >
+                                    Expired
+                                  </div>
+                                </div>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
                     {meta.users.length === 0 && (
                       <tr
                         class={`w-full flex self-stretch items-center justify-center px-4 py-2.5 rounded`}

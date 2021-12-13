@@ -146,7 +146,7 @@
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex items-start justify-start bg-white`}>
+    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
       <div class="flex flex-1 self-stretch items-start justify-start">
         <div
           class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -617,87 +617,91 @@
                     </tr>
                   </thead>
                   <tbody class="flex flex-col space-y-2.5 items-start justify-start">
-                    {meta.users.map((value, index) => {
-                      return (
-                        <tr
-                          class={`w-full flex space-x-3 items-center justify-start px-4 py-2.5 bg-white rounded`}
-                          style=":hover {background-color: #ffbe76;"
-                        >
-                          <td
-                            class={`flex flex-col items-center justify-center pl-2`}
-                            style={"width:3% padding-left:10px;"}
+                    {meta.users
+                      .slice(meta.first_entries, meta.last_entries)
+                      .map((value, index) => {
+                        return (
+                          <tr
+                            class={`w-full flex space-x-3 items-center justify-start px-4 py-2.5 bg-white rounded`}
+                            style=":hover {background-color: #ffbe76;"
                           >
-                            <div class={`text-base leading-normal`}>
-                              {index + 1}
-                            </div>
-                          </td>
-                          <td
-                            class={`flex space-x-3 items-center justify-start pl-2`}
-                            style="width:27%;"
-                          >
-                            <img
-                              src={
-                                value.users.user_picture
-                                  ? "/upload" + value.users.user_email
-                                  : "/fimgs/4385_21969.x1.png"
-                              }
-                              onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.src = "/fimgs/4385_21969.x1.png";
-                              }}
-                              style="width: 44px; min-width: 44px; max-width: 44px; height: 44px; min-height: 44px; max-height: 44px;background-image: url('/fimgs/bg-b734a5be3aee0fd453c592a0baf71a7e7f723cd8');background-size:100% 100%;background-repeat:no-repeat; border-radius:50px;"
-                            />
                             <td
-                              class={`flex flex-col items-start justify-center`}
-                              style={"padding: 8px;"}
+                              class={`flex flex-col items-center justify-center pl-2`}
+                              style={"width:3% padding-left:10px;"}
                             >
-                              <div
-                                class={`text-base font-medium leading-normal`}
-                              >
-                                {value.users.user_name || "Name"}
-                              </div>
-                              <div
-                                class={`text-sm leading-tight text-gray-600`}
-                              >
-                                {value.users.user_email || "email"}
+                              <div class={`text-base leading-normal`}>
+                                {index + 1}
                               </div>
                             </td>
-                          </td>
-                          <td
-                            class={`flex flex-1 self-stretch items-center justify-start`}
-                            style="width:20%; padding-left:20px;"
-                          >
-                            <div class="flex items-start justify-start px-3 py-1 bg-amber-500 rounded-full">
-                              <div class="text-base font-bold leading-normal text-white">
-                                Aktif
+                            <td
+                              class={`flex space-x-3 items-center justify-start pl-2`}
+                              style="width:27%;"
+                            >
+                              <img
+                                src={
+                                  value.users.user_picture
+                                    ? "/upload" + value.users.user_email
+                                    : "/fimgs/4385_21969.x1.png"
+                                }
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = "/fimgs/4385_21969.x1.png";
+                                }}
+                                style="width: 44px; min-width: 44px; max-width: 44px; height: 44px; min-height: 44px; max-height: 44px;background-image: url('/fimgs/bg-b734a5be3aee0fd453c592a0baf71a7e7f723cd8');background-size:100% 100%;background-repeat:no-repeat; border-radius:50px;"
+                              />
+                              <td
+                                class={`flex flex-col items-start justify-center`}
+                                style={"padding: 8px;"}
+                              >
+                                <div
+                                  class={`text-base font-medium leading-normal`}
+                                >
+                                  {value.users.user_name || "Name"}
+                                </div>
+                                <div
+                                  class={`text-sm leading-tight text-gray-600`}
+                                >
+                                  {value.users.user_email || "email"}
+                                </div>
+                              </td>
+                            </td>
+                            <td
+                              class={`flex flex-1 self-stretch items-center justify-start`}
+                              style="width:20%; padding-left:20px;"
+                            >
+                              <div class="flex items-start justify-start px-3 py-1 bg-amber-500 rounded-full">
+                                <div class="text-base font-bold leading-normal text-white">
+                                  Aktif
+                                </div>
                               </div>
-                            </div>
-                          </td>
-                          <td
-                            class={`flex flex-1 self-stretch items-center justify-start`}
-                            style="width:20%;"
-                          >
-                            <div
-                              class={`text-base font-medium leading-normal text-gray-600`}
+                            </td>
+                            <td
+                              class={`flex flex-1 self-stretch items-center justify-start`}
+                              style="width:20%;"
                             >
-                              {dateFormat(value.join_date, "dd MMMM yyyy") ||
-                                "-"}
-                            </div>
-                          </td>
-                          <td
-                            class={`flex flex-1 self-stretch items-center justify-start`}
-                            style="width:30%;"
-                          >
-                            <div
-                              class={`text-base font-bold leading-normal text-gray-600`}
+                              <div
+                                class={`text-base font-medium leading-normal text-gray-600`}
+                              >
+                                {dateFormat(value.join_date, "dd MMMM yyyy") ||
+                                  "-"}
+                              </div>
+                            </td>
+                            <td
+                              class={`flex flex-1 self-stretch items-center justify-start`}
+                              style="width:30%;"
                             >
-                              {dateFormat(value.expired_date, "dd MMMM yyyy") ||
-                                "-"}
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                              <div
+                                class={`text-base font-bold leading-normal text-gray-600`}
+                              >
+                                {dateFormat(
+                                  value.expired_date,
+                                  "dd MMMM yyyy"
+                                ) || "-"}
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
                     {meta.users.length === 0 && (
                       <tr
                         class={`w-full flex self-stretch items-center justify-center px-4 py-2.5 rounded`}
