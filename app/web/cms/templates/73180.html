@@ -27,9 +27,7 @@
           runInAction(() => {
             this[key] = value;
           });
-        }
-
-        console.log(key + " : " + value);
+        } // console.log(key + " : " + value);
       },
 
       async sendRating() {
@@ -60,7 +58,7 @@
                 },
                 e: "Create",
               }).then((res) => {
-                console.log(res);
+                // console.log(res);
                 runInAction(() => {
                   this.user_rating = res.rating;
                 });
@@ -195,9 +193,7 @@
           this.save_info = false;
           this.star_info = false;
           this.read_info = false;
-        }
-
-        console.log("onclick:" + this.page_info);
+        } // console.log("onclick:" + this.page_info);
       },
 
       async back() {
@@ -277,7 +273,7 @@
             } else {
               window.mobileApp.app.dialog.confirm(
                 "This book already added to read later.",
-                "Remove from book read later?",
+                "Remove from read later?",
                 () => {
                   api("/api/bookmarks", {
                     bookmark: {
@@ -308,7 +304,11 @@
     }}
     run={async () => {
       // read buku by book_id
-      // console.log(params.history);
+      window.mobileApp.app.tooltip.create({
+        targetEl: ".saveInfo",
+        text: "Save",
+      }); // console.log(params.history);
+
       if (params.book_id !== undefined) {
         // read all rating by book
         api("/api/rating", {
@@ -568,7 +568,7 @@
             }}
           >
             <div
-              class={`flex flex-1 flex-col items-center justify-center p-2.5`}
+              class={`flex flex-1 flex-col items-center justify-center p-2.5 starInfo`}
               onClick={() => {
                 meta.showInfo("star_info");
               }}
@@ -599,7 +599,7 @@
               </div>
             </div>
             <div
-              class={`flex flex-1 flex-col items-center justify-center p-2.5`}
+              class={`flex flex-1 flex-col items-center justify-center p-2.5 saveInfo`}
               onClick={() => {
                 meta.showInfo("save_info");
               }}
@@ -630,7 +630,7 @@
               </div>
             </div>
             <div
-              class={`flex flex-1 flex-col items-center justify-center p-2.5`}
+              class={`flex flex-1 flex-col items-center justify-center p-2.5 readInfo`}
               onClick={() => {
                 meta.showInfo("read_info");
               }}
@@ -647,7 +647,10 @@
                   </div>
                 </div>
               )}
-              <div class="flex space-x-1 items-center justify-center">
+              <div
+                class={`flex space-x-1 items-center justify-center`}
+                onClick={() => {}}
+              >
                 <img
                   src="/fimgs/3840_264942.x1.svg"
                   class="flex items-start justify-start"
@@ -661,7 +664,7 @@
               </div>
             </div>
             <div
-              class={`flex flex-1 flex-col items-center justify-center p-2.5`}
+              class={`flex flex-1 flex-col items-center justify-center p-2.5 pageInfo`}
               onClick={() => {
                 meta.showInfo("page_info");
               }}

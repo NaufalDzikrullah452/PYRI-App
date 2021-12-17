@@ -136,7 +136,6 @@
             }
           );
         } else if (this.user_comment_edit.length !== 0) {
-          // window.mobileApp.app.dialog.alert("Please close edit comment first.", "Can't add new comment!");
           this.toast(
             "Please close edit comment before add new comment.",
             "center",
@@ -711,7 +710,85 @@
             </div>
           )}
           {meta.loading && (
-            <div class={`flex self-stretch items-start justify-start pb-1`}>
+            <div
+              class={`flex self-stretch flex-col space-y-2.5 items-start justify-start pb-1`}
+            >
+              <div
+                class={`flex flex-1 self-stretch space-x-2.5 items-center justify-start item-inner`}
+              >
+                <div class={`flex items-start justify-start p-2.5`}>
+                  <div
+                    class="flex flex-1 self-stretch items-start justify-start rounded-full"
+                    style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
+                  >
+                    <loading-box class={"rounded-full"} />
+                  </div>
+                </div>
+                <div class="flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-center py-2.5">
+                  <div
+                    class={`flex self-stretch space-x-16 items-start justify-start`}
+                    style={`height: 15px; min-height: 15px; max-height: 15px;display: flex;
+  justify-content: space-between`}
+                  >
+                    <div
+                      class="flex flex-1 self-stretch items-start justify-start bg-white"
+                      style="width: 111.50px; min-width: 111.50px; max-width: 111.50px; height: 15px; min-height: 15px; max-height: 15px;"
+                    >
+                      <loading-box />
+                    </div>
+                    <div
+                      class="flex flex-1 self-stretch items-start justify-start bg-white"
+                      style="width: 111.50px; min-width: 111.50px; max-width: 111.50px; height: 15px; min-height: 15px; max-height: 15px;"
+                    >
+                      <loading-box />
+                    </div>
+                  </div>
+                  <div
+                    class="flex self-stretch items-start justify-start bg-white"
+                    style="height: 45px; min-height: 45px; max-height: 45px;"
+                  >
+                    <loading-box />
+                  </div>
+                </div>
+              </div>
+              <div
+                class={`flex flex-1 self-stretch space-x-2.5 items-center justify-start item-inner`}
+              >
+                <div class={`flex items-start justify-start p-2.5`}>
+                  <div
+                    class="flex flex-1 self-stretch items-start justify-start rounded-full"
+                    style="width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;"
+                  >
+                    <loading-box class={"rounded-full"} />
+                  </div>
+                </div>
+                <div class="flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-center py-2.5">
+                  <div
+                    class={`flex self-stretch space-x-16 items-start justify-start`}
+                    style={`height: 15px; min-height: 15px; max-height: 15px;display: flex;
+  justify-content: space-between`}
+                  >
+                    <div
+                      class="flex flex-1 self-stretch items-start justify-start bg-white"
+                      style="width: 111.50px; min-width: 111.50px; max-width: 111.50px; height: 15px; min-height: 15px; max-height: 15px;"
+                    >
+                      <loading-box />
+                    </div>
+                    <div
+                      class="flex flex-1 self-stretch items-start justify-start bg-white"
+                      style="width: 111.50px; min-width: 111.50px; max-width: 111.50px; height: 15px; min-height: 15px; max-height: 15px;"
+                    >
+                      <loading-box />
+                    </div>
+                  </div>
+                  <div
+                    class="flex self-stretch items-start justify-start bg-white"
+                    style="height: 45px; min-height: 45px; max-height: 45px;"
+                  >
+                    <loading-box />
+                  </div>
+                </div>
+              </div>
               <div
                 class={`flex flex-1 self-stretch space-x-2.5 items-center justify-start item-inner`}
               >

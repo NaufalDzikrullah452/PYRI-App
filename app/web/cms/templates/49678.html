@@ -348,17 +348,24 @@
       });
       runInAction(() => {
         meta.user = window.user.user || [];
-        meta.popularBook = popularBook;
         meta.newReleaseBook = newReleaseBook;
-        popularBook.map((a) => {
+        popularBook.map((a, i) => {
           var sum = 0;
           var avg = 0;
           a.rating.map((b) => {
-            sum += b.rating_point; // console.log(console.log(b.rating_point));
+            sum += b.rating_point;
           });
           avg = parseFloat(sum / a.rating.length);
           meta.get_rating_popular.push(avg);
+          popularBook[i]["rating_avg"] = avg;
         });
+        popularBook.sort(function (a, b) {
+          var aNum = a.rating_avg;
+          var bNum = b.rating_avg;
+          return bNum - aNum;
+        });
+        meta.popularBook = popularBook; // console.log(popularBook)
+
         setTimeout(() => {
           runInAction(() => {
             meta.loading = false;
@@ -384,7 +391,7 @@
     }}
   />
   <div
-    class={`flex self-stretch items-end justify-center bg-white`}
+    class={`flex items-end justify-center bg-white`}
     style={"margin-bottom: 50px;"}
   >
     <div
@@ -677,36 +684,36 @@
               </div>
             </div>
           )}
-          <div
-            class={`flex self-stretch flex-col space-y-2 items-start justify-start p-6 bg-gray-50`}
-          >
-            <div class="flex self-stretch space-x-2.5 items-end justify-start rounded-lg">
-              <div class="flex flex-1 items-center justify-start">
+          {meta.popularBook.length !== 0 && (
+            <div
+              class={`flex self-stretch flex-col space-y-2 items-start justify-start p-6 bg-gray-50`}
+            >
+              <div class="flex self-stretch space-x-2.5 items-end justify-start rounded-lg">
+                <div class="flex flex-1 items-center justify-start">
+                  <div
+                    class={`text-xl font-bold leading-loose`}
+                    onClick={() => {
+                      navigate("/m/popular-page");
+                    }}
+                  >
+                    Popular
+                  </div>
+                </div>
                 <div
-                  class={`text-xl font-bold leading-loose`}
+                  class={`flex self-stretch items-center justify-start`}
                   onClick={() => {
                     navigate("/m/popular-page");
                   }}
                 >
-                  Popular
+                  <div class="text-base font-bold leading-normal text-amber-500">
+                    See more
+                  </div>
                 </div>
               </div>
-              <div
-                class={`flex self-stretch items-center justify-start`}
-                onClick={() => {
-                  navigate("/m/popular-page");
-                }}
-              >
-                <div class="text-base font-bold leading-normal text-amber-500">
-                  See more
-                </div>
-              </div>
-            </div>
-            {!meta.loading && (
-              <div
-                class={`flex self-stretch flex-col space-y-3 items-start justify-start py-4 overflow-x-auto`}
-              >
-                {meta.popularBook.length !== 0 && (
+              {!meta.loading && (
+                <div
+                  class={`flex self-stretch flex-col space-y-3 items-start justify-start py-4 overflow-x-auto`}
+                >
                   <div
                     class={`flex flex-1 space-x-3 items-start justify-start`}
                   >
@@ -715,7 +722,9 @@
                         <div
                           class={`flex flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded shadow`}
                           onClick={() => {
-                            navigate("/m/detail-book-page/" + value.book_id);
+                            navigate(
+                              "/m/detail-book-page/" + value.book_id + "/"
+                            );
                           }}
                         >
                           <img
@@ -741,11 +750,19 @@
                                 </div>
                               </div>
                             </div>
-                            <div class="flex self-stretch items-center justify-start">
+                            <div
+                              class={`flex self-stretch items-start justify-start`}
+                              style={`height: 3.5em;`}
+                            >
                               <div
                                 class={`text-sm font-medium leading-tight`}
-                                style={`height: 3.75em;     
-    overflow: hidden;`}
+                                style={`width: 100px;     
+    overflow: hidden;
+    line-height: 1em;
+max-height: 3em;
+display: -webkit-box;
+-webkit-box-orient: vertical;
+-webkit-line-clamp: 3;`}
                               >
                                 {value.book_title || "Book Title"}
                               </div>
@@ -759,11 +776,7 @@
                                     style="width: 12px; min-width: 12px; max-width: 12px; height: 12px; min-height: 12px; max-height: 12px;"
                                   />
                                   <div class={`text-xs leading-none`}>
-                                    {meta.get_rating_popular.length !== 0
-                                      ? meta.get_rating_popular[index].toFixed(
-                                          2
-                                        )
-                                      : 0}
+                                    {value.rating_avg.toFixed(2) || ""}
                                   </div>
                                 </div>
                               </div>
@@ -804,217 +817,217 @@
                       </div>
                     </div>
                   </div>
-                )}
-                {meta.popularBook.length === 0 && (
-                  <div
-                    class={`flex self-stretch flex-col items-center justify-center`}
-                  >
-                    <div class="text-xs leading-none text-center">
-                      No books published.
+                  {meta.popularBook.length === 0 && (
+                    <div
+                      class={`flex self-stretch flex-col items-center justify-center`}
+                    >
+                      <div class="text-xs leading-none text-center">
+                        No books published.
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            )}
-            {meta.loading && (
-              <div
-                class={`flex self-stretch space-x-3 items-start justify-start overflow-x-auto`}
-              >
+                  )}
+                </div>
+              )}
+              {meta.loading && (
                 <div
-                  class={`flex self-stretch flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded`}
-                  onClick={() => {
-                    navigate("/m/detail-book-page");
-                  }}
+                  class={`flex self-stretch space-x-3 items-start justify-start overflow-x-auto`}
                 >
                   <div
-                    class="flex items-start justify-start"
-                    style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;"
+                    class={`flex self-stretch flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded`}
+                    onClick={() => {
+                      navigate("/m/detail-book-page");
+                    }}
                   >
-                    <loading-box
-                      style={`background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;`}
-                    />
-                  </div>
-                  <div class="flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-start px-2 pb-2">
                     <div
-                      class="flex flex-col items-start justify-start"
-                      style="width: 75px; min-width: 75px; max-width: 75px; height: 12px; min-height: 12px; max-height: 12px;"
+                      class="flex items-start justify-start"
+                      style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;"
                     >
-                      <loading-box class="bg-gray-200" />
+                      <loading-box
+                        style={`background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;`}
+                      />
                     </div>
-                    <div
-                      class="flex flex-col items-start justify-start"
-                      style="width: 94.16px; min-width: 94.16px; max-width: 94.16px; height: 12px; min-height: 12px; max-height: 12px;"
-                    >
-                      <loading-box class="bg-gray-200" />
-                    </div>
-                    <div class="flex self-stretch space-x-2 items-center justify-center">
+                    <div class="flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-start px-2 pb-2">
                       <div
                         class="flex flex-col items-start justify-start"
-                        style="width: 43.08px; min-width: 43.08px; max-width: 43.08px; height: 12px; min-height: 12px; max-height: 12px;"
+                        style="width: 75px; min-width: 75px; max-width: 75px; height: 12px; min-height: 12px; max-height: 12px;"
                       >
                         <loading-box class="bg-gray-200" />
                       </div>
                       <div
                         class="flex flex-col items-start justify-start"
-                        style="width: 43.08px; min-width: 43.08px; max-width: 43.08px; height: 12px; min-height: 12px; max-height: 12px;"
+                        style="width: 94.16px; min-width: 94.16px; max-width: 94.16px; height: 12px; min-height: 12px; max-height: 12px;"
                       >
                         <loading-box class="bg-gray-200" />
+                      </div>
+                      <div class="flex self-stretch space-x-2 items-center justify-center">
+                        <div
+                          class="flex flex-col items-start justify-start"
+                          style="width: 43.08px; min-width: 43.08px; max-width: 43.08px; height: 12px; min-height: 12px; max-height: 12px;"
+                        >
+                          <loading-box class="bg-gray-200" />
+                        </div>
+                        <div
+                          class="flex flex-col items-start justify-start"
+                          style="width: 43.08px; min-width: 43.08px; max-width: 43.08px; height: 12px; min-height: 12px; max-height: 12px;"
+                        >
+                          <loading-box class="bg-gray-200" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class={`flex self-stretch flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded`}
+                    onClick={() => {
+                      navigate("/m/detail-book-page");
+                    }}
+                  >
+                    <div
+                      class="flex items-start justify-start"
+                      style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;"
+                    >
+                      <loading-box
+                        style={`background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;`}
+                      />
+                    </div>
+                    <div class="flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-start px-2 pb-2">
+                      <div
+                        class="flex flex-col items-start justify-start"
+                        style="width: 75px; min-width: 75px; max-width: 75px; height: 12px; min-height: 12px; max-height: 12px;"
+                      >
+                        <loading-box class="bg-gray-200" />
+                      </div>
+                      <div
+                        class="flex flex-col items-start justify-start"
+                        style="width: 94.16px; min-width: 94.16px; max-width: 94.16px; height: 12px; min-height: 12px; max-height: 12px;"
+                      >
+                        <loading-box class="bg-gray-200" />
+                      </div>
+                      <div class="flex self-stretch space-x-2 items-center justify-center">
+                        <div
+                          class="flex flex-col items-start justify-start"
+                          style="width: 43.08px; min-width: 43.08px; max-width: 43.08px; height: 12px; min-height: 12px; max-height: 12px;"
+                        >
+                          <loading-box class="bg-gray-200" />
+                        </div>
+                        <div
+                          class="flex flex-col items-start justify-start"
+                          style="width: 43.08px; min-width: 43.08px; max-width: 43.08px; height: 12px; min-height: 12px; max-height: 12px;"
+                        >
+                          <loading-box class="bg-gray-200" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class={`flex self-stretch flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded`}
+                    onClick={() => {
+                      navigate("/m/detail-book-page");
+                    }}
+                  >
+                    <div
+                      class="flex items-start justify-start"
+                      style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;"
+                    >
+                      <loading-box
+                        style={`background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;`}
+                      />
+                    </div>
+                    <div class="flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-start px-2 pb-2">
+                      <div
+                        class="flex flex-col items-start justify-start"
+                        style="width: 75px; min-width: 75px; max-width: 75px; height: 12px; min-height: 12px; max-height: 12px;"
+                      >
+                        <loading-box class="bg-gray-200" />
+                      </div>
+                      <div
+                        class="flex flex-col items-start justify-start"
+                        style="width: 94.16px; min-width: 94.16px; max-width: 94.16px; height: 12px; min-height: 12px; max-height: 12px;"
+                      >
+                        <loading-box class="bg-gray-200" />
+                      </div>
+                      <div class="flex self-stretch space-x-2 items-center justify-center">
+                        <div
+                          class="flex flex-col items-start justify-start"
+                          style="width: 43.08px; min-width: 43.08px; max-width: 43.08px; height: 12px; min-height: 12px; max-height: 12px;"
+                        >
+                          <loading-box class="bg-gray-200" />
+                        </div>
+                        <div
+                          class="flex flex-col items-start justify-start"
+                          style="width: 43.08px; min-width: 43.08px; max-width: 43.08px; height: 12px; min-height: 12px; max-height: 12px;"
+                        >
+                          <loading-box class="bg-gray-200" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class={`flex self-stretch flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded`}
+                    onClick={() => {
+                      navigate("/m/detail-book-page");
+                    }}
+                  >
+                    <div
+                      class="flex items-start justify-start"
+                      style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;"
+                    >
+                      <loading-box
+                        style={`background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;`}
+                      />
+                    </div>
+                    <div class="flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-start px-2 pb-2">
+                      <div
+                        class="flex flex-col items-start justify-start"
+                        style="width: 75px; min-width: 75px; max-width: 75px; height: 12px; min-height: 12px; max-height: 12px;"
+                      >
+                        <loading-box class="bg-gray-200" />
+                      </div>
+                      <div
+                        class="flex flex-col items-start justify-start"
+                        style="width: 94.16px; min-width: 94.16px; max-width: 94.16px; height: 12px; min-height: 12px; max-height: 12px;"
+                      >
+                        <loading-box class="bg-gray-200" />
+                      </div>
+                      <div class="flex self-stretch space-x-2 items-center justify-center">
+                        <div
+                          class="flex flex-col items-start justify-start"
+                          style="width: 43.08px; min-width: 43.08px; max-width: 43.08px; height: 12px; min-height: 12px; max-height: 12px;"
+                        >
+                          <loading-box class="bg-gray-200" />
+                        </div>
+                        <div
+                          class="flex flex-col items-start justify-start"
+                          style="width: 43.08px; min-width: 43.08px; max-width: 43.08px; height: 12px; min-height: 12px; max-height: 12px;"
+                        >
+                          <loading-box class="bg-gray-200" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class={`flex self-stretch flex-col items-center justify-center px-1 pt-1 pb-2.5 bg-white rounded`}
+                    onClick={() => {
+                      navigate("/m/popular-page");
+                    }}
+                  >
+                    <div
+                      class="flex flex-1 self-stretch flex-col space-y-1 items-center justify-center"
+                      style="width: 110.16px; min-width: 110.16px; max-width: 110.16px;"
+                    >
+                      <div class="text-xs leading-none text-center text-gray-500">
+                        Show all Popular
+                      </div>
+                      <div class="flex flex-col items-center justify-center bg-white border-2 rounded-full border-gray-300">
+                        <div class="flex items-start justify-start">
+                          <div />
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div
-                  class={`flex self-stretch flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded`}
-                  onClick={() => {
-                    navigate("/m/detail-book-page");
-                  }}
-                >
-                  <div
-                    class="flex items-start justify-start"
-                    style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;"
-                  >
-                    <loading-box
-                      style={`background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;`}
-                    />
-                  </div>
-                  <div class="flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-start px-2 pb-2">
-                    <div
-                      class="flex flex-col items-start justify-start"
-                      style="width: 75px; min-width: 75px; max-width: 75px; height: 12px; min-height: 12px; max-height: 12px;"
-                    >
-                      <loading-box class="bg-gray-200" />
-                    </div>
-                    <div
-                      class="flex flex-col items-start justify-start"
-                      style="width: 94.16px; min-width: 94.16px; max-width: 94.16px; height: 12px; min-height: 12px; max-height: 12px;"
-                    >
-                      <loading-box class="bg-gray-200" />
-                    </div>
-                    <div class="flex self-stretch space-x-2 items-center justify-center">
-                      <div
-                        class="flex flex-col items-start justify-start"
-                        style="width: 43.08px; min-width: 43.08px; max-width: 43.08px; height: 12px; min-height: 12px; max-height: 12px;"
-                      >
-                        <loading-box class="bg-gray-200" />
-                      </div>
-                      <div
-                        class="flex flex-col items-start justify-start"
-                        style="width: 43.08px; min-width: 43.08px; max-width: 43.08px; height: 12px; min-height: 12px; max-height: 12px;"
-                      >
-                        <loading-box class="bg-gray-200" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  class={`flex self-stretch flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded`}
-                  onClick={() => {
-                    navigate("/m/detail-book-page");
-                  }}
-                >
-                  <div
-                    class="flex items-start justify-start"
-                    style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;"
-                  >
-                    <loading-box
-                      style={`background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;`}
-                    />
-                  </div>
-                  <div class="flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-start px-2 pb-2">
-                    <div
-                      class="flex flex-col items-start justify-start"
-                      style="width: 75px; min-width: 75px; max-width: 75px; height: 12px; min-height: 12px; max-height: 12px;"
-                    >
-                      <loading-box class="bg-gray-200" />
-                    </div>
-                    <div
-                      class="flex flex-col items-start justify-start"
-                      style="width: 94.16px; min-width: 94.16px; max-width: 94.16px; height: 12px; min-height: 12px; max-height: 12px;"
-                    >
-                      <loading-box class="bg-gray-200" />
-                    </div>
-                    <div class="flex self-stretch space-x-2 items-center justify-center">
-                      <div
-                        class="flex flex-col items-start justify-start"
-                        style="width: 43.08px; min-width: 43.08px; max-width: 43.08px; height: 12px; min-height: 12px; max-height: 12px;"
-                      >
-                        <loading-box class="bg-gray-200" />
-                      </div>
-                      <div
-                        class="flex flex-col items-start justify-start"
-                        style="width: 43.08px; min-width: 43.08px; max-width: 43.08px; height: 12px; min-height: 12px; max-height: 12px;"
-                      >
-                        <loading-box class="bg-gray-200" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  class={`flex self-stretch flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded`}
-                  onClick={() => {
-                    navigate("/m/detail-book-page");
-                  }}
-                >
-                  <div
-                    class="flex items-start justify-start"
-                    style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;"
-                  >
-                    <loading-box
-                      style={`background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat;`}
-                    />
-                  </div>
-                  <div class="flex flex-1 self-stretch flex-col space-y-2.5 items-center justify-start px-2 pb-2">
-                    <div
-                      class="flex flex-col items-start justify-start"
-                      style="width: 75px; min-width: 75px; max-width: 75px; height: 12px; min-height: 12px; max-height: 12px;"
-                    >
-                      <loading-box class="bg-gray-200" />
-                    </div>
-                    <div
-                      class="flex flex-col items-start justify-start"
-                      style="width: 94.16px; min-width: 94.16px; max-width: 94.16px; height: 12px; min-height: 12px; max-height: 12px;"
-                    >
-                      <loading-box class="bg-gray-200" />
-                    </div>
-                    <div class="flex self-stretch space-x-2 items-center justify-center">
-                      <div
-                        class="flex flex-col items-start justify-start"
-                        style="width: 43.08px; min-width: 43.08px; max-width: 43.08px; height: 12px; min-height: 12px; max-height: 12px;"
-                      >
-                        <loading-box class="bg-gray-200" />
-                      </div>
-                      <div
-                        class="flex flex-col items-start justify-start"
-                        style="width: 43.08px; min-width: 43.08px; max-width: 43.08px; height: 12px; min-height: 12px; max-height: 12px;"
-                      >
-                        <loading-box class="bg-gray-200" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  class={`flex self-stretch flex-col items-center justify-center px-1 pt-1 pb-2.5 bg-white rounded`}
-                  onClick={() => {
-                    navigate("/m/popular-page");
-                  }}
-                >
-                  <div
-                    class="flex flex-1 self-stretch flex-col space-y-1 items-center justify-center"
-                    style="width: 110.16px; min-width: 110.16px; max-width: 110.16px;"
-                  >
-                    <div class="text-xs leading-none text-center text-gray-500">
-                      Show all Popular
-                    </div>
-                    <div class="flex flex-col items-center justify-center bg-white border-2 rounded-full border-gray-300">
-                      <div class="flex items-start justify-start">
-                        <div />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
           <div
             class={`flex self-stretch flex-col space-y-2 items-start justify-start p-6 bg-orange-50`}
             style={"margin-bottom: 40px;"}
@@ -1053,13 +1066,17 @@
                           }}
                           class={`flex items-start justify-start`}
                           onClick={() => {
-                            navigate("/m/detail-book-page/" + value.book_id);
+                            navigate(
+                              "/m/detail-book-page/" + value.book_id + "/"
+                            );
                           }}
                         />
                         <div
                           class={`flex flex-1 flex-col space-y-1 items-start justify-start`}
                           onClick={() => {
-                            navigate("/m/detail-book-page/" + value.book_id);
+                            navigate(
+                              "/m/detail-book-page/" + value.book_id + "/"
+                            );
                           }}
                         >
                           <div class="flex self-stretch items-start justify-start">
