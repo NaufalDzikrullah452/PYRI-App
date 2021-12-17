@@ -23,11 +23,8 @@
 
       async onClickTabPyri(tab) {
         // console.log(tab);
-        if (tab === "pyriList" && tab != this.tabActivePyri) {
-          this.readHistory();
-          this.readBookmarks();
-        }
-
+        this.readHistory();
+        this.readBookmarks();
         this.tabActivePyri = tab;
       },
 
@@ -102,10 +99,11 @@
               users: "Logout",
               e: "Logout",
             }).then((res) => {
-              console.log(res);
+              // console.log(res);
               window.user = {
                 role: "guest",
                 roleAdmin: window.user.roleAdmin || "",
+                admin: window.user.admin || "",
               };
               window.mobileApp.app.dialog.close();
               navigate("/m/");
@@ -176,13 +174,28 @@
             },
             e: "ReadByUserId",
           }).then((res) => {
+            // console.log(res)
             if (res !== null && res.bookmark.length !== 0) {
               runInAction(() => {
                 this.bookmarks = res.bookmark;
               });
+            } else {
+              runInAction(() => {
+                this.bookmarks = [];
+              });
             }
           });
         }
+      },
+
+      async toast(text, position, time) {
+        var toastCenter = window.mobileApp.app.toast.create({
+          text: text,
+          position: position,
+          closeTimeout: time,
+        }); // Open it
+
+        toastCenter.open();
       },
 
       async deleteBookmark(bookmark_id) {
@@ -191,22 +204,20 @@
             "Remove book from read later.",
             "Confirm delete?",
             () => {
-              window.mobileApp.app.dialog.preloader("Loading...");
               api("/api/bookmarks", {
                 bookmark: {
                   bookmark_id: bookmark_id,
                 },
                 e: "Delete",
               }).then((res) => {
+                // console.log(res)
                 if (res !== null) {
-                  setTimeout(() => {
-                    window.mobileApp.app.dialog.close();
-                  }, 1000);
                   runInAction(() => {
-                    this.readBookmarks(); // location.reload();
+                    this.readBookmarks();
+                    this.toast("Remove success", "center", 2000);
                   });
                 } else {
-                  window.mobileApp.app.dialog.close();
+                  this.toast("Database error", "center", 2000);
                 }
               });
             }
@@ -220,8 +231,7 @@
           category: " ",
           e: "ReadAll",
         }).then((res) => {
-          categories = res.category;
-          console.log(categories);
+          categories = res.category; // console.log(categories);
         });
         document.getElementById("categories").innerHTML = "";
         document.getElementById("categories").className =
@@ -272,8 +282,7 @@
           tags: " ",
           e: "ReadAll",
         }).then((res) => {
-          genres = res.tags;
-          console.log(genres);
+          genres = res.tags; // console.log(genres);
         });
         document.getElementById("genres").innerHTML = "";
         document.getElementById("genres").className =
@@ -364,8 +373,7 @@
           },
           e: "ReadUserSubscriptionById",
         }).then((res) => {
-          console.log(res);
-
+          // console.log(res);
           if (res.users !== null) {
             runInAction(() => {
               meta.user_premium = res.users;
@@ -1371,7 +1379,7 @@
           </div>
         </m-tab>
         <m-tab
-          class={`flex flex-1 self-stretch flex-col items-start justify-start`}
+          class={`flex flex-1 self-stretch flex-col items-start justify-start bg-white`}
           id="pyriList"
         >
           <div class="flex flex-1 self-stretch flex-col items-start justify-start">

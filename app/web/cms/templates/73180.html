@@ -218,6 +218,16 @@
         navigate("/m/about-books-page/" + book_id);
       },
 
+      async toast(text, position, time) {
+        var toastCenter = window.mobileApp.app.toast.create({
+          text: text,
+          position: position,
+          closeTimeout: time,
+        }); // Open it
+
+        toastCenter.open();
+      },
+
       async commentPage() {
         var book_id = "";
         if (params.book_id !== undefined) book_id = params.book_id;
@@ -248,7 +258,6 @@
           }).then((res) => {
             // console.log(res);
             if (res.bookmark === null) {
-              window.mobileApp.app.dialog.preloader("Added to read later...");
               api("/api/bookmarks", {
                 bookmark: {
                   bookmark_user_id: window.user.user.user_id,
@@ -258,12 +267,20 @@
                 e: "Create",
               }).then((res) => {
                 // console.log(res);
-                setTimeout(function () {
-                  window.mobileApp.app.dialog.close();
-                }, 2000);
-                runInAction(() => {
-                  this.isBookmark = true;
-                }); // navigate("/m/");
+                if (
+                  res === null ||
+                  res.res === "failure" ||
+                  res.bookmark === null
+                ) {
+                  this.toast("Database error", "center", 2000);
+                } else {
+                  this.toast("Added to read later", "center", 2000);
+                  runInAction(() => {
+                    this.isBookmark = true;
+                    document.getElementById("bookmark").src =
+                      "/fimgs/4379_20313.x1.svg";
+                  }); // navigate("/m/");
+                }
               });
             } else {
               window.mobileApp.app.dialog.confirm(
@@ -282,26 +299,24 @@
                         "Failed to remove this book from read later"
                       );
                     } else {
-                      window.mobileApp.app.dialog.preloader("Removing ...");
-                      setTimeout(function () {
-                        window.mobileApp.app.dialog.close();
-                      }, 2000);
+                      this.toast("Remove success", "center", 2000);
                       runInAction(() => {
                         this.isBookmark = false;
+                        document.getElementById("bookmark").src =
+                          "/fimgs/4833_122630.x1.svg";
                       });
                     }
                   });
                 }
               );
-            }
+            } // console.log(this.isBookmark)
           });
         }
       },
     }}
     run={async () => {
       // read buku by book_id
-      console.log(params.history);
-
+      // console.log(params.history);
       if (params.book_id !== undefined) {
         // read all rating by book
         api("/api/rating", {
@@ -444,6 +459,8 @@
             if (res.bookmark !== null) {
               runInAction(() => {
                 meta.isBookmark = true;
+                document.getElementById("bookmark").src =
+                  "/fimgs/4379_20313.x1.svg";
               });
             }
           }); // count sum bookmark
@@ -474,7 +491,7 @@
       }
     }}
   />
-  <div class={`flex self-stretch items-start justify-start bg-white`}>
+  <div class={`flex items-start justify-start bg-white`}>
     <div
       class={`flex flex-1 self-stretch flex-col space-y-4 items-start justify-start`}
     >
@@ -739,7 +756,7 @@
             class={`flex self-stretch items-center justify-start`}
             onClick={meta.commentPage}
           >
-            <div class="text-xl font-bold leading-loose">Comment</div>
+            <div class="text-xl font-bold leading-loose">Comments</div>
           </div>
           <div
             class={`flex flex-1 self-stretch items-center justify-start`}
@@ -755,7 +772,7 @@
           >
             <img
               class={`flex items-start justify-start`}
-              src="/fimgs/1022_25715.x1.svg"
+              src="/fimgs/991_7298.x1.svg"
               style="width: 20px; min-width: 20px; max-width: 20px; height: 20px; min-height: 20px; max-height: 20px;"
             />
           </div>
@@ -1096,15 +1113,12 @@
           }}
           style="width: 50px; min-width: 50px; max-width: 50px; height: 44px; min-height: 44px; max-height: 44px;"
         >
-          <div class="flex items-start justify-start">
-            {meta.isBookmark && (
-              <img
-                class={""}
-                style={`width: 35.71px; min-width: 35.71px; max-width: 35.71px; height: 44px; min-height: 44px; max-height: 44px;`}
-                src="/fimgs/4379_20313.x1.svg"
-              />
-            )}
-          </div>
+          <img
+            class={""}
+            style={`width: 35.71px; min-width: 35.71px; max-width: 35.71px; height: 44px; min-height: 44px; max-height: 44px;`}
+            src="/fimgs/4833_122630.x1.svg"
+            id={"bookmark"}
+          />
         </div>
         <button
           class={`flex flex-1 items-center justify-center p-2.5 bg-amber-500 shadow rounded-lg`}

@@ -136,15 +136,16 @@
             }
           );
         } else if (this.user_comment_edit.length !== 0) {
-          window.mobileApp.app.dialog.alert(
-            "Please close edit comment first.",
-            "Can't add new comment!"
+          // window.mobileApp.app.dialog.alert("Please close edit comment first.", "Can't add new comment!");
+          this.toast(
+            "Please close edit comment before add new comment.",
+            "center",
+            2000
           );
         } else if (this.user_comment === "") {
           comment.firstElementChild.focus();
         } else {
           window.mobileApp.app.dialog.confirm(null, "Confirm ?", () => {
-            window.mobileApp.app.dialog.preloader("Loading...");
             comment.firstElementChild.value = "";
             api("/api/comment", {
               comment: {
@@ -157,10 +158,23 @@
             }).then((res) => {
               if (res !== null) {
                 this.readComment();
+                this.toast("Comment added", "center", 2000);
+              } else {
+                this.toast("Database error", "center", 2000);
               }
             });
           });
         }
+      },
+
+      async toast(text, position, time) {
+        var toastCenter = window.mobileApp.app.toast.create({
+          text: text,
+          position: position,
+          closeTimeout: time,
+        }); // Open it
+
+        toastCenter.open();
       },
 
       async editComment(id, key, value) {
@@ -203,7 +217,6 @@
               this.edit_comment = 0;
             });
           } else {
-            window.mobileApp.app.dialog.preloader("Loading...");
             api("/api/comment", {
               comment: {
                 comment_id: parseInt(id),
@@ -213,19 +226,14 @@
               e: "Update",
             }).then((res) => {
               if (res.res !== "Failure" && res !== null) {
-                setTimeout(() => {
-                  window.mobileApp.app.dialog.close();
-                }, 1000);
                 runInAction(() => {
                   this.user_comment_edit = "";
                   this.edit_comment = 0;
                   this.readComment();
                 });
+                this.toast("Edit success", "center", 2000);
               } else {
-                setTimeout(() => {
-                  window.mobileApp.app.dialog.close();
-                  window.mobileApp.app.dialog.alert(null, "Failed to save");
-                }, 1000);
+                this.toast("Database error", "center", 2000);
               }
             }); // window.mobileApp.app.dialog.close();
           }
@@ -244,13 +252,10 @@
             window.mobileApp.app.dialog.close(); // console.log(res)
 
             if (res !== null && res.res !== "Failure") {
-              window.mobileApp.app.dialog.preloader("Success delete...");
+              this.toast("Delete success", "center", 2000);
               this.readComment();
-              setTimeout(() => {
-                window.mobileApp.app.dialog.close();
-              }, 1500);
             } else {
-              window.mobileApp.app.dialog.alert(null, "Error ondelete");
+              this.toast("Database error", "center", 2000);
             }
           });
         });
@@ -319,7 +324,7 @@
           </m-button>
           <div class="flex flex-1 items-center justify-start pb-2.5">
             <div class={`text-xl font-bold leading-loose`}>
-              Komentar ( {meta.comment.length} )
+              Comments ( {meta.comment.length} )
             </div>
           </div>
           <div />
@@ -353,8 +358,8 @@
               }}
             >
               <img
-                src={`/fimgs/1718_30652.x1.svg`}
-                class={`flex items-start justify-start bg-white`}
+                src="/fimgs/4826_18065.x1.png"
+                style="width: 18px; min-width: 18px; max-width: 18px; height: 18px; min-height: 18px; max-height: 18px;"
               />
             </m-button>
             <div class="flex items-start justify-start">
