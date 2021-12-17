@@ -384,7 +384,7 @@
     }}
   />
   <div
-    class={`flex items-end justify-center bg-white`}
+    class={`flex self-stretch items-end justify-center bg-white`}
     style={"margin-bottom: 50px;"}
   >
     <div
@@ -760,7 +760,9 @@
                                   />
                                   <div class={`text-xs leading-none`}>
                                     {meta.get_rating_popular.length !== 0
-                                      ? meta.get_rating_popular[index]
+                                      ? meta.get_rating_popular[index].toFixed(
+                                          2
+                                        )
                                       : 0}
                                   </div>
                                 </div>
@@ -1379,7 +1381,7 @@
           </div>
         </m-tab>
         <m-tab
-          class={`flex flex-1 self-stretch flex-col items-start justify-start bg-white`}
+          class={`flex flex-1 self-stretch flex-col items-start justify-start`}
           id="pyriList"
         >
           <div class="flex flex-1 self-stretch flex-col items-start justify-start">

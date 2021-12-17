@@ -87,8 +87,7 @@
       },
 
       async nextPage() {
-        meta.ptr.done();
-        console.log("PTR WORK");
+        meta.ptr.done(); // console.log("PTR WORK");
       },
 
       async back() {
@@ -137,8 +136,8 @@
           this.loading(true);
           runInAction(() => {
             this[key] = value;
-          });
-          console.log(key + " : " + value); // read last pages in chapter
+          }); // console.log(key + " : " + value);
+          // read last pages in chapter
 
           await api("/api/history-book", {
             viewBook: {
@@ -196,6 +195,16 @@
         }
       },
 
+      async toast(text, position, time) {
+        var toastCenter = window.mobileApp.app.toast.create({
+          text: text,
+          position: position,
+          closeTimeout: time,
+        }); // Open it
+
+        toastCenter.open();
+      },
+
       async addBookmark(book_id) {
         if (window.user.role === "guest") {
           window.mobileApp.app.dialog.confirm(
@@ -215,7 +224,6 @@
           }).then((res) => {
             // console.log(res);
             if (res.bookmark === null) {
-              window.mobileApp.app.dialog.preloader("Added to read later...");
               api("/api/bookmarks", {
                 bookmark: {
                   bookmark_user_id: window.user.user.user_id,
@@ -225,17 +233,25 @@
                 e: "Create",
               }).then((res) => {
                 // console.log(res);
-                setTimeout(function () {
-                  window.mobileApp.app.dialog.close();
-                }, 2000);
-                runInAction(() => {
-                  this.isBookmark = true;
-                }); // navigate("/m/");
+                if (
+                  res === null ||
+                  res.res === "failure" ||
+                  res.bookmark === null
+                ) {
+                  this.toast("Database error", "center", 2000);
+                } else {
+                  this.toast("Added to read later", "center", 2000);
+                  runInAction(() => {
+                    this.isBookmark = true;
+                    document.getElementById("bookmark-read").src =
+                      "/fimgs/4379_20313.x1.svg"; // console.log(document.getElementById("bookmark-read"))
+                  }); // navigate("/m/");
+                }
               });
             } else {
               window.mobileApp.app.dialog.confirm(
                 "This book already added to read later.",
-                "Remove from read later?",
+                "Remove from book read later?",
                 () => {
                   api("/api/bookmarks", {
                     bookmark: {
@@ -249,18 +265,17 @@
                         "Failed to remove this book from read later"
                       );
                     } else {
-                      window.mobileApp.app.dialog.preloader("Removing ...");
-                      setTimeout(function () {
-                        window.mobileApp.app.dialog.close();
-                      }, 2000);
+                      this.toast("Remove success", "center", 2000);
                       runInAction(() => {
                         this.isBookmark = false;
+                        document.getElementById("bookmark-read").src =
+                          "/fimgs/4833_122630.x1.svg";
                       });
                     }
                   });
                 }
               );
-            }
+            } // console.log(this.isBookmark)
           });
         }
       },
@@ -283,8 +298,13 @@
           if (res.bookmark !== null) {
             runInAction(() => {
               meta.isBookmark = true;
+              document.getElementById("bookmark-read").src =
+                "/fimgs/4379_20313.x1.svg";
             });
-          }
+          } else {
+            document.getElementById("bookmark-read").src =
+              "/fimgs/4833_508352.x1.svg";
+          } // console.log(document.getElementById("bookmark-read"))
         });
       }
 
@@ -360,8 +380,8 @@
                 var bNum = parseInt(b.chapter.chapter_number);
                 return aNum - bNum;
               });
-              meta.page = page_chapter;
-              console.log(page_chapter); // read last chapter read
+              meta.page = page_chapter; // console.log(page_chapter);
+              // read last chapter read
 
               api("/api/history-book", {
                 viewBook: {
@@ -370,8 +390,7 @@
                 },
                 e: "ReadLatestChapter",
               }).then((res) => {
-                console.log(res);
-
+                // console.log(res);
                 if (res.viewBook !== null) {
                   runInAction(() => {
                     meta.page.map((value, index) => {
@@ -406,6 +425,16 @@
                     }
                   });
                 }
+
+                meta.toast(
+                  "Last accessed: " +
+                    dateFormat(
+                      res.viewBook.viewBook_access_date,
+                      "dd/MM/yyyy HH:mm:ss"
+                    ),
+                  "center",
+                  3000
+                );
               });
             });
             meta.loading(false);
@@ -414,9 +443,7 @@
       }
     }}
   />
-  <div
-    class={`flex self-stretch items-start justify-start bg-white w-full h-full`}
-  >
+  <div class={`flex items-start justify-start bg-white w-full h-full`}>
     <div
       class={`flex flex-1 self-stretch items-start justify-start w-full`}
       style={meta.darkMode ? "background-color: #3d3d3d" : ""}
@@ -461,13 +488,13 @@
               onClick={() => {
                 meta.addBookmark(params.book_id);
               }}
+              tooltip={"Read later"}
             >
-              {!meta.isBookmark && (
-                <img src="/fimgs/I991_7676_991_7671.x1.svg" />
-              )}
-              {meta.isBookmark && (
-                <img class={""} style={``} src="/fimgs/4379_20313.x1.svg" />
-              )}
+              <img
+                src="/fimgs/4833_508352.x1.svg"
+                class={""}
+                id={"bookmark-read"}
+              />
             </m-button>
             <m-button
               panelOpen={meta.chapter.length === 0 ? "#" : "right"}

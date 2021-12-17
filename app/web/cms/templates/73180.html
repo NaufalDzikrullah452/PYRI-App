@@ -66,10 +66,7 @@
                 });
 
                 if (res !== null) {
-                  window.mobileApp.app.dialog.preloader("Rating success!");
-                  setTimeout(() => {
-                    window.mobileApp.app.dialog.close();
-                  }, 2000);
+                  this.toast("Rating success", "center", 2000);
                 }
               });
             } else if (res.rating !== null) {
@@ -83,10 +80,7 @@
               }).then((res) => {
                 // console.log(res);
                 if (res !== null) {
-                  window.mobileApp.app.dialog.preloader(
-                    "Update rating success!"
-                  ); // read all rating by book
-
+                  // read all rating by book
                   api("/api/rating", {
                     rating: {
                       rating_book_id: parseInt(params.book_id),
@@ -104,11 +98,9 @@
                           sum_rating / res.rating.length
                         );
                       });
+                      this.toast("Update rating success", "center", 2000);
                     }
                   });
-                  setTimeout(() => {
-                    window.mobileApp.app.dialog.close();
-                  }, 2000);
                 }
               });
             }
@@ -285,7 +277,7 @@
             } else {
               window.mobileApp.app.dialog.confirm(
                 "This book already added to read later.",
-                "Remove from read later?",
+                "Remove from book read later?",
                 () => {
                   api("/api/bookmarks", {
                     bookmark: {
