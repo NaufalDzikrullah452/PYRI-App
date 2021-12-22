@@ -10,17 +10,56 @@
       isBookmark: false,
       author: [],
       book: [],
+      freeBook: [],
+      history_book: [],
       comment: [],
       tags: [],
       chapter: [],
       category: [],
       page: [],
+      user_premium: [],
+      free_book_amount: 0,
       publisher: [],
       page_info: false,
       save_info: false,
       star_info: false,
       read_info: false,
       loading: true,
+      regisLoading: false,
+
+      async regisFreeBook() {
+        runInAction(() => {
+          this.regisLoading = true;
+        });
+        api("/api/free-books", {
+          freeBook: {
+            freeBook_user_id: window.user.user.user_id,
+            freeBook_amount: 3,
+            freeBook_date_registered: new Date(),
+            freeBook_date_updated: new Date(),
+          },
+          e: "Upsert",
+        }).then((res) => {
+          // console.log(res);
+          setTimeout(() => {
+            runInAction(() => {
+              this.regisLoading = false;
+            });
+            window.mobileApp.app.sheet.close();
+            var exp_date = dateFormat(
+              add(new Date(), {
+                months: 1,
+              }),
+              "dd MMM yyyy"
+            );
+            this.toast(
+              "You get 3 free books this month (exp time: " + exp_date + ")",
+              "center",
+              3000
+            );
+          }, 2000);
+        });
+      },
 
       async onChange(key, value) {
         if (key === "rating") {
@@ -103,10 +142,13 @@
               });
             }
           });
+        } else {
+          this.toast("Please fill the star!", "center", 2000);
         }
       },
 
       async readBook() {
+        // console.log(this.user_premium)
         if (window.user.role === "guest") {
           window.mobileApp.app.dialog.confirm(
             "redirect to login?",
@@ -115,12 +157,117 @@
               navigate("/m/login");
             }
           );
-        } else {
-          window.mobileApp.app.dialog.preloader();
-          setTimeout(() => {
-            window.mobileApp.app.dialog.close();
-          }, 2000);
-          navigate("/m/read-book-page/" + params.book_id + "/");
+        } else if (this.user_premium.length === 0) {
+          api("/api/free-books", {
+            freeBook: {
+              freeBook_user_id: window.user.user.user_id,
+            },
+            e: "ReadByUserId",
+          }).then((res) => {
+            // console.log(res)
+            runInAction(() => {
+              this.freeBook = res.freeBook;
+            });
+
+            if (res.freeBook === null) {
+              window.mobileApp.app.sheet.open(".sheet-free-books");
+            } else {
+              runInAction(() => {
+                this.free_book_amount = res.freeBook.freeBook_amount;
+              });
+              let regis_month1 = add(
+                new Date(this.freeBook.freeBook_date_registered),
+                {
+                  months: 1,
+                }
+              );
+              let regis_month = this.freeBook.freeBook_date_registered;
+              let compare_regis =
+                compareAsc(new Date(), new Date(regis_month1)) !== -1; // console.log(new Date() + " <br> "+ new Date(regis_month1))
+              // console.log(compareAsc(new Date(), new Date(regis_month1)))
+
+              if (compare_regis) {
+                window.mobileApp.app.sheet.open(".sheet-free-books");
+              } else {
+                api("/api/history-book", {
+                  viewBook: {
+                    freeBook_date_registered: regis_month,
+                    freeBook_date_exp: regis_month1,
+                    viewBook_user_id: window.user.user.user_id,
+                  },
+                  e: "ReadHistoryUserFreeBook",
+                }).then((res) => {
+                  console.log(res);
+                  let res_viewBook = res.viewBook;
+                  var inHistory = false;
+                  res_viewBook.map((value, index) => {
+                    if (
+                      index < 3 &&
+                      value.books.book_id === parseInt(params.book_id)
+                    ) {
+                      inHistory = true;
+                    }
+                  });
+
+                  if (!inHistory && this.free_book_amount !== 0) {
+                    runInAction(() => {
+                      this.free_book_amount -= 1;
+                    });
+                    api("/api/free-books", {
+                      freeBook: {
+                        freeBook_user_id: window.user.user.user_id,
+                        freeBook_amount: this.free_book_amount,
+                        freeBook_date_updated: new Date(),
+                      },
+                      e: "UpdateByUserId",
+                    });
+                    window.mobileApp.app.dialog.preloader(
+                      "Free books used (" + (3 - this.free_book_amount) + "/3)"
+                    );
+                    setTimeout(() => {
+                      window.mobileApp.app.dialog.close();
+                    }, 1500);
+                    navigate("/m/read-book-page/" + params.book_id + "/");
+                  } else if (inHistory) {
+                    window.mobileApp.app.dialog.preloader();
+                    setTimeout(() => {
+                      window.mobileApp.app.dialog.close();
+                    }, 1500);
+                    navigate("/m/read-book-page/" + params.book_id + "/");
+                  } else {
+                    window.mobileApp.app.dialog.confirm(
+                      "Free books used (" +
+                        (3 - this.free_book_amount) +
+                        "/3), get premium to read all books for free. Redirect to purchase page?",
+                      "Free books is out.",
+                      () => {
+                        navigate("/m/premium-page");
+                      }
+                    );
+                  }
+                });
+              }
+            }
+          });
+        } else if (this.user_premium.length !== 0) {
+          if (
+            dateFormat(this.user_premium.expired_date, "dd MM yyyy") >
+            dateFormat(new Date(), "dd MM yyyy")
+          ) {
+            window.mobileApp.app.dialog.confirm(
+              "Redirect to purchase page?",
+              "User premium has expired!",
+              () => {
+                navigate("/m/premium-page");
+              }
+            );
+          } else {
+            window.mobileApp.app.dialog.preloader();
+            setTimeout(() => {
+              window.mobileApp.app.dialog.close();
+            }, 2000);
+            navigate("/m/read-book-page/" + params.book_id + "/");
+          }
         }
       },
 
@@ -301,6 +448,22 @@
           });
         }
       },
+
+      async readUserPremium() {
+        await api("/api/api-users", {
+          users: {
+            user_id: window.user.user.user_id,
+          },
+          e: "ReadUserSubscriptionById",
+        }).then((res) => {
+          // console.log(res);
+          if (res.users !== null) {
+            runInAction(() => {
+              this.user_premium = res.users;
+            });
+          }
+        });
+      },
     }}
     run={async () => {
       // read buku by book_id
@@ -351,11 +514,17 @@
               viewBook_book_id: parseInt(params.book_id),
               viewBook_user_id: window.user.user.user_id,
             },
-            e: "ReadLatestChapter",
+            e: "ReadHistoryUser",
           }).then((res) => {
-            if (res.viewBook !== null) {
+            // console.log(res.viewBook)
+            if (res.viewBook !== null && res.viewBook.length !== 0) {
               runInAction(() => {
-                meta.isRead = true;
+                meta.history_book = res.viewBook;
+                meta.history_book.map((val, i) => {
+                  if (val.books.book_id === parseInt(params.book_id)) {
+                    meta.isRead = true;
+                  }
+                });
               });
             }
           });
@@ -478,6 +647,10 @@
         } //read comment
 
         meta.readComment();
+
+        if (window.user.role !== "guest") {
+          meta.readUserPremium();
+        }
       } else {
         navigate("/m/");
       }
@@ -1084,17 +1257,18 @@
               </div>
             </div>
           </div>
-          <button
+          <m-button
             class={`flex items-center justify-center px-2.5 py-0.5 bg-amber-500 shadow rounded`}
-            style={`width: 87px; min-width: 87px; max-width: 87px; height: 32px; min-height: 32px; max-height: 32px;`}
+            style={`text-transform: capitalize; padding: 8px 24px;`}
             onClick={() => {
               meta.sendRating();
             }}
+            disabled={meta.loading}
           >
             <div class={`text-base font-bold leading-normal text-white`}>
               {meta.user_rating === "" ? "Send" : "Update"}
             </div>
-          </button>
+          </m-button>
         </div>
       </div>
       <div
@@ -1106,7 +1280,7 @@
           onClick={() => {
             meta.addBookmark(params.book_id);
           }}
-          style="width: 50px; min-width: 50px; max-width: 50px; height: 44px; min-height: 44px; max-height: 44px;"
+          style={`width: 50px; min-width: 50px; max-width: 50px; height: 44px; min-height: 44px; max-height: 44px;`}
         >
           <img
             class={""}
@@ -1115,19 +1289,61 @@
             id={"bookmark"}
           />
         </div>
-        <button
-          class={`flex flex-1 items-center justify-center p-2.5 bg-amber-500 shadow rounded-lg`}
+        <m-button
+          class={`flex flex-1 items-center justify-center p-2.5 bg-amber-500 shadow rounded-lg h-full`}
+          disabled={meta.loading}
           onClick={() => {
             meta.readBook();
           }}
+          style={`text-transform: capitalize;`}
         >
           <div
             class={`text-base font-bold leading-normal text-center text-white`}
           >
             {meta.isRead ? "Continue Reading" : "Start Reading"}
           </div>
-        </button>
+        </m-button>
       </div>
+      {!meta.loading && (
+        <m-sheet
+          class={`flex self-stretch flex-col items-center justify-center flex-row`}
+          className="sheet-free-books"
+          style={{
+            height: "auto",
+            "--f7-sheet-bg-color": "#fff",
+          }}
+          swipeToClose={true}
+          backdrop={true}
+        >
+          <div
+            class={`flex self-stretch flex-col space-y-2.5 items-center justify-center px-1.5 pt-4 pb-2 w-full`}
+          >
+            <div
+              class={`flex self-stretch flex-col items-center justify-center bg-white`}
+              style={`margin-bottom: 30px`}
+            >
+              <div class={`text-base font-bold leading-normal text-center`}>
+                Registration for get free 3 books per month.
+              </div>
+            </div>
+            <m-button
+              class={`flex flex-col items-center justify-center px-2 py-0.5 bg-amber-500 rounded-lg`}
+              preloader={true}
+              loading={meta.regisLoading}
+              onClick={() => {
+                meta.regisFreeBook();
+              }}
+              style={`text-transform: capitalize; padding: 16px 28px;`}
+            >
+              <div
+                class={`text-base font-bold leading-normal text-center text-white`}
+              >
+                Regis now!
+              </div>
+            </m-button>
+          </div>
+        </m-sheet>
+      )}
     </div>
   </div>
 </>

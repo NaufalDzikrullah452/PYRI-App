@@ -52,6 +52,7 @@ model users {
   user_username          String?         @db.VarChar(256)
   bookmarks              bookmarks[]
   comment                comment[]
+  freeBook               freeBook?
   interests              interests[]
   payment                payment[]
   rating                 rating[]
@@ -218,6 +219,16 @@ model subscription {
   expired_date    DateTime  @db.Timestamp(6)
   users           users     @relation(fields: [user_id], references: [user_id])
   payment         payment[]
+}
+
+model freeBook {
+  freeBook_id              Int      @id @default(autoincrement())
+  freeBook_user_id         Int      @unique
+  freeBook_amount          Int
+  freeBook_date_created    DateTime @default(now()) @db.Timestamp(6)
+  freeBook_date_registered DateTime @db.Timestamp(6)
+  freeBook_date_updated    DateTime @db.Timestamp(6)
+  users                    users    @relation(fields: [freeBook_user_id], references: [user_id])
 }
 
 enum user_gender {
