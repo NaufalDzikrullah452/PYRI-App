@@ -42,60 +42,69 @@
             }
           );
           let regis_month = this.freeBook.freeBook_date_registered;
-          api("/api/history-book", {
-            viewBook: {
-              freeBook_date_registered: regis_month,
-              freeBook_date_exp: regis_month1,
-              viewBook_user_id: window.user.user.user_id,
-            },
-            e: "ReadHistoryUserFreeBook",
-          }).then((res) => {
-            // console.log(res);
-            let res_viewBook = res.viewBook;
-            var inHistory = false;
-            res_viewBook.map((value, index) => {
-              if (index < 3 && value.books.book_id === parseInt(book_id)) {
-                inHistory = true;
+          let compare_regis =
+            compareAsc(new Date(), new Date(regis_month1)) !== -1; // console.log(new Date() + " <br> "+ new Date(regis_month1))
+          // console.log(compareAsc(new Date(), new Date(regis_month1)))
+
+          if (compare_regis) {
+            // window.mobileApp.app.sheet.open(".sheet-free-books")
+            this.toast("Monthly free expired.", "center", 2000);
+          } else {
+            api("/api/history-book", {
+              viewBook: {
+                freeBook_date_registered: regis_month,
+                freeBook_date_exp: regis_month1,
+                viewBook_user_id: window.user.user.user_id,
+              },
+              e: "ReadHistoryUserFreeBook",
+            }).then((res) => {
+              // console.log(res);
+              let res_viewBook = res.viewBook;
+              var inHistory = false;
+              res_viewBook.map((value, index) => {
+                if (index < 3 && value.books.book_id === parseInt(book_id)) {
+                  inHistory = true;
+                }
+              });
+
+              if (!inHistory && this.free_book_amount !== 0) {
+                runInAction(() => {
+                  this.free_book_amount -= 1;
+                });
+                api("/api/free-books", {
+                  freeBook: {
+                    freeBook_user_id: window.user.user.user_id,
+                    freeBook_amount: this.free_book_amount,
+                    freeBook_date_updated: new Date(),
+                  },
+                  e: "UpdateByUserId",
+                });
+                window.mobileApp.app.dialog.preloader(
+                  "Free books used (" + (3 - this.free_book_amount) + "/3)"
+                );
+                setTimeout(() => {
+                  window.mobileApp.app.dialog.close();
+                }, 1500);
+                navigate("/m/read-book-page/" + book_id + "/");
+              } else if (inHistory) {
+                window.mobileApp.app.dialog.preloader();
+                setTimeout(() => {
+                  window.mobileApp.app.dialog.close();
+                }, 1500);
+                navigate("/m/read-book-page/" + book_id + "/");
+              } else {
+                window.mobileApp.app.dialog.confirm(
+                  "Free books used (" +
+                    (3 - this.free_book_amount) +
+                    "/3), get premium to read all books for free. Redirect to purchase page?",
+                  "Free books is out.",
+                  () => {
+                    navigate("/m/premium-page");
+                  }
+                );
               }
             });
-
-            if (!inHistory && this.free_book_amount !== 0) {
-              runInAction(() => {
-                this.free_book_amount -= 1;
-              });
-              api("/api/free-books", {
-                freeBook: {
-                  freeBook_user_id: window.user.user.user_id,
-                  freeBook_amount: this.free_book_amount,
-                  freeBook_date_updated: new Date(),
-                },
-                e: "UpdateByUserId",
-              });
-              window.mobileApp.app.dialog.preloader(
-                "Free books used (" + (3 - this.free_book_amount) + "/3)"
-              );
-              setTimeout(() => {
-                window.mobileApp.app.dialog.close();
-              }, 1500);
-              navigate("/m/read-book-page/" + book_id + "/");
-            } else if (inHistory) {
-              window.mobileApp.app.dialog.preloader();
-              setTimeout(() => {
-                window.mobileApp.app.dialog.close();
-              }, 1500);
-              navigate("/m/read-book-page/" + book_id + "/");
-            } else {
-              window.mobileApp.app.dialog.confirm(
-                "Free books used (" +
-                  (3 - this.free_book_amount) +
-                  "/3), get premium to read all books for free. Redirect to purchase page?",
-                "Free books is out.",
-                () => {
-                  navigate("/m/premium-page");
-                }
-              );
-            }
-          });
+          }
         });
       },
 
@@ -1504,7 +1513,7 @@ display: -webkit-box;
           </div>
         </m-tab>
         <m-tab
-          class={`flex flex-1 self-stretch flex-col items-start justify-start`}
+          class={`flex flex-1 self-stretch flex-col items-start justify-start bg-white`}
           id="pyriList"
         >
           <div class="flex flex-1 self-stretch flex-col items-start justify-start">
@@ -1587,21 +1596,19 @@ display: -webkit-box;
                     <div
                       class={`flex space-x-4 items-start justify-start p-2 bg-white shadow shadow-inner rounded`}
                       onClick={() => {
-                        window.mobileApp.app.dialog.preloader("Loading...");
-
                         if (meta.user_premium.length !== 0) {
+                          window.mobileApp.app.dialog.preloader("Loading...");
                           navigate(
                             "/m/read-book-page/" +
                               value.books.book_id +
                               "/history"
                           );
+                          setTimeout(() => {
+                            window.mobileApp.app.dialog.close();
+                          }, 2000);
                         } else {
                           meta.readHistoryFree(value.books.book_id);
                         }
-
-                        setTimeout(() => {
-                          window.mobileApp.app.dialog.close();
-                        }, 2000);
                       }}
                     >
                       <div
@@ -1632,26 +1639,45 @@ border-radius: 8%`}
                             >
                               {value.books.book_title || "Book title"}
                             </div>
-                            {meta.user_premium.length === 0 && i < 3 && (
-                              <m-badge
-                                class={`flex self-stretch flex-col items-start justify-start bg-white`}
-                              >
-                                <div
-                                  class={`text-sm font-medium leading-tight`}
-                                  style={`--tw-bg-opacity: 1;
-    color: rgba(245,158,11,var(--tw-bg-opacity));`}
+                            {meta.freeBook !== null &&
+                              compareAsc(
+                                new Date(),
+                                new Date(
+                                  dateAdd(
+                                    new Date(
+                                      meta.freeBook.freeBook_date_registered
+                                    ),
+                                    {
+                                      months: 1,
+                                    }
+                                  )
+                                )
+                              ) === -1 &&
+                              meta.user_premium.length === 0 &&
+                              i < 3 && (
+                                <m-badge
+                                  class={`flex self-stretch flex-col items-start justify-start bg-white`}
                                 >
-                                  Free
-                                </div>
-                              </m-badge>
-                            )}
+                                  <div
+                                    class={`text-sm font-medium leading-tight`}
+                                    style={`--tw-bg-opacity: 1;
+    color: rgba(245,158,11,var(--tw-bg-opacity));`}
+                                  >
+                                    Free
+                                  </div>
+                                </m-badge>
+                              )}
                           </div>
                           <div
                             class={`flex flex-1 self-stretch items-center justify-start rounded-full`}
                             style="margin-top:10px;"
                           >
-                            <div class="text-xs font-medium leading-none text-gray-500">
-                              Author
+                            <div
+                              class={`text-xs font-medium leading-none text-gray-500`}
+                            >
+                              {value.books
+                                .authors_authorsTobooks_book_author_one_id
+                                .author_name || "-"}
                             </div>
                           </div>
                         </div>

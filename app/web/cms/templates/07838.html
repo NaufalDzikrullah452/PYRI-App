@@ -6,6 +6,7 @@
       showMasterData: false,
       showManagement: false,
       setPublish: false,
+      statusPublish: false,
       changeAction: (open) => {},
       changeProfile: (open) => {},
       changeManagement: (open) => {},
@@ -32,6 +33,7 @@
       chapter_count: "",
       page_count: "",
       book_is_released: false,
+      publishTime: true,
       searching: "",
       entries: 5,
       last_entries: 5,
@@ -349,6 +351,36 @@
         }
       },
 
+      async setPublishBook(value) {
+        await api("/api/books", {
+          book: {
+            book_id: parseInt(params.book_id),
+            book_is_released: value,
+          },
+          e: "Update",
+        }).then((res) => {
+          if (res.res === "Failure") {
+            alert("Can't update book, related to other tables");
+          } else {
+            runInAction(() => {
+              this.statusPublish = value;
+
+              if (!this.publishTime) {
+                setTimeout(() => {
+                  runInAction(() => {
+                    this.publishTime = value;
+                  });
+                }, 10000);
+              } else {
+                runInAction(() => {
+                  this.publishTime = false;
+                });
+              }
+            });
+          }
+        });
+      },
+
       async setPublishTrue(id) {
         if (true) {
           await api("/api/books", {
@@ -429,6 +461,7 @@
         },
         changePublish: (open) => {
           meta.setPublish = open;
+          console.log(meta.setPublish);
           let btn_swicth1 = document.getElementById("toggle");
           let btn_swicth2 = document.getElementById("switch");
 
@@ -596,8 +629,10 @@
       document.getElementById("bc").parentNode.replaceChild(newbc, oldbc);
 
       if (meta.book_is_released) {
-        meta.setPublish = true;
-        meta.action.changePublish(false);
+        runInAction(() => {
+          meta.setPublish = true;
+          meta.statusPublish = true; // meta.action.changePublish(false);
+        });
       }
     }}
   />
@@ -1031,14 +1066,37 @@
                     <button
                       class={`flex items-center justify-start p-0.5 bg-gray-300 shadow rounded-full`}
                       id="switch"
-                      style={`width: 53px; min-width: 53px; max-width: 53px; height: 28px; min-height: 28px; max-height: 28px;`}
+                      style={`width: 53px; min-width: 53px; max-width: 53px; height: 28px; min-height: 28px; max-height: 28px;
+    margin-left: 0px;
+    transition: background-color .3s; 
+    ${
+      meta.statusPublish
+        ? "background-color: #ffc048;"
+        : "background-color: #d2dae2;"
+    }`}
                       onClick={() => {
-                        if (meta.setPublish == false) {
-                          meta.action.changePublish(true);
-                          meta.setPublishFalse(params.book_id);
+                        if (meta.statusPublish) {
+                          var conf = confirm("Unpublish book ?");
+
+                          if (conf) {
+                            meta.setPublishBook(false);
+                            let btn_swicth1 = document.getElementById("toggle");
+                            btn_swicth1.setAttribute(
+                              "style",
+                              "transition: margin-left .4s; margin-left: 0px;"
+                            );
+                          }
                         } else {
-                          meta.action.changePublish(false);
-                          meta.setPublishTrue(params.book_id);
+                          var conf = confirm("Publish book ?");
+
+                          if (conf) {
+                            meta.setPublishBook(true);
+                            let btn_swicth1 = document.getElementById("toggle");
+                            btn_swicth1.setAttribute(
+                              "style",
+                              "transition: margin-left .4s; margin-left: 25px;"
+                            );
+                          }
                         }
                       }}
                     >
