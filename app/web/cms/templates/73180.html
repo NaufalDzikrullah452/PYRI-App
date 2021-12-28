@@ -63,9 +63,21 @@
 
       async onChange(key, value) {
         if (key === "rating") {
-          runInAction(() => {
-            this[key] = value;
-          });
+          if (window.user.role === "guest") {
+            window.mobileApp.app.dialog.confirm(
+              "redirect to login?",
+              "Please login before rate!",
+              () => {
+                navigate("/m/login");
+              }
+            );
+          } else if (!this.isRead) {
+            this.toast("Please read before rate!", "center", 3000);
+          } else {
+            runInAction(() => {
+              this[key] = value;
+            });
+          }
         } // console.log(key + " : " + value);
       },
 
@@ -78,6 +90,8 @@
               navigate("/m/login");
             }
           );
+        } else if (!this.isRead) {
+          this.toast("Please read before rate!", "center", 3000);
         } else if (this.rating !== 0) {
           api("/api/rating", {
             rating: {
@@ -197,7 +211,7 @@
                   },
                   e: "ReadHistoryUserFreeBook",
                 }).then((res) => {
-                  console.log(res);
+                  // console.log(res);
                   let res_viewBook = res.viewBook;
                   var inHistory = false;
                   res_viewBook.map((value, index) => {
@@ -315,6 +329,8 @@
       },
 
       async showInfo(key) {
+        return true;
+
         if (key === "page_info" && !this[key]) {
           this.page_info = true;
           this.save_info = false;
@@ -466,11 +482,24 @@
       },
     }}
     run={async () => {
-      // read buku by book_id
+      //create tooltip
       window.mobileApp.app.tooltip.create({
         targetEl: ".saveInfo",
         text: "Save",
-      }); // console.log(params.history);
+      });
+      window.mobileApp.app.tooltip.create({
+        targetEl: ".readInfo",
+        text: "Read",
+      });
+      window.mobileApp.app.tooltip.create({
+        targetEl: ".pageInfo",
+        text: "Page",
+      });
+      window.mobileApp.app.tooltip.create({
+        targetEl: ".starInfo",
+        text: "Rating",
+      }); // read buku by book_id
+      // console.log(params.history);
 
       if (params.book_id !== undefined) {
         // read all rating by book
@@ -741,10 +770,11 @@
             }}
           >
             <div
-              class={`flex flex-1 flex-col items-center justify-center p-2.5 starInfo`}
+              class={`flex flex-1 flex-col items-center justify-center px-2.5 starInfo`}
               onClick={() => {
                 meta.showInfo("star_info");
               }}
+              style={`border-right: 1px solid #7a78786e;`}
             >
               {meta.star_info && (
                 <div
@@ -772,10 +802,11 @@
               </div>
             </div>
             <div
-              class={`flex flex-1 flex-col items-center justify-center p-2.5 saveInfo`}
+              class={`flex flex-1 flex-col items-center justify-center px-2.5 saveInfo`}
               onClick={() => {
                 meta.showInfo("save_info");
               }}
+              style={`border-right: 1px solid #7a78786e;`}
             >
               {meta.save_info && (
                 <div
@@ -803,10 +834,11 @@
               </div>
             </div>
             <div
-              class={`flex flex-1 flex-col items-center justify-center p-2.5 readInfo`}
+              class={`flex flex-1 flex-col items-center justify-center px-2.5 readInfo`}
               onClick={() => {
                 meta.showInfo("read_info");
               }}
+              style={`border-right: 1px solid #7a78786e;`}
             >
               {meta.read_info && (
                 <div
@@ -837,7 +869,7 @@
               </div>
             </div>
             <div
-              class={`flex flex-1 flex-col items-center justify-center p-2.5 pageInfo`}
+              class={`flex flex-1 flex-col items-center justify-center px-2.5 pageInfo`}
               onClick={() => {
                 meta.showInfo("page_info");
               }}
@@ -1132,6 +1164,7 @@
             </div>
           </div>
         }
+        <hr class={`w-full`} />
       </div>
       <div
         class={`mb-10 flex self-stretch flex-col space-y-4 items-start justify-start px-6`}
@@ -1153,17 +1186,7 @@
                     : "/fimgs/1369_35115.x1.svg"
                 }
                 onClick={() => {
-                  if (window.user.role === "guest") {
-                    window.mobileApp.app.dialog.confirm(
-                      "redirect to login?",
-                      "Please login before rate!",
-                      () => {
-                        navigate("/m/login");
-                      }
-                    );
-                  } else {
-                    meta.onChange("rating", 1);
-                  }
+                  meta.onChange("rating", 1);
                 }}
               />
               <img
@@ -1174,17 +1197,7 @@
                     : "/fimgs/1369_35115.x1.svg"
                 }
                 onClick={() => {
-                  if (window.user.role === "guest") {
-                    window.mobileApp.app.dialog.confirm(
-                      "redirect to login?",
-                      "Please login before rate!",
-                      () => {
-                        navigate("/m/login");
-                      }
-                    );
-                  } else {
-                    meta.onChange("rating", 2);
-                  }
+                  meta.onChange("rating", 2);
                 }}
               />
               <img
@@ -1195,17 +1208,7 @@
                     : "/fimgs/1369_35115.x1.svg"
                 }
                 onClick={() => {
-                  if (window.user.role === "guest") {
-                    window.mobileApp.app.dialog.confirm(
-                      "redirect to login?",
-                      "Please login before rate!",
-                      () => {
-                        navigate("/m/login");
-                      }
-                    );
-                  } else {
-                    meta.onChange("rating", 3);
-                  }
+                  meta.onChange("rating", 3);
                 }}
               />
               <img
@@ -1216,17 +1219,7 @@
                     : "/fimgs/1369_35115.x1.svg"
                 }
                 onClick={() => {
-                  if (window.user.role === "guest") {
-                    window.mobileApp.app.dialog.confirm(
-                      "redirect to login?",
-                      "Please login before rate!",
-                      () => {
-                        navigate("/m/login");
-                      }
-                    );
-                  } else {
-                    meta.onChange("rating", 4);
-                  }
+                  meta.onChange("rating", 4);
                 }}
               />
               <img
@@ -1237,17 +1230,7 @@
                     : "/fimgs/1369_35115.x1.svg"
                 }
                 onClick={() => {
-                  if (window.user.role === "guest") {
-                    window.mobileApp.app.dialog.confirm(
-                      "redirect to login?",
-                      "Please login before rate!",
-                      () => {
-                        navigate("/m/login");
-                      }
-                    );
-                  } else {
-                    meta.onChange("rating", 5);
-                  }
+                  meta.onChange("rating", 5);
                 }}
               />
             </div>

@@ -13,6 +13,7 @@
       user_comment_reply: "",
       edit_comment: 0,
       hide_replies: 0,
+      isRead: false,
       loading: true,
       backNavigation: false,
 
@@ -291,13 +292,32 @@
               meta.category = res.book.category;
             }
           });
+        }); //read history user read this book
+
+        api("/api/history-book", {
+          viewBook: {
+            viewBook_book_id: parseInt(params.book_id),
+            viewBook_user_id: window.user.user.user_id,
+          },
+          e: "ReadHistoryUser",
+        }).then((res) => {
+          // console.log(res.viewBook)
+          if (res.viewBook !== null && res.viewBook.length !== 0) {
+            runInAction(() => {
+              res.viewBook.map((val, i) => {
+                if (val.books.book_id === parseInt(params.book_id)) {
+                  meta.isRead = true;
+                }
+              });
+            });
+          }
         }); // read comment
 
         meta.readComment();
       }
     }}
   />
-  <div class="flex flex-col items-start justify-start bg-white">
+  <div class="flex self-stretch flex-col items-start justify-start bg-white">
     <div
       class={`flex flex-1 self-stretch flex-col space-y-1 items-start justify-start`}
     >
@@ -333,27 +353,40 @@
         class={`flex flex-1 self-stretch flex-col space-y-4 items-start justify-start px-6 pt-4 h-full`}
       >
         <div class="flex self-stretch space-x-2.5 items-center justify-center px-6 py-3 bg-white border rounded border-gray-200">
-          <m-input
-            disabled={
-              meta.edit_comment !== 0 ||
-              meta.reply_comment.length !== 0 ||
-              window.user.role === "guest"
-            }
-            class={`flex flex-1 items-start justify-start p-2.5`}
-            type="textarea"
-            resizable={true}
-            placeholder="Add Comment..."
-            onChange={(e) => {
-              meta.onChange(e, "user_comment");
+          <div
+            class={`flex flex-1 flex-col items-start justify-start`}
+            onClick={() => {
+              if (!meta.isRead) {
+                meta.toast("Please read book before comment!", "center", 2000);
+              }
             }}
-            maxlength="501"
-            id="addComment"
-          />
+          >
+            <m-input
+              disabled={!meta.isRead}
+              class={`flex items-start justify-start p-2.5`}
+              type="textarea"
+              resizable={true}
+              placeholder="Add Comment..."
+              onChange={(e) => {
+                meta.onChange(e, "user_comment");
+              }}
+              maxlength="501"
+              id="addComment"
+            />
+          </div>
           <div class="flex flex-col items-center justify-center">
             <m-button
               class={`flex items-center justify-center bg-gray-100`}
               onClick={() => {
-                meta.addComment();
+                if (!meta.isRead) {
+                  meta.toast(
+                    "Please read book before comment!",
+                    "center",
+                    2000
+                  );
+                } else {
+                  meta.addComment();
+                }
               }}
             >
               <img

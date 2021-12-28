@@ -42,7 +42,11 @@
                   a.rating.map((b) => {
                     sum += b.rating_point;
                   });
-                  avg = parseFloat(sum / a.rating.length);
+
+                  if (a.rating.length !== 0) {
+                    avg = parseFloat(sum / a.rating.length);
+                  }
+
                   this.get_rating_popular.push(avg);
                   this.popularBook[i]["rating_avg"] = avg;
                 });
@@ -150,7 +154,7 @@
       >
         <m-button
           class={`flex items-center justify-center px-2.5 py-0.5 bg-amber-500 rounded`}
-          style={`text-transform: capitalize;
+          style={`text-transform: capitalize; min-width: fit-content;
 ${
   meta.categoryActive === "all"
     ? "background: #FF8F00;"
@@ -166,7 +170,7 @@ ${
           return (
             <m-button
               class={`flex items-center justify-center px-2.5 py-0.5 bg-gray-400 rounded`}
-              style={`text-transform: capitalize; width:fit-content; ${
+              style={`text-transform: capitalize; min-width:fit-content; ${
                 meta.categoryActive === value.category_id
                   ? "background: #FF8F00;"
                   : "background: #A1A1AA; "
@@ -182,84 +186,90 @@ ${
           );
         })}
       </div>
-      <div class="flex self-stretch flex-col space-y-4 items-start justify-center px-6 pb-1.5">
-        <div class={`flex self-stretch items-center justify-start space-x-4`}>
+      <div
+        class={`flex self-stretch flex-col space-y-4 items-center justify-center px-5 pb-3`}
+        style={`padding: 0 8px;`}
+      >
+        <div class={`flex self-stretch items-center justify-start flex-wrap`}>
           {meta.popularBook.map((value, index) => {
-            return (
-              <div
-                class={`flex self-stretch flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded shadow`}
-                onClick={() => {
-                  navigate("/m/detail-book-page/" + value.book_id + "/");
-                }}
-              >
-                <img
-                  src={
-                    value.book_picture
-                      ? "/upload/" + value.book_picture
-                      : "/fimgs/1718_224584.x1.png"
-                  }
-                  style={`width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat; border-radius: 4%`}
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "/fimgs/1718_224584.x1.png";
+            if (value.rating_avg !== 0 && value.viewBook.length !== 0) {
+              return (
+                <div
+                  class={`flex self-stretch flex-col space-y-1 items-start justify-start px-1 pt-1 pb-2.5 bg-white rounded shadow`}
+                  style={`flex-basis: 33.333333%; max-width:fit-content; margin:6px 0px 6px 6px;`}
+                  onClick={() => {
+                    navigate("/m/detail-book-page/" + value.book_id + "/");
                   }}
-                />
-                <div class="flex flex-1 self-stretch flex-col space-y-1 items-start justify-start px-2 pb-2">
-                  <div class="flex items-start justify-start">
-                    <div class="flex items-center justify-center rounded-full">
-                      <div
-                        class={`text-xs font-medium leading-none text-center text-gray-500`}
-                      >
-                        {value.tags_books_book_genre_one_idTotags.tag_name ||
-                          "Genre"}
+                >
+                  <img
+                    src={
+                      value.book_picture
+                        ? "/upload/" + value.book_picture
+                        : "/fimgs/1718_224584.x1.png"
+                    }
+                    style={`width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat; border-radius: 4%`}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "/fimgs/1718_224584.x1.png";
+                    }}
+                  />
+                  <div class="flex flex-1 self-stretch flex-col space-y-1 items-start justify-start px-2 pb-2">
+                    <div class="flex items-start justify-start">
+                      <div class="flex items-center justify-center rounded-full">
+                        <div
+                          class={`text-xs font-medium leading-none text-center text-gray-500`}
+                        >
+                          {value.tags_books_book_genre_one_idTotags.tag_name ||
+                            "Genre"}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div
-                    class={`flex self-stretch items-start justify-start`}
-                    style={`height: 3.5em;`}
-                  >
                     <div
-                      class={`text-sm font-medium leading-tight`}
-                      style={`width: 100px;     
+                      class={`flex self-stretch items-start justify-start`}
+                      style={`height: 3.5em;`}
+                    >
+                      <div
+                        class={`text-sm font-medium leading-tight`}
+                        style={`width: 100px;     
     overflow: hidden;
     line-height: 1em;
 max-height: 3em;
 display: -webkit-box;
 -webkit-box-orient: vertical;
 -webkit-line-clamp: 3;`}
-                    >
-                      {value.book_title || "Book Title"}
-                    </div>
-                  </div>
-                  <div class="flex self-stretch space-x-2 items-center justify-start">
-                    <div class="flex items-center justify-center">
-                      <div class="flex space-x-0.5 items-center justify-center pr-0.5">
-                        <img
-                          src="/fimgs/4839_659726.x1.svg"
-                          class="flex items-center justify-center"
-                          style="width: 12px; min-width: 12px; max-width: 12px; height: 12px; min-height: 12px; max-height: 12px;"
-                        />
-                        <div class={`text-xs leading-none`}>
-                          {value.rating_avg.toFixed(2) || 0}
-                        </div>
+                      >
+                        {value.book_title || "Book Title"}
                       </div>
                     </div>
-                    <div class="flex items-center justify-center">
-                      <img
-                        src="/fimgs/4000_79452.x1.svg"
-                        class={`flex flex-col items-start justify-start pr-0.5`}
-                      />
-                      <div class={`text-xs leading-none text-center`}>
-                        {value.viewBook.length > 999
-                          ? value.viewBook.length / 1000 + "k"
-                          : value.viewBook.length}
+                    <div class="flex self-stretch space-x-2 items-center justify-start">
+                      <div class="flex items-center justify-center">
+                        <div class="flex space-x-0.5 items-center justify-center pr-0.5">
+                          <img
+                            src="/fimgs/4839_659726.x1.svg"
+                            class="flex items-center justify-center"
+                            style="width: 12px; min-width: 12px; max-width: 12px; height: 12px; min-height: 12px; max-height: 12px;"
+                          />
+                          <div class={`text-xs leading-none`}>
+                            {value.rating_avg.toFixed(2) || 0}
+                          </div>
+                        </div>
+                      </div>
+                      <div class="flex items-center justify-center">
+                        <img
+                          src="/fimgs/4000_79452.x1.svg"
+                          class={`flex flex-col items-start justify-start pr-0.5`}
+                        />
+                        <div class={`text-xs leading-none text-center`}>
+                          {value.viewBook.length > 999
+                            ? value.viewBook.length / 1000 + "k"
+                            : value.viewBook.length}
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            );
+              );
+            }
           })}
         </div>
         {meta.popularBook.length === 0 && (

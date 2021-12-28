@@ -22,6 +22,13 @@
             location.reload();
           });
         } else {
+          var toastCenter = window.mobileApp.app.toast.create({
+            text: "Please choose at least one.",
+            position: "center",
+            closeTimeout: 2000,
+          }); // Open it
+
+          toastCenter.open();
           console.log("Fail");
         }
 
