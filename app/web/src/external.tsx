@@ -137,4 +137,16 @@ export default {
     import("./components/w-add-btn"),
     { c: "", s: "", h: "" },
   ],
+  "barchart-author": () => [
+    import("./components/barchart-author"),
+    { c: "", s: "", h: "" },
+  ],
+  "barchart-interest-user": () => [
+    import("./components/barchart-interest-user"),
+    { c: "", s: "", h: "" },
+  ],
+  "piechart-interest": () => [
+    import("./components/piechart-interest"),
+    { c: "", s: "", h: "" },
+  ],
 };

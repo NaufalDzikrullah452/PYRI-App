@@ -45,6 +45,8 @@
     "postcss": "^8.2.8",
     "postinstall-postinstall": "^2.1.0",
     "prettier": "^2.2.1",
+    "react-chartjs-2": "^3.3.0",
+    "react-color": "^2.19.3",
     "tslib": "1.14.1",
     "typescript": "^4.2.3"
   },

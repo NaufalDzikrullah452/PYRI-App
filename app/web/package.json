@@ -21,6 +21,7 @@
     "password-validator": "^5.2.1",
     "qrcode.react": "^1.0.1",
     "react": "^17.0.2",
+    "react-chartjs-2": "^3.3.0",
     "react-dom": "^17.0.2",
     "tailwindcss": "^2.2.19",
     "validator": "^13.7.0"
