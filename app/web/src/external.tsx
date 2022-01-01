@@ -149,4 +149,20 @@ export default {
     import("./components/piechart-interest"),
     { c: "", s: "", h: "" },
   ],
+  "barchart-newuser": () => [
+    import("./components/barchart-newuser"),
+    { c: "", s: "", h: "" },
+  ],
+  "linechart-active-subs": () => [
+    import("./components/linechart-active-subs"),
+    { c: "", s: "", h: "" },
+  ],
+  "linechart-transaction-subs": () => [
+    import("./components/linechart-transaction-subs"),
+    { c: "", s: "", h: "" },
+  ],
+  "doughnutchart-totaluser": () => [
+    import("./components/doughnutchart-totaluser"),
+    { c: "", s: "", h: "" },
+  ],
 };
