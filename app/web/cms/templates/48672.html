@@ -9,13 +9,92 @@
       changeDashboard: (open) => {},
       changeManagement: (open) => {},
       changeMasterData: (open) => {},
+      users: [],
       admin: [],
+      searching: "",
+      entries: 5,
+      last_entries: 5,
+      first_entries: 0,
+      pages: 1,
+      sum_pages: 0,
+      pages_array: [],
+      loading_page: true,
+      transaksi_sub_year: 0,
+      sub_aktif_year: 0,
+      pengguna_baru_year: 0,
+      transaksi_sub: {},
+      sub_aktif: {},
+      pengguna_baru: {},
+      button: {
+        transaksi_sub_year: true,
+        sub_aktif_year: true,
+        pengguna_baru_year: true,
+      },
+      data_total_user: {
+        labels: [],
+        datasets: [{}],
+      },
+      data_transaksi_sub: {
+        labels: [],
+        datasets: [{}],
+      },
+      data_sub_aktif: {
+        labels: [],
+        datasets: [{}],
+      },
+      data_pengguna_baru: {
+        labels: [],
+        datasets: [{}],
+      },
+      income: {
+        thisMonth: 0,
+        lastMonth: 0,
+      },
+      user_counter: 0,
 
       async onChange(e, key) {
         let value = e.target.value;
-        runInAction(() => {
-          this.admin[key] = value;
-        }); // console.log(key + " : " + value);
+
+        if (key === "entries") {
+          runInAction(() => {
+            this[key] = value;
+            this.first_entries = 0;
+            this.pages = 1;
+            this.last_entries = parseInt(value);
+            this.sum_pages = Math.ceil(this.users.length / this.entries);
+            this.pages_array = Array.apply(null, {
+              length: this.sum_pages,
+            }).map(Number.call, Number);
+            this.loading_page = false;
+          });
+        } else if (value !== this[key]) {
+          runInAction(() => {
+            this[key] = value;
+            this.button[key] = false;
+          });
+        } // console.log(key + " : " + value);
+      },
+
+      async onClickPages(key, value) {
+        if (value !== this.pages && value !== 0 && value <= this.sum_pages) {
+          const last_pages = this.pages;
+          const gap = value - last_pages;
+          const res = gap > 0;
+          runInAction(() => {
+            this.pages = value;
+
+            if (res) {
+              this.first_entries += parseInt(this.entries) * Math.abs(gap);
+              this.last_entries += parseInt(this.entries) * Math.abs(gap);
+            } else {
+              this.first_entries -= parseInt(this.entries) * Math.abs(gap);
+              this.last_entries -= parseInt(this.entries) * Math.abs(gap);
+            }
+          }); // console.log(key + " : " + value);
+          // console.log("first_entries : " + this.first_entries);
+          // console.log("last_entries : " + this.last_entries);
+          // console.log("gap : " + res);
+        }
       },
 
       async logout() {
@@ -26,6 +105,141 @@
           }).then((res) => {
             navigate("/login-admin");
           }));
+      },
+
+      async getTransaksiSub() {
+        let idata = {};
+
+        if (this.transaksi_sub_year === 0) {
+          idata = Object.values(
+            Object.values(this.transaksi_sub)[
+              Object.values(this.transaksi_sub).length - 1
+            ]
+          );
+        } else {
+          idata = Object.values(this.transaksi_sub[this.transaksi_sub_year]);
+        } // console.log(idata);
+
+        runInAction(() => {
+          this.data_transaksi_sub = {
+            labels: [
+              "Januari",
+              "Februari",
+              "Maret",
+              "April",
+              "Mei",
+              "Juni",
+              "Juli",
+              "Agustus",
+              "September",
+              "Oktober",
+              "November",
+              "Desember",
+            ],
+            datasets: [
+              {
+                label:
+                  "Transaction Subscription (" + this.transaksi_sub_year + ")",
+                data: idata,
+                borderColor: "#6ab04c",
+                // backgroundColor: '#f0932b',
+                pointBackgroundColor: "#ffffff",
+                pointRadius: 2,
+                pointHoverRadius: 7,
+                borderWidth: 2, // tension:0.2
+              },
+            ],
+          };
+          this.button["transaksi_sub_year"] = true;
+        });
+      },
+
+      async getSubAktif() {
+        let idata = {};
+
+        if (this.sub_aktif_year === 0) {
+          idata = Object.values(
+            Object.values(this.sub_aktif)[
+              Object.values(this.sub_aktif).length - 1
+            ]
+          );
+        } else {
+          idata = Object.values(this.sub_aktif[this.sub_aktif_year]);
+        } // console.log(idata);
+
+        runInAction(() => {
+          this.data_sub_aktif = {
+            labels: [
+              "Januari",
+              "Februari",
+              "Maret",
+              "April",
+              "Mei",
+              "Juni",
+              "Juli",
+              "Agustus",
+              "September",
+              "Oktober",
+              "November",
+              "Desember",
+            ],
+            datasets: [
+              {
+                label: "Subscription Active (" + this.sub_aktif_year + ")",
+                data: idata,
+                borderColor: "#f0932b",
+                // backgroundColor: '#312e8115',
+                pointBackgroundColor: "#ffffff",
+                pointRadius: 1,
+                pointHoverRadius: 7,
+                borderWidth: 2, // tension:0.2
+              },
+            ],
+          };
+          this.button["sub_aktif_year"] = true;
+        });
+      },
+
+      async getPenggunaBaru() {
+        let idata = {};
+
+        if (this.pengguna_baru_year === 0) {
+          idata = Object.values(
+            Object.values(this.pengguna_baru)[
+              Object.values(this.pengguna_baru).length - 1
+            ]
+          );
+        } else {
+          idata = Object.values(this.pengguna_baru[this.pengguna_baru_year]);
+        } // console.log(idata);
+
+        runInAction(() => {
+          this.data_pengguna_baru = {
+            labels: [
+              "Januari",
+              "Februari",
+              "Maret",
+              "April",
+              "Mei",
+              "Juni",
+              "Juli",
+              "Agustus",
+              "September",
+              "Oktober",
+              "November",
+              "Desember",
+            ],
+            datasets: [
+              {
+                label: "New user (" + this.pengguna_baru_year + ")",
+                data: idata,
+                backgroundColor: "#ffbe76",
+                borderRadius: 0,
+              },
+            ],
+          };
+          this.button["pengguna_baru_year"] = true;
+        });
       },
     }}
     run={async () => {
@@ -69,6 +283,206 @@
       if (window.user.roleAdmin !== "admin") {
         navigate("/login-admin");
       } else {
+        // read all user
+        let non_premium_counter = 0;
+        let premium_counter = 0;
+        api("/api/api-users", {
+          user: "",
+          e: "ReadMany",
+        }).then((res) => {
+          runInAction(() => {
+            meta.user_counter = res.users.length;
+          });
+          api("/api/api-users", {
+            user: "",
+            e: "ReadUserSubscription",
+          }).then((res) => {
+            if (res.users.length !== 0) {
+              // user premium
+              res.users.map((value, i) => {
+                if (
+                  dateCompare(new Date(), new Date(value.expired_date)) !== 1
+                ) {
+                  premium_counter += 1;
+                }
+              }); // user non premium
+
+              non_premium_counter = meta.user_counter - premium_counter;
+              runInAction(() => {
+                meta.data_total_user = {
+                  labels: ["Premium", "Non-Premium"],
+                  datasets: [
+                    {
+                      label: "# of Votes",
+                      data: [premium_counter, non_premium_counter],
+                      backgroundColor: ["#f0932b", "#dcdde1"],
+                      hoverOffset: 4,
+                    },
+                  ],
+                };
+              }); //sub aktif
+
+              let temp_sub_aktif = {};
+              res.users.map((value, i) => {
+                let year = dateFormat(new Date(value.join_date), "yyyy");
+
+                if (year in temp_sub_aktif == false) {
+                  temp_sub_aktif[year] = {
+                    1: 0,
+                    2: 0,
+                    3: 0,
+                    4: 0,
+                    5: 0,
+                    6: 0,
+                    7: 0,
+                    8: 0,
+                    9: 0,
+                    10: 0,
+                    11: 0,
+                    12: 0,
+                  };
+                }
+
+                temp_sub_aktif[year][
+                  _getMonth(new Date(value.join_date)) + 1
+                ] += 1;
+              });
+              runInAction(() => {
+                meta.sub_aktif = temp_sub_aktif;
+                meta.sub_aktif_year = Object.keys(temp_sub_aktif)[
+                  Object.values(temp_sub_aktif).length - 1
+                ];
+                meta.getSubAktif();
+              });
+            }
+          }); //pengguna baru
+
+          let temp_pengguna_baru = {};
+          res.users.map((value, i) => {
+            let year = dateFormat(new Date(value.user_date_created), "yyyy");
+
+            if (year in temp_pengguna_baru == false) {
+              temp_pengguna_baru[year] = {
+                1: 0,
+                2: 0,
+                3: 0,
+                4: 0,
+                5: 0,
+                6: 0,
+                7: 0,
+                8: 0,
+                9: 0,
+                10: 0,
+                11: 0,
+                12: 0,
+              };
+            }
+
+            temp_pengguna_baru[year][
+              _getMonth(new Date(value.user_date_created)) + 1
+            ] += 1;
+          });
+          runInAction(() => {
+            meta.pengguna_baru = temp_pengguna_baru;
+            meta.pengguna_baru_year = Object.keys(temp_pengguna_baru)[
+              Object.values(temp_pengguna_baru).length - 1
+            ];
+            meta.getPenggunaBaru();
+          });
+        }); // pendapatan bulan ini && last transaksi
+
+        var user = "";
+        let income_this_month = 0;
+        let income_last_month = 0;
+        api("/api/api-users", {
+          user: "",
+          e: "ReadUserPayment",
+        }).then((res) => {
+          // console.log(res)
+          if (res.users.length !== 0) {
+            // get payment last month & this month
+            res.users.map((value, i) => {
+              if (
+                _getMonth(new Date(value.mt_settled_date)) + 1 ===
+                _getMonth(new Date()) + 1
+              ) {
+                income_this_month += parseFloat(value.mt_gross_amount);
+              }
+
+              if (_getMonth(new Date()) === 0) {
+                if (_getMonth(new Date(value.mt_settled_date)) + 1 === 12) {
+                  income_last_month += parseFloat(value.mt_gross_amount);
+                }
+              } else if (
+                _getMonth(new Date(value.mt_settled_date)) + 1 ===
+                _getMonth(new Date())
+              ) {
+                income_last_month += parseFloat(value.mt_gross_amount);
+              }
+            });
+            runInAction(() => {
+              meta.income = {
+                thisMonth: income_this_month,
+                lastMonth: income_last_month,
+              };
+            }); // get payment each month
+
+            let temp_payment_month = {};
+            res.users.map((value, i) => {
+              let year = dateFormat(new Date(value.mt_settled_date), "yyyy");
+
+              if (year in temp_payment_month == false) {
+                temp_payment_month[year] = {
+                  1: 0,
+                  2: 0,
+                  3: 0,
+                  4: 0,
+                  5: 0,
+                  6: 0,
+                  7: 0,
+                  8: 0,
+                  9: 0,
+                  10: 0,
+                  11: 0,
+                  12: 0,
+                };
+              }
+
+              temp_payment_month[year][
+                _getMonth(new Date(value.mt_settled_date)) + 1
+              ] += parseFloat(value.mt_gross_amount);
+            }); // transaksi terakhir dalam seminggu
+
+            let temp_user = [];
+            var dateNow = new Date().getTime(); // Date now
+
+            var dateOneWeekBefore =
+              new Date().getTime() - 7 * 24 * 60 * 60 * 1000; // Date 1 week before
+
+            res.users.map((value, index) => {
+              if (
+                new Date(value.mt_settled_date).getTime() <= dateNow &&
+                new Date(value.mt_settled_date).getTime() > dateOneWeekBefore
+              ) {
+                temp_user.push(value);
+              }
+            });
+            runInAction(() => {
+              meta.transaksi_sub = temp_payment_month;
+              meta.transaksi_sub_year = Object.keys(temp_payment_month)[
+                Object.values(temp_payment_month).length - 1
+              ];
+              meta.getTransaksiSub();
+              meta.users = temp_user;
+              meta.sum_pages = Math.ceil(meta.users.length / meta.entries); // meta.page_array = new Array(meta.sum_page);
+
+              meta.pages_array = Array.apply(null, {
+                length: meta.sum_pages,
+              }).map(Number.call, Number);
+              meta.loading_page = false;
+            });
+          }
+        });
         runInAction(() => {
           meta.admin = window.user.admin;
         });
@@ -433,7 +847,7 @@
                 {meta.showProfile && (
                   <div
                     class={`flex flex-col items-center justify-end px-4 absolute`}
-                    style={"top: 98px;"}
+                    style={"top: 98px; z-index:1"}
                   >
                     <div
                       class={`flex self-stretch flex-col space-y-1 items-center justify-start p-4 bg-white shadow rounded`}
@@ -476,8 +890,8 @@
                   <div class="flex self-stretch items-center justify-start px-9 py-3 bg-orange-100 shadow rounded-lg">
                     <div class="flex flex-1 flex-col items-start justify-start">
                       <div class="flex self-stretch items-start justify-start">
-                        <div class="text-3xl leading-10 text-amber-500">
-                          Holla, Savanah
+                        <div class={`text-3xl leading-10 text-amber-500`}>
+                          Holla, {meta.admin.user_name}
                         </div>
                       </div>
                       <div class="flex self-stretch items-start justify-start">
@@ -501,8 +915,8 @@
                       />
                       <div class="flex flex-1 flex-col items-start justify-start">
                         <div class="flex self-stretch items-start justify-start">
-                          <div class="text-2xl font-bold leading-9">
-                            Rp 12.000.000,-
+                          <div class={`text-2xl font-bold leading-9`}>
+                            {"Rp " + meta.income.thisMonth + ",-"}
                           </div>
                         </div>
                         <div class="flex self-stretch items-start justify-start">
@@ -512,26 +926,53 @@
                         </div>
                       </div>
                     </div>
-                    <div class="flex flex-1 self-stretch space-x-2 items-center justify-start p-9 bg-white shadow rounded-lg">
-                      <div class="flex space-x-2 items-start justify-start">
-                        <img
-                          src="/fimgs/5076_13695.x1.svg"
-                          class="flex flex-col items-start justify-start p-1.5 bg-green-100 rounded-lg"
-                          style="width: 70px; min-width: 70px; max-width: 70px; height: 73.91px; min-height: 73.91px; max-height: 73.91px;"
-                        />
-                        <div class="flex flex-col items-start justify-start">
-                          <div class="flex self-stretch items-start justify-start">
-                            <div class="text-2xl font-bold leading-9">
-                              Rp 12.000.000,-
+                    <div class="flex flex-1 self-stretch flex-col space-y-2 items-center justify-start p-9 bg-white shadow rounded-lg">
+                      {meta.income.thisMonth - meta.income.lastMonth < 0 && (
+                        <div
+                          class={`flex self-stretch space-x-2 items-start justify-start`}
+                        >
+                          <img
+                            src="/fimgs/5103_14242.x1.svg"
+                            class="flex flex-col items-start justify-start p-1.5 bg-red-100 rounded-lg"
+                            style="width: 70px; min-width: 70px; max-width: 70px; height: 73.91px; min-height: 73.91px; max-height: 73.91px;"
+                          />
+                          <div class="flex flex-col items-start justify-start">
+                            <div class={`text-2xl font-bold leading-9`}>
+                              {"Rp " +
+                                (meta.income.thisMonth -
+                                  meta.income.lastMonth) +
+                                ",-"}
                             </div>
-                          </div>
-                          <div class="flex self-stretch items-start justify-start">
                             <div class="text-base font-bold leading-normal text-gray-500">
-                              Kenaikan dari bulan lalu
+                              Penurunan dari bulan lalu
                             </div>
                           </div>
                         </div>
-                      </div>
+                      )}
+                      {meta.income.thisMonth - meta.income.lastMonth >= 0 && (
+                        <div class={`flex space-x-2 items-start justify-start`}>
+                          <img
+                            src="/fimgs/5076_13695.x1.svg"
+                            class="flex flex-col items-start justify-start p-1.5 bg-green-100 rounded-lg"
+                            style="width: 70px; min-width: 70px; max-width: 70px; height: 73.91px; min-height: 73.91px; max-height: 73.91px;"
+                          />
+                          <div class="flex flex-col items-start justify-start">
+                            <div class="flex self-stretch items-start justify-start">
+                              <div class={`text-2xl font-bold leading-9`}>
+                                {"Rp " +
+                                  (meta.income.thisMonth -
+                                    meta.income.lastMonth) +
+                                  ",-"}
+                              </div>
+                            </div>
+                            <div class="flex self-stretch items-start justify-start">
+                              <div class="text-base font-bold leading-normal text-gray-500">
+                                Kenaikan dari bulan lalu
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -543,10 +984,12 @@
                       </div>
                     </div>
                     <div class="flex items-start justify-start">
-                      <div class="text-xl font-bold leading-loose">406</div>
+                      <div class={`text-xl font-bold leading-loose`}>
+                        {meta.user_counter || "-"}
+                      </div>
                     </div>
                   </div>
-                  <doughnutchart-totaluser />
+                  <doughnutchart data={meta.data_total_user} />
                 </div>
               </div>
               <div class="flex self-stretch items-start justify-start">
@@ -559,16 +1002,56 @@
                     </div>
                     <div class="flex space-x-1 items-start justify-start">
                       <div class="flex self-stretch items-center justify-start px-2 py-0.5 bg-white border rounded-sm border-gray-200">
-                        <input
-                          class={"w-full"}
-                          type="month"
-                          placeholder="tanggal"
+                        <select
+                          class={
+                            "flex flex-col space-y-2.5 items-center justify-start w-full"
+                          }
+                          value={meta.transaksi_sub_year}
                           style={`color: black;
       background:transparent; 
       outline: none;`}
-                        />
+                          onChange={(e) => {
+                            meta.onChange(e, "transaksi_sub_year");
+                          }}
+                        >
+                          {Object.keys(meta.transaksi_sub).length === 0 && (
+                            <option
+                              class={`text-base leading-normal text-gray-400`}
+                              value={0}
+                              disabled={true}
+                            >
+                              Tahun
+                            </option>
+                          )}
+                          {Object.keys(meta.transaksi_sub).length !== 0 &&
+                            Object.keys(meta.transaksi_sub).map(
+                              (value, index) => {
+                                return (
+                                  <option
+                                    class={`text-base leading-normal`}
+                                    value={value}
+                                  >
+                                    {value}
+                                  </option>
+                                );
+                              }
+                            )}
+                        </select>
                       </div>
-                      <button class="flex items-center justify-start px-2 py-0.5 bg-amber-500 shadow rounded-sm">
+                      <button
+                        class={`flex items-center justify-start px-2 py-0.5 bg-amber-500 shadow rounded-sm`}
+                        disabled={meta.button["transaksi_sub_year"]}
+                        style={`${
+                          meta.button["transaksi_sub_year"]
+                            ? `
+  background-color: #cccccc;
+  color: #666666;`
+                            : ""
+                        }`}
+                        onClick={() => {
+                          meta.getTransaksiSub();
+                        }}
+                      >
                         <div class="flex items-start justify-start">
                           <div class="text-base font-bold leading-normal text-white">
                             Proses
@@ -577,7 +1060,7 @@
                       </button>
                     </div>
                   </div>
-                  <linechart-transaction-subs />
+                  <linechart data={meta.data_transaksi_sub} />
                 </div>
               </div>
               <div class="flex self-stretch space-x-4 items-start justify-start">
@@ -590,16 +1073,54 @@
                     </div>
                     <div class="flex space-x-1 items-start justify-start">
                       <div class="flex self-stretch items-center justify-start px-2 py-0.5 bg-white border rounded-sm border-gray-200">
-                        <input
-                          class={"w-full"}
-                          type="month"
-                          placeholder="tanggal"
+                        <select
+                          class={
+                            "flex flex-col space-y-2.5 items-center justify-start w-full"
+                          }
+                          value={meta.sub_aktif_year}
                           style={`color: black;
       background:transparent; 
       outline: none;`}
-                        />
+                          onChange={(e) => {
+                            meta.onChange(e, "sub_aktif_year");
+                          }}
+                        >
+                          {Object.keys(meta.transaksi_sub).length === 0 && (
+                            <option
+                              class={`text-base leading-normal text-gray-400`}
+                              value={0}
+                              disabled={true}
+                            >
+                              Tahun
+                            </option>
+                          )}
+                          {Object.keys(meta.sub_aktif).length !== 0 &&
+                            Object.keys(meta.sub_aktif).map((value, index) => {
+                              return (
+                                <option
+                                  class={`text-base leading-normal`}
+                                  value={value}
+                                >
+                                  {value}
+                                </option>
+                              );
+                            })}
+                        </select>
                       </div>
-                      <button class="flex items-center justify-start px-2 py-0.5 bg-amber-500 shadow rounded-sm">
+                      <button
+                        class={`flex items-center justify-start px-2 py-0.5 bg-amber-500 shadow rounded-sm`}
+                        disabled={meta.button["sub_aktif_year"]}
+                        style={`${
+                          meta.button["sub_aktif_year"]
+                            ? `
+  background-color: #cccccc;
+  color: #666666;`
+                            : ""
+                        }`}
+                        onClick={() => {
+                          meta.getSubAktif();
+                        }}
+                      >
                         <div class="flex items-start justify-start">
                           <div class="text-base font-bold leading-normal text-white">
                             Proses
@@ -608,7 +1129,7 @@
                       </button>
                     </div>
                   </div>
-                  <linechart-active-subs />
+                  <linechart data={meta.data_sub_aktif} />
                 </div>
                 <div class="flex flex-1 flex-col space-y-6 items-start justify-start p-4 bg-white shadow rounded-lg">
                   <div class="flex self-stretch space-x-2.5 items-start justify-start">
@@ -619,16 +1140,56 @@
                     </div>
                     <div class="flex space-x-1 items-start justify-start">
                       <div class="flex self-stretch items-center justify-start px-2 py-0.5 bg-white border rounded-sm border-gray-200">
-                        <input
-                          class={"w-full"}
-                          type="month"
-                          placeholder="tanggal"
+                        <select
+                          class={
+                            "flex flex-col space-y-2.5 items-center justify-start w-full"
+                          }
+                          value={meta.pengguna_baru_year}
                           style={`color: black;
       background:transparent; 
       outline: none;`}
-                        />
+                          onChange={(e) => {
+                            meta.onChange(e, "pengguna_baru_year");
+                          }}
+                        >
+                          {Object.keys(meta.transaksi_sub).length === 0 && (
+                            <option
+                              class={`text-base leading-normal text-gray-400`}
+                              value={0}
+                              disabled={true}
+                            >
+                              Tahun
+                            </option>
+                          )}
+                          {Object.keys(meta.pengguna_baru).length !== 0 &&
+                            Object.keys(meta.pengguna_baru).map(
+                              (value, index) => {
+                                return (
+                                  <option
+                                    class={`text-base leading-normal`}
+                                    value={value}
+                                  >
+                                    {value}
+                                  </option>
+                                );
+                              }
+                            )}
+                        </select>
                       </div>
-                      <button class="flex items-center justify-start px-2 py-0.5 bg-amber-500 shadow rounded-sm">
+                      <button
+                        class={`flex items-center justify-start px-2 py-0.5 bg-amber-500 shadow rounded-sm`}
+                        disabled={meta.button["pengguna_baru_year"]}
+                        style={`${
+                          meta.button["pengguna_baru_year"]
+                            ? `
+  background-color: #cccccc;
+  color: #666666;`
+                            : ""
+                        }`}
+                        onClick={() => {
+                          meta.getPenggunaBaru();
+                        }}
+                      >
                         <div class="flex items-start justify-start">
                           <div class="text-base font-bold leading-normal text-white">
                             Proses
@@ -637,7 +1198,7 @@
                       </button>
                     </div>
                   </div>
-                  <barchart-newuser />
+                  <barchart data={meta.data_pengguna_baru} />
                 </div>
               </div>
               <div
@@ -660,7 +1221,10 @@
                       <select
                         class={`flex flex-col space-y-2.5 items-center justify-start px-6 py-1 bg-white border rounded border-gray-500`}
                         style={`width: 95.87px; min-width: 95.87px; max-width: 95.87px;`}
-                        defaultValue="5"
+                        value={meta.entries}
+                        onChange={(e) => {
+                          meta.onChange(e, "entries");
+                        }}
                       >
                         <option class={`hidden`} />
                         <option
@@ -674,6 +1238,18 @@
                           class="flex flex-1 self-stretch flex-col items-start justify-start bg-white"
                         >
                           10
+                        </option>
+                        <option
+                          value="25"
+                          class="flex flex-1 self-stretch flex-col items-start justify-start bg-white"
+                        >
+                          25
+                        </option>
+                        <option
+                          value="50"
+                          class="flex flex-1 self-stretch flex-col items-start justify-start bg-white"
+                        >
+                          50
                         </option>
                       </select>
                       <div class="flex items-start justify-start">
@@ -707,7 +1283,7 @@
                           </div>
                         </th>
                         <th
-                          class={`flex self-stretch items-center justify-start`}
+                          class={`flex flex-1 self-stretch items-center justify-start`}
                           style="width:20%;"
                         >
                           <div class="text-base font-bold leading-normal text-white">
@@ -715,7 +1291,7 @@
                           </div>
                         </th>
                         <th
-                          class={`flex self-stretch items-center justify-start`}
+                          class={`flex flex-1 self-stretch items-center justify-start`}
                           style="width:20%;"
                         >
                           <div class="text-base font-bold leading-normal text-white">
@@ -723,7 +1299,7 @@
                           </div>
                         </th>
                         <th
-                          class={`flex self-stretch items-center justify-start`}
+                          class={`flex self-stretch items-center justify-end`}
                           style="width:8%;"
                         >
                           <div class="text-base font-bold leading-normal text-white">
@@ -748,102 +1324,239 @@
                         </th>
                       </tr>
                     </thead>
-                    <tr
-                      class={`w-full flex self-stretch space-x-3 items-center justify-start px-4 py-2.5 bg-white rounded`}
-                    >
-                      <td
-                        class={`flex flex-col items-center justify-start pl-2.5`}
-                        style="width:5%; padding-right:10px;"
-                      >
-                        <div class="text-base leading-normal">1</div>
-                      </td>
-                      <td
-                        class={`flex space-x-3 items-center justify-start`}
-                        style="width:25%;"
-                      >
-                        <img src="/fimgs/5109_13731.x1.png" />
-                        <td
-                          class={`flex flex-col items-start justify-center`}
-                          style={"padding: 8px;"}
+                    <tbody class="flex flex-col space-y-2.5 items-start justify-start">
+                      {meta.users
+                        .slice(meta.first_entries, meta.last_entries)
+                        .map((value, index) => {
+                          return (
+                            <tr
+                              class={`w-full flex space-x-3 items-center justify-start px-4 py-2.5 bg-white rounded`}
+                              style=":hover {background-color: #ffbe76;"
+                            >
+                              <td
+                                class={`flex flex-col items-start justify-center pl-2`}
+                                style="width:5%; padding-right:10px;"
+                              >
+                                <div class={`text-base leading-normal`}>
+                                  {index + 1}
+                                </div>
+                              </td>
+                              <td
+                                class={`flex space-x-3 items-center justify-start`}
+                                style="width:24%;"
+                              >
+                                <img
+                                  src={
+                                    value.users.user_picture
+                                      ? "/upload" + value.users.user_email
+                                      : "/fimgs/4385_21969.x1.png"
+                                  }
+                                  onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = "/fimgs/4385_21969.x1.png";
+                                  }}
+                                  style="width: 44px; min-width: 44px; max-width: 44px; height: 44px; min-height: 44px; max-height: 44px;background-image: url('/fimgs/bg-b734a5be3aee0fd453c592a0baf71a7e7f723cd8');background-size:100% 100%;background-repeat:no-repeat; border-radius:50px;"
+                                />
+                                <td
+                                  class={`flex flex-col items-start justify-center`}
+                                  style={"padding: 8px;"}
+                                >
+                                  <div
+                                    class={`text-base font-medium leading-normal`}
+                                  >
+                                    {value.users.user_name || "-"}
+                                  </div>
+                                  <div
+                                    class={`text-sm leading-tight text-gray-600`}
+                                  >
+                                    {value.users.user_name || "-"}
+                                  </div>
+                                </td>
+                              </td>
+                              <td
+                                class={`flex flex-1 self-stretch items-center justify-start`}
+                                style="width:20%;"
+                              >
+                                <div
+                                  class={`text-base font-medium leading-normal text-gray-600`}
+                                >
+                                  {value.mt_order_id || "-"}
+                                </div>
+                              </td>
+                              <td
+                                class={`flex flex-1 self-stretch items-center justify-center`}
+                                style="width:20%;"
+                              >
+                                <div class="flex items-center justify-start py-0.5 rounded-full">
+                                  <div
+                                    class={`text-base font-medium leading-normal text-gray-600`}
+                                  >
+                                    {value.plans.plan_name || "-"}
+                                  </div>
+                                </div>
+                              </td>
+                              <td
+                                class={`flex self-stretch items-center justify-end`}
+                                style="width:10%;"
+                              >
+                                <div class="flex items-center justify-start py-0.5 rounded-full">
+                                  <div
+                                    class={`text-base font-medium leading-normal text-gray-600`}
+                                  >
+                                    {value.plans.plan_duration + " Hari" || "-"}
+                                  </div>
+                                </div>
+                              </td>
+                              <td
+                                class={`flex self-stretch items-center justify-end`}
+                                style="width:10%;"
+                              >
+                                <div
+                                  class={`text-base font-medium leading-normal text-gray-600`}
+                                >
+                                  {value.plans.plan_price
+                                    .toFixed(0)
+                                    .replace(
+                                      /(\d)(?=(\d{3})+(?:\.\d+)?$)/g,
+                                      "$1,"
+                                    ) || "-"}
+                                </div>
+                              </td>
+                              <td
+                                class={`flex self-stretch space-x-2.5 items-center justify-start pl-3`}
+                                style="width:10%;"
+                              >
+                                {value.mt_status === "capture" && (
+                                  <div
+                                    class={`flex items-center justify-start px-3 py-1 bg-green-200 rounded-full`}
+                                    style="background-color:rgb(39, 174, 96, 0.2);"
+                                  >
+                                    <div class="text-sm font-bold leading-tight text-green-600">
+                                      Success
+                                    </div>
+                                  </div>
+                                )}
+                                {value.mt_status === "pending" && (
+                                  <div
+                                    class={`flex items-center justify-start px-3 py-1 rounded-full`}
+                                    style="background-color: rgb(230, 126, 34, 0.2)"
+                                  >
+                                    <div class="text-sm font-bold leading-tight text-amber-500">
+                                      Pending
+                                    </div>
+                                  </div>
+                                )}
+                                {value.mt_status === "expire" && (
+                                  <div
+                                    class={`flex items-center justify-start px-3 py-1 rounded-full`}
+                                    style="background-color: rgb(192, 57, 43, 0.2)"
+                                  >
+                                    <div
+                                      class={`text-sm font-bold leading-tight text-rose-500`}
+                                      style="color:#c0392b;"
+                                    >
+                                      Expired
+                                    </div>
+                                  </div>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      {meta.users.length === 0 && (
+                        <tr
+                          class={`w-full flex self-stretch items-center justify-center px-4 py-2.5 rounded`}
+                          style={""}
                         >
-                          <div class={`text-base font-medium leading-normal`}>
-                            Nillasanti Puspita
-                          </div>
-                          <div class={`text-sm leading-tight text-gray-600`}>
-                            bill.sanders@gmail.com
-                          </div>
-                        </td>
-                      </td>
-                      <td
-                        class={`flex self-stretch items-center justify-start`}
-                        style="width:20%;"
-                      >
-                        <div class="text-base font-medium leading-normal text-gray-600">
-                          02019219313
-                        </div>
-                      </td>
-                      <td
-                        class={`flex self-stretch items-center justify-start`}
-                        style="width:20%;"
-                      >
-                        <div class="flex items-center justify-start py-0.5 rounded-full">
-                          <div class="text-base font-medium leading-normal text-gray-600">
-                            Bibliophile
-                          </div>
-                        </div>
-                      </td>
-                      <td
-                        class={`flex self-stretch items-center justify-center`}
-                        style="width:10%;"
-                      >
-                        <div class="flex items-center justify-center py-0.5 rounded-full">
-                          <div class="text-base font-medium leading-normal text-gray-600">
-                            30 Hari
-                          </div>
-                        </div>
-                      </td>
-                      <td
-                        class={`flex self-stretch items-center justify-end`}
-                        style="width:10%;"
-                      >
-                        <div class="text-base font-medium leading-normal text-gray-600">
-                          60.000
-                        </div>
-                      </td>
-                      <td
-                        class={`flex self-stretch items-center justify-start pl-3`}
-                        style="width:10%;"
-                      >
-                        <div
-                          class={`flex items-center justify-start px-3 py-1 bg-green-200 rounded-full`}
-                          style="background-color:rgb(39, 174, 96, 0.2);"
-                        >
-                          <div class="text-sm font-bold leading-tight text-green-600">
-                            Success
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
+                          <td class={`text-base leading-normal`}>
+                            Data not found!
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
                   </table>
                   <div class="flex self-stretch space-x-2.5 items-center justify-start bg-white">
-                    <div class="flex flex-1 items-start justify-start">
-                      <div class={`text-base leading-normal text-orange-900`}>
-                        Showing 1 to 6 of 6 entries
-                      </div>
+                    <div class="flex flex-1 space-x-2.5 items-start justify-start">
+                      {
+                        <div
+                          class={`text-base leading-normal text-orange-900`}
+                        >{`Showing ${meta.first_entries + 1} to 
+${
+  meta.last_entries <= meta.users.length ? meta.last_entries : meta.users.length
+} of ${meta.users.length} entries`}</div>
+                      }
+                      {false && meta.filter.role !== "ROLE" && (
+                        <div class={`text-base leading-normal`}>{`Showing ${
+                          meta.first_entries + 1
+                        } to 
+${
+  meta.last_entries <= meta.filter.dataRole.length
+    ? meta.last_entries
+    : meta.filter.dataRole.length
+} of ${meta.filter.dataRole.length} entries`}</div>
+                      )}
                     </div>
                     <div class="flex space-x-2 items-start justify-start">
                       <div
                         class={`flex self-stretch flex-col items-center justify-center px-2 bg-white rounded cursor-pointer`}
                         style={`:hover {outline: 2px solid #ababab;`}
+                        onClick={() => {
+                          meta.onClickPages(
+                            "page" + (meta.pages - 1),
+                            meta.pages - 1
+                          );
+                        }}
                       >
                         <img src="/fimgs/4385_22030.x1.svg" />
                       </div>
-                      <div class={`flex items-start justify-start`}>
-                        <div class={`text-base leading-normal`}>1</div>
-                      </div>
+                      {meta.pages_array.map((numList, i) => {
+                        const upper =
+                          meta.pages + 2 < meta.pages_array.length
+                            ? meta.pages + 2
+                            : meta.pages_array.length;
+                        const under = meta.pages - 2 > 0 ? meta.pages - 2 : 1;
+
+                        if (
+                          (numList + 1 < upper && numList + 1 > under) ||
+                          numList + 1 === 1 ||
+                          numList + 1 === meta.pages_array.length
+                        ) {
+                          return (
+                            <div class={`flex items-start justify-start`}>
+                              {
+                                <div
+                                  class={`flex flex-col items-start justify-start px-2.5 py-1 bg-white rounded`}
+                                  style={`${
+                                    "page" + meta.pages === "page" + (i + 1)
+                                      ? `background: #FF8F00;`
+                                      : `:hover {background-color: #ffc780;}`
+                                  }
+  cursor:pointer;`}
+                                  onClick={() => {
+                                    meta.onClickPages("page" + (i + 1), i + 1);
+                                  }}
+                                >
+                                  <div class={`text-base leading-normal`}>
+                                    {numList + 1}
+                                  </div>
+                                </div>
+                              }
+                            </div>
+                          );
+                        } else {
+                          if (numList + 1 === upper || numList + 1 === under)
+                            return "...";
+                        }
+                      })}
                       <div
                         class={`flex self-stretch flex-col items-center justify-center px-2 bg-white rounded cursor-pointer`}
                         style={`:hover {outline: 2px solid #ababab;`}
+                        onClick={() => {
+                          meta.onClickPages(
+                            "page" + (meta.pages + 1),
+                            meta.pages + 1
+                          );
+                        }}
                       >
                         <img src="/fimgs/4385_22037.x1.svg" />
                       </div>

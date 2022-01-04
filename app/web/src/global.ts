@@ -2,15 +2,20 @@ import { format as formatFNS, parseISO } from 'date-fns'
 import * as locales from 'date-fns/locale';
 import add  from 'date-fns/add'
 import compareAsc  from 'date-fns/compareAsc'
+import getMonth  from 'date-fns/getMonth'
 const md5 = require('md5');
 var validator = require('validator');
 var passwordValidator = require('password-validator');
+
 
 export const dateAdd = (date, duration) =>{
   return add (date, duration)
 }
 export const dateCompare = (dateLeft, dateRight) =>{
   return compareAsc(dateLeft, dateRight)
+}
+export const _getMonth = (date) =>{
+  return getMonth(date)
 }
 
 export const formatSeparatorDec = (value: any, decimal?: number) => {

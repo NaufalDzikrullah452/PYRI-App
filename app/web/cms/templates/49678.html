@@ -823,7 +823,10 @@
             // console.log(res);
             if (res.users !== null) {
               runInAction(() => {
-                this.user_premium = res.users;
+                this.user_premium = res.users; //         console.log(dateFormat(this.user_premium.expired_date, "dd MM yyyy"))
+                //         console.log(dateFormat(new Date(), "dd MM yyyy"))
+                //         console.log(dateFormat(this.user_premium.expired_date, "dd MM yyyy") >
+                // dateFormat(new Date(), "dd MM yyyy"))
               });
             }
           });
@@ -852,7 +855,7 @@
     }}
   />
   <div
-    class={`flex items-end justify-center bg-white`}
+    class={`flex self-stretch items-end justify-center bg-white`}
     style={"margin-bottom: 50px;"}
   >
     <div
@@ -1052,8 +1055,8 @@
                           {meta.recommendBook
                             .slice(
                               0,
-                              meta.recommendBook.length > 3
-                                ? 3
+                              meta.recommendBook.length > 4
+                                ? 4
                                 : meta.recommendBook.length
                             )
                             .map((value, i) => {
@@ -2338,7 +2341,7 @@ border-radius: 8%`}
         <m-tab
           class={`flex flex-1 self-stretch flex-col space-y-2.5 items-start justify-start px-6 pt-2`}
           id="profile"
-          style={`height: 684px; min-height: 684px; max-height: 684px; padding-top:1rem`}
+          style={`height: 1201px; min-height: 1201px; max-height: 1201px; padding-top:1rem`}
         >
           <div class="flex self-stretch space-x-2.5 items-center justify-start">
             <div
@@ -2365,7 +2368,7 @@ border-radius: 8%`}
               </div>
               {(meta.user_premium.length === 0 ||
                 (meta.user_premium.length !== 0 &&
-                  dateFormat(meta.user_premium.expired_date, "dd MM yyyy") >
+                  dateFormat(meta.user_premium.expired_date, "dd MM yyyy") <=
                     dateFormat(new Date(), "dd MM yyyy"))) && (
                 <div
                   class={`flex items-center justify-center px-4 py-0.5 bg-gray-500 border rounded border-gray-500`}
@@ -2376,7 +2379,7 @@ border-radius: 8%`}
                 </div>
               )}
               {meta.user_premium.length !== 0 &&
-                dateFormat(meta.user_premium.expired_date, "dd MM yyyy") <=
+                dateFormat(meta.user_premium.expired_date, "dd MM yyyy") >
                   dateFormat(new Date(), "dd MM yyyy") && (
                   <div
                     class={`flex items-center justify-center px-2.5 py-0.5 border rounded`}
@@ -2460,7 +2463,7 @@ border-radius: 8%`}
                 </div>
                 {(meta.user_premium.length === 0 ||
                   (meta.user_premium.length !== 0 &&
-                    dateFormat(meta.user_premium.expired_date, "dd MM yyyy") >
+                    dateFormat(meta.user_premium.expired_date, "dd MM yyyy") <=
                       dateFormat(new Date(), "dd MM yyyy"))) && (
                   <div
                     class={`text-base font-bold leading-normal text-gray-900`}
@@ -2469,10 +2472,7 @@ border-radius: 8%`}
                   </div>
                 )}
                 {meta.user_premium.length !== 0 &&
-                  dateFormat(meta.user_premium.expired_date, "dd MM yyyy") <=
-                    dateFormat(new Date(), "dd MM yyyy") &&
-                  meta.user_premium.length !== 0 &&
-                  dateFormat(meta.user_premium.expired_date, "dd MM yyyy") <=
+                  dateFormat(meta.user_premium.expired_date, "dd MM yyyy") >
                     dateFormat(new Date(), "dd MM yyyy") && (
                     <div class={`text-base font-bold leading-normal`}>
                       User Pro
@@ -2482,7 +2482,7 @@ border-radius: 8%`}
               <div class={`flex flex-col items-end justify-start`}>
                 {(meta.user_premium.length === 0 ||
                   (meta.user_premium.length !== 0 &&
-                    dateFormat(meta.user_premium.expired_date, "dd MM yyyy") >
+                    dateFormat(meta.user_premium.expired_date, "dd MM yyyy") <=
                       dateFormat(new Date(), "dd MM yyyy"))) && (
                   <m-button
                     class={`flex items-start justify-start px-2.5 py-0.5 bg-gradient-to-r from-red-600 to-yellow-400 shadow rounded`}
@@ -2498,7 +2498,7 @@ border-radius: 8%`}
                   </m-button>
                 )}
                 {meta.user_premium.length !== 0 &&
-                  dateFormat(meta.user_premium.expired_date, "dd MM yyyy") <=
+                  dateFormat(meta.user_premium.expired_date, "dd MM yyyy") >
                     dateFormat(new Date(), "dd MM yyyy") && (
                     <m-button
                       class={`flex items-start justify-start px-2.5 py-0.5 shadow rounded`}
