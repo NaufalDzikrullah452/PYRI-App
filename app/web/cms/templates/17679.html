@@ -1,25 +1,139 @@
 <>
   <effect
     meta={{
-      showAction: false,
+      showAction: 0,
       showProfile: false,
       showDashboard: false,
       showMasterData: false,
       showManagement: false,
       setPublish: false,
+      statusPublish: false,
       changeAction: (open) => {},
       changeProfile: (open) => {},
       changeDashboard: (open) => {},
       changeManagement: (open) => {},
       changeMasterData: (open) => {},
       changePublish: (open) => {},
-      admin: [],
+      avg_rating: 0,
+      book: [],
+      comment: [],
+      showMoreLess: true,
+      searching: "",
+      entries: 5,
+      last_entries: 5,
+      first_entries: 0,
+      pages: 1,
+      sum_pages: 0,
+      pages_array: [],
+      loading_page: true,
 
       async onChange(e, key) {
         let value = e.target.value;
-        runInAction(() => {
-          this.admin[key] = value;
-        }); // console.log(key + " : " + value);
+
+        if (key === "entries") {
+          runInAction(() => {
+            this[key] = value;
+            this.first_entries = 0;
+            this.pages = 1;
+            this.last_entries = parseInt(value);
+            this.sum_pages = Math.ceil(this.comment.length / this.entries);
+            this.pages_array = Array.apply(null, {
+              length: this.sum_pages,
+            }).map(Number.call, Number);
+            this.loading_page = false;
+          });
+        } else if (key === "searching") {
+          runInAction(() => {
+            this[key] = value;
+            api("/api/comment", {
+              comment: {
+                comment_description: value,
+              },
+              e: "Searching",
+            }).then((res) => {
+              runInAction(() => {
+                this.comment = res.comment;
+                this.first_entries = 0;
+                this.pages = 1;
+                this.last_entries = parseInt(this.entries);
+                this.sum_pages = Math.ceil(this.comment.length / this.entries);
+                this.pages_array = Array.apply(null, {
+                  length: this.sum_pages,
+                }).map(Number.call, Number);
+                this.loading_page = false;
+              });
+            });
+          });
+        } // console.log(key + " : " + value);
+      },
+
+      async onClickPages(key, value) {
+        if (value !== this.pages && value !== 0 && value <= this.sum_pages) {
+          const last_pages = this.pages;
+          const gap = value - last_pages;
+          const res = gap > 0;
+          runInAction(() => {
+            this.pages = value;
+
+            if (res) {
+              this.first_entries += parseInt(this.entries) * Math.abs(gap);
+              this.last_entries += parseInt(this.entries) * Math.abs(gap);
+            } else {
+              this.first_entries -= parseInt(this.entries) * Math.abs(gap);
+              this.last_entries -= parseInt(this.entries) * Math.abs(gap);
+            }
+          });
+        }
+      },
+
+      async deleteComment(id) {
+        console.log("delete: " + id);
+        var secondConfirm = confirm(
+          "Can't restore comment after delete, are you sure?"
+        );
+
+        if (secondConfirm) {
+          api("/api/comment", {
+            comment: {
+              comment_id: parseInt(id),
+            },
+            e: "Delete",
+          }).then((res) => {
+            if (res.res === "Failure" || res === null) {
+              alert("Can't delete comment. Database error.");
+            } else {
+              const deleteDom = document.getElementById("comment-" + id);
+              deleteDom.style =
+                "margin-bottom: 12px; transform: translateX(-700px); transition: transform 1.5s ease-in-out;";
+              setTimeout(() => {
+                deleteDom.style =
+                  "margin-bottom: 12px; transform: translateX(0px); transition: transform 0s ease-in-out; opacity: 0;";
+                api("/api/comment", {
+                  comment: {
+                    comment_book_id: parseInt(params.book_id),
+                  },
+                  e: "ReadByBookId",
+                }).then((res) => {
+                  runInAction(() => {
+                    this.comment = res.comment;
+                    this.first_entries = 0;
+                    this.pages = 1;
+                    this.last_entries = parseInt(this.entries);
+                    this.sum_pages = Math.ceil(
+                      this.comment.length / this.entries
+                    );
+                    this.pages_array = Array.apply(null, {
+                      length: this.sum_pages,
+                    }).map(Number.call, Number);
+                    this.loading_page = false;
+                    deleteDom.style =
+                      "margin-bottom: 12px; transform: translateX(0px); transition: transform 1.5s ease-in-out; opacity: 1;";
+                  });
+                });
+              }, 1500);
+            }
+          });
+        }
       },
 
       async logout() {
@@ -30,6 +144,24 @@
           }).then((res) => {
             navigate("/login-admin");
           }));
+      },
+
+      async setPublishBook(value) {
+        await api("/api/books", {
+          book: {
+            book_id: parseInt(params.book_id),
+            book_is_released: value,
+          },
+          e: "Update",
+        }).then((res) => {
+          if (res.res === "Failure") {
+            alert("Can't update book, related to other tables");
+          } else {
+            runInAction(() => {
+              this.statusPublish = value;
+            });
+          }
+        });
       },
     }}
     run={async () => {
@@ -102,6 +234,49 @@
       if (window.user.roleAdmin !== "admin") {
         navigate("/login-admin");
       } else {
+        // read book
+        if (params.book_id !== undefined) {
+          api("/api/books", {
+            book: {
+              book_id: parseInt(params.book_id),
+            },
+            e: "ReadDetailById",
+          }).then((res) => {
+            console.log(res);
+
+            if (res.book !== null) {
+              runInAction(() => {
+                meta.book = res.book;
+                meta.comment = res.book.comment;
+                meta.sum_pages = Math.ceil(meta.comment.length / meta.entries);
+                meta.last_entries =
+                  meta.comment.length > 5 ? 5 : meta.comment.length;
+                meta.pages_array = Array.apply(null, {
+                  length: meta.sum_pages,
+                }).map(Number.call, Number);
+              });
+
+              if (meta.book.rating.length !== 0) {
+                var sum_rating = 0;
+                meta.book.rating.map((value) => {
+                  sum_rating += value.rating_point;
+                });
+                runInAction(() => {
+                  meta.avg_rating = parseFloat(
+                    sum_rating / meta.book.rating.length
+                  );
+                });
+              }
+
+              if (meta.book.book_is_released) {
+                runInAction(() => {
+                  meta.statusPublish = true;
+                });
+              }
+            }
+          });
+        }
+
         runInAction(() => {
           meta.admin = window.user.admin;
         });
@@ -109,7 +284,7 @@
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
+    <div class={`w-full flex items-start justify-start bg-white`}>
       <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
         <div
           class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -542,12 +717,36 @@
                     <button
                       class={`flex items-center justify-start p-0.5 bg-gray-300 shadow rounded-full`}
                       id="switch"
-                      style={`width: 53px; min-width: 53px; max-width: 53px; height: 28px; min-height: 28px; max-height: 28px;`}
+                      style={`width: 53px; min-width: 53px; max-width: 53px; height: 28px; min-height: 28px; max-height: 28px;
+    transition: background-color .3s; 
+    ${
+      meta.statusPublish
+        ? "background-color: #ffc048;"
+        : "background-color: #d2dae2;"
+    }`}
                       onClick={() => {
-                        if (meta.setPublish == false) {
-                          meta.action.changePublish(true);
+                        if (meta.statusPublish) {
+                          var conf = confirm("Unpublish book ?");
+
+                          if (conf) {
+                            meta.setPublishBook(false);
+                            let btn_swicth1 = document.getElementById("toggle");
+                            btn_swicth1.setAttribute(
+                              "style",
+                              "transition: margin-left .4s; margin-left: 0px;"
+                            );
+                          }
                         } else {
-                          meta.action.changePublish(false);
+                          var conf = confirm("Publish book ?");
+
+                          if (conf) {
+                            meta.setPublishBook(true);
+                            let btn_swicth1 = document.getElementById("toggle");
+                            btn_swicth1.setAttribute(
+                              "style",
+                              "transition: margin-left .4s; margin-left: 25px;"
+                            );
+                          }
                         }
                       }}
                     >
@@ -555,32 +754,54 @@
                         src="/fimgs/4911_14210.x1.svg"
                         id="toggle"
                         class={`flex items-start justify-start`}
-                        style={`width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;`}
+                        style={`transition: margin-left .1s; 
+  ${meta.statusPublish ? "margin-left: 25px;" : "margin-left: 0px;"}`}
                       />
                     </button>
                   </div>
                 </div>
                 <div class="flex self-stretch space-x-9 items-start justify-start px-9 pt-4 pb-9">
                   <div class="flex flex-col items-center justify-start">
-                    <img src="/fimgs/4939_114233.x1.png" class="shadow" />
+                    <img
+                      src={
+                        meta.book.book_picture
+                          ? "/upload/" + meta.book.book_picture
+                          : "/fimgs/5203_75641.x1.png"
+                      }
+                      class={`shadow`}
+                      style={`width: 200.81px; min-width: 200.81px; max-width: 200.81px; height: 300px; min-height: 300px; max-height: 300px;background-image: url('/fimgs/bg-8cf180f8c9bc5fec9363e489cbbba28f18b9b868');background-size:100% 100%;background-repeat:no-repeat;`}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "/fimgs/3145_306147.x1.png";
+                      }}
+                      id="bc"
+                    />
                   </div>
                   <div class="flex flex-1 flex-col space-y-4 items-start justify-start">
                     <div class="flex self-stretch flex-col items-start justify-start">
                       <div class="flex self-stretch items-start justify-start">
-                        <div class="text-2xl font-bold leading-9 text-gray-900">
-                          One Piece
+                        <div
+                          class={`text-2xl font-bold leading-9 text-gray-900`}
+                        >
+                          {meta.book.book_title || "Book title"}
                         </div>
                       </div>
                       <div class="flex self-stretch items-start justify-start">
-                        <div class="text-base leading-normal text-gray-500">
-                          Tahun terbit : 21 Maret 2001
+                        <div class={`text-base leading-normal text-gray-500`}>
+                          Tahun terbit :{" "}
+                          {dateFormat(
+                            meta.book.book_year_of_release,
+                            "dd MMMM yyyy"
+                          ) || "Book title"}
                         </div>
                       </div>
                     </div>
                     <div class="flex self-stretch space-x-2 items-center justify-start">
                       <div class="flex items-start justify-start px-3 py-0.5 bg-orange-100 rounded">
-                        <div class="text-base font-bold leading-normal text-amber-500">
-                          Komik
+                        <div
+                          class={`text-base font-bold leading-normal text-amber-500`}
+                        >
+                          {meta.book.category.category_name || "-"}
                         </div>
                       </div>
                       <div class="flex items-start justify-start px-3 py-0.5 bg-white border border-gray-500">
@@ -596,8 +817,8 @@
                           style="color: orange;"
                         />
                         <div class="flex items-center justify-start">
-                          <div class="text-base font-bold leading-normal">
-                            4.5
+                          <div class={`text-base font-bold leading-normal`}>
+                            {meta.avg_rating.toFixed(2) || "-"}
                           </div>
                         </div>
                       </div>
@@ -610,8 +831,8 @@
                           />
                         </div>
                         <div class="flex items-center justify-start">
-                          <div class="text-base font-bold leading-normal">
-                            125K
+                          <div class={`text-base font-bold leading-normal`}>
+                            {meta.book.bookmarks.length || 0}
                           </div>
                         </div>
                       </div>
@@ -622,8 +843,8 @@
                           style="width: 16px; min-width: 16px; max-width: 16px; height: 16px; min-height: 16px; max-height: 16px;"
                         />
                         <div class="flex items-center justify-start">
-                          <div class="text-base font-bold leading-normal">
-                            125K
+                          <div class={`text-base font-bold leading-normal`}>
+                            {meta.book.viewBook.length}
                           </div>
                         </div>
                       </div>
@@ -639,8 +860,24 @@
                           </div>
                         </div>
                         <div class="flex flex-1 items-start justify-start">
-                          <div class="text-base leading-normal text-gray-500">
-                            Fiction
+                          <div class={`text-base leading-normal text-gray-500`}>
+                            {meta.book.tags_books_book_genre_one_idTotags !==
+                            null
+                              ? meta.book.tags_books_book_genre_one_idTotags
+                                  .tag_name
+                              : ""}{" "}
+                            {meta.book.tags_books_book_genre_two_idTotags !==
+                            null
+                              ? ", " +
+                                meta.book.tags_books_book_genre_two_idTotags
+                                  .tag_name
+                              : ""}{" "}
+                            {meta.book.tags_books_book_genre_three_idTotags !==
+                            null
+                              ? ", " +
+                                meta.book.tags_books_book_genre_three_idTotags
+                                  .tag_name
+                              : ""}
                           </div>
                         </div>
                       </div>
@@ -654,8 +891,30 @@
                           </div>
                         </div>
                         <div class="flex flex-1 items-start justify-start">
-                          <div class="text-base leading-normal text-gray-500">
-                            Eichiro Oda
+                          <div class={`text-base leading-normal text-gray-500`}>
+                            {meta.book
+                              .authors_authorsTobooks_book_author_one_id !==
+                            null
+                              ? meta.book
+                                  .authors_authorsTobooks_book_author_one_id
+                                  .author_name
+                              : ""}{" "}
+                            {meta.book
+                              .authors_authorsTobooks_book_author_two_id !==
+                            null
+                              ? ", " +
+                                meta.book
+                                  .authors_authorsTobooks_book_author_two_id
+                                  .author_name
+                              : ""}{" "}
+                            {meta.book
+                              .authors_authorsTobooks_book_author_three_id !==
+                            null
+                              ? ", " +
+                                meta.book
+                                  .authors_authorsTobooks_book_author_three_id
+                                  .author_name
+                              : ""}
                           </div>
                         </div>
                       </div>
@@ -669,8 +928,8 @@
                           </div>
                         </div>
                         <div class="flex flex-1 items-start justify-start">
-                          <div class="text-base leading-normal text-gray-500">
-                            Elex Media Komputindo
+                          <div class={`text-base leading-normal text-gray-500`}>
+                            {meta.book.publisher.publisher_name || "-"}
                           </div>
                         </div>
                       </div>
@@ -684,8 +943,8 @@
                           </div>
                         </div>
                         <div class="flex flex-1 items-start justify-start">
-                          <div class="text-base leading-normal text-gray-500">
-                            123456789
+                          <div class={`text-base leading-normal text-gray-500`}>
+                            {meta.book.book_isbn || "-"}
                           </div>
                         </div>
                       </div>
@@ -697,24 +956,50 @@
                         </div>
                       </div>
                       <div class="flex self-stretch items-start justify-start">
-                        <div class={`text-base leading-normal text-gray-500`}>
-                          Lorem ipsum dolor sit amet, consectetur adipiscing
-                          elit. In dictum elementum ante nec quam id. Tellus
-                          duis risus adipiscing facilisis viverra suspendisse
-                          sit aliquam ultricies. Nisl viverra viverra ultrices
-                          et imperdiet. Semper ut nisl, diam mollis. Ac arcu in
-                          turpis morbi elementum leo. Urna, magna euismod
-                          sagittis nunc blandit sollicitudin neque ipsum.
-                          Laoreet eu, orci habitasse at. Sodales pellentesque
-                          venenatis morbi sed. Dictum.
+                        <div
+                          class={`text-base leading-normal text-gray-500`}
+                          style={
+                            meta.showMoreLess
+                              ? `
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+`
+                              : ""
+                          }
+                        >
+                          {meta.book.book_description || "Book title"}
                         </div>
+                      </div>
+                      <div class="flex flex-col items-start justify-start py-2.5">
+                        <button
+                          class={`flex items-center justify-start px-2 py-0.5 bg-gray-400 shadow rounded-sm`}
+                          style={`padding: 6px 8px;`}
+                          onClick={() => {
+                            runInAction(() => {
+                              meta.showMoreLess = meta.showMoreLess
+                                ? false
+                                : true;
+                            });
+                          }}
+                        >
+                          <div class="flex items-start justify-start">
+                            <div class={`text-xs leading-none text-white`}>
+                              {meta.showMoreLess ? "Show More" : "Show Less"}
+                            </div>
+                          </div>
+                        </button>
                       </div>
                     </div>
                     <div class="flex self-stretch space-x-6 items-start justify-start">
                       <div class="flex flex-col items-center justify-center px-9 py-2 bg-white border rounded border-amber-500 border-opacity-50">
                         <div class="flex flex-col items-start justify-start">
-                          <div class="text-2xl font-bold leading-9 text-gray-700">
-                            0
+                          <div
+                            class={`text-2xl font-bold leading-9 text-gray-700`}
+                          >
+                            {meta.book.chapter.length || "-"}
                           </div>
                         </div>
                         <div class="flex items-start justify-start">
@@ -725,8 +1010,10 @@
                       </div>
                       <div class="flex flex-col items-center justify-center px-9 py-2 bg-white border rounded border-amber-500 border-opacity-50">
                         <div class="flex flex-col items-start justify-start">
-                          <div class="text-2xl font-bold leading-9 text-gray-700">
-                            0
+                          <div
+                            class={`text-2xl font-bold leading-9 text-gray-700`}
+                          >
+                            {meta.book.page.length || "-"}
                           </div>
                         </div>
                         <div class="flex items-start justify-start">
@@ -756,7 +1043,10 @@
                       <select
                         class={`flex flex-col space-y-2.5 items-center justify-start px-6 py-1 bg-white border rounded border-gray-500`}
                         style={`width: 95.87px; min-width: 95.87px; max-width: 95.87px;`}
-                        defaultValue="5"
+                        value={meta.entries}
+                        onChange={(e) => {
+                          meta.onChange(e, "entries");
+                        }}
                       >
                         <option class={`hidden`} />
                         <option
@@ -791,10 +1081,10 @@
                   </div>
                   <div
                     class={`w-full flex space-x-4 items-center justify-start px-4 py-2 bg-gray-100 rounded-lg`}
-                    style="width: 300px; min-width: 300px; max-width: 300px;"
+                    style="width: 300px; min-width: 300px; max-width: 300px; height: 40px; min-height: 40px; max-height: 40px;"
                   >
                     <img
-                      src="/fimgs/I4938_14489_2941_18426.x1.svg"
+                      src="/fimgs/I5207_20201_2941_18426.x1.svg"
                       class="flex items-start justify-start"
                       style="width: 24px; min-width: 24px; max-width: 24px; height: 24px; min-height: 24px; max-height: 24px;"
                     />
@@ -805,92 +1095,200 @@
                       style={`color: black;
       background:transparent; 
       outline: none;`}
+                      onChange={(e) => {
+                        meta.onChange(e, "searching");
+                      }}
                     />
                   </div>
                 </div>
                 <div class="flex self-stretch flex-col space-y-4 items-start justify-start px-9 py-6">
                   <div class="flex self-stretch flex-col items-start justify-start p-2.5 bg-white shadow rounded-lg">
-                    <div class="flex self-stretch space-x-2.5 items-start justify-start">
-                      <img src="/fimgs/4938_14409.x1.png" />
-                      <div class="flex flex-1 flex-col space-y-1.5 items-start justify-start">
-                        <div class="flex self-stretch space-x-2 items-center justify-start">
-                          <div class="flex items-start justify-start">
-                            <div class="text-base font-bold leading-normal">
-                              Ronald Richards
-                            </div>
-                          </div>
-                          <div class="flex flex-1 items-start justify-start">
-                            <div class="text-xs font-bold leading-none text-gray-500">
-                              22 Maret 2121
-                            </div>
-                          </div>
-                        </div>
-                        <div class="flex self-stretch items-start justify-start">
-                          <div class="text-base leading-normal text-gray-800">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit.{" "}
-                          </div>
-                        </div>
-                      </div>
-                      <div class="flex flex-col items-end justify-start">
-                        <div
-                          class={`flex flex-col items-start justify-start cursor-pointer`}
-                          onClick={() => {
-                            if (meta.showAction == false) {
-                              meta.action.changeAction(true);
-                            } else {
-                              meta.action.changeAction(false);
-                            }
-                          }}
-                        >
-                          <img src="/fimgs/4938_14497.x1.svg" />
-                        </div>
-                        {meta.showAction && (
+                    {meta.comment
+                      .slice(meta.first_entries, meta.last_entries)
+                      .map((value, index) => {
+                        return (
                           <div
-                            class={`flex flex-col items-center justify-start p-4 bg-white shadow rounded`}
-                            style={"top: 935px;"}
+                            class={`flex self-stretch space-x-2.5 items-start justify-start`}
+                            style={`margin-bottom: 12px; 
+      transform: translateX(0px);
+      transition: transform 1.5s ease-in-out;`}
+                            id={"comment-" + value.comment_id}
                           >
-                            <div
-                              class={`flex self-stretch items-center justify-start px-6 py-1 bg-white rounded-lg cursor-pointer`}
-                              style={
-                                ":hover {color:#ffc048;background-color: rgba(255, 192, 72, 0.2); } "
-                              }
-                            >
-                              <div
-                                class={`text-base font-medium leading-normal text-gray-500`}
-                                style={":hover {color:#ffc048;}"}
-                              >
-                                Hapus
+                            <div class="flex self-stretch items-start justify-start pl-0.5 pt-0.5">
+                              <img
+                                src={
+                                  value.users.user_picture
+                                    ? "/upload/" + value.users.user_picture
+                                    : "/fimgs/4938_14409.x1.png"
+                                }
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = "/fimgs/4938_14409.x1.png";
+                                }}
+                                style={`width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;background-image: url('/fimgs/bg-903b674a5016cc8f074bb3bb469e48104d576af3');background-size:100% 100%;background-repeat:no-repeat; border-radius: 50%;`}
+                              />
+                            </div>
+                            <div class="flex flex-1 flex-col items-start justify-center">
+                              <div class="flex self-stretch space-x-2 items-center justify-start">
+                                <div class="flex items-start justify-start">
+                                  <div
+                                    class={`text-base font-bold leading-normal`}
+                                  >
+                                    {value.users.user_name || "Username"}
+                                  </div>
+                                </div>
+                                <div class="flex flex-1 items-start justify-start">
+                                  <div
+                                    class={`text-xs leading-none text-gray-500`}
+                                  >
+                                    {dateFormat(
+                                      value.comment_date_updated,
+                                      "dd MMMM yyyy"
+                                    ) || "date"}
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="flex self-stretch items-start justify-start">
+                                <div
+                                  class={`text-base leading-normal text-gray-800`}
+                                >
+                                  {value.comment_description || "Username"}
+                                </div>
                               </div>
                             </div>
+                            <div class="flex flex-col items-end justify-start">
+                              <div
+                                class={`flex flex-col items-start justify-start cursor-pointer`}
+                                onClick={() => {
+                                  if (meta.showAction !== value.comment_id) {
+                                    meta.action.changeAction(value.comment_id);
+                                  } else {
+                                    meta.action.changeAction(0);
+                                  }
+                                }}
+                              >
+                                <img src="/fimgs/4938_14497.x1.svg" />
+                              </div>
+                              {meta.showAction === value.comment_id && (
+                                <div
+                                  class={`flex flex-col items-center justify-start p-0.5 bg-white shadow rounded`}
+                                  style={`margin-top: 30px;
+    position: absolute;`}
+                                >
+                                  <div
+                                    class={`flex items-center justify-center px-6 py-1 bg-white rounded-lg cursor-pointer`}
+                                    style={
+                                      ":hover {color:#ffc048;background-color: rgba(255, 192, 72, 0.2); } "
+                                    }
+                                    onClick={() => {
+                                      var conf = confirm("Confirm delete ?");
+
+                                      if (conf) {
+                                        meta.deleteComment(value.comment_id);
+                                      }
+                                    }}
+                                  >
+                                    <div
+                                      class={`text-base font-medium leading-normal text-center text-gray-500`}
+                                      style={":hover {color:#ffc048;}"}
+                                    >
+                                      Hapus
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        )}
-                      </div>
-                    </div>
+                        );
+                      })}
                   </div>
                   <div class="flex self-stretch space-x-2.5 items-center justify-start bg-white">
-                    <div class="flex flex-1 items-start justify-start">
-                      <div class="text-base leading-normal text-orange-900">
-                        Showing 1 to 6 of 6 entries
-                      </div>
+                    <div class="flex flex-1 space-x-2.5 items-start justify-start">
+                      {
+                        <div
+                          class={`text-base leading-normal text-orange-900`}
+                        >{`Showing ${meta.first_entries + 1} to 
+${
+  meta.last_entries <= meta.comment.length
+    ? meta.last_entries
+    : meta.comment.length
+} of ${meta.comment.length} entries`}</div>
+                      }
+                      {false && meta.filter.role !== "ROLE" && (
+                        <div class={`text-base leading-normal`}>{`Showing ${
+                          meta.first_entries + 1
+                        } to 
+${
+  meta.last_entries <= meta.filter.dataRole.length
+    ? meta.last_entries
+    : meta.filter.dataRole.length
+} of ${meta.filter.dataRole.length} entries`}</div>
+                      )}
                     </div>
                     <div class="flex space-x-2 items-start justify-start">
-                      <ficon
-                        aria-label="Back"
-                        iconName="Back"
-                        style="color: black; padding-bottom:10px; padding-right:8px; font-size:20px;"
-                      />
-                      <div class="flex flex-col items-start justify-start px-2.5 py-1 bg-amber-500 rounded">
-                        <div class="text-base leading-normal">1</div>
+                      <div
+                        class={`flex self-stretch flex-col items-center justify-center px-2 bg-white rounded cursor-pointer`}
+                        style={`:hover {outline: 2px solid #ababab;`}
+                        onClick={() => {
+                          meta.onClickPages(
+                            "page" + (meta.pages - 1),
+                            meta.pages - 1
+                          );
+                        }}
+                      >
+                        <img src="/fimgs/4385_22030.x1.svg" />
                       </div>
-                      <div class="flex flex-col items-start justify-start px-2.5 py-1 bg-white rounded">
-                        <div class="text-base leading-normal">2</div>
+                      {meta.pages_array.map((numList, i) => {
+                        const upper =
+                          meta.pages + 2 < meta.pages_array.length
+                            ? meta.pages + 2
+                            : meta.pages_array.length;
+                        const under = meta.pages - 2 > 0 ? meta.pages - 2 : 1;
+
+                        if (
+                          (numList + 1 < upper && numList + 1 > under) ||
+                          numList + 1 === 1 ||
+                          numList + 1 === meta.pages_array.length
+                        ) {
+                          return (
+                            <div class={`flex items-start justify-start`}>
+                              {
+                                <div
+                                  class={`flex flex-col items-start justify-start px-2.5 py-1 bg-white rounded`}
+                                  style={`${
+                                    "page" + meta.pages === "page" + (i + 1)
+                                      ? `background: #FF8F00;`
+                                      : `:hover {background-color: #ffc780;}`
+                                  }
+  cursor:pointer;`}
+                                  onClick={() => {
+                                    meta.onClickPages("page" + (i + 1), i + 1);
+                                  }}
+                                >
+                                  <div class={`text-base leading-normal`}>
+                                    {numList + 1}
+                                  </div>
+                                </div>
+                              }
+                            </div>
+                          );
+                        } else {
+                          if (numList + 1 === upper || numList + 1 === under)
+                            return "...";
+                        }
+                      })}
+                      <div
+                        class={`flex self-stretch flex-col items-center justify-center px-2 bg-white rounded cursor-pointer`}
+                        style={`:hover {outline: 2px solid #ababab;`}
+                        onClick={() => {
+                          meta.onClickPages(
+                            "page" + (meta.pages + 1),
+                            meta.pages + 1
+                          );
+                        }}
+                      >
+                        <img src="/fimgs/4385_22037.x1.svg" />
                       </div>
-                      <ficon
-                        aria-label="Forward"
-                        iconName="Forward"
-                        style="color: black; padding-bottom:10px; padding-left:8px; font-size:20px;"
-                      />
                     </div>
                   </div>
                 </div>

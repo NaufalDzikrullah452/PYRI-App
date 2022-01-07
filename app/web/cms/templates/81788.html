@@ -146,7 +146,7 @@
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex items-start justify-start bg-white`}>
+    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
       <div class="flex flex-1 self-stretch items-start justify-start">
         <div
           class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -669,7 +669,7 @@
                               class={`flex flex-1 self-stretch space-x-2.5 items-center justify-start`}
                               style="width:20%; padding-left:20px;"
                             >
-                              {dateFormat(value.expired_date, "dd MM yyyy") <=
+                              {dateFormat(value.expired_date, "dd MM yyyy") >=
                                 dateFormat(new Date(), "dd MM yyyy") && (
                                 <div
                                   class={`flex items-start justify-start px-3 py-1 bg-amber-500 rounded-full`}
@@ -679,7 +679,7 @@
                                   </div>
                                 </div>
                               )}
-                              {dateFormat(value.expired_date, "dd MM yyyy") >
+                              {dateFormat(value.expired_date, "dd MM yyyy") <
                                 dateFormat(new Date(), "dd MM yyyy") && (
                                 <div
                                   class={`flex items-start justify-start px-3 py-1 border rounded-full border-gray-400`}

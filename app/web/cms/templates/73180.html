@@ -63,6 +63,10 @@
 
       async onChange(key, value) {
         if (key === "rating") {
+          if (!this.isRead) {
+            this.readHistoryUser();
+          }
+
           if (window.user.role === "guest") {
             this.toast("Please login before rate!", "center", 2000);
           } else if (!this.isRead) {
@@ -76,6 +80,10 @@
       },
 
       async sendRating() {
+        if (!this.isRead) {
+          this.readHistoryUser();
+        }
+
         if (window.user.role === "guest") {
           this.toast("Please login before rate!", "center", 2000);
         } else if (!this.isRead) {
@@ -253,7 +261,7 @@
           });
         } else if (this.user_premium.length !== 0) {
           if (
-            dateFormat(this.user_premium.expired_date, "dd MM yyyy") >
+            dateFormat(this.user_premium.expired_date, "dd MM yyyy") <
             dateFormat(new Date(), "dd MM yyyy")
           ) {
             window.mobileApp.app.dialog.confirm(
@@ -318,33 +326,6 @@
 
       async showInfo(key) {
         return true;
-
-        if (key === "page_info" && !this[key]) {
-          this.page_info = true;
-          this.save_info = false;
-          this.star_info = false;
-          this.read_info = false;
-        } else if (key === "save_info" && !this[key]) {
-          this.page_info = false;
-          this.save_info = true;
-          this.star_info = false;
-          this.read_info = false;
-        } else if (key === "star_info" && !this[key]) {
-          this.page_info = false;
-          this.save_info = false;
-          this.star_info = true;
-          this.read_info = false;
-        } else if (key === "read_info" && !this[key]) {
-          this.page_info = false;
-          this.save_info = false;
-          this.star_info = false;
-          this.read_info = true;
-        } else {
-          this.page_info = false;
-          this.save_info = false;
-          this.star_info = false;
-          this.read_info = false;
-        } // console.log("onclick:" + this.page_info);
       },
 
       async back() {
@@ -466,6 +447,32 @@
           }
         });
       },
+
+      async readHistoryUser() {
+        //read history user read this book
+        api("/api/history-book", {
+          viewBook: {
+            viewBook_book_id: parseInt(params.book_id),
+            viewBook_user_id: window.user.user.user_id,
+          },
+          e: "ReadHistoryUser",
+        }).then((res) => {
+          // console.log(res.viewBook)
+          if (res.viewBook !== null && res.viewBook.length !== 0) {
+            runInAction(() => {
+              this.history_book = res.viewBook;
+              this.history_book.map((val, i) => {
+                if (val.books.book_id === parseInt(params.book_id)) {
+                  this.isRead = true;
+                }
+              });
+              window.mobileApp.app.dialog.close();
+            });
+          } else {
+            window.mobileApp.app.dialog.close();
+          }
+        });
+      },
     }}
     run={async () => {
       //create tooltip
@@ -522,27 +529,8 @@
                 meta.rating = res.rating.rating_point;
               });
             }
-          }); //read history user read this book
-
-          api("/api/history-book", {
-            viewBook: {
-              viewBook_book_id: parseInt(params.book_id),
-              viewBook_user_id: window.user.user.user_id,
-            },
-            e: "ReadHistoryUser",
-          }).then((res) => {
-            // console.log(res.viewBook)
-            if (res.viewBook !== null && res.viewBook.length !== 0) {
-              runInAction(() => {
-                meta.history_book = res.viewBook;
-                meta.history_book.map((val, i) => {
-                  if (val.books.book_id === parseInt(params.book_id)) {
-                    meta.isRead = true;
-                  }
-                });
-              });
-            }
           });
+          meta.readHistoryUser();
         } // read book data
 
         var author = [];
@@ -1241,7 +1229,7 @@
         </div>
       </div>
       <div
-        class={`fixed w-full bottom-0 flex self-stretch space-x-2 items-center justify-center px-6 py-4 bg-white bg-opacity-50`}
+        class={`fixed w-full bottom-0 flex self-stretch items-center justify-center px-6 py-4 bg-white bg-opacity-50`}
         style="backdrop-filter: blur(10px); z-index:1"
       >
         <div
@@ -1258,20 +1246,6 @@
             id={"bookmark"}
           />
         </div>
-        <m-button
-          class={`flex flex-1 items-center justify-center p-2.5 bg-amber-500 shadow rounded-lg h-full`}
-          disabled={meta.loading}
-          onClick={() => {
-            meta.readBook();
-          }}
-          style={`text-transform: capitalize;`}
-        >
-          <div
-            class={`text-base font-bold leading-normal text-center text-white`}
-          >
-            {meta.isRead ? "Continue Reading" : "Start Reading"}
-          </div>
-        </m-button>
       </div>
       {!meta.loading && (
         <m-sheet

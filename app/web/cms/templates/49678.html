@@ -489,25 +489,29 @@
 
             let author_id = null;
 
-            if (
-              rating[0].books.authors_authorsTobooks_book_author_one_id !== null
-            ) {
-              author_id =
-                rating[0].books.authors_authorsTobooks_book_author_one_id
-                  .author_id;
-            } else if (
-              rating[0].books.authors_authorsTobooks_book_author_two_id !== null
-            ) {
-              author_id =
-                rating[0].books.authors_authorsTobooks_book_author_two_id
-                  .author_id;
-            } else if (
-              rating[0].books.authors_authorsTobooks_book_author_three_id !==
-              null
-            ) {
-              author_id =
-                rating[0].books.authors_authorsTobooks_book_author_three_id
-                  .author_id;
+            if (rating[0].rating_point >= 4) {
+              if (
+                rating[0].books.authors_authorsTobooks_book_author_one_id !==
+                null
+              ) {
+                author_id =
+                  rating[0].books.authors_authorsTobooks_book_author_one_id
+                    .author_id;
+              } else if (
+                rating[0].books.authors_authorsTobooks_book_author_two_id !==
+                null
+              ) {
+                author_id =
+                  rating[0].books.authors_authorsTobooks_book_author_two_id
+                    .author_id;
+              } else if (
+                rating[0].books.authors_authorsTobooks_book_author_three_id !==
+                null
+              ) {
+                author_id =
+                  rating[0].books.authors_authorsTobooks_book_author_three_id
+                    .author_id;
+              }
             } // console.log(author_id)
 
             if (author_id !== null) {
@@ -593,7 +597,7 @@
                 }
               }); // console.log(tagsAndInterest);
             }
-          }); //based history read more than 3 pages
+          }); //based history read more equal than 50% of total pages
 
           api("/api/books", {
             book: {
@@ -606,26 +610,31 @@
             // console.log(res)
             if (res.book.length !== 0) {
               var filter_history = res.book.filter(function (el) {
-                return el.viewBook.length >= 3;
+                var half_pages = el.page.length / 2;
+                return el.viewBook.length >= half_pages;
               }); // console.log(filter_history[0])
 
               let tag_id = null;
 
-              if (
-                filter_history[0].tags_books_book_genre_one_idTotags !== null
-              ) {
-                tag_id =
-                  filter_history[0].tags_books_book_genre_one_idTotags.tag_id;
-              } else if (
-                filter_history[0].tags_books_book_genre_two_idTotags !== null
-              ) {
-                tag_id =
-                  filter_history[0].tags_books_book_genre_two_idTotags.tag_id;
-              } else if (
-                filter_history[0].tags_books_book_genre_three_idTotags !== null
-              ) {
-                tag_id =
-                  filter_history[0].tags_books_book_genre_three_idTotags.tag_id;
+              if (filter_history[0] !== undefined) {
+                if (
+                  filter_history[0].tags_books_book_genre_one_idTotags !== null
+                ) {
+                  tag_id =
+                    filter_history[0].tags_books_book_genre_one_idTotags.tag_id;
+                } else if (
+                  filter_history[0].tags_books_book_genre_two_idTotags !== null
+                ) {
+                  tag_id =
+                    filter_history[0].tags_books_book_genre_two_idTotags.tag_id;
+                } else if (
+                  filter_history[0].tags_books_book_genre_three_idTotags !==
+                  null
+                ) {
+                  tag_id =
+                    filter_history[0].tags_books_book_genre_three_idTotags
+                      .tag_id;
+                }
               } // console.log(tag_id);
 
               if (tag_id !== null) {
@@ -764,7 +773,8 @@
           book: "",
           e: "ReadAllPublished",
         }).then((res) => {
-          // console.log(res);
+          console.log(res);
+
           if (res !== null && res.book.length != 0) {
             popularBook = res.book;
           }
@@ -799,12 +809,79 @@
             this.get_rating_popular.push(avg);
             popularBook[i]["rating_avg"] = avg;
           });
+          var data = [];
+          popularBook.map((a, i) => {
+            if (a.rating_avg >= 4) {
+              data.push(a);
+            }
+          });
+          popularBook = data;
           popularBook.sort(function (a, b) {
-            var aNum = a.rating_avg;
-            var bNum = b.rating_avg;
+            var aNum = a.viewBook.length;
+            var bNum = b.viewBook.length;
             return bNum - aNum;
           });
-          this.popularBook = popularBook; // console.log(popularBook)
+          let temp_popularbook = [];
+          var date = new Date();
+          var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+          var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+          console.log(dateFormat(firstDay, "dd/MM/yyyy"));
+          console.log(dateFormat(lastDay, "dd/MM/yyyy"));
+          popularBook.map((a, i) => {
+            var views_month = 0; // console.log(a)
+
+            a.viewBook.map((b) => {
+              var time = new Date(b.viewBook_access_date).getTime();
+
+              if (time >= firstDay.getTime() && time <= lastDay.getTime()) {
+                views_month += 1;
+              }
+            });
+            popularBook[i]["views_month"] = views_month;
+
+            if (views_month !== 0) {
+              temp_popularbook.push(a);
+            }
+          });
+          temp_popularbook.sort(function (a, b) {
+            if (a.views_month !== undefined && b.views_month !== undefined) {
+              var aNum = a.views_month;
+              var bNum = b.views_month;
+              return bNum - aNum;
+            }
+          }); // console.log(temp_popularbook);
+
+          let temp_id = [];
+          let temp_data = [];
+
+          if (temp_popularbook.length !== 0) {
+            temp_popularbook.map((v, i) => {
+              // console.log(v);
+              if (!temp_id.includes(v.book_id)) {
+                temp_data.push(v);
+                temp_id.push(v.book_id);
+              }
+            });
+          }
+
+          popularBook.map((v, i) => {
+            // console.log(v);
+            if (!temp_id.includes(v.book_id)) {
+              temp_data.push(v);
+              temp_id.push(v.book_id);
+            }
+          });
+          temp_popularbook = temp_data; // console.log(temp_popularbook);
+          // console.log(popularBook);
+          // popularBook.sort(function (a, b) {
+          //   if(a.rating_avg !== undefined && b.rating_avg !== undefined){
+          //     var aNum = a.rating_avg;
+          //     var bNum = b.rating_avg;
+          //     return bNum - aNum;
+          //   }
+          // });
+
+          this.popularBook = temp_popularbook; // console.log(popularBook)
 
           setTimeout(() => {
             runInAction(() => {
@@ -855,7 +932,7 @@
     }}
   />
   <div
-    class={`flex self-stretch items-end justify-center bg-white`}
+    class={`flex items-end justify-center bg-white`}
     style={"margin-bottom: 50px;"}
   >
     <div
@@ -1387,7 +1464,11 @@ display: -webkit-box;
                                         style="width: 12px; min-width: 12px; max-width: 12px; height: 12px; min-height: 12px; max-height: 12px;"
                                       />
                                       <div class={`text-xs leading-none`}>
-                                        {value.rating_avg.toFixed(2) || ""}
+                                        {typeof value.rating_avg == "number" &&
+                                        value.rating_avg !== undefined &&
+                                        value.rating_avg !== null
+                                          ? value.rating_avg.toFixed(2)
+                                          : "0.00"}
                                       </div>
                                     </div>
                                   </div>

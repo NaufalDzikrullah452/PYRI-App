@@ -490,7 +490,7 @@
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex items-start justify-start bg-white`}>
+    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
       <div class={`w-full flex flex-1 items-start justify-start`}>
         <div
           class={`flex self-stretch flex-col space-y-20 items-center justify-start py-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -916,7 +916,13 @@
                       <div class="flex flex-1 flex-col items-start justify-start">
                         <div class="flex self-stretch items-start justify-start">
                           <div class={`text-2xl font-bold leading-9`}>
-                            {"Rp " + meta.income.thisMonth + ",-"}
+                            {"Rp " +
+                              meta.income.thisMonth
+                                .toFixed(0)
+                                .replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, "$1,")
+                                .replace(/,/g, ".")
+                                .replace(/,/g, ".") +
+                              ",-"}
                           </div>
                         </div>
                         <div class="flex self-stretch items-start justify-start">
@@ -939,8 +945,13 @@
                           <div class="flex flex-col items-start justify-start">
                             <div class={`text-2xl font-bold leading-9`}>
                               {"Rp " +
-                                (meta.income.thisMonth -
-                                  meta.income.lastMonth) +
+                                (meta.income.thisMonth - meta.income.lastMonth)
+                                  .toFixed(0)
+                                  .replace(
+                                    /(\d)(?=(\d{3})+(?:\.\d+)?$)/g,
+                                    "$1,"
+                                  )
+                                  .replace(/,/g, ".") +
                                 ",-"}
                             </div>
                             <div class="text-base font-bold leading-normal text-gray-500">
@@ -1419,7 +1430,8 @@
                                     .replace(
                                       /(\d)(?=(\d{3})+(?:\.\d+)?$)/g,
                                       "$1,"
-                                    ) || "-"}
+                                    )
+                                    .replace(/,/g, ".") || "-"}
                                 </div>
                               </td>
                               <td
