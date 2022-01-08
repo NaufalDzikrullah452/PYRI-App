@@ -10,6 +10,12 @@
       changeManagement: (open) => {},
       changeMasterData: (open) => {},
       admin: [],
+      book_count: 0,
+      publisher_count: 0,
+      author_count: 0,
+      genre_count: 0,
+      bestrated: [],
+      worstrated: [],
 
       async onChange(e, key) {
         let value = e.target.value;
@@ -71,6 +77,20 @@
       } else {
         runInAction(() => {
           meta.admin = window.user.admin;
+        });
+        api("/api/dashboardcontent", {
+          book: "",
+          e: "Initialize",
+        }).then((res) => {
+          runInAction(() => {
+            meta.book_count = res.bookcount._count.book_id;
+            meta.publisher_count = res.publishercount._count.publisher_id;
+            meta.author_count = res.authorcount._count.author_id;
+            meta.genre_count = res.genrecount._count.tag_id;
+            meta.bestrated = res.bestrated;
+            meta.worstrated = res.worstrated;
+          });
+          console.log(res);
         });
       }
     }}
@@ -484,7 +504,9 @@
                       />
                       <div class="flex flex-1 flex-col items-start justify-start">
                         <div class="flex items-start justify-start">
-                          <div class="text-xl font-bold leading-loose">200</div>
+                          <div class={`text-xl font-bold leading-loose`}>
+                            {meta.book_count || "-"}
+                          </div>
                         </div>
                         <div class="flex items-start justify-start">
                           <div class="text-base font-bold leading-normal text-gray-500">
@@ -501,7 +523,9 @@
                       />
                       <div class="flex flex-1 flex-col items-start justify-start">
                         <div class="flex self-stretch items-start justify-start">
-                          <div class="text-xl font-bold leading-loose">123</div>
+                          <div class={`text-xl font-bold leading-loose`}>
+                            {meta.publisher_count || "-"}
+                          </div>
                         </div>
                         <div class="flex self-stretch items-start justify-start">
                           <div class="text-base font-bold leading-normal text-gray-500">
@@ -518,7 +542,9 @@
                       />
                       <div class="flex flex-1 flex-col items-start justify-start">
                         <div class="flex self-stretch items-start justify-start">
-                          <div class="text-xl font-bold leading-loose">234</div>
+                          <div class={`text-xl font-bold leading-loose`}>
+                            {meta.author_count || "-"}
+                          </div>
                         </div>
                         <div class="flex self-stretch items-start justify-start">
                           <div class="text-base font-bold leading-normal text-gray-500">
@@ -535,7 +561,9 @@
                       />
                       <div class="flex flex-1 flex-col items-start justify-start">
                         <div class="flex self-stretch items-start justify-start">
-                          <div class="text-xl font-bold leading-loose">234</div>
+                          <div class={`text-xl font-bold leading-loose`}>
+                            {meta.genre_count || "-"}
+                          </div>
                         </div>
                         <div class="flex self-stretch items-start justify-start">
                           <div class="text-base font-bold leading-normal text-gray-500">
@@ -712,81 +740,165 @@
                   <div class={`text-xl font-bold leading-loose`}>
                     Buku dengan Rating Terbaik
                   </div>
-                  <div class="flex self-stretch flex-col items-start justify-start">
-                    <div class="flex self-stretch space-x-2.5 items-center justify-start p-2 bg-white shadow rounded">
-                      <img
-                        src="/fimgs/5084_45683.x1.png"
-                        class="shadow rounded"
-                        style="width: 46.85px; min-width: 46.85px; max-width: 46.85px; height: 70px; min-height: 70px; max-height: 70px;background-image: url('/fimgs/bg-8b2a3be12ea5340f2c7014a54744352ce2b9b77d');background-size:100% 100%;background-repeat:no-repeat;"
-                      />
-                      <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
-                        <div class="text-base font-bold leading-normal">
-                          Judul Buku
-                        </div>
-                        <div class="text-base font-medium leading-normal text-gray-500">
-                          Author
-                        </div>
-                        <div class="flex space-x-1 items-center justify-center">
-                          <ficon
-                            aria-label="FavoriteStarFill"
-                            iconName="FavoriteStarFill"
-                            class={`flex items-start justify-start`}
-                            style="color: orange;"
-                          />
-                          <div class="flex items-center justify-start">
-                            <div class="text-base font-bold leading-normal text-amber-500">
-                              4.5
+                  {meta.bestrated.length !== 0 &&
+                    meta.bestrated
+                      .slice(0, meta.bestrated.length)
+                      .map((value, index) => {
+                        return (
+                          <div
+                            class={`flex self-stretch flex-col items-start justify-start`}
+                          >
+                            <div class="flex self-stretch space-x-2.5 items-center justify-start p-2 bg-white shadow rounded">
+                              <img
+                                src="/fimgs/5084_45683.x1.png"
+                                class={`shadow rounded`}
+                                style={`width: 46.85px; min-width: 46.85px; max-width: 46.85px; height: 70px; min-height: 70px; max-height: 70px;background-image: url('/fimgs/bg-8b2a3be12ea5340f2c7014a54744352ce2b9b77d');background-size:100% 100%;background-repeat:no-repeat;`}
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = "/fimgs/5084_45683.x1.png";
+                                }}
+                              />
+                              <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
+                                <div
+                                  class={`text-base font-bold leading-normal`}
+                                >
+                                  {value.book_title || "Book Title"}
+                                </div>
+                                <div
+                                  class={`text-base font-medium leading-normal text-gray-500`}
+                                >
+                                  {value.authors_authorsTobooks_book_author_one_id
+                                    ? value
+                                        .authors_authorsTobooks_book_author_one_id
+                                        .author_name
+                                    : ""}{" "}
+                                  {value.authors_authorsTobooks_book_author_two_id
+                                    ? value
+                                        .authors_authorsTobooks_book_author_two_id
+                                        .author_name
+                                    : ""}{" "}
+                                  {value.authors_authorsTobooks_book_author_three_id
+                                    ? value
+                                        .authors_authorsTobooks_book_author_three_id
+                                        .author_name
+                                    : ""}
+                                </div>
+                                <div class="flex space-x-1 items-center justify-center">
+                                  <ficon
+                                    aria-label="FavoriteStarFill"
+                                    iconName="FavoriteStarFill"
+                                    class={`flex items-start justify-start`}
+                                    style="color: orange;"
+                                  />
+                                  <div class="flex items-center justify-start">
+                                    <div
+                                      class={`text-base font-bold leading-normal text-amber-500`}
+                                    >
+                                      {value.userRating.toFixed(1) || ""}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div
+                                class={`flex items-start justify-start px-4 py-2 bg-gray-200 shadow rounded`}
+                                onClick={() => {
+                                  navigate(
+                                    "/w-dashboard-content/detail-book/" +
+                                      value.book_id
+                                  );
+                                }}
+                                style="cursor:pointer;"
+                              >
+                                <div class="text-sm font-bold leading-tight text-gray-600">
+                                  Detail
+                                </div>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </div>
-                      <div class="flex items-start justify-start px-4 py-2 bg-gray-200 shadow rounded">
-                        <div class="text-sm font-bold leading-tight text-gray-600">
-                          Detail
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                        );
+                      })}
                 </div>
                 <div class="flex flex-1 flex-col space-y-6 items-start justify-start p-4 bg-white shadow rounded-lg">
                   <div class={`text-xl font-bold leading-loose`}>
                     Buku dengan Rating Terburuk
                   </div>
-                  <div class="flex self-stretch flex-col items-start justify-start">
-                    <div class="flex self-stretch space-x-2.5 items-center justify-start p-2 bg-white shadow rounded">
-                      <img
-                        src="/fimgs/5084_37298.x1.png"
-                        class="shadow rounded"
-                        style="width: 46.85px; min-width: 46.85px; max-width: 46.85px; height: 70px; min-height: 70px; max-height: 70px;background-image: url('/fimgs/bg-8b2a3be12ea5340f2c7014a54744352ce2b9b77d');background-size:100% 100%;background-repeat:no-repeat;"
-                      />
-                      <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
-                        <div class="text-base font-bold leading-normal">
-                          Judul Buku
-                        </div>
-                        <div class="text-base font-medium leading-normal text-gray-500">
-                          Author
-                        </div>
-                        <div class="flex space-x-1 items-center justify-center">
-                          <ficon
-                            aria-label="FavoriteStarFill"
-                            iconName="FavoriteStarFill"
-                            class={`flex items-start justify-start`}
-                            style="color: orange;"
-                          />
-                          <div class="flex items-center justify-start">
-                            <div class="text-base font-bold leading-normal text-amber-500">
-                              4.5
+                  {meta.worstrated.length !== 0 &&
+                    meta.worstrated
+                      .slice(0, meta.worstrated.length)
+                      .map((value, index) => {
+                        return (
+                          <div
+                            class={`flex self-stretch flex-col items-start justify-start`}
+                          >
+                            <div class="flex self-stretch space-x-2.5 items-center justify-start p-2 bg-white shadow rounded">
+                              <img
+                                src="/fimgs/5084_37298.x1.png"
+                                class={`shadow rounded`}
+                                style={`width: 46.85px; min-width: 46.85px; max-width: 46.85px; height: 70px; min-height: 70px; max-height: 70px;background-image: url('/fimgs/bg-8b2a3be12ea5340f2c7014a54744352ce2b9b77d');background-size:100% 100%;background-repeat:no-repeat;`}
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = "/fimgs/5084_37298.x1.png";
+                                }}
+                              />
+                              <div class="flex flex-1 flex-col space-y-1 items-start justify-start">
+                                <div
+                                  class={`text-base font-bold leading-normal`}
+                                >
+                                  {value.book_title || "Book Title"}
+                                </div>
+                                <div
+                                  class={`text-base font-medium leading-normal text-gray-500`}
+                                >
+                                  {value.authors_authorsTobooks_book_author_one_id
+                                    ? value
+                                        .authors_authorsTobooks_book_author_one_id
+                                        .author_name
+                                    : ""}{" "}
+                                  {value.authors_authorsTobooks_book_author_two_id
+                                    ? value
+                                        .authors_authorsTobooks_book_author_two_id
+                                        .author_name
+                                    : ""}{" "}
+                                  {value.authors_authorsTobooks_book_author_three_id
+                                    ? value
+                                        .authors_authorsTobooks_book_author_three_id
+                                        .author_name
+                                    : ""}
+                                </div>
+                                <div class="flex space-x-1 items-center justify-center">
+                                  <ficon
+                                    aria-label="FavoriteStarFill"
+                                    iconName="FavoriteStarFill"
+                                    class={`flex items-start justify-start`}
+                                    style="color: orange;"
+                                  />
+                                  <div class="flex items-center justify-start">
+                                    <div
+                                      class={`text-base font-bold leading-normal text-amber-500`}
+                                    >
+                                      {value.userRating.toFixed(1) || ""}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div
+                                class={`flex items-start justify-start px-4 py-2 bg-gray-200 shadow rounded`}
+                                onClick={() => {
+                                  navigate(
+                                    "/w-dashboard-content/detail-book/" +
+                                      value.book_id
+                                  );
+                                }}
+                                style="cursor:pointer;"
+                              >
+                                <div class="text-sm font-bold leading-tight text-gray-600">
+                                  Detail
+                                </div>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </div>
-                      <div class="flex items-start justify-start px-4 py-2 bg-gray-200 shadow rounded">
-                        <div class="text-sm font-bold leading-tight text-gray-600">
-                          Detail
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                        );
+                      })}
                 </div>
               </div>
             </div>
