@@ -5,9 +5,11 @@ const BarChart = () => {
     return (
         <div>
             <Bar
+                width={"1000%"}
+                height={"250%"}
                 options={{
                     responsive: true,
-                    maintainAspectRatio: true,
+                    maintainAspectRatio: false,
                 }}
                 data={{
                     labels: ['Author 1', 'Author 2', 'Author 3', 'Author 3', 'Author 4', 'Author 5', 'Author 6', 'Author 7', 'Author 8', 'Author 9', 'Author 10', 'Author 11', 'Author 12'],

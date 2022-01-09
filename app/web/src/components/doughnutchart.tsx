@@ -7,6 +7,8 @@ export default (x) => {
         <div>
             <Doughnut
                 data={idata}
+                width={"250%"}
+                options={{ maintainAspectRatio: false }}
             />
         </div>
     )
