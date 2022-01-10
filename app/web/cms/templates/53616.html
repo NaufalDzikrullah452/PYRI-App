@@ -128,11 +128,20 @@
           let temp_dataset = {
             label: "# of views",
             data: [],
+            backgroundColor: [
+              "#F7464A",
+              "#0C71E0",
+              "#46BFBD",
+              "#FDB45C",
+              "#949FB1",
+              "#4D5360",
+            ],
           };
           let temp_labels = [];
 
           for (let genre of this.fav_genres) {
             temp_labels.push(genre.tag_name);
+            console.log(genre, this.fav_genres);
             temp_dataset.data.push(genre.tagView);
           }
 
