@@ -21,8 +21,18 @@
         labels: [],
         datasets: [{}],
       },
+      genre_favorite_date: "",
+      fav_genres: [],
+      data_fav_genres: {
+        labels: [],
+        datasets: [{}],
+      },
       author_favorite_date: "",
       fav_authors: [],
+      data_fav_authors: {
+        labels: [],
+        datasets: [{}],
+      },
       book_favorite_date: "",
       fav_books: [],
 
@@ -45,6 +55,15 @@
       },
 
       async getInterests() {
+        await api("/api/dashboardcontent", {
+          book: "",
+          e: "Initialize",
+        }).then((res) => {
+          runInAction(() => {
+            this.user_interests = res.user_interests;
+          });
+          console.log(res);
+        });
         runInAction(() => {
           let temp_dataset = {
             label: "# of interests",
@@ -58,15 +77,10 @@
             temp_dataset.data.push(tag.tagInterests);
           }
 
-          console.log(temp_dataset, temp_labels);
           this.data_user_interests = {
             labels: temp_labels,
             datasets: [temp_dataset],
           };
-          console.log(
-            this.data_user_interests.labels,
-            this.data_user_interests.datasets[0].data
-          );
         });
       },
 
@@ -76,9 +90,56 @@
           e: "fav_author_monthly",
         }).then((res) => {
           runInAction(() => {
-            meta.fav_authors = res.fav_authors;
+            this.fav_authors = res.fav_authors;
           });
           console.log(res);
+        });
+        runInAction(() => {
+          let temp_dataset = {
+            label: "# of views",
+            data: [],
+            backgroundColor: "#30D5C8",
+          };
+          let temp_labels = [];
+
+          for (let author of this.fav_authors) {
+            temp_labels.push(author.author_name);
+            temp_dataset.data.push(author.authorView);
+          }
+
+          this.data_fav_authors = {
+            labels: temp_labels,
+            datasets: [temp_dataset],
+          };
+        });
+      },
+
+      async getFavGenres() {
+        await api("/api/dashboardcontent", {
+          book: this.genre_favorite_date,
+          e: "fav_genre_monthly",
+        }).then((res) => {
+          runInAction(() => {
+            this.fav_genres = res.fav_tags;
+          });
+          console.log(res);
+        });
+        runInAction(() => {
+          let temp_dataset = {
+            label: "# of views",
+            data: [],
+          };
+          let temp_labels = [];
+
+          for (let genre of this.fav_genres) {
+            temp_labels.push(genre.tag_name);
+            temp_dataset.data.push(genre.tagView);
+          }
+
+          this.data_fav_genres = {
+            labels: temp_labels,
+            datasets: [temp_dataset],
+          };
         });
       },
 
@@ -150,13 +211,21 @@
             meta.bestrated = res.bestrated;
             meta.worstrated = res.worstrated;
             meta.user_interests = res.user_interests;
+            meta.fav_genres = res.fav_tags;
+            meta.fav_authors = res.fav_authors;
+            meta.fav_books = res.fav_books;
           });
         });
       }
 
-      runInAction(() => {
-        meta.getInterests();
-      });
+      meta.getInterests();
+      meta.getFavBooks(); // TODO: Get actual this month date formatted
+
+      meta.genre_favorite_date = "2022-01";
+      meta.getFavGenres(); // TODO: Get actual this month date formatted
+
+      meta.author_favorite_date = "2022-01";
+      meta.getFavAuthors();
     }}
   />
   {window.user.roleAdmin === "admin" && (
@@ -649,7 +718,7 @@
                     </div>
                     <div />
                   </div>
-                  <barchart-interest-user data={meta.data_user_interests} />
+                  <barchart data={meta.data_user_interests} />
                 </div>
                 <div class="flex flex-1 self-stretch flex-col space-y-6 items-start justify-start p-4 bg-white shadow rounded-lg">
                   <div class="flex self-stretch space-x-2.5 items-start justify-start">
@@ -668,9 +737,18 @@
                             style={`color: black;
       background:transparent; 
       outline: none;`}
+                            onChange={(e) => {
+                              meta.onChange(e, "genre_favorite_date");
+                              meta.genre_favorite_date = e.target.value;
+                            }}
                           />
                         </div>
-                        <button class="flex items-center justify-start px-2 py-0.5 bg-amber-500 shadow rounded-sm">
+                        <button
+                          class={`flex items-center justify-start px-2 py-0.5 bg-amber-500 shadow rounded-sm`}
+                          onClick={() => {
+                            meta.getFavGenres();
+                          }}
+                        >
                           <div class="flex items-start justify-start">
                             <div class="text-base font-bold leading-normal text-white">
                               Proses
@@ -680,7 +758,7 @@
                       </div>
                     </div>
                   </div>
-                  <piechart-interest />
+                  <piechart-interest data={meta.data_fav_genres} />
                 </div>
               </div>
               <div class="flex self-stretch items-start justify-start">
@@ -707,7 +785,12 @@
                             }}
                           />
                         </div>
-                        <button class="flex items-center justify-start px-2 py-0.5 bg-amber-500 shadow rounded-sm">
+                        <button
+                          class={`flex items-center justify-start px-2 py-0.5 bg-amber-500 shadow rounded-sm`}
+                          onClick={() => {
+                            meta.getFavAuthors();
+                          }}
+                        >
                           <div class="flex items-start justify-start">
                             <div class="text-base font-bold leading-normal text-white">
                               Proses
@@ -718,7 +801,10 @@
                     </div>
                   </div>
                   <div class="flex self-stretch flex-col items-start justify-start">
-                    <barchart-author style="width:500px" />
+                    <barchart
+                      style="width:500px"
+                      data={meta.data_fav_authors}
+                    />
                   </div>
                 </div>
               </div>
