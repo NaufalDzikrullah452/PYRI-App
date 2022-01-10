@@ -175,13 +175,12 @@
             e: "ReadByUserId",
           }).then((res) => {
             // console.log(res)
-            runInAction(() => {
-              this.freeBook = res.freeBook;
-            });
-
             if (res.freeBook === null) {
               window.mobileApp.app.sheet.open(".sheet-free-books");
             } else {
+              runInAction(() => {
+                this.freeBook = res.freeBook;
+              });
               runInAction(() => {
                 this.free_book_amount = res.freeBook.freeBook_amount;
               });
@@ -261,16 +260,101 @@
           });
         } else if (this.user_premium.length !== 0) {
           if (
-            dateFormat(this.user_premium.expired_date, "dd MM yyyy") <
-            dateFormat(new Date(), "dd MM yyyy")
+            new Date(this.user_premium.expired_date).getTime() <
+            new Date().getTime()
           ) {
-            window.mobileApp.app.dialog.confirm(
-              "Redirect to purchase page?",
-              "User premium has expired!",
-              () => {
-                navigate("/m/premium-page");
+            api("/api/free-books", {
+              freeBook: {
+                freeBook_user_id: window.user.user.user_id,
+              },
+              e: "ReadByUserId",
+            }).then((res) => {
+              // console.log(res)
+              if (res.freeBook === null) {
+                window.mobileApp.app.sheet.open(".sheet-free-books");
+              } else {
+                runInAction(() => {
+                  this.freeBook = res.freeBook;
+                });
+                runInAction(() => {
+                  this.free_book_amount = res.freeBook.freeBook_amount;
+                });
+                let regis_month1 = add(
+                  new Date(this.freeBook.freeBook_date_registered),
+                  {
+                    months: 1,
+                  }
+                );
+                let regis_month = this.freeBook.freeBook_date_registered;
+                let compare_regis =
+                  compareAsc(new Date(), new Date(regis_month1)) !== -1; // console.log(new Date() + " <br> "+ new Date(regis_month1))
+                // console.log(compareAsc(new Date(), new Date(regis_month1)))
+
+                if (compare_regis) {
+                  window.mobileApp.app.sheet.open(".sheet-free-books");
+                } else {
+                  api("/api/history-book", {
+                    viewBook: {
+                      freeBook_date_registered: regis_month,
+                      freeBook_date_exp: regis_month1,
+                      viewBook_user_id: window.user.user.user_id,
+                    },
+                    e: "ReadHistoryUserFreeBook",
+                  }).then((res) => {
+                    // console.log(res);
+                    let res_viewBook = res.viewBook;
+                    var inHistory = false;
+                    res_viewBook.map((value, index) => {
+                      if (
+                        index < 3 &&
+                        value.books.book_id === parseInt(params.book_id)
+                      ) {
+                        inHistory = true;
+                      }
+                    });
+
+                    if (!inHistory && this.free_book_amount !== 0) {
+                      runInAction(() => {
+                        this.free_book_amount -= 1;
+                      });
+                      api("/api/free-books", {
+                        freeBook: {
+                          freeBook_user_id: window.user.user.user_id,
+                          freeBook_amount: this.free_book_amount,
+                          freeBook_date_updated: new Date(),
+                        },
+                        e: "UpdateByUserId",
+                      });
+                      window.mobileApp.app.dialog.preloader(
+                        "Free books used (" +
+                          (3 - this.free_book_amount) +
+                          "/3)"
+                      );
+                      setTimeout(() => {
+                        window.mobileApp.app.dialog.close();
+                      }, 1500);
+                      navigate("/m/read-book-page/" + params.book_id + "/");
+                    } else if (inHistory) {
+                      window.mobileApp.app.dialog.preloader();
+                      setTimeout(() => {
+                        window.mobileApp.app.dialog.close();
+                      }, 1500);
+                      navigate("/m/read-book-page/" + params.book_id + "/");
+                    } else {
+                      window.mobileApp.app.dialog.confirm(
+                        "Free books used (" +
+                          (3 - this.free_book_amount) +
+                          "/3), get premium to read all books for free. Redirect to purchase page?",
+                        "Free books is out.",
+                        () => {
+                          navigate("/m/premium-page");
+                        }
+                      );
+                    }
+                  });
+                }
               }
-            );
+            });
           } else {
             window.mobileApp.app.dialog.preloader();
             setTimeout(() => {
