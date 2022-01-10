@@ -8,7 +8,7 @@ const BarChart = (x) => {
             <Bar
                 options={{
                     responsive: true,
-                    maintainAspectRatio: true,
+                    maintainAspectRatio: false,
                 }}
                 data={idata}
             />

@@ -6,8 +6,8 @@ const LineChart = (x) => {
     return (
         <div>
             <Line
-                width={"1000%"}
-                height={"250%"}
+                width={"450%"}
+                height={"200%"}
                 options={{
                     responsive: true,
                     maintainAspectRatio: false,

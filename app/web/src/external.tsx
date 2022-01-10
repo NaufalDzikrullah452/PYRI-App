@@ -153,8 +153,16 @@ export default {
     import("./components/barchart"),
     { c: "", s: "", h: "" },
   ],
+  "barchart-new-users": () => [
+    import("./components/barchart-new-users"),
+    { c: "", s: "", h: "" },
+  ],
   "linechart": () => [
     import("./components/linechart"),
+    { c: "", s: "", h: "" },
+  ],
+  "linechart-active-subs": () => [
+    import("./components/linechart-active-subs"),
     { c: "", s: "", h: "" },
   ],
   "doughnutchart": () => [
