@@ -532,8 +532,8 @@
                 e: "ReadByAuthorId",
               }).then((res) => {
                 // console.log(res)
-                let recommendBook = res.book;
-                recommendBook.map((a, i) => {
+                let data_recommendBook = res.book;
+                data_recommendBook.map((a, i) => {
                   var sum = 0;
                   var avg = 0;
                   a.rating.map((b) => {
@@ -545,18 +545,18 @@
                   }
 
                   this.get_rating_popular.push(avg);
-                  recommendBook[i]["rating_avg"] = avg;
+                  data_recommendBook[i]["rating_avg"] = avg;
                 });
-                recommendBook.sort(function (a, b) {
+                data_recommendBook.sort(function (a, b) {
                   var aNum = a.rating_avg;
                   var bNum = b.rating_avg;
                   return bNum - aNum;
                 });
 
-                if (recommendBook.length !== 0) {
+                if (data_recommendBook.length !== 0) {
                   runInAction(() => {
-                    recommendBook[0].recommend = "rating";
-                    recommendBook_temp.push(recommendBook[0]);
+                    data_recommendBook[0].recommend = "rating";
+                    recommendBook_temp.push(data_recommendBook[0]);
                     runInAction(() => {
                       this.recommendBook = recommendBook_temp;
                     }); // console.log(this.recommendBook);
@@ -596,7 +596,7 @@
 
                     if (filter_popular_book.length !== 0) {
                       runInAction(() => {
-                        recommendBook[0].recommend = "history x interest";
+                        filter_popular_book[0].recommend = "history x interest";
                         recommendBook_temp.push(filter_popular_book[0]);
                         runInAction(() => {
                           this.recommendBook = recommendBook_temp;
@@ -655,8 +655,8 @@
                   e: "ReadByTagId",
                 }).then((res) => {
                   // console.log(res)
-                  let recommendBook = res.book;
-                  recommendBook.map((a, i) => {
+                  let data_recommendBook = res.book;
+                  data_recommendBook.map((a, i) => {
                     var sum = 0;
                     var avg = 0;
                     a.rating.map((b) => {
@@ -668,18 +668,19 @@
                     }
 
                     this.get_rating_popular.push(avg);
-                    recommendBook[i]["rating_avg"] = avg;
+                    data_recommendBook[i]["rating_avg"] = avg;
                   });
-                  recommendBook.sort(function (a, b) {
+                  data_recommendBook.sort(function (a, b) {
                     var aNum = a.rating_avg;
                     var bNum = b.rating_avg;
                     return bNum - aNum;
                   });
 
-                  if (recommendBook.length !== 0) {
+                  if (data_recommendBook.length !== 0) {
                     runInAction(() => {
-                      recommendBook[0].recommend = "history more than 3 pages";
-                      recommendBook_temp.push(recommendBook[0]); // console.log(this.recommendBook);
+                      data_recommendBook[0].recommend =
+                        "history more than 3 pages";
+                      recommendBook_temp.push(data_recommendBook[0]); // console.log(this.recommendBook);
                       // distinct same book
 
                       let temp_id = [];
@@ -941,7 +942,7 @@
     }}
   />
   <div
-    class={`flex self-stretch items-end justify-center bg-white`}
+    class={`flex items-end justify-center bg-white`}
     style={"margin-bottom: 50px;"}
   >
     <div
