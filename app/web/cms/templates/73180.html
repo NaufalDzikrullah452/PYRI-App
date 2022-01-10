@@ -450,28 +450,30 @@
 
       async readHistoryUser() {
         //read history user read this book
-        api("/api/history-book", {
-          viewBook: {
-            viewBook_book_id: parseInt(params.book_id),
-            viewBook_user_id: window.user.user.user_id,
-          },
-          e: "ReadHistoryUser",
-        }).then((res) => {
-          // console.log(res.viewBook)
-          if (res.viewBook !== null && res.viewBook.length !== 0) {
-            runInAction(() => {
-              this.history_book = res.viewBook;
-              this.history_book.map((val, i) => {
-                if (val.books.book_id === parseInt(params.book_id)) {
-                  this.isRead = true;
-                }
+        if (window.user.role !== "guest") {
+          api("/api/history-book", {
+            viewBook: {
+              viewBook_book_id: parseInt(params.book_id),
+              viewBook_user_id: window.user.user.user_id,
+            },
+            e: "ReadHistoryUser",
+          }).then((res) => {
+            // console.log(res.viewBook)
+            if (res.viewBook !== null && res.viewBook.length !== 0) {
+              runInAction(() => {
+                this.history_book = res.viewBook;
+                this.history_book.map((val, i) => {
+                  if (val.books.book_id === parseInt(params.book_id)) {
+                    this.isRead = true;
+                  }
+                });
+                window.mobileApp.app.dialog.close();
               });
+            } else {
               window.mobileApp.app.dialog.close();
-            });
-          } else {
-            window.mobileApp.app.dialog.close();
-          }
-        });
+            }
+          });
+        }
       },
     }}
     run={async () => {
@@ -1229,7 +1231,7 @@
         </div>
       </div>
       <div
-        class={`fixed w-full bottom-0 flex self-stretch items-center justify-center px-6 py-4 bg-white bg-opacity-50`}
+        class={`fixed w-full bottom-0 flex self-stretch space-x-2 items-center justify-center px-6 py-4 bg-white bg-opacity-50`}
         style="backdrop-filter: blur(10px); z-index:1"
       >
         <div
@@ -1237,7 +1239,7 @@
           onClick={() => {
             meta.addBookmark(params.book_id);
           }}
-          style={`width: 50px; min-width: 50px; max-width: 50px; height: 44px; min-height: 44px; max-height: 44px;`}
+          style={`width: 35.71px; min-width: 35.71px; max-width: 35.71px; height: 44px; min-height: 44px; max-height: 44px;`}
         >
           <img
             class={""}
@@ -1245,6 +1247,21 @@
             src="/fimgs/4833_122630.x1.svg"
             id={"bookmark"}
           />
+        </div>
+        <div class="flex flex-1 self-stretch flex-col items-start justify-start">
+          <m-button
+            class={`flex flex-1 self-stretch items-center justify-center p-2.5 bg-amber-500 shadow rounded-lg`}
+            onClick={() => {
+              meta.readBook();
+            }}
+            style={`text-transform: capitalize;`}
+          >
+            <div
+              class={`text-base font-bold leading-normal text-center text-white`}
+            >
+              {meta.isRead ? "Continue Reading" : "Start Reading"}
+            </div>
+          </m-button>
         </div>
       </div>
       {!meta.loading && (
