@@ -4,6 +4,7 @@
       showProfile: false,
       showMasterData: false,
       showManagement: false,
+      changeDashboard: (open) => {},
       changeProfile: (open) => {},
       changeManagement: (open) => {},
       changeMasterData: (open) => {},
@@ -265,6 +266,16 @@
       // });
 
       meta.action = {
+        changeDashboard: (open) => {
+          meta.showDashboard = open;
+          let img = document.getElementById("chevron-dashboard");
+
+          if (open == true) {
+            img.setAttribute("style", "transform: rotate(0deg);");
+          } else {
+            img.setAttribute("style", "transform: rotate(180deg);");
+          }
+        },
         changeMasterData: (open) => {
           meta.showMasterData = open;
           let img = document.getElementById("chevron-master");
@@ -335,11 +346,22 @@
           style={"margin-top:50px; padding-left:40px"}
         >
           <div
-            class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+            class={`flex self-stretch space-x-2.5 items-center justify-start py-3 pl-9 pr-3 rounded-2xl`}
             style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
+            onClick={() => {
+              if (meta.showDashboard == false) {
+                meta.action.changeDashboard(true);
+                meta.action.changeMasterData(false);
+                meta.action.changeManagement(false);
+              } else {
+                meta.action.changeDashboard(false);
+                meta.action.changeMasterData(false);
+                meta.action.changeManagement(false);
+              }
+            }}
           >
             <img
-              src="/fimgs/3192_19706.x1.svg"
+              src="/fimgs/5289_31975.x1.svg"
               style="width: 16px; min-width: 16px; max-width: 16px; height: 16px; min-height: 16px; max-height: 16px;"
             />
             <div class="flex flex-1 items-center justify-start">
@@ -347,7 +369,47 @@
                 Dashboard
               </div>
             </div>
+            <img
+              src="/fimgs/5289_31979.x1.svg"
+              class={`transform rotate-180`}
+              id="chevron-dashboard"
+              style={`width: 18.87px; min-width: 18.87px; max-width: 18.87px; height: 18.43px; min-height: 18.43px; max-height: 18.43px; margin-right:25px !important;`}
+            />
           </div>
+          {meta.showDashboard && (
+            <div
+              class={`flex self-stretch flex-col space-y-1 items-start justify-start`}
+            >
+              <div
+                class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
+                onClick={() => {
+                  navigate("/w-dashboard-user");
+                }}
+              >
+                <div />
+                <div class="flex flex-1 items-start justify-start">
+                  <div class="text-base font-bold leading-normal text-white">
+                    User
+                  </div>
+                </div>
+              </div>
+              <div
+                class={`flex self-stretch space-x-2.5 items-center justify-start px-9 py-3 rounded-2xl`}
+                style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"
+                onClick={() => {
+                  navigate("/w-dashboard-content");
+                }}
+              >
+                <div />
+                <div class="flex flex-1 items-start justify-start">
+                  <div class="text-base font-bold leading-normal text-gray-50">
+                    Konten
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           <div
             class={`flex self-stretch space-x-2.5 items-center justify-center py-3 pl-9 pr-3 rounded-2xl`}
             style=":hover {background-color: rgba(255, 143, 0, 0.2); color: #FF8F00 !important; cursor:pointer;}"

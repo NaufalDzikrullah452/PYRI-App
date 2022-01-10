@@ -4,6 +4,7 @@
       showProfile: false,
       showMasterData: false,
       showManagement: false,
+      changeDashboard: (open) => {},
       changeProfile: (open) => {},
       changeManagement: (open) => {},
       changeMasterData: (open) => {},
@@ -145,6 +146,16 @@
         meta.admin = window.user.admin;
       });
       meta.action = {
+        changeDashboard: (open) => {
+          meta.showDashboard = open;
+          let img = document.getElementById("chevron-dashboard");
+
+          if (open == true) {
+            img.setAttribute("style", "transform: rotate(0deg);");
+          } else {
+            img.setAttribute("style", "transform: rotate(180deg);");
+          }
+        },
         changeMasterData: (open) => {
           meta.showMasterData = open;
           let img = document.getElementById("chevron-master");
