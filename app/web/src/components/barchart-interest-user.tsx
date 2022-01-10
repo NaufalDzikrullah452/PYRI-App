@@ -1,25 +1,18 @@
 import React from 'react'
 import { Bar, defaults } from 'react-chartjs-2'
 
-const BarChart = () => {
+const BarChart = (x) => {
+    const idata = x.data;
     return (
         <div>
             <Bar
+                width={"450%"}
+                height={"200%"}
                 options={{
                     responsive: true,
-                    maintainAspectRatio: true,
+                    maintainAspectRatio: false,
                 }}
-                data={{
-                    labels: ['Genre 1', 'Genre 2', 'Genre 3', 'Genre 3', 'Genre 4', 'Genre 5'],
-                    datasets: [
-                        {
-                            label: '# of Votes',
-                            data: [120, 190, 30, 50, 20, 30],
-                            backgroundColor: '#fdcb6e',
-                            borderRadius: 0,
-                        },
-                    ],
-                }}
+                data={idata}
             />
         </div>
     )

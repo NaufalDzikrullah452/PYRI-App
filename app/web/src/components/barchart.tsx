@@ -6,6 +6,8 @@ const BarChart = (x) => {
     return (
         <div>
             <Bar
+                width={"450%"}
+                height={"200%"}
                 options={{
                     responsive: true,
                     maintainAspectRatio: false,

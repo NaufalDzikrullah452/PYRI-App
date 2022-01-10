@@ -154,7 +154,9 @@
         });
       }
 
-      meta.getInterests();
+      runInAction(() => {
+        meta.getInterests();
+      });
     }}
   />
   {window.user.roleAdmin === "admin" && (
@@ -645,24 +647,9 @@
                         Interest Pengguna
                       </div>
                     </div>
-                    <div class="flex flex-1 self-stretch items-center justify-end">
-                      <div class="flex items-start justify-start">
-                        <button
-                          class={`flex items-center justify-start px-2 py-0.5 bg-amber-500 shadow rounded-sm`}
-                          onClick={() => {
-                            meta.getInterests();
-                          }}
-                        >
-                          <div class="flex items-start justify-start">
-                            <div class="text-base font-bold leading-normal text-white">
-                              Proses
-                            </div>
-                          </div>
-                        </button>
-                      </div>
-                    </div>
+                    <div />
                   </div>
-                  <barchart data={meta.data_user_interests} />
+                  <barchart-interest-user data={meta.data_user_interests} />
                 </div>
                 <div class="flex flex-1 self-stretch flex-col space-y-6 items-start justify-start p-4 bg-white shadow rounded-lg">
                   <div class="flex self-stretch space-x-2.5 items-start justify-start">
