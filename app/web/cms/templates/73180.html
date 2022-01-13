@@ -159,6 +159,13 @@
 
       async readBook() {
         // console.log(this.user_premium)
+        var birthday = new Date(window.user.user.user_birthday);
+        var ageDifMs = Date.now() - birthday.getTime();
+        var ageDate = new Date(ageDifMs); // miliseconds from epoch
+
+        var userAge = Math.abs(ageDate.getUTCFullYear() - 1970);
+        console.log(userAge);
+
         if (window.user.role === "guest") {
           window.mobileApp.app.dialog.confirm(
             "redirect to login?",
@@ -166,6 +173,15 @@
             () => {
               navigate("/m/login");
             }
+          );
+        } else if (userAge < this.book.book_age_restriction) {
+          this.toast(
+            "You must be " +
+              this.book.book_age_restriction +
+              " years or older to read it. Your age: " +
+              userAge,
+            "center",
+            2000
           );
         } else if (this.user_premium.length === 0) {
           api("/api/free-books", {
@@ -675,7 +691,17 @@
             meta.chapter = res.book.chapter;
             meta.category = res.book.category;
             meta.publisher = res.book.publisher;
-            meta.page = res.book.page; // meta.author = res.book.author;
+            meta.page = res.book.page;
+            window.mobileApp.app.tooltip.create({
+              targetEl: ".ageRestriction",
+              text:
+                meta.book.book_age_restriction === null ||
+                meta.book.book_age_restriction === undefined
+                  ? "This book is accessible to everyone"
+                  : "User must be " +
+                    meta.book.book_age_restriction +
+                    " years or older to read it",
+            }); // meta.author = res.book.author;
           });
         }); //count book views
 
@@ -814,9 +840,15 @@
                   {meta.publisher.publisher_name || "Book publisher"}
                 </div>
               </div>
-              <div class="flex items-start justify-start px-1 py-0.5 bg-white border border-gray-500">
-                <div class="text-xs leading-none text-right text-gray-500">
-                  16+
+              <div
+                class={`flex items-start justify-start px-1 py-0.5 bg-white border border-gray-500 ageRestriction`}
+              >
+                <div class={`text-xs leading-none text-right text-gray-500`}>
+                  {meta.book.book_age_restriction === undefined
+                    ? "-"
+                    : meta.book.book_age_restriction === null
+                    ? "G"
+                    : meta.book.book_age_restriction + "+"}
                 </div>
               </div>
             </div>
