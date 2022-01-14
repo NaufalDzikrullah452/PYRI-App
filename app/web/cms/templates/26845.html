@@ -479,7 +479,9 @@
       }
     }}
   />
-  <div class={`flex items-start justify-start bg-white w-full h-full`}>
+  <div
+    class={`flex self-stretch items-start justify-start bg-white w-full h-full`}
+  >
     <div
       class={`flex flex-1 self-stretch items-start justify-start w-full`}
       style={meta.darkMode ? "background-color: #3d3d3d" : ""}
@@ -619,7 +621,7 @@
           color="orange"
           id={`fab-button`}
           style={`transform: translateY(${
-            (screen.height * -10) / 100
+            (screen.height * -15) / 100
           }px); transition: 0.2s`}
         >
           <m-icon ios="f7:ellipsis" aurora="f7:ellipsis" md="material:add" />
@@ -631,9 +633,9 @@
             <m-fab-button
               tooltip={"Zoom In"}
               onClick={() => {
-                if (meta.zoomValue < 20) {
+                if (meta.zoomValue < 25) {
                   runInAction(() => {
-                    meta.zoomValue += 4;
+                    meta.zoomValue += 5;
                   });
                   var zoomlevel = 1 + (meta.zoomValue / 100) * 3;
                   meta.zoom("pages-" + meta.page_id, zoomlevel);
@@ -650,7 +652,7 @@
               onClick={() => {
                 if (meta.zoomValue > 0) {
                   runInAction(() => {
-                    meta.zoomValue -= 4;
+                    meta.zoomValue -= 5;
                   });
                   var zoomlevel = 1 + (meta.zoomValue / 100) * 3;
                   meta.zoom("pages-" + meta.page_id, zoomlevel);
