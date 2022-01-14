@@ -19,6 +19,7 @@ export const extendExternals = () => {
     'm-navbar': () => [require('../../../mobile/src/m-navbar')],
     'm-segmented': () => [require('../../../mobile/src/m-segmented')],
     'm-tab': () => [require('../../../mobile/src/m-tab')],
+    'm-icon': () => [require('../../../mobile/src/m-icon')],
     'm-tabs': () => [require('../../../mobile/src/m-tabs')],
     'm-toolbar': () => [require('../../../mobile/src/m-toolbar')],
     'm-checkbox': () => [require('../../../mobile/src/m-checkbox')],

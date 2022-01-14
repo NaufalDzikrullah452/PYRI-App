@@ -15,6 +15,7 @@
       pages: 0,
       page_id: 1,
       page_length: 0,
+      zoomValue: 0,
       hide_bar: false,
       loading_page: false,
       isBookmark: false,
@@ -279,6 +280,38 @@
           });
         }
       },
+
+      async zoom(id, value) {
+        var outerDiv = document.getElementById("img-wrapper-" + id);
+        var imgEle = document.getElementById(id);
+        var scale = "scale(" + value + ");";
+        var origin = "top";
+        var translateX = "";
+
+        if (outerDiv.clientWidth !== outerDiv.scrollWidth) {
+          origin = "top left";
+          translateX = " translateX(" + -imgEle.offsetLeft + "px) ";
+        }
+
+        var style =
+          "-ms-transform:" +
+          translateX +
+          scale +
+          "-webkit-transform:" +
+          translateX +
+          scale +
+          "transform:" +
+          translateX +
+          scale +
+          "transform-origin:" +
+          origin +
+          ";";
+        document.getElementById(id).setAttribute("style", style);
+        outerDiv.scrollTop =
+          outerDiv.scrollHeight / 2 - outerDiv.clientHeight / 2;
+        outerDiv.scrollLeft =
+          outerDiv.scrollWidth / 2 - outerDiv.clientWidth / 2;
+      },
     }}
     run={async () => {
       // read buku by book_id
@@ -438,6 +471,9 @@
               });
             });
             meta.loading(false);
+            document.getElementById(
+              "fab-button"
+            ).firstChild.style.backgroundColor = "#FF8F00";
           }
         });
       }
@@ -531,20 +567,32 @@
                 class={`flex flex-1 self-stretch space-x-2.5 items-center justify-center px-4
         ${meta.page_id === value.page_id ? "" : "hidden"}`}
                 id={"ch-" + meta.chapter_id + "-page-" + value.page_id}
+                style={`transition: padding 0.2s ease-in-out;
+        ${meta.hide_bar ? `padding: 0px;` : ""}`}
               >
                 {!meta.loading_page && (
                   <div
-                    class={`flex flex-1 self-stretch items-center justify-center`}
+                    class={`flex flex-1 self-stretch items-center justify-center ${
+                      "img-wrapper-pages-" + value.page_id
+                    }`}
+                    id={`img-wrapper-pages-` + value.page_id}
+                    style={`display: flex;
+            justify-content: center;
+            width: auto;
+            overflow: auto;
+            margin: 0 auto;
+            position: relative;`}
                   >
                     <img
-                      class={"w-full h-full"}
+                      class={"w-full h-full my-image"}
+                      id={"pages-" + value.page_id}
                       draggable={false}
                       src={
                         value.page_content
                           ? "/upload/" + value.page_content
                           : "/fimgs/708_2600.x3.png"
                       }
-                      style={`background-image: url('/fimgs/bg-41b447df617d0e6879cf62ac89bba01eb158d003');background-size:100% 100%;background-repeat:no-repeat; background:none; object-fit:contain`}
+                      style={`background-image: url('/fimgs/bg-41b447df617d0e6879cf62ac89bba01eb158d003');background-size:100% 100%;background-repeat:no-repeat; background:none; object-fit:contain; transform-origin: top;`}
                       onError={(e) => {
                         e.target.onerror = null;
                         e.target.src = "";
@@ -564,6 +612,58 @@
             );
           })}
         </div>
+        <m-fab
+          class={`flex flex-col items-start justify-start fixed`}
+          position="right-bottom"
+          slot="fixed"
+          color="orange"
+          id={`fab-button`}
+          style={`transform: translateY(${
+            (screen.height * -10) / 100
+          }px); transition: 0.2s`}
+        >
+          <m-icon ios="f7:ellipsis" aurora="f7:ellipsis" md="material:add" />
+          <m-icon ios="f7:xmark" aurora="f7:xmark" md="material:close" />
+          <m-fab-buttons
+            class={`flex flex-1 self-stretch flex-col space-y-1.5 items-start justify-start fixed`}
+            position={"top"}
+          >
+            <m-fab-button
+              tooltip={"Zoom In"}
+              onClick={() => {
+                if (meta.zoomValue < 20) {
+                  runInAction(() => {
+                    meta.zoomValue += 4;
+                  });
+                  var zoomlevel = 1 + (meta.zoomValue / 100) * 3;
+                  meta.zoom("pages-" + meta.page_id, zoomlevel);
+                }
+              }}
+              class={`flex flex-1 self-stretch flex-col items-start justify-start bg-white`}
+            >
+              <div class="flex flex-1 self-stretch flex-col items-center justify-center p-2.5">
+                {"+"}
+              </div>
+            </m-fab-button>
+            <m-fab-button
+              tooltip={"Zoom Out"}
+              onClick={() => {
+                if (meta.zoomValue > 0) {
+                  runInAction(() => {
+                    meta.zoomValue -= 4;
+                  });
+                  var zoomlevel = 1 + (meta.zoomValue / 100) * 3;
+                  meta.zoom("pages-" + meta.page_id, zoomlevel);
+                }
+              }}
+              class={`flex flex-1 self-stretch flex-col items-start justify-start bg-white`}
+            >
+              <div class="flex flex-1 self-stretch flex-col items-center justify-center p-2.5">
+                {"-"}
+              </div>
+            </m-fab-button>
+          </m-fab-buttons>
+        </m-fab>
         <div
           class={`flex self-stretch flex-col items-center justify-center p-6 bg-white shadow-inner`}
           style={`${meta.hide_bar ? "transform: translateY(200px);" : ""}
@@ -615,6 +715,7 @@
         swipeNoFollow={true}
         swipe={true}
         backdrop={true}
+        swipeThreshold={30}
       >
         <div
           class={`flex flex-1 self-stretch flex-col space-y-2.5 items-start justify-start px-6 pt-9 pb-6 overflow-y-auto`}

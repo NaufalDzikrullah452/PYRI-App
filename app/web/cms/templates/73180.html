@@ -25,6 +25,7 @@
       star_info: false,
       read_info: false,
       loading: true,
+      readLoading: true,
       regisLoading: false,
 
       async regisFreeBook() {
@@ -163,8 +164,7 @@
         var ageDifMs = Date.now() - birthday.getTime();
         var ageDate = new Date(ageDifMs); // miliseconds from epoch
 
-        var userAge = Math.abs(ageDate.getUTCFullYear() - 1970);
-        console.log(userAge);
+        var userAge = Math.abs(ageDate.getUTCFullYear() - 1970); // console.log(userAge)
 
         if (window.user.role === "guest") {
           window.mobileApp.app.dialog.confirm(
@@ -176,10 +176,9 @@
           );
         } else if (userAge < this.book.book_age_restriction) {
           this.toast(
-            "You must be " +
+            "You are not old enough to access this book. You must be at least " +
               this.book.book_age_restriction +
-              " years or older to read it. Your age: " +
-              userAge,
+              " years or older.",
             "center",
             2000
           );
@@ -691,7 +690,8 @@
             meta.chapter = res.book.chapter;
             meta.category = res.book.category;
             meta.publisher = res.book.publisher;
-            meta.page = res.book.page;
+            meta.page = res.book.page; // meta.author = res.book.author;
+
             window.mobileApp.app.tooltip.create({
               targetEl: ".ageRestriction",
               text:
@@ -701,7 +701,12 @@
                   : "User must be " +
                     meta.book.book_age_restriction +
                     " years or older to read it",
-            }); // meta.author = res.book.author;
+            });
+            setTimeout(() => {
+              runInAction(() => {
+                meta.readLoading = false;
+              });
+            }, 1000);
           });
         }); //count book views
 
@@ -771,7 +776,7 @@
       }
     }}
   />
-  <div class={`flex items-start justify-start bg-white`}>
+  <div class={`flex self-stretch items-start justify-start bg-white`}>
     <div
       class={`flex flex-1 self-stretch flex-col space-y-4 items-start justify-start`}
     >
@@ -832,7 +837,10 @@
               </div>
               <div class="flex self-stretch items-start justify-start">
                 <div class={`text-sm font-bold leading-tight text-gray-500`}>
-                  By {meta.author[0] ? meta.author[0].author_name : "Author"}
+                  By{" "}
+                  {meta.author.length !== 0
+                    ? meta.author[0].author_name
+                    : "Author"}
                 </div>
               </div>
               <div class="flex self-stretch items-start justify-start">
@@ -1072,121 +1080,126 @@
         <m-list
           class={`flex flex-1 self-stretch flex-col space-y-2 items-start justify-start overflow-x-auto`}
         >
-          {!meta.loading &&
-            meta.comment.length !== 0 &&
-            meta.comment
-              .slice(0, meta.comment.length > 3 ? 3 : meta.comment.length)
-              .map((value, index) => {
-                return (
-                  <m-list-item
-                    class={`flex self-stretch space-x-2.5 items-start justify-start pb-1 bg-white`}
-                    swipeout={true}
-                    style={`margin-left : -50px`}
-                  >
-                    <div
-                      class={`flex flex-1 self-stretch items-start justify-start swipeout-content`}
+          {!meta.loading && meta.comment.length !== 0 && (
+            <div
+              class={`flex flex-1 self-stretch flex-col items-start justify-start`}
+            >
+              {meta.comment
+                .slice(0, meta.comment.length > 3 ? 3 : meta.comment.length)
+                .map((value, index) => {
+                  return (
+                    <m-list-item
+                      class={`flex space-x-2.5 items-start justify-start pb-1 bg-white`}
+                      swipeout={true}
+                      style={`margin-left : -50px`}
                     >
                       <div
-                        class={`flex flex-1 flex-col items-start justify-start item-content`}
+                        class={`flex flex-1 self-stretch items-start justify-start swipeout-content`}
                       >
                         <div
-                          class={`flex flex-1 self-stretch space-x-2.5 items-center justify-start item-inner`}
+                          class={`flex flex-1 flex-col items-start justify-start item-content`}
                         >
                           <div
-                            class={`flex self-stretch items-start justify-start p-2.5`}
-                          >
-                            <img
-                              class={`rounded-full h-24 w-24 `}
-                              style={`width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;background-image: url('/fimgs/bg-9a38e49e10277e6e852b4067665aec6e437bde6f');background-size:100% 100%;background-repeat:no-repeat;`}
-                              src={
-                                value.users.user_picture
-                                  ? "/upload/" + value.users.user_picture
-                                  : "/fimgs/1718_127188.x1.png"
-                              }
-                              onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.src = "/fimgs/1718_127188.x1.png";
-                              }}
-                              onClick={meta.commentPage}
-                            />
-                          </div>
-                          <div
-                            class={`flex flex-1 self-stretch flex-col space-y-1.5 items-start justify-start`}
-                            onClick={meta.commentPage}
+                            class={`flex flex-1 self-stretch space-x-2.5 items-center justify-start item-inner`}
                           >
                             <div
-                              class={`flex self-stretch space-x-2 items-center justify-start w-full`}
+                              class={`flex self-stretch items-start justify-start p-2.5`}
                             >
-                              <div class="flex items-start justify-start">
-                                <div
-                                  class={`text-base font-bold leading-normal name`}
-                                >
-                                  {window.user.role !== "guest" &&
-                                  value.users.user_name ===
-                                    window.user.user.user_name
-                                    ? "Your Comment"
-                                    : value.users.user_name}
-                                </div>
-                              </div>
-                              <div
-                                class={`flex flex-1 items-center justify-end w-full`}
-                              >
-                                <div
-                                  class={`text-xs font-bold leading-none text-gray-500`}
-                                >
-                                  {dateFormat(
-                                    value.comment_date_updated,
-                                    "MMMM dd, yyyy"
-                                  ) || "MMMM dd, yyyy"}
-                                </div>
-                              </div>
+                              <img
+                                class={`rounded-full h-24 w-24 `}
+                                style={`width: 40px; min-width: 40px; max-width: 40px; height: 40px; min-height: 40px; max-height: 40px;background-image: url('/fimgs/bg-9a38e49e10277e6e852b4067665aec6e437bde6f');background-size:100% 100%;background-repeat:no-repeat;`}
+                                src={
+                                  value.users.user_picture
+                                    ? "/upload/" + value.users.user_picture
+                                    : "/fimgs/1718_127188.x1.png"
+                                }
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = "/fimgs/1718_127188.x1.png";
+                                }}
+                                onClick={meta.commentPage}
+                              />
                             </div>
-                            <div class="flex self-stretch items-start justify-start">
+                            <div
+                              class={`flex flex-1 self-stretch flex-col space-y-1.5 items-start justify-start`}
+                              onClick={meta.commentPage}
+                            >
                               <div
-                                class={`text-base leading-normal text-gray-800`}
+                                class={`flex self-stretch space-x-2 items-center justify-start w-full`}
                               >
-                                {value.comment_description.length < 100
-                                  ? value.comment_description
-                                  : value.comment_description.slice(0, 100) +
-                                    "..."}
+                                <div class="flex items-start justify-start">
+                                  <div
+                                    class={`text-base font-bold leading-normal name`}
+                                  >
+                                    {window.user.role !== "guest" &&
+                                    value.users.user_name ===
+                                      window.user.user.user_name
+                                      ? "Your Comment"
+                                      : value.users.user_name}
+                                  </div>
+                                </div>
+                                <div
+                                  class={`flex flex-1 items-center justify-end w-full`}
+                                >
+                                  <div
+                                    class={`text-xs font-bold leading-none text-gray-500`}
+                                  >
+                                    {dateFormat(
+                                      value.comment_date_updated,
+                                      "MMMM dd, yyyy"
+                                    ) || "MMMM dd, yyyy"}
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="flex self-stretch items-start justify-start">
+                                <div
+                                  class={`text-base leading-normal text-gray-800`}
+                                >
+                                  {value.comment_description.length < 100
+                                    ? value.comment_description
+                                    : value.comment_description.slice(0, 100) +
+                                      "..."}
+                                </div>
                               </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    {false && value.users.user_id === window.user.user.user_id && (
-                      <m-swipeout-actions
-                        right={true}
-                        class={`flex self-stretch items-start justify-start bg-white`}
-                        style={`max-height: 102px`}
-                      >
-                        <m-swipeout-button
-                          class={`flex self-stretch flex-col items-center justify-center bg-white`}
-                          color={"green"}
-                          onClick={() => {
-                            meta.editComment(value.comment_id);
-                          }}
-                        >
-                          {"Edit"}
-                        </m-swipeout-button>
-                        <m-swipeout-button
-                          class={`flex self-stretch flex-col items-center justify-center bg-white`}
-                          color={"red"}
-                          overswipe={() => {
-                            meta.deleteComment(value.comment_id);
-                          }}
-                          onClick={() => {
-                            meta.deleteComment(value.comment_id);
-                          }}
-                        >
-                          {"Delete"}
-                        </m-swipeout-button>
-                      </m-swipeout-actions>
-                    )}
-                  </m-list-item>
-                );
-              })}
+                      {false &&
+                        value.users.user_id === window.user.user.user_id && (
+                          <m-swipeout-actions
+                            right={true}
+                            class={`flex self-stretch items-start justify-start bg-white`}
+                            style={`max-height: 102px`}
+                          >
+                            <m-swipeout-button
+                              class={`flex self-stretch flex-col items-center justify-center bg-white`}
+                              color={"green"}
+                              onClick={() => {
+                                meta.editComment(value.comment_id);
+                              }}
+                            >
+                              {"Edit"}
+                            </m-swipeout-button>
+                            <m-swipeout-button
+                              class={`flex self-stretch flex-col items-center justify-center bg-white`}
+                              color={"red"}
+                              overswipe={() => {
+                                meta.deleteComment(value.comment_id);
+                              }}
+                              onClick={() => {
+                                meta.deleteComment(value.comment_id);
+                              }}
+                            >
+                              {"Delete"}
+                            </m-swipeout-button>
+                          </m-swipeout-actions>
+                        )}
+                    </m-list-item>
+                  );
+                })}
+            </div>
+          )}
           {meta.comment.length === 0 && !meta.loading && (
             <div
               class={`flex flex-1 self-stretch items-center justify-center pb-1 h-full`}
@@ -1371,6 +1384,7 @@
               meta.readBook();
             }}
             style={`text-transform: capitalize;`}
+            disabled={meta.readLoading}
           >
             <div
               class={`text-base font-bold leading-normal text-center text-white`}

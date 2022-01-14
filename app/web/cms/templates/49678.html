@@ -915,9 +915,7 @@
                 //         console.log(dateFormat(this.user_premium.expired_date, "dd MM yyyy") >
                 // dateFormat(new Date(), "dd MM yyyy"))
               });
-            }
-
-            console.log(this.user_premium.length == 0);
+            } // console.log(this.user_premium.length == 0)
           });
           api("/api/free-books", {
             freeBook: {
@@ -1029,22 +1027,51 @@
                     class={`flex self-stretch flex-col items-start justify-start p-4 shadow rounded`}
                     style={`background-image: url('/fimgs/bg-8d8ddb80570065b889eef54faf9c419dd251956e');background-size:100% 100%;background-repeat:no-repeat;`}
                     onClick={() => {
+                      var birthday = new Date(window.user.user.user_birthday);
+                      var ageDifMs = Date.now() - birthday.getTime();
+                      var ageDate = new Date(ageDifMs);
+                      var userAge = Math.abs(ageDate.getUTCFullYear() - 1970);
+
                       if (
                         meta.user_premium.length !== 0 &&
                         new Date(meta.user_premium.expired_date).getTime() >=
                           new Date().getTime()
                       ) {
-                        window.mobileApp.app.dialog.preloader("Loading...");
-                        navigate(
-                          "/m/read-book-page/" +
-                            meta.history[0].books.book_id +
-                            "/history"
-                        );
-                        setTimeout(() => {
-                          window.mobileApp.app.dialog.close();
-                        }, 2000);
+                        if (
+                          userAge < meta.history[0].books.book_age_restriction
+                        ) {
+                          meta.toast(
+                            "You are not old enough to access this book. You must be at least " +
+                              meta.history[0].books.book_age_restriction +
+                              " years or older.",
+                            "center",
+                            2000
+                          );
+                        } else {
+                          window.mobileApp.app.dialog.preloader("Loading...");
+                          navigate(
+                            "/m/read-book-page/" +
+                              meta.history[0].books.book_id +
+                              "/history"
+                          );
+                          setTimeout(() => {
+                            window.mobileApp.app.dialog.close();
+                          }, 2000);
+                        }
                       } else {
-                        meta.readHistoryFree(meta.history[0].books.book_id);
+                        if (
+                          userAge < meta.history[0].books.book_age_restriction
+                        ) {
+                          meta.toast(
+                            "You are not old enough to access this book. You must be at least " +
+                              meta.history[0].books.book_age_restriction +
+                              " years or older.",
+                            "center",
+                            2000
+                          );
+                        } else {
+                          meta.readHistoryFree(meta.history[0].books.book_id);
+                        }
                       }
                     }}
                   >
@@ -2208,22 +2235,47 @@ display: -webkit-box;
                     <div
                       class={`flex space-x-4 items-start justify-start p-2 bg-white shadow shadow-inner rounded`}
                       onClick={() => {
+                        var birthday = new Date(window.user.user.user_birthday);
+                        var ageDifMs = Date.now() - birthday.getTime();
+                        var ageDate = new Date(ageDifMs);
+                        var userAge = Math.abs(ageDate.getUTCFullYear() - 1970);
+
                         if (
                           meta.user_premium.length !== 0 &&
                           new Date(meta.user_premium.expired_date).getTime() >=
                             new Date().getTime()
                         ) {
-                          window.mobileApp.app.dialog.preloader("Loading...");
-                          navigate(
-                            "/m/read-book-page/" +
-                              value.books.book_id +
-                              "/history"
-                          );
-                          setTimeout(() => {
-                            window.mobileApp.app.dialog.close();
-                          }, 2000);
+                          if (userAge < value.books.book_age_restriction) {
+                            meta.toast(
+                              "You are not old enough to access this book. You must be at least " +
+                                value.books.book_age_restriction +
+                                " years or older.",
+                              "center",
+                              2000
+                            );
+                          } else {
+                            window.mobileApp.app.dialog.preloader("Loading...");
+                            navigate(
+                              "/m/read-book-page/" +
+                                value.books.book_id +
+                                "/history"
+                            );
+                            setTimeout(() => {
+                              window.mobileApp.app.dialog.close();
+                            }, 2000);
+                          }
                         } else {
-                          meta.readHistoryFree(value.books.book_id);
+                          if (userAge < value.books.book_age_restriction) {
+                            meta.toast(
+                              "You are not old enough to access this book. You must be at least " +
+                                value.books.book_age_restriction +
+                                " years or older.",
+                              "center",
+                              2000
+                            );
+                          } else {
+                            meta.readHistoryFree(value.books.book_id);
+                          }
                         }
                       }}
                     >
