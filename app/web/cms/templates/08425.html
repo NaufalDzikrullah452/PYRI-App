@@ -1,0 +1,76 @@
+<div class={`flex self-stretch items-start justify-start bg-white`}>
+  <div
+    class={`flex flex-1 self-stretch flex-col space-y-5 items-start justify-start bg-white w-full`}
+  >
+    <div
+      class={`flex self-stretch flex-col items-start justify-start px-6 pt-9 pb-4 bg-white shadow`}
+    >
+      <div class="flex flex-1 self-stretch space-x-4 items-center justify-center">
+        <m-button
+          class={`flex self-stretch items-center justify-start`}
+          onClick={() => {
+            // navigate("/m/");
+            back();
+          }}
+        >
+          <ficon
+            aria-label="ChromeBack"
+            iconName="ChromeBack"
+            style="padding-top:14px; color:black; font-size:20px;"
+          />
+        </m-button>
+        <div class="flex flex-1 items-center justify-center">
+          <div class={`text-xl font-bold leading-loose text-center`}>
+            Recommend For You
+          </div>
+        </div>
+        <div />
+      </div>
+    </div>
+    <div class="flex self-stretch flex-col items-start justify-start px-6 relative overflow-y-auto">
+      <div class="flex self-stretch flex-col items-start justify-start">
+        <div class="flex self-stretch space-x-4 items-start justify-start bg-white shadow shadow-inner rounded">
+          <div class="flex items-start justify-start">
+            <img src="/fimgs/5402_81572.x1.png" />
+          </div>
+          <div class="flex flex-1 self-stretch flex-col items-start justify-center">
+            <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
+              <div class="flex self-stretch flex-col items-start justify-start">
+                <div class="flex self-stretch items-start justify-start">
+                  <div class="text-base font-medium leading-normal">
+                    Game Over
+                  </div>
+                </div>
+                <div class="flex self-stretch space-x-2 items-center justify-start">
+                  <div class="flex items-start justify-start">
+                    <div class="flex items-center justify-center rounded-full">
+                      <div class="text-xs font-medium leading-none text-center text-gray-500">
+                        Romance
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-center">
+                    <div class="flex items-center justify-center pr-0.5">
+                      <ficon
+                        aria-label="FavoriteStarFill"
+                        iconName="FavoriteStarFill"
+                        style="font-size:10px; color: #ff9f43;"
+                        class={`flex items-center justify-center pr-1`}
+                      />
+                      <div class="text-xs leading-none text-amber-500">4.9</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="flex self-stretch items-start justify-start">
+                <div class="text-sm font-medium leading-tight text-gray-600">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. In...
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
