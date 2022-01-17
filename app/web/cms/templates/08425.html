@@ -1,76 +1,943 @@
-<div class={`flex self-stretch items-start justify-start bg-white`}>
-  <div
-    class={`flex flex-1 self-stretch flex-col space-y-5 items-start justify-start bg-white w-full`}
-  >
+<>
+  <effect
+    meta={{
+      page_recommend: 0,
+      new_releases_length: 0,
+      recommend_length: 0,
+      pages: [],
+      user: [],
+      user_premium: [],
+      book: [],
+      popularBook: [],
+      recommendBook: [],
+      newReleaseBook: [],
+      freeBook: [],
+      free_book_amount: 0,
+      interest: [],
+      history: [],
+      get_rating_popular: [],
+      loading: true,
+      loadingInterest: true,
+      showMoreRecommend: false,
+
+      async showMore(key) {
+        if (key === "Recommend") {
+          runInAction(() => {
+            this.showMoreRecommend = true;
+          });
+          setTimeout(() => {
+            runInAction(() => {
+              this.recommend_length =
+                this.recommendBook.length > this.recommend_length + 4
+                  ? this.recommend_length + 4
+                  : this.newReleaseBook.length;
+              this.showMoreRecommend = false;
+            });
+          }, 1000);
+        }
+      },
+
+      async readHistoryFree(book_id) {
+        api("/api/free-books", {
+          freeBook: {
+            freeBook_user_id: window.user.user.user_id,
+          },
+          e: "ReadByUserId",
+        }).then((res) => {
+          // console.log(res)
+          if (res.freeBook !== null) {
+            runInAction(() => {
+              this.freeBook = res.freeBook;
+              this.free_book_amount = res.freeBook.freeBook_amount;
+            });
+            let regis_month1 = dateAdd(
+              new Date(this.freeBook.freeBook_date_registered),
+              {
+                months: 1,
+              }
+            );
+            let regis_month = this.freeBook.freeBook_date_registered;
+            let compare_regis =
+              compareAsc(new Date(), new Date(regis_month1)) !== -1; // console.log(new Date() + " <br> "+ new Date(regis_month1))
+            // console.log(compareAsc(new Date(), new Date(regis_month1)))
+
+            if (compare_regis) {
+              // window.mobileApp.app.sheet.open(".sheet-free-books")
+              this.toast("Monthly free expired.", "center", 2000);
+            } else {
+              api("/api/history-book", {
+                viewBook: {
+                  freeBook_date_registered: regis_month,
+                  freeBook_date_exp: regis_month1,
+                  viewBook_user_id: window.user.user.user_id,
+                },
+                e: "ReadHistoryUserFreeBook",
+              }).then((res) => {
+                // console.log(res);
+                let res_viewBook = res.viewBook;
+                var inHistory = false;
+                res_viewBook.map((value, index) => {
+                  if (index < 3 && value.books.book_id === parseInt(book_id)) {
+                    inHistory = true;
+                  }
+                });
+
+                if (!inHistory && this.free_book_amount !== 0) {
+                  runInAction(() => {
+                    this.free_book_amount -= 1;
+                  });
+                  api("/api/free-books", {
+                    freeBook: {
+                      freeBook_user_id: window.user.user.user_id,
+                      freeBook_amount: this.free_book_amount,
+                      freeBook_date_updated: new Date(),
+                    },
+                    e: "UpdateByUserId",
+                  });
+                  window.mobileApp.app.dialog.preloader(
+                    "Free books used (" + (3 - this.free_book_amount) + "/3)"
+                  );
+                  setTimeout(() => {
+                    window.mobileApp.app.dialog.close();
+                  }, 1500);
+                  navigate("/m/read-book-page/" + book_id + "/");
+                } else if (inHistory) {
+                  window.mobileApp.app.dialog.preloader();
+                  setTimeout(() => {
+                    window.mobileApp.app.dialog.close();
+                  }, 1500);
+                  navigate("/m/read-book-page/" + book_id + "/");
+                } else {
+                  window.mobileApp.app.dialog.confirm(
+                    "Free books used (" +
+                      (3 - this.free_book_amount) +
+                      "/3), get premium to read all books for free. Redirect to purchase page?",
+                    "Free books is out.",
+                    () => {
+                      navigate("/m/premium-page");
+                    }
+                  );
+                }
+              });
+            }
+          } else {
+            window.mobileApp.app.dialog.confirm(
+              "Get premium to read all books for free. Redirect to purchase page?",
+              "Go to Premium.",
+              () => {
+                navigate("/m/premium-page");
+              }
+            );
+          }
+        });
+      },
+
+      async readHistory() {
+        var page_chapter = ""; //read history read
+
+        if (window.user.role !== "guest") {
+          await api("/api/history-book", {
+            viewBook: {
+              viewBook_user_id: window.user.user.user_id,
+            },
+            e: "ReadByUserId",
+          }).then((res) => {
+            // console.log(res);
+            if (res !== null && res.viewBook.length !== 0) {
+              runInAction(() => {
+                this.pages = [];
+                this.book = [];
+                this.history = res.viewBook;
+                this.history.map((value, index) => {
+                  runInAction(() => {
+                    this.book.push(value.books);
+                  });
+                }); // console.log(this.book[0])
+
+                if (this.book[0].page.length !== 0) {
+                  this.book.map((value, index) => {
+                    runInAction(() => {
+                      page_chapter = this.book[index].page;
+                    });
+                    page_chapter.sort(function (a, b) {
+                      var aNum = parseInt(a.page_page);
+                      var bNum = parseInt(b.page_page);
+                      return aNum - bNum;
+                    });
+                    page_chapter.sort(function (a, b) {
+                      var aNum = parseInt(a.page_chapter_id);
+                      var bNum = parseInt(b.page_chapter_id);
+                      return aNum - bNum;
+                    });
+                    page_chapter.map((value, idx) => {
+                      if (
+                        value.page_id === this.history[index].viewBook_page_id
+                      ) {
+                        runInAction(() => {
+                          this.pages.push(idx + 1);
+                        });
+                      }
+                    });
+                  });
+                } // console.log(this.history);
+              });
+            }
+          });
+        }
+      },
+
+      async toast(text, position, time) {
+        var toastCenter = window.mobileApp.app.toast.create({
+          text: text,
+          position: position,
+          closeTimeout: time,
+        }); // Open it
+
+        toastCenter.open();
+      },
+
+      async readRecommend() {
+        //reset
+        let recommendBook_temp = []; // based on the author book from user highest rating
+
+        api("/api/rating", {
+          rating: {
+            rating_user_id: window.user.user.user_id,
+          },
+          e: "ReadByUserId",
+        }).then((res) => {
+          // console.log(res.rating)
+          if (res.rating.length !== 0) {
+            let rating = res.rating;
+            rating.sort(function (a, b) {
+              var aNum = a.rating_point;
+              var bNum = b.rating_point;
+              return bNum - aNum;
+            }); // console.log(rating[0])
+
+            let author_id = null;
+
+            if (rating[0].rating_point >= 4) {
+              if (
+                rating[0].books.authors_authorsTobooks_book_author_one_id !==
+                null
+              ) {
+                author_id =
+                  rating[0].books.authors_authorsTobooks_book_author_one_id
+                    .author_id;
+              } else if (
+                rating[0].books.authors_authorsTobooks_book_author_two_id !==
+                null
+              ) {
+                author_id =
+                  rating[0].books.authors_authorsTobooks_book_author_two_id
+                    .author_id;
+              } else if (
+                rating[0].books.authors_authorsTobooks_book_author_three_id !==
+                null
+              ) {
+                author_id =
+                  rating[0].books.authors_authorsTobooks_book_author_three_id
+                    .author_id;
+              }
+            } // console.log(author_id)
+
+            if (author_id !== null) {
+              api("/api/books", {
+                book: {
+                  book_author_id: author_id,
+                },
+                e: "ReadByAuthorId",
+              }).then((res) => {
+                // console.log(res)
+                let data_recommendBook = res.book;
+                data_recommendBook.map((a, i) => {
+                  var sum = 0;
+                  var avg = 0;
+                  a.rating.map((b) => {
+                    sum += b.rating_point;
+                  });
+
+                  if (a.rating.length !== 0) {
+                    avg = parseFloat(sum / a.rating.length);
+                  }
+
+                  this.get_rating_popular.push(avg);
+                  data_recommendBook[i]["rating_avg"] = avg;
+                });
+                data_recommendBook.sort(function (a, b) {
+                  var aNum = a.rating_avg;
+                  var bNum = b.rating_avg;
+                  return bNum - aNum;
+                });
+
+                if (data_recommendBook.length !== 0) {
+                  runInAction(() => {
+                    data_recommendBook[0].recommend = "rating";
+                    recommendBook_temp.push(data_recommendBook[0]);
+                    runInAction(() => {
+                      this.recommendBook = recommendBook_temp;
+                    }); // console.log(this.recommendBook);
+                  });
+                } // console.log(recommendBook[0])
+              });
+            }
+          }
+        }); // based on the tag of last history read
+
+        if (this.history.length !== 0) {
+          let interest_user = [];
+          api("/api/interests", {
+            e: "show",
+            user_id: window.user.user.user_id,
+          }).then((res) => {
+            // console.log(res)
+            if (res.result.length !== 0) {
+              interest_user = res.result;
+              var tagsAndInterest = [];
+              interest_user.map((e, i) => {
+                // console.log(e.tags.tag_name);
+                if (this.history.length !== 0) {
+                  if (
+                    this.history[0].books.tags_books_book_genre_one_idTotags
+                      .tag_id === e.tags.tag_id
+                  ) {
+                    // console.log(e.tags.tag_name);
+                    var filter_popular_book = this.popularBook.filter(function (
+                      el
+                    ) {
+                      return (
+                        el.tags_books_book_genre_one_idTotags.tag_id ===
+                          e.tags.tag_id && el.rating_avg !== 0
+                      );
+                    });
+
+                    if (filter_popular_book.length !== 0) {
+                      runInAction(() => {
+                        filter_popular_book[0].recommend = "history x interest";
+                        recommendBook_temp.push(filter_popular_book[0]);
+                        runInAction(() => {
+                          this.recommendBook = recommendBook_temp;
+                        }); // console.log(this.recommendBook);
+                      });
+                    }
+                  }
+                }
+              }); // console.log(tagsAndInterest);
+            }
+          }); //based history read more equal than 50% of total pages
+
+          api("/api/books", {
+            book: {
+              viewBook: {
+                viewBook_user_id: window.user.user.user_id,
+              },
+            },
+            e: "ReadHistoryByUserId",
+          }).then((res) => {
+            // console.log(res)
+            if (res.book.length !== 0) {
+              var filter_history = res.book.filter(function (el) {
+                var half_pages = el.page.length / 2;
+                return el.viewBook.length >= half_pages;
+              }); // console.log(filter_history[0])
+
+              let tag_id = null;
+
+              if (filter_history[0] !== undefined) {
+                if (
+                  filter_history[0].tags_books_book_genre_one_idTotags !== null
+                ) {
+                  tag_id =
+                    filter_history[0].tags_books_book_genre_one_idTotags.tag_id;
+                } else if (
+                  filter_history[0].tags_books_book_genre_two_idTotags !== null
+                ) {
+                  tag_id =
+                    filter_history[0].tags_books_book_genre_two_idTotags.tag_id;
+                } else if (
+                  filter_history[0].tags_books_book_genre_three_idTotags !==
+                  null
+                ) {
+                  tag_id =
+                    filter_history[0].tags_books_book_genre_three_idTotags
+                      .tag_id;
+                }
+              } // console.log(tag_id);
+
+              if (tag_id !== null) {
+                api("/api/books", {
+                  book: {
+                    book_tag_id: tag_id,
+                  },
+                  e: "ReadByTagId",
+                }).then((res) => {
+                  // console.log(res)
+                  let data_recommendBook = res.book;
+                  data_recommendBook.map((a, i) => {
+                    var sum = 0;
+                    var avg = 0;
+                    a.rating.map((b) => {
+                      sum += b.rating_point;
+                    });
+
+                    if (a.rating.length !== 0) {
+                      avg = parseFloat(sum / a.rating.length);
+                    }
+
+                    this.get_rating_popular.push(avg);
+                    data_recommendBook[i]["rating_avg"] = avg;
+                  });
+                  data_recommendBook.sort(function (a, b) {
+                    var aNum = a.rating_avg;
+                    var bNum = b.rating_avg;
+                    return bNum - aNum;
+                  });
+
+                  if (data_recommendBook.length !== 0) {
+                    runInAction(() => {
+                      data_recommendBook[0].recommend =
+                        "history more than 3 pages";
+                      recommendBook_temp.push(data_recommendBook[0]); // console.log(this.recommendBook);
+                      // distinct same book
+
+                      let temp_id = [];
+                      let temp_data = [];
+                      recommendBook_temp.map((v, i) => {
+                        // console.log(v);
+                        if (!temp_id.includes(v.book_id)) {
+                          temp_data.push(v);
+                          temp_id.push(v.book_id);
+                        }
+                      });
+                      recommendBook_temp = temp_data;
+                      runInAction(() => {
+                        this.recommendBook = recommendBook_temp;
+                      });
+                    });
+                  } // console.log(recommendBook[0])
+                });
+              }
+            }
+          });
+        } // based on interest user
+
+        let recommend_interest = [];
+        api("/api/interests", {
+          e: "show",
+          user_id: window.user.user.user_id,
+        }).then((res) => {
+          // console.log(res)
+          api("/api/books", {
+            book: {
+              book_genre_one_id: res.result[0] ? res.result[0].tag_id : 0,
+              book_genre_two_id: res.result[1] ? res.result[1].tag_id : 0,
+              book_genre_three_id: res.result[2] ? res.result[2].tag_id : 0,
+            },
+            e: "ReadByGenreIdRecommend",
+          }).then((res) => {
+            // console.log(res.book)
+            if (res.book.length !== 0) {
+              recommend_interest = res.book;
+              recommend_interest.map((a, i) => {
+                var sum = 0;
+                var avg = 0;
+                a.rating.map((b) => {
+                  sum += b.rating_point;
+                });
+
+                if (a.rating.length !== 0) {
+                  avg = parseFloat(sum / a.rating.length);
+                }
+
+                this.get_rating_popular.push(avg);
+                recommend_interest[i]["rating_avg"] = avg;
+                recommend_interest[i]["recommend"] = "Interest user-" + i;
+              });
+              recommend_interest.sort(function (a, b) {
+                var aNum = a.rating_avg;
+                var bNum = b.rating_avg;
+                return bNum - aNum;
+              }); // console.log(recommend_interest)
+
+              if (recommend_interest.length !== 0) {
+                // console.log(this.recommendBook);
+                recommend_interest
+                  .slice(
+                    0,
+                    recommend_interest.length > 3
+                      ? 3
+                      : recommend_interest.length
+                  )
+                  .map((a, b) => {
+                    runInAction(() => {
+                      recommendBook_temp.push(a);
+                    });
+                  }); // distinct same book
+
+                let temp_id = [];
+                let temp_data = [];
+                recommendBook_temp.map((v, i) => {
+                  // console.log(v);
+                  if (!temp_id.includes(v.book_id)) {
+                    temp_data.push(v);
+                    temp_id.push(v.book_id);
+                  }
+                });
+                recommendBook_temp = temp_data; // console.log(this.recommendBook);
+
+                runInAction(() => {
+                  this.recommendBook = recommendBook_temp;
+                  this.recommend_length =
+                    this.recommendBook.length > 4
+                      ? 4
+                      : this.recommendBook.length;
+                });
+                setTimeout(() => {
+                  runInAction(() => {
+                    this.loading = false;
+                  });
+                }, 1000);
+              }
+            }
+          });
+        });
+      },
+
+      async readRecommendPage() {
+        // read popular book
+        var popularBook = [];
+        await api("/api/books", {
+          book: "",
+          e: "ReadAllPublished",
+        }).then((res) => {
+          // console.log(res);
+          if (res !== null && res.book.length != 0) {
+            popularBook = res.book;
+          }
+        }); // read book
+
+        var newReleaseBook = [];
+        await api("/api/books", {
+          book: "",
+          e: "ReadAllNewRelease",
+        }).then((res) => {
+          // console.log(res)
+          if (res !== null && res.book.length != 0) {
+            newReleaseBook = res.book;
+          }
+        });
+        runInAction(() => {
+          this.user = window.user.user || [];
+          this.newReleaseBook = newReleaseBook;
+          this.new_releases_length =
+            newReleaseBook.length > 5 ? 5 : newReleaseBook.length;
+          popularBook.map((a, i) => {
+            var sum = 0;
+            var avg = 0;
+            a.rating.map((b) => {
+              sum += b.rating_point;
+            });
+
+            if (a.rating.length !== 0) {
+              avg = parseFloat(sum / a.rating.length);
+            }
+
+            this.get_rating_popular.push(avg);
+            popularBook[i]["rating_avg"] = avg;
+          });
+          var data = [];
+          popularBook.map((a, i) => {
+            if (a.rating_avg >= 4) {
+              data.push(a);
+            }
+          });
+          popularBook = data;
+          popularBook.sort(function (a, b) {
+            var aNum = a.viewBook.length;
+            var bNum = b.viewBook.length;
+            return bNum - aNum;
+          });
+          let temp_popularbook = [];
+          var date = new Date();
+          var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+          var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0); // console.log(dateFormat(firstDay, "dd/MM/yyyy"))
+          // console.log(dateFormat(lastDay, "dd/MM/yyyy"))
+
+          popularBook.map((a, i) => {
+            var views_month = 0; // console.log(a)
+
+            a.viewBook.map((b) => {
+              var time = new Date(b.viewBook_access_date).getTime();
+
+              if (time >= firstDay.getTime() && time <= lastDay.getTime()) {
+                views_month += 1;
+              }
+            });
+            popularBook[i]["views_month"] = views_month;
+
+            if (views_month !== 0) {
+              temp_popularbook.push(a);
+            }
+          });
+          temp_popularbook.sort(function (a, b) {
+            if (a.views_month !== undefined && b.views_month !== undefined) {
+              var aNum = a.views_month;
+              var bNum = b.views_month;
+              return bNum - aNum;
+            }
+          }); // console.log(temp_popularbook);
+
+          let temp_id = [];
+          let temp_data = [];
+
+          if (temp_popularbook.length !== 0) {
+            temp_popularbook.map((v, i) => {
+              // console.log(v);
+              if (!temp_id.includes(v.book_id)) {
+                temp_data.push(v);
+                temp_id.push(v.book_id);
+              }
+            });
+          }
+
+          popularBook.map((v, i) => {
+            // console.log(v);
+            if (!temp_id.includes(v.book_id)) {
+              temp_data.push(v);
+              temp_id.push(v.book_id);
+            }
+          });
+          temp_popularbook = temp_data; // console.log(temp_popularbook);
+          // console.log(popularBook);
+          // popularBook.sort(function (a, b) {
+          //   if(a.rating_avg !== undefined && b.rating_avg !== undefined){
+          //     var aNum = a.rating_avg;
+          //     var bNum = b.rating_avg;
+          //     return bNum - aNum;
+          //   }
+          // });
+
+          this.popularBook = temp_popularbook; // console.log(popularBook)
+        });
+
+        if (window.user.role !== "guest") {
+          api("/api/api-users", {
+            users: {
+              user_id: window.user.user.user_id,
+            },
+            e: "ReadUserSubscriptionById",
+          }).then((res) => {
+            // console.log(res);
+            if (res.users !== null) {
+              runInAction(() => {
+                this.user_premium = res.users; //         console.log(dateFormat(this.user_premium.expired_date, "dd MM yyyy"))
+                //         console.log(dateFormat(new Date(), "dd MM yyyy"))
+                //         console.log(dateFormat(this.user_premium.expired_date, "dd MM yyyy") >
+                // dateFormat(new Date(), "dd MM yyyy"))
+              });
+            } // console.log(this.user_premium.length == 0)
+          });
+          api("/api/free-books", {
+            freeBook: {
+              freeBook_user_id: window.user.user.user_id,
+            },
+            e: "ReadByUserId",
+          }).then((res) => {
+            // console.log(res);
+            if (res.freeBook !== null) {
+              runInAction(() => {
+                this.freeBook = res.freeBook;
+                this.free_book_amount = res.freeBook.freeBook_amount;
+              });
+            }
+          });
+          this.readRecommend();
+        }
+      },
+    }}
+    run={async ({}) => {
+      meta.readHistory();
+      meta.readRecommendPage();
+    }}
+  />
+  <div class={`flex items-start justify-start bg-white`}>
     <div
-      class={`flex self-stretch flex-col items-start justify-start px-6 pt-9 pb-4 bg-white shadow`}
+      class={`flex flex-1 self-stretch flex-col space-y-5 items-start justify-start bg-white w-full`}
     >
-      <div class="flex flex-1 self-stretch space-x-4 items-center justify-center">
-        <m-button
-          class={`flex self-stretch items-center justify-start`}
-          onClick={() => {
-            // navigate("/m/");
-            back();
-          }}
-        >
-          <ficon
-            aria-label="ChromeBack"
-            iconName="ChromeBack"
-            style="padding-top:14px; color:black; font-size:20px;"
-          />
-        </m-button>
-        <div class="flex flex-1 items-center justify-center">
-          <div class={`text-xl font-bold leading-loose text-center`}>
-            Recommend For You
+      <div
+        class={`flex self-stretch flex-col items-start justify-start px-6 pt-9 pb-4 bg-white shadow`}
+      >
+        <div class="flex flex-1 self-stretch space-x-4 items-center justify-center">
+          <m-button
+            class={`flex self-stretch items-center justify-start`}
+            onClick={() => {
+              // navigate("/m/");
+              back();
+            }}
+          >
+            <ficon
+              aria-label="ChromeBack"
+              iconName="ChromeBack"
+              style="padding-top:14px; color:black; font-size:20px;"
+            />
+          </m-button>
+          <div class="flex flex-1 items-center justify-center">
+            <div class={`text-xl font-bold leading-loose text-center`}>
+              Recommend For You
+            </div>
           </div>
+          <div />
         </div>
-        <div />
       </div>
-    </div>
-    <div class="flex self-stretch flex-col items-start justify-start px-6 relative overflow-y-auto">
-      <div class="flex self-stretch flex-col items-start justify-start">
-        <div class="flex self-stretch space-x-4 items-start justify-start bg-white shadow shadow-inner rounded">
-          <div class="flex items-start justify-start">
-            <img src="/fimgs/5402_81572.x1.png" />
-          </div>
-          <div class="flex flex-1 self-stretch flex-col items-start justify-center">
-            <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
-              <div class="flex self-stretch flex-col items-start justify-start">
-                <div class="flex self-stretch items-start justify-start">
-                  <div class="text-base font-medium leading-normal">
-                    Game Over
-                  </div>
-                </div>
-                <div class="flex self-stretch space-x-2 items-center justify-start">
-                  <div class="flex items-start justify-start">
-                    <div class="flex items-center justify-center rounded-full">
-                      <div class="text-xs font-medium leading-none text-center text-gray-500">
-                        Romance
+      <div class="flex self-stretch flex-col space-y-4 items-start justify-start px-6 relative overflow-y-auto">
+        {!meta.loading && (
+          <div
+            class={`flex self-stretch flex-col items-start justify-start overflow-auto`}
+          >
+            {meta.recommendBook
+              .slice(0, meta.recommend_length)
+              .map((value, i) => {
+                return (
+                  <div
+                    class={`flex self-stretch space-x-4 items-start justify-start bg-white shadow shadow-inner rounded`}
+                    style={`margin-bottom:16px`}
+                    onClick={() => {
+                      navigate("/m/detail-book-page/" + value.book_id + "/");
+                    }}
+                  >
+                    <div class="flex items-start justify-start">
+                      <img
+                        src={
+                          value.book_picture
+                            ? "/upload/" + value.book_picture
+                            : "/fimgs/1718_224584.x1.png"
+                        }
+                        style={`width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat; border-radius: 4%`}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "/fimgs/1718_224584.x1.png";
+                        }}
+                      />
+                    </div>
+                    <div class="flex flex-1 self-stretch flex-col items-start justify-center">
+                      <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
+                        <div class="flex self-stretch flex-col items-start justify-start">
+                          <div class="flex self-stretch items-start justify-start">
+                            <div class={`text-base font-medium leading-normal`}>
+                              {value.book_title || "Title"}
+                            </div>
+                          </div>
+                          <div class="flex self-stretch space-x-2 items-center justify-start">
+                            <div class="flex items-start justify-start">
+                              <div class="flex items-center justify-center rounded-full">
+                                <div
+                                  class={`text-xs font-medium leading-none text-center text-gray-500`}
+                                >
+                                  {value.tags_books_book_genre_one_idTotags
+                                    .tag_name || "-"}
+                                </div>
+                              </div>
+                            </div>
+                            <div class="flex items-center justify-center">
+                              <div class="flex items-center justify-center pr-0.5">
+                                <ficon
+                                  aria-label="FavoriteStarFill"
+                                  iconName="FavoriteStarFill"
+                                  style="font-size:10px; color: #ff9f43;"
+                                  class={`flex items-center justify-center pr-1`}
+                                />
+                                <div
+                                  class={`text-xs leading-none text-amber-500`}
+                                >
+                                  {value.rating_avg.toFixed(2) || "-"}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="flex self-stretch items-start justify-start">
+                          <div
+                            class={`text-sm font-medium leading-tight text-gray-600`}
+                            style={`overflow: hidden;
+    line-height: 1.5em;
+max-height: 3em;
+display: -webkit-box;
+-webkit-box-orient: vertical;
+-webkit-line-clamp: 2;`}
+                          >
+                            {value.book_description || "-"}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <div class="flex items-center justify-center">
-                    <div class="flex items-center justify-center pr-0.5">
-                      <ficon
-                        aria-label="FavoriteStarFill"
-                        iconName="FavoriteStarFill"
-                        style="font-size:10px; color: #ff9f43;"
-                        class={`flex items-center justify-center pr-1`}
-                      />
-                      <div class="text-xs leading-none text-amber-500">4.9</div>
+                );
+              })}
+            <div
+              class={`flex self-stretch flex-col items-center justify-center p-8`}
+              style={`padding: 10px 30px 40px 30px`}
+            >
+              {meta.recommendBook.length > meta.recommend_length && (
+                <m-button
+                  preloader={true}
+                  loading={meta.showMoreRecommend}
+                  onClick={() => {
+                    meta.showMore("Recommend");
+                  }}
+                  class={`flex items-center justify-center p-1 bg-gray-400 rounded-md`}
+                  style={`text-transform: capitalize;
+  padding: 8px;
+  padding-right: 12px!important;
+    color: white;
+    background: #969696d6;
+    font-weight: bold;
+    font-size: 18px;
+    transition: 0.6s ease;
+    border-radius: 6px;
+    user-select: none;`}
+                >
+                  <div
+                    class={`text-xs font-medium leading-none text-center text-white`}
+                  >
+                    Show More
+                  </div>
+                </m-button>
+              )}
+            </div>
+          </div>
+        )}
+        {meta.loading && (
+          <div
+            class={`flex self-stretch flex-col space-y-4 items-start justify-start`}
+            style={`margin-bottom:8px`}
+          >
+            <div
+              class={`flex self-stretch space-x-4 items-start justify-start pr-2 bg-white shadow shadow-inner rounded`}
+            >
+              <div class="flex items-start justify-start">
+                <div
+                  class={`flex flex-col items-start justify-start shadow rounded`}
+                  style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;"
+                >
+                  <loading-box />
+                </div>
+              </div>
+              <div class="flex flex-1 self-stretch flex-col items-start justify-center">
+                <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
+                  <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
+                    <div class="flex self-stretch items-start justify-start">
+                      <loading-box style="width: 228.84px; min-width: 228.84px; max-width: 228.84px; height: 24px; min-height: 24px; max-height: 24px;" />
                     </div>
+                    <div class="flex self-stretch space-x-2 items-center justify-start">
+                      <div
+                        class="flex items-start justify-start"
+                        style="width: 49px; min-width: 49px; max-width: 49px; height: 18px; min-height: 18px; max-height: 18px;"
+                      >
+                        <loading-box />
+                      </div>
+                      <div
+                        class="flex items-center justify-center"
+                        style="width: 37px; min-width: 37px; max-width: 37px; height: 18px; min-height: 18px; max-height: 18px;"
+                      >
+                        <loading-box />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="flex self-stretch items-start justify-start"
+                    style="width: 228.84px; min-width: 228.84px; max-width: 228.84px; height: 84px; min-height: 84px; max-height: 84px;"
+                  >
+                    <loading-box />
                   </div>
                 </div>
               </div>
-              <div class="flex self-stretch items-start justify-start">
-                <div class="text-sm font-medium leading-tight text-gray-600">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. In...
+            </div>
+            <div
+              class={`flex self-stretch space-x-4 items-start justify-start pr-2 bg-white shadow shadow-inner rounded`}
+            >
+              <div class="flex items-start justify-start">
+                <div
+                  class={`flex flex-col items-start justify-start shadow rounded`}
+                  style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;"
+                >
+                  <loading-box />
+                </div>
+              </div>
+              <div class="flex flex-1 self-stretch flex-col items-start justify-center">
+                <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
+                  <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
+                    <div class="flex self-stretch items-start justify-start">
+                      <loading-box style="width: 228.84px; min-width: 228.84px; max-width: 228.84px; height: 24px; min-height: 24px; max-height: 24px;" />
+                    </div>
+                    <div class="flex self-stretch space-x-2 items-center justify-start">
+                      <div
+                        class="flex items-start justify-start"
+                        style="width: 49px; min-width: 49px; max-width: 49px; height: 18px; min-height: 18px; max-height: 18px;"
+                      >
+                        <loading-box />
+                      </div>
+                      <div
+                        class="flex items-center justify-center"
+                        style="width: 37px; min-width: 37px; max-width: 37px; height: 18px; min-height: 18px; max-height: 18px;"
+                      >
+                        <loading-box />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="flex self-stretch items-start justify-start"
+                    style="width: 228.84px; min-width: 228.84px; max-width: 228.84px; height: 84px; min-height: 84px; max-height: 84px;"
+                  >
+                    <loading-box />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class={`flex self-stretch space-x-4 items-start justify-start pr-2 bg-white shadow shadow-inner rounded`}
+            >
+              <div class="flex items-start justify-start">
+                <div
+                  class={`flex flex-col items-start justify-start shadow rounded`}
+                  style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;"
+                >
+                  <loading-box />
+                </div>
+              </div>
+              <div class="flex flex-1 self-stretch flex-col items-start justify-center">
+                <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
+                  <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
+                    <div class="flex self-stretch items-start justify-start">
+                      <loading-box style="width: 228.84px; min-width: 228.84px; max-width: 228.84px; height: 24px; min-height: 24px; max-height: 24px;" />
+                    </div>
+                    <div class="flex self-stretch space-x-2 items-center justify-start">
+                      <div
+                        class="flex items-start justify-start"
+                        style="width: 49px; min-width: 49px; max-width: 49px; height: 18px; min-height: 18px; max-height: 18px;"
+                      >
+                        <loading-box />
+                      </div>
+                      <div
+                        class="flex items-center justify-center"
+                        style="width: 37px; min-width: 37px; max-width: 37px; height: 18px; min-height: 18px; max-height: 18px;"
+                      >
+                        <loading-box />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="flex self-stretch items-start justify-start"
+                    style="width: 228.84px; min-width: 228.84px; max-width: 228.84px; height: 84px; min-height: 84px; max-height: 84px;"
+                  >
+                    <loading-box />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   </div>
-</div>
+</>

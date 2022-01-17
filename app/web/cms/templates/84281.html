@@ -1,6 +1,82 @@
 <>
-  <effect meta={{}} run={async () => {}} />
-  <div class={`flex self-stretch items-start justify-start bg-white`}>
+  <effect
+    meta={{
+      new_releases_length: 0,
+      newReleaseBook: [],
+      loading: true,
+      loadingInterest: true,
+      showMoreNewReleases: false,
+
+      async showMore(key) {
+        if (key === "NewReleases") {
+          runInAction(() => {
+            this.showMoreNewReleases = true;
+          });
+          setTimeout(() => {
+            runInAction(() => {
+              this.new_releases_length =
+                this.newReleaseBook.length > this.new_releases_length + 4
+                  ? this.new_releases_length + 4
+                  : this.newReleaseBook.length;
+              this.showMoreNewReleases = false;
+            });
+          }, 1000);
+        }
+      },
+
+      async toast(text, position, time) {
+        var toastCenter = window.mobileApp.app.toast.create({
+          text: text,
+          position: position,
+          closeTimeout: time,
+        }); // Open it
+
+        toastCenter.open();
+      },
+
+      async readNewReleasesPage() {
+        // read book
+        var dataNew = [];
+        await api("/api/books", {
+          book: "",
+          e: "ReadAllNewRelease",
+        }).then((res) => {
+          // console.log(res)
+          if (res !== null && res.book.length != 0) {
+            dataNew = res.book;
+          }
+
+          setTimeout(() => {
+            runInAction(() => {
+              this.loading = false;
+            });
+          }, 1000);
+        });
+        dataNew.map((value, index) => {
+          let sum = 0;
+          let rating_avg = 0;
+          value.rating.map((el, i) => {
+            sum += el.rating_point;
+          });
+
+          if (value.rating.length !== 0) {
+            rating_avg = sum / value.rating.length;
+          }
+
+          dataNew[index]["rating_avg"] = rating_avg; // console.log(rating_avg)
+        });
+        runInAction(() => {
+          this.user = window.user.user || [];
+          this.newReleaseBook = dataNew;
+          this.new_releases_length = dataNew.length > 4 ? 4 : dataNew.length;
+        });
+      },
+    }}
+    run={async ({}) => {
+      meta.readNewReleasesPage();
+    }}
+  />
+  <div class={`flex items-start justify-start bg-white`}>
     <div
       class={`flex flex-1 self-stretch flex-col space-y-5 items-start justify-start bg-white w-full`}
     >
@@ -29,53 +105,253 @@
           <div />
         </div>
       </div>
-      <div class="flex self-stretch flex-col items-start justify-start px-6 relative overflow-y-auto">
-        <div class="flex self-stretch flex-col items-start justify-start">
-          <div class="flex self-stretch space-x-4 items-start justify-start bg-white shadow shadow-inner rounded">
-            <div class="flex items-start justify-start">
-              <img src="/fimgs/5402_81572.x1.png" />
-            </div>
-            <div class="flex flex-1 self-stretch flex-col items-start justify-center">
-              <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
-                <div class="flex self-stretch flex-col items-start justify-start">
-                  <div class="flex self-stretch items-start justify-start">
-                    <div class="text-base font-medium leading-normal">
-                      Game Over
+      <div class="flex self-stretch flex-col space-y-2 items-start justify-start px-6 relative overflow-y-auto">
+        {!meta.loading && (
+          <div
+            class={`flex self-stretch flex-col items-start justify-start overflow-auto`}
+          >
+            {meta.newReleaseBook
+              .slice(0, meta.new_releases_length)
+              .map((value, i) => {
+                return (
+                  <div
+                    class={`flex self-stretch space-x-4 items-start justify-start bg-white shadow shadow-inner rounded`}
+                    style={`margin-bottom:16px`}
+                    onClick={() => {
+                      navigate("/m/detail-book-page/" + value.book_id + "/");
+                    }}
+                  >
+                    <div class="flex items-start justify-start">
+                      <img
+                        src={
+                          value.book_picture
+                            ? "/upload/" + value.book_picture
+                            : "/fimgs/1718_224584.x1.png"
+                        }
+                        style={`width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;background-image: url('/fimgs/bg-faa07871d0024ca0a958943ad719b21cfec79189');background-size:100% 100%;background-repeat:no-repeat; border-radius: 4%`}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "/fimgs/1718_224584.x1.png";
+                        }}
+                      />
+                    </div>
+                    <div class="flex flex-1 self-stretch flex-col items-start justify-center">
+                      <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
+                        <div class="flex self-stretch flex-col items-start justify-start">
+                          <div class="flex self-stretch items-start justify-start">
+                            <div class={`text-base font-medium leading-normal`}>
+                              {value.book_title || "Title"}
+                            </div>
+                          </div>
+                          <div class="flex self-stretch space-x-2 items-center justify-start">
+                            <div class="flex items-start justify-start">
+                              <div class="flex items-center justify-center rounded-full">
+                                <div
+                                  class={`text-xs font-medium leading-none text-center text-gray-500`}
+                                >
+                                  {value.tags_books_book_genre_one_idTotags
+                                    .tag_name || "-"}
+                                </div>
+                              </div>
+                            </div>
+                            <div class="flex items-center justify-center">
+                              <div class="flex items-center justify-center pr-0.5">
+                                <ficon
+                                  aria-label="FavoriteStarFill"
+                                  iconName="FavoriteStarFill"
+                                  style="font-size:10px; color: #ff9f43;"
+                                  class={`flex items-center justify-center pr-1`}
+                                />
+                                <div
+                                  class={`text-xs leading-none text-amber-500`}
+                                >
+                                  {value.rating_avg.toFixed(2) || "-"}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="flex self-stretch items-start justify-start">
+                          <div
+                            class={`text-sm font-medium leading-tight text-gray-600`}
+                            style={`overflow: hidden;
+    line-height: 1.5em;
+max-height: 3em;
+display: -webkit-box;
+-webkit-box-orient: vertical;
+-webkit-line-clamp: 2;`}
+                          >
+                            {value.book_description || "-"}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div class="flex self-stretch space-x-2 items-center justify-start">
-                    <div class="flex items-start justify-start">
-                      <div class="flex items-center justify-center rounded-full">
-                        <div class="text-xs font-medium leading-none text-center text-gray-500">
-                          Romance
-                        </div>
+                );
+              })}
+            <div
+              class={`flex self-stretch flex-col items-center justify-center p-8`}
+              style={`padding: 10px 30px 40px 30px`}
+            >
+              {meta.newReleaseBook.length > meta.new_releases_length && (
+                <m-button
+                  preloader={true}
+                  loading={meta.showMoreNewReleases}
+                  onClick={() => {
+                    meta.showMore("NewReleases");
+                  }}
+                  class={`flex items-center justify-center p-1 bg-gray-400 rounded-md`}
+                  style={`text-transform: capitalize;
+  padding: 8px;
+  padding-right: 12px!important;
+    color: white;
+    background: #969696d6;
+    font-weight: bold;
+    font-size: 18px;
+    transition: 0.6s ease;
+    border-radius: 6px;
+    user-select: none;`}
+                >
+                  <div
+                    class={`text-xs font-medium leading-none text-center text-white`}
+                  >
+                    Show More
+                  </div>
+                </m-button>
+              )}
+            </div>
+          </div>
+        )}
+        {meta.loading && (
+          <div
+            class={`flex self-stretch flex-col space-y-4 items-start justify-start`}
+            style={`margin-bottom:8px`}
+          >
+            <div
+              class={`flex self-stretch space-x-4 items-start justify-start pr-2 bg-white shadow shadow-inner rounded`}
+            >
+              <div class="flex items-start justify-start">
+                <div
+                  class={`flex flex-col items-start justify-start shadow rounded`}
+                  style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;"
+                >
+                  <loading-box />
+                </div>
+              </div>
+              <div class="flex flex-1 self-stretch flex-col items-start justify-center">
+                <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
+                  <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
+                    <div class="flex self-stretch items-start justify-start">
+                      <loading-box style="width: 228.84px; min-width: 228.84px; max-width: 228.84px; height: 24px; min-height: 24px; max-height: 24px;" />
+                    </div>
+                    <div class="flex self-stretch space-x-2 items-center justify-start">
+                      <div
+                        class="flex items-start justify-start"
+                        style="width: 49px; min-width: 49px; max-width: 49px; height: 18px; min-height: 18px; max-height: 18px;"
+                      >
+                        <loading-box />
+                      </div>
+                      <div
+                        class="flex items-center justify-center"
+                        style="width: 37px; min-width: 37px; max-width: 37px; height: 18px; min-height: 18px; max-height: 18px;"
+                      >
+                        <loading-box />
                       </div>
                     </div>
-                    <div class="flex items-center justify-center">
-                      <div class="flex items-center justify-center pr-0.5">
-                        <ficon
-                          aria-label="FavoriteStarFill"
-                          iconName="FavoriteStarFill"
-                          style="font-size:10px; color: #ff9f43;"
-                          class={`flex items-center justify-center pr-1`}
-                        />
-                        <div class="text-xs leading-none text-amber-500">
-                          4.9
-                        </div>
-                      </div>
-                    </div>
+                  </div>
+                  <div
+                    class="flex self-stretch items-start justify-start"
+                    style="width: 228.84px; min-width: 228.84px; max-width: 228.84px; height: 84px; min-height: 84px; max-height: 84px;"
+                  >
+                    <loading-box />
                   </div>
                 </div>
-                <div class="flex self-stretch items-start justify-start">
-                  <div class="text-sm font-medium leading-tight text-gray-600">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    In...
+              </div>
+            </div>
+            <div
+              class={`flex self-stretch space-x-4 items-start justify-start pr-2 bg-white shadow shadow-inner rounded`}
+            >
+              <div class="flex items-start justify-start">
+                <div
+                  class={`flex flex-col items-start justify-start shadow rounded`}
+                  style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;"
+                >
+                  <loading-box />
+                </div>
+              </div>
+              <div class="flex flex-1 self-stretch flex-col items-start justify-center">
+                <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
+                  <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
+                    <div class="flex self-stretch items-start justify-start">
+                      <loading-box style="width: 228.84px; min-width: 228.84px; max-width: 228.84px; height: 24px; min-height: 24px; max-height: 24px;" />
+                    </div>
+                    <div class="flex self-stretch space-x-2 items-center justify-start">
+                      <div
+                        class="flex items-start justify-start"
+                        style="width: 49px; min-width: 49px; max-width: 49px; height: 18px; min-height: 18px; max-height: 18px;"
+                      >
+                        <loading-box />
+                      </div>
+                      <div
+                        class="flex items-center justify-center"
+                        style="width: 37px; min-width: 37px; max-width: 37px; height: 18px; min-height: 18px; max-height: 18px;"
+                      >
+                        <loading-box />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="flex self-stretch items-start justify-start"
+                    style="width: 228.84px; min-width: 228.84px; max-width: 228.84px; height: 84px; min-height: 84px; max-height: 84px;"
+                  >
+                    <loading-box />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class={`flex self-stretch space-x-4 items-start justify-start pr-2 bg-white shadow shadow-inner rounded`}
+            >
+              <div class="flex items-start justify-start">
+                <div
+                  class={`flex flex-col items-start justify-start shadow rounded`}
+                  style="width: 110.16px; min-width: 110.16px; max-width: 110.16px; height: 157.61px; min-height: 157.61px; max-height: 157.61px;"
+                >
+                  <loading-box />
+                </div>
+              </div>
+              <div class="flex flex-1 self-stretch flex-col items-start justify-center">
+                <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
+                  <div class="flex self-stretch flex-col space-y-2 items-start justify-start">
+                    <div class="flex self-stretch items-start justify-start">
+                      <loading-box style="width: 228.84px; min-width: 228.84px; max-width: 228.84px; height: 24px; min-height: 24px; max-height: 24px;" />
+                    </div>
+                    <div class="flex self-stretch space-x-2 items-center justify-start">
+                      <div
+                        class="flex items-start justify-start"
+                        style="width: 49px; min-width: 49px; max-width: 49px; height: 18px; min-height: 18px; max-height: 18px;"
+                      >
+                        <loading-box />
+                      </div>
+                      <div
+                        class="flex items-center justify-center"
+                        style="width: 37px; min-width: 37px; max-width: 37px; height: 18px; min-height: 18px; max-height: 18px;"
+                      >
+                        <loading-box />
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="flex self-stretch items-start justify-start"
+                    style="width: 228.84px; min-width: 228.84px; max-width: 228.84px; height: 84px; min-height: 84px; max-height: 84px;"
+                  >
+                    <loading-box />
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   </div>

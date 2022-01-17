@@ -55,11 +55,7 @@ Thumbs.db
 app/**/build
 pkgs/**/build
 
-uploads/book_cover
-uploads/category_icon
-uploads/genre_icon
-uploads/user_icon
-uploads/img
+uploads
 
 sessions.db-lock
 sessions.db
