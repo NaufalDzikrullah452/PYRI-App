@@ -5,6 +5,25 @@
       rating_score: [],
       views_count: [],
       books: [],
+      books_length: 0,
+      showMoreBooks: false,
+
+      async showMore(key) {
+        if (key === "Books") {
+          runInAction(() => {
+            this.showMoreBooks = true;
+          });
+          setTimeout(() => {
+            runInAction(() => {
+              this.books_length =
+                this.books.length > this.books_length + 5
+                  ? this.books_length + 5
+                  : this.books.length;
+              this.showMoreBooks = false;
+            });
+          }, 1000);
+        }
+      },
     }}
     run={async () => {
       let books;
@@ -46,15 +65,15 @@
       runInAction(() => {
         meta.category_name = category.category_name;
         meta.books = books;
+        meta.books_length = books.length > 5 ? 5 : books.length;
         meta.views_count = viewsCount;
         console.log(meta.views_count);
         meta.rating_score = ratingScore;
         console.log(meta.rating_score);
-      });
-      console.log(meta.books);
+      }); // console.log(meta.books);
     }}
   />
-  <div class="flex self-stretch flex-col items-start justify-start bg-white">
+  <div class="flex flex-col items-start justify-start bg-white">
     <div class="flex flex-1 self-stretch flex-col space-y-5 items-start justify-start relative overflow-y-auto">
       <div
         class={`flex self-stretch flex-col items-start justify-center px-6 pt-9 pb-4 bg-white shadow`}
@@ -81,7 +100,7 @@
       </div>
       <div class="flex self-stretch flex-col items-start justify-start px-6 relative overflow-y-auto">
         <div class="flex self-stretch flex-col space-y-4 items-start justify-start">
-          {meta.books.map((numList, i) => {
+          {meta.books.slice(0, meta.books_length).map((numList, i) => {
             return (
               <div
                 class={`flex self-stretch space-x-4 items-start justify-start bg-white shadow shadow-inner rounded my-2`}
@@ -187,6 +206,33 @@
               </div>
             </div>
           )}
+          <div class="flex self-stretch flex-col items-center justify-center p-2.5">
+            {meta.books.length > meta.books_length && (
+              <m-button
+                preloader={true}
+                loading={meta.showMoreBooks}
+                onClick={() => {
+                  meta.showMore("Books");
+                }}
+                class={`flex items-center justify-center p-1 bg-amber-500 bg-opacity-25 rounded-md color-orange`}
+                style={`text-transform: capitalize;
+  padding: 16px 16px 16px 12px;
+    color: #FF8F00;
+    background-color: #FF8F0040;
+    font-weight: bold;
+    font-size: 18px;
+    transition: 0.6s ease;
+    border-radius: 6px;
+    user-select: none;`}
+              >
+                <div
+                  class={`text-xs font-medium leading-none text-center text-amber-500`}
+                >
+                  Load More
+                </div>
+              </m-button>
+            )}
+          </div>
         </div>
       </div>
     </div>

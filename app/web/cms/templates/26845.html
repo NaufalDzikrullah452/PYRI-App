@@ -16,6 +16,7 @@
       page_id: 1,
       page_length: 0,
       zoomValue: 0,
+      opacityFAB: true,
       hide_bar: false,
       loading_page: false,
       isBookmark: false,
@@ -282,6 +283,10 @@
       },
 
       async zoom(id, value) {
+        if (this.loading_page) {
+          return;
+        }
+
         var outerDiv = document.getElementById("img-wrapper-" + id);
         var imgEle = document.getElementById(id);
         var scale = "scale(" + value + ");";
@@ -479,9 +484,7 @@
       }
     }}
   />
-  <div
-    class={`flex self-stretch items-start justify-start bg-white w-full h-full`}
-  >
+  <div class={`flex items-start justify-start bg-white w-full h-full`}>
     <div
       class={`flex flex-1 self-stretch items-start justify-start w-full`}
       style={meta.darkMode ? "background-color: #3d3d3d" : ""}
@@ -622,7 +625,7 @@
           id={`fab-button`}
           style={`transform: translateY(${
             (screen.height * -15) / 100
-          }px); transition: 0.2s`}
+          }px); transition: 0.2s;`}
         >
           <m-icon ios="f7:ellipsis" aurora="f7:ellipsis" md="material:add" />
           <m-icon ios="f7:xmark" aurora="f7:xmark" md="material:close" />
@@ -632,6 +635,7 @@
           >
             <m-fab-button
               tooltip={"Zoom In"}
+              class={`flex flex-1 self-stretch flex-col items-start justify-start bg-white`}
               onClick={() => {
                 if (meta.zoomValue < 25) {
                   runInAction(() => {
@@ -641,7 +645,6 @@
                   meta.zoom("pages-" + meta.page_id, zoomlevel);
                 }
               }}
-              class={`flex flex-1 self-stretch flex-col items-start justify-start bg-white`}
             >
               <div class="flex flex-1 self-stretch flex-col items-center justify-center p-2.5">
                 {"+"}
@@ -649,6 +652,7 @@
             </m-fab-button>
             <m-fab-button
               tooltip={"Zoom Out"}
+              class={`flex flex-1 self-stretch flex-col items-start justify-start bg-white`}
               onClick={() => {
                 if (meta.zoomValue > 0) {
                   runInAction(() => {
@@ -658,7 +662,6 @@
                   meta.zoom("pages-" + meta.page_id, zoomlevel);
                 }
               }}
-              class={`flex flex-1 self-stretch flex-col items-start justify-start bg-white`}
             >
               <div class="flex flex-1 self-stretch flex-col items-center justify-center p-2.5">
                 {"-"}

@@ -28,8 +28,8 @@
           setTimeout(() => {
             runInAction(() => {
               this.recommend_length =
-                this.recommendBook.length > this.recommend_length + 4
-                  ? this.recommend_length + 4
+                this.recommendBook.length > this.recommend_length + 5
+                  ? this.recommend_length + 5
                   : this.newReleaseBook.length;
               this.showMoreRecommend = false;
             });
@@ -489,8 +489,8 @@
                 runInAction(() => {
                   this.recommendBook = recommendBook_temp;
                   this.recommend_length =
-                    this.recommendBook.length > 4
-                      ? 4
+                    this.recommendBook.length > 5
+                      ? 5
                       : this.recommendBook.length;
                 });
                 setTimeout(() => {
@@ -785,12 +785,11 @@ display: -webkit-box;
                   onClick={() => {
                     meta.showMore("Recommend");
                   }}
-                  class={`flex items-center justify-center p-1 bg-gray-400 rounded-md`}
+                  class={`flex items-center justify-center p-1 bg-amber-500 bg-opacity-25 rounded-md color-orange`}
                   style={`text-transform: capitalize;
-  padding: 8px;
-  padding-right: 12px!important;
-    color: white;
-    background: #969696d6;
+  padding: 16px 16px 16px 12px;
+    color: #FF8F00;
+    background-color: #FF8F0040;
     font-weight: bold;
     font-size: 18px;
     transition: 0.6s ease;
@@ -798,9 +797,9 @@ display: -webkit-box;
     user-select: none;`}
                 >
                   <div
-                    class={`text-xs font-medium leading-none text-center text-white`}
+                    class={`text-xs font-medium leading-none text-center text-amber-500`}
                   >
-                    Show More
+                    Load More
                   </div>
                 </m-button>
               )}

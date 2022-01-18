@@ -15,8 +15,8 @@
           setTimeout(() => {
             runInAction(() => {
               this.new_releases_length =
-                this.newReleaseBook.length > this.new_releases_length + 4
-                  ? this.new_releases_length + 4
+                this.newReleaseBook.length > this.new_releases_length + 5
+                  ? this.new_releases_length + 5
                   : this.newReleaseBook.length;
               this.showMoreNewReleases = false;
             });
@@ -68,7 +68,7 @@
         runInAction(() => {
           this.user = window.user.user || [];
           this.newReleaseBook = dataNew;
-          this.new_releases_length = dataNew.length > 4 ? 4 : dataNew.length;
+          this.new_releases_length = dataNew.length > 5 ? 5 : dataNew.length;
         });
       },
     }}
@@ -200,12 +200,11 @@ display: -webkit-box;
                   onClick={() => {
                     meta.showMore("NewReleases");
                   }}
-                  class={`flex items-center justify-center p-1 bg-gray-400 rounded-md`}
+                  class={`flex items-center justify-center p-1 bg-amber-500 bg-opacity-25 rounded-md color-orange`}
                   style={`text-transform: capitalize;
-  padding: 8px;
-  padding-right: 12px!important;
-    color: white;
-    background: #969696d6;
+  padding: 16px 16px 16px 12px;
+    color: #FF8F00;
+    background-color: #FF8F0040;
     font-weight: bold;
     font-size: 18px;
     transition: 0.6s ease;
@@ -213,9 +212,9 @@ display: -webkit-box;
     user-select: none;`}
                 >
                   <div
-                    class={`text-xs font-medium leading-none text-center text-white`}
+                    class={`text-xs font-medium leading-none text-center text-amber-500`}
                   >
-                    Show More
+                    Load More
                   </div>
                 </m-button>
               )}
