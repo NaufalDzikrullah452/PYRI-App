@@ -34,6 +34,7 @@
       book_notes: "",
       chapter_count: "",
       page_count: "",
+      book_date_published: "",
       book_is_released: false,
       publishTime: true,
       searching: "",
@@ -354,11 +355,17 @@
       },
 
       async setPublishBook(value) {
+        let data = {
+          book_id: parseInt(params.book_id),
+          book_is_released: value,
+        };
+
+        if (value) {
+          data["book_date_published"] = new Date();
+        }
+
         await api("/api/books", {
-          book: {
-            book_id: parseInt(params.book_id),
-            book_is_released: value,
-          },
+          book: { ...data },
           e: "Update",
         }).then((res) => {
           if (res.res === "Failure") {
@@ -557,6 +564,7 @@
           meta.chapter_count = buku.chapter.length;
           meta.page_count = buku.page.length;
           meta.book_is_released = buku.book_is_released;
+          meta.book_date_published = buku.book_date_published;
           console.log(meta.chapter);
         });
       }

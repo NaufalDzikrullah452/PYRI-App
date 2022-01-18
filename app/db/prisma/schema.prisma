@@ -97,6 +97,7 @@ model books {
   book_genre_two_id                           Int?
   book_genre_three_id                         Int?
   book_isbn                                   String?     @db.VarChar(50)
+  book_date_published                         DateTime?   @db.Timestamp(6)
   authors_authorsTobooks_book_author_one_id   authors?    @relation("authorsTobooks_book_author_one_id", fields: [book_author_one_id], references: [author_id])
   authors_authorsTobooks_book_author_three_id authors?    @relation("authorsTobooks_book_author_three_id", fields: [book_author_three_id], references: [author_id])
   authors_authorsTobooks_book_author_two_id   authors?    @relation("authorsTobooks_book_author_two_id", fields: [book_author_two_id], references: [author_id])

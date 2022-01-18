@@ -484,14 +484,14 @@
                     temp_id.push(v.book_id);
                   }
                 });
-                recommendBook_temp = temp_data; // console.log(this.recommendBook);
+                recommendBook_temp = temp_data; // console.log(recommendBook);
 
                 runInAction(() => {
                   this.recommendBook = recommendBook_temp;
                   this.recommend_length =
-                    this.recommendBook.length > 5
+                    recommendBook_temp.length > 5
                       ? 5
-                      : this.recommendBook.length;
+                      : recommendBook_temp.length;
                 });
                 setTimeout(() => {
                   runInAction(() => {
