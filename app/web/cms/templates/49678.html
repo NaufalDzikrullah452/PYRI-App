@@ -133,8 +133,8 @@
             );
             let regis_month = this.freeBook.freeBook_date_registered;
             let compare_regis =
-              compareAsc(new Date(), new Date(regis_month1)) !== -1; // console.log(new Date() + " <br> "+ new Date(regis_month1))
-            // console.log(compareAsc(new Date(), new Date(regis_month1)))
+              dateCompare(new Date(), new Date(regis_month1)) !== -1; // console.log(new Date() + " <br> "+ new Date(regis_month1))
+            // console.log(dateCompare(new Date(), new Date(regis_month1)))
 
             if (compare_regis) {
               // window.mobileApp.app.sheet.open(".sheet-free-books")
@@ -2169,7 +2169,7 @@ display: -webkit-box;
           </div>
         </m-tab>
         <m-tab
-          class={`flex flex-1 self-stretch flex-col items-start justify-start`}
+          class={`flex flex-1 self-stretch flex-col items-start justify-start bg-white`}
           id="pyriList"
         >
           <div class="flex self-stretch flex-col items-start justify-start">
@@ -2325,7 +2325,7 @@ border-radius: 8%`}
                               {value.books.book_title || "Book title"}
                             </div>
                             {meta.freeBook !== null &&
-                              compareAsc(
+                              dateCompare(
                                 new Date(),
                                 new Date(
                                   dateAdd(

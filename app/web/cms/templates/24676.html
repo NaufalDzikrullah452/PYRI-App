@@ -69,7 +69,7 @@
         }).then((res) => {
           if (res.users.length !== 0) {
             res.users.map((value, i) => {
-              if (compareAsc(new Date(), new Date(value.expired_date)) !== 1) {
+              if (dateCompare(new Date(), new Date(value.expired_date)) !== 1) {
                 premium_counter += 1;
               }
             });

@@ -58,8 +58,8 @@
             );
             let regis_month = this.freeBook.freeBook_date_registered;
             let compare_regis =
-              compareAsc(new Date(), new Date(regis_month1)) !== -1; // console.log(new Date() + " <br> "+ new Date(regis_month1))
-            // console.log(compareAsc(new Date(), new Date(regis_month1)))
+              dateCompare(new Date(), new Date(regis_month1)) !== -1; // console.log(new Date() + " <br> "+ new Date(regis_month1))
+            // console.log(dateCompare(new Date(), new Date(regis_month1)))
 
             if (compare_regis) {
               // window.mobileApp.app.sheet.open(".sheet-free-books")
