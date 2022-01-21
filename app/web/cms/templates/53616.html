@@ -228,12 +228,23 @@
       }
 
       meta.getInterests();
-      meta.getFavBooks(); // TODO: Get actual this month date formatted
+      let d = new Date(Date.now());
+      let month_num = d.getMonth() + 1;
+      let year = d.getFullYear().toString();
+      let month = "";
 
-      meta.genre_favorite_date = "2022-01";
-      meta.getFavGenres(); // TODO: Get actual this month date formatted
+      if (month_num / 10 >= 1) {
+        month = month_num.toString();
+      } else {
+        month = "0" + month_num.toString();
+      }
 
-      meta.author_favorite_date = "2022-01";
+      let currentmonth = year + "-" + month;
+      meta.book_favorite_date = currentmonth;
+      meta.getFavBooks();
+      meta.genre_favorite_date = currentmonth;
+      meta.getFavGenres();
+      meta.author_favorite_date = currentmonth;
       meta.getFavAuthors();
     }}
   />
