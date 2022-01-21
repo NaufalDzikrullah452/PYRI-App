@@ -1,15 +1,14 @@
 <>
   <effect meta={{}} run={async () => {}} />
-  <div class="flex self-stretch flex-col items-start justify-start bg-white">
-    <div class="flex self-stretch flex-col items-start justify-start">
+  <div class={`flex self-stretch flex-col items-start justify-start bg-white`}>
+    <div
+      class={`flex self-stretch flex-col items-start justify-start self-stretch w-full`}
+    >
       <div
-        class={`flex self-stretch space-x-6 items-start justify-center px-40 py-2 bg-trueGray-200 bg-opacity-30 shadow fixed w-full`}
+        class={`flex self-stretch space-x-6 items-center justify-center px-40 py-2 bg-trueGray-200 bg-opacity-30 shadow fixed w-full`}
         style="backdrop-filter: blur(50px);"
       >
-        <div
-          class="flex flex-1 flex-col items-start justify-start"
-          style="width: 652px; min-width: 652px; max-width: 652px;"
-        >
+        <div class="flex flex-1 flex-col items-start justify-start">
           <img
             class={`flex items-start justify-start`}
             src="/fimgs/5460_16336.x1.svg"
@@ -17,18 +16,28 @@
           />
         </div>
         <div class="flex space-x-6 items-start justify-start">
-          <div class="flex items-start justify-start p-2.5">
-            <div class="text-lg font-bold leading-relaxed text-amber-500">
+          <div class={`flex items-start justify-start p-2.5`} href="#home">
+            <a
+              class={`text-lg font-bold leading-relaxed text-amber-500`}
+              href="#home"
+            >
               Home
-            </div>
+            </a>
           </div>
           <div class="flex items-start justify-start p-2.5">
-            <div class="text-lg leading-relaxed">Features</div>
+            <a class={`text-lg leading-relaxed`} href="#feature">
+              Features
+            </a>
           </div>
           <div class="flex items-start justify-start p-2.5">
-            <div class="text-lg leading-relaxed">Premium</div>
+            <a class={`text-lg leading-relaxed`} href="#premium">
+              Premium
+            </a>
           </div>
-          <button class="flex items-center justify-center px-4 py-2 bg-amber-500 shadow rounded-lg">
+          <button
+            class="flex items-center justify-center px-4 py-2 bg-amber-500 shadow rounded-lg"
+            style="width: 121px; min-width: 121px; max-width: 121px;"
+          >
             <div class="text-lg font-bold leading-relaxed text-white">
               Contact Us
             </div>
@@ -36,7 +45,7 @@
         </div>
       </div>
       <div
-        class={`flex self-stretch flex-col items-center justify-center`}
+        class={`flex self-stretch flex-col items-center justify-center w-full`}
         style={`height: 430.01px; min-height: 430.01px; max-height: 430.01px;background-image: url('/fimgs/bg-aa10d69746143188317c9268fffd9545d0b60190');background-size:100% 100%;background-repeat:no-repeat; margin-top:72px !important;`}
       >
         <div
@@ -78,8 +87,9 @@
         </div>
       </div>
       <div
-        class="flex self-stretch flex-col items-center justify-center px-40 py-12 bg-orange-50"
-        style="height: 499px; min-height: 499px; max-height: 499px;"
+        class={`flex self-stretch flex-col items-center justify-center px-40 py-12 bg-orange-50 w-full`}
+        id="feature"
+        style={`height: 499px; min-height: 499px; max-height: 499px;`}
       >
         <div class="flex self-stretch flex-col space-y-9 items-center justify-center">
           <div class="flex flex-col items-center justify-center">
@@ -155,11 +165,11 @@
         </div>
       </div>
       <div
-        class="flex self-stretch flex-col space-y-9 items-center justify-center px-40 py-12"
-        style="height: 586px; min-height: 586px; max-height: 586px;"
+        class={`flex self-stretch flex-col space-y-9 items-center justify-center px-40 py-12 w-full`}
+        style={`height: 586px; min-height: 586px; max-height: 586px;`}
       >
         <div class="flex self-stretch flex-col space-y-2 items-center justify-start">
-          <div class={`flex self-stretch items-center justify-center mt-16`}>
+          <div class={`flex self-stretch items-center justify-center`}>
             <div class="text-3xl font-bold leading-10 text-center">
               Read as much as you want without limitation
             </div>
@@ -172,10 +182,10 @@
         </div>
         <div class="flex space-x-9 items-start justify-start">
           <div
-            class="flex flex-1 flex-col space-y-4 items-center justify-start p-6 bg-white shadow border rounded-3xl border-gray-300"
-            style="height: 374px; min-height: 374px; max-height: 374px;"
+            class={`flex flex-1 flex-col space-y-4 items-center justify-start p-6 bg-white shadow border rounded-3xl border-gray-300 cursor-pointer`}
+            style={`height: 374px; min-height: 374px; max-height: 374px; :hover {background-color:rgb(243, 156, 18, 0.05); border-color:orange; box-shadow: 8px 5px 5px grey; transition: 0.5s;}`}
           >
-            <div class="flex flex-col space-y-2 items-start justify-start">
+            <div class="flex flex-col space-y-2 items-center justify-center">
               <div />
               <div class="flex items-center justify-center">
                 <div class="text-2xl font-bold leading-9 text-center text-amber-500">
@@ -183,7 +193,7 @@
                 </div>
               </div>
             </div>
-            <div class="flex flex-col space-y-2 items-start justify-start">
+            <div class="flex flex-col space-y-2 items-center justify-center">
               <div class="text-xl font-medium leading-loose text-center">
                 1 Month
               </div>
@@ -203,18 +213,24 @@
               </div>
             </div>
             <div class="flex flex-1 flex-col items-center justify-end p-2.5">
-              <div class="flex items-center justify-center px-4 py-2 bg-white shadow border rounded-full border-amber-500">
-                <div class="text-lg font-bold leading-snug text-amber-500">
+              <button
+                class={`flex items-center justify-center px-4 py-2 bg-white shadow border rounded-full border-amber-500`}
+                style=":active {background-color:#f0932b;}"
+              >
+                <div
+                  class={`text-lg font-bold leading-snug text-amber-500`}
+                  style=":active {color: #ffffff !important; }"
+                >
                   Try Now
                 </div>
-              </div>
+              </button>
             </div>
           </div>
           <div
-            class="flex flex-1 flex-col space-y-4 items-center justify-start p-6 bg-orange-50 shadow border rounded-3xl border-amber-500"
-            style="height: 374px; min-height: 374px; max-height: 374px;"
+            class={`flex flex-1 flex-col space-y-4 items-center justify-start p-6 bg-white shadow border rounded-3xl border-gray-300 cursor-pointer`}
+            style={`height: 374px; min-height: 374px; max-height: 374px; :hover {background-color:rgb(243, 156, 18, 0.05); border-color:orange; box-shadow: 8px 5px 5px grey; transition: 0.5s;}`}
           >
-            <div class="flex flex-col space-y-2 items-start justify-start">
+            <div class="flex flex-col space-y-2 items-center justify-center">
               <div class="flex self-stretch flex-col items-center justify-center">
                 <div
                   class="flex items-center justify-center px-2.5 py-0.5 bg-gradient-to-r from-red-600 via-amber-500 to-orange-600 shadow rounded"
@@ -231,7 +247,7 @@
                 </div>
               </div>
             </div>
-            <div class="flex flex-col space-y-2 items-center justify-start">
+            <div class="flex flex-col space-y-2 items-center justify-center">
               <div class="flex flex-col items-center justify-center">
                 <div class="text-xl font-medium leading-loose text-center">
                   1 Year
@@ -270,18 +286,24 @@
               </div>
             </div>
             <div class="flex flex-1 flex-col items-center justify-end p-2.5">
-              <div class="flex items-center justify-center px-4 py-2 bg-white shadow border rounded-full border-amber-500">
-                <div class="text-lg font-bold leading-snug text-amber-500">
+              <button
+                class={`flex items-center justify-center px-4 py-2 bg-white shadow border rounded-full border-amber-500`}
+                style=":active {background-color:#f0932b;}"
+              >
+                <div
+                  class={`text-lg font-bold leading-snug text-amber-500`}
+                  style=":active {color: #ffffff !important;}"
+                >
                   Try Now
                 </div>
-              </div>
+              </button>
             </div>
           </div>
           <div
-            class="flex flex-1 flex-col space-y-4 items-center justify-start p-6 bg-white shadow border rounded-3xl border-gray-300"
-            style="height: 374px; min-height: 374px; max-height: 374px;"
+            class={`flex flex-1 flex-col space-y-4 items-center justify-start p-6 bg-white shadow border rounded-3xl border-gray-300 cursor-pointer`}
+            style={`height: 374px; min-height: 374px; max-height: 374px; :hover {background-color:rgb(243, 156, 18, 0.05); border-color:orange; box-shadow: 8px 5px 5px grey; transition: 0.5s;}`}
           >
-            <div class="flex flex-col space-y-2 items-start justify-start">
+            <div class="flex flex-col space-y-2 items-center justify-center">
               <div />
               <div class="flex items-center justify-center">
                 <div class="text-2xl font-bold leading-9 text-center text-amber-500">
@@ -289,7 +311,7 @@
                 </div>
               </div>
             </div>
-            <div class="flex flex-col space-y-2 items-center justify-start">
+            <div class="flex flex-col space-y-2 items-center justify-center">
               <div class="flex flex-col items-center justify-center">
                 <div class="text-xl font-medium leading-loose text-right">
                   6 Months
@@ -328,18 +350,24 @@
               </div>
             </div>
             <div class="flex flex-1 flex-col items-center justify-end p-2.5">
-              <div class="flex items-center justify-center px-4 py-2 bg-white shadow border rounded-full border-amber-500">
-                <div class="text-lg font-bold leading-snug text-amber-500">
+              <button
+                class={`flex items-center justify-center px-4 py-2 bg-white shadow border rounded-full border-amber-500`}
+                style=":active {background-color:#f0932b;}"
+              >
+                <div
+                  class={`text-lg font-bold leading-snug text-amber-500`}
+                  style=":active {color: #ffffff !important;}"
+                >
                   Try Now
                 </div>
-              </div>
+              </button>
             </div>
           </div>
         </div>
       </div>
       <div
-        class="flex self-stretch flex-col items-center justify-center px-40 py-9 bg-gray-100"
-        style="height: 132px; min-height: 132px; max-height: 132px;"
+        class={`flex self-stretch flex-col items-center justify-center px-40 py-9 bg-gray-100 w-full`}
+        style={`height: 132px; min-height: 132px; max-height: 132px;`}
       >
         <div class="flex self-stretch space-x-16 items-center justify-center">
           <div class="flex items-start justify-start" />
@@ -357,8 +385,8 @@
         </div>
       </div>
       <div
-        class="flex self-stretch flex-col items-center justify-center px-40 py-9"
-        style="height: 256px; min-height: 256px; max-height: 256px;"
+        class={`flex self-stretch flex-col items-center justify-center px-40 py-9 w-full`}
+        style={`height: 256px; min-height: 256px; max-height: 256px;`}
       >
         <div
           class={`flex items-center justify-center rounded-2xl`}
@@ -366,7 +394,7 @@
         >
           <div
             class={`flex flex-1 self-stretch flex-col space-y-6 items-center justify-center px-2.5 py-9 bg-white bg-opacity-30 py-12`}
-            style={`width: 1120px; min-width: 1120px; max-width: 1120px; border-radius: 15px; backdrop-filter: blur(40px);`}
+            style={`border-radius: 15px; backdrop-filter: blur(40px);`}
           >
             <div class="flex self-stretch items-start justify-center">
               <div class="text-3xl font-bold leading-10 text-center">
@@ -382,13 +410,13 @@
         </div>
       </div>
       <div
-        class="flex self-stretch flex-col items-center justify-center px-28 py-9 bg-gray-900"
-        style="height: 350px; min-height: 350px; max-height: 350px;"
+        class={`flex self-stretch flex-col items-center justify-center px-28 py-9 bg-gray-900 w-full`}
+        style={`height: 350px; min-height: 350px; max-height: 350px;`}
       >
         <div
           class={`flex self-stretch flex-col space-y-6 items-center justify-center px-12`}
         >
-          <div class="flex space-x-9 items-center justify-center">
+          <div class="flex self-stretch space-x-9 items-center justify-center">
             <div class="flex flex-1 flex-col space-y-6 items-start justify-start">
               <img
                 src="/fimgs/5448_15618.x1.svg"
