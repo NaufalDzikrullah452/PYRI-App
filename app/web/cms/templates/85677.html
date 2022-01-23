@@ -1,9 +1,87 @@
 <>
-  <effect meta={{}} run={async () => {}} />
+  <effect
+    meta={{
+      selectCard1: false,
+      selectCard2: false,
+      selectCard3: false,
+      changeCard1: (select) => {},
+      changeCard2: (select) => {},
+      changeCard3: (select) => {},
+    }}
+    run={async () => {
+      meta.action = {
+        changeCard1: (select) => {
+          meta.selectCard1 = select;
+          let card = document.getElementById("card_plan1");
+
+          if (select == true) {
+            card.setAttribute(
+              "style",
+              "background-color:rgb(243, 156, 18, 0.05); border-color:orange; box-shadow: 8px 5px 5px grey; transition: 0.5s;"
+            );
+          } else {
+            card.setAttribute("style", "border-color:#dfe4ea;");
+          }
+        },
+        changeCard2: (select) => {
+          meta.selectCard2 = select;
+          let card = document.getElementById("card_plan2");
+
+          if (select == true) {
+            card.setAttribute(
+              "style",
+              "background-color:rgb(243, 156, 18, 0.05); border-color:orange; box-shadow: 8px 5px 5px grey; transition: 0.5s;"
+            );
+          } else {
+            card.setAttribute("style", "border-color:#dfe4ea;");
+          }
+        },
+        changeCard3: (select) => {
+          meta.selectCard3 = select;
+          let card = document.getElementById("card_plan3");
+
+          if (select == true) {
+            card.setAttribute(
+              "style",
+              "background-color:rgb(243, 156, 18, 0.05); border-color:orange; box-shadow: 8px 5px 5px grey; transition: 0.5s;"
+            );
+          } else {
+            card.setAttribute("style", "border-color:#dfe4ea;");
+          }
+        },
+      };
+    }}
+  />
   <div class={`flex items-start justify-start bg-white`}>
     <div
       class={`flex flex-1 self-stretch flex-col items-center justify-start bg-white w-full`}
     >
+      <m-panel
+        style={`box-shadow: -0.05px 0px 5px grey;`}
+        right={true}
+        swipeNoFollow={true}
+        swipe={true}
+        backdrop={true}
+        swipeThreshold={30}
+        class={`flex self-stretch flex-col space-y-1 items-start justify-start`}
+      >
+        <div
+          class={`flex self-stretch items-start justify-center p-2.5`}
+          style="margin-top:20px;"
+        >
+          <div class="text-xl font-bold leading-loose text-gray-700">Home</div>
+        </div>
+        <div class="flex self-stretch items-start justify-center p-2.5">
+          <div class="text-xl font-bold leading-loose text-gray-700">
+            Features
+          </div>
+        </div>
+        <div class="flex self-stretch items-start justify-center p-2.5">
+          <div class="text-xl font-bold leading-loose text-gray-700">
+            Premium
+          </div>
+        </div>
+      </m-panel>
       <div
         class={`flex self-stretch space-x-4 items-center justify-start px-6 py-3 bg-white bg-opacity-30 shadow fixed w-full`}
         style="backdrop-filter: blur(30px);"
@@ -23,16 +101,19 @@
             Contact Us
           </div>
         </button>
-        <div class="flex flex-col items-center justify-center">
+        <m-button
+          class={`flex flex-col items-center justify-center`}
+          panelOpen={"right"}
+        >
           <ficon
             class={`flex flex-col items-center justify-center`}
             aria-label="CollapseMenu"
             iconName="CollapseMenu"
             style="font-size:30px; color:black;"
           >
-            <div class="bg-pink-900 bg-opacity-50 border border-black" />
+            <div />
           </ficon>
-        </div>
+        </m-button>
       </div>
       <div
         class={`flex self-stretch items-center justify-start`}
@@ -146,11 +227,23 @@
           </div>
         </div>
         <div
-          class={`flex self-stretch space-x-4 items-start justify-center overflow-x-auto shrink-0`}
+          class={`flex self-stretch flex-col space-y-4 items-center justify-center p-2 overflow-x-auto shrink-0`}
         >
           <div
-            class="flex flex-col space-y-4 items-center justify-start px-1 py-6 bg-white shadow border rounded-2xl border-gray-300"
-            style="width: 217.33px; min-width: 217.33px; max-width: 217.33px; height: 340px; min-height: 340px; max-height: 340px;"
+            class={`flex flex-col space-y-4 items-center justify-start px-1 py-6 bg-white shadow border rounded-2xl border-gray-300`}
+            id="card_plan1"
+            onClick={() => {
+              if (meta.selectCard1 == false) {
+                meta.action.changeCard1(true);
+                meta.action.changeCard2(false);
+                meta.action.changeCard3(false);
+              } else {
+                meta.action.changeCard1(false);
+                meta.action.changeCard2(false);
+                meta.action.changeCard3(false);
+              }
+            }}
+            style={`width: 217.33px; min-width: 217.33px; max-width: 217.33px; height: 340px; min-height: 340px; max-height: 340px;`}
           >
             <div class="flex flex-col space-y-2 items-start justify-start">
               <div />
@@ -194,8 +287,20 @@
             </div>
           </div>
           <div
-            class="flex flex-col space-y-4 items-center justify-center px-1 py-6 bg-white shadow border rounded-2xl border-gray-300"
-            style="width: 217.33px; min-width: 217.33px; max-width: 217.33px; height: 340px; min-height: 340px; max-height: 340px;"
+            class={`flex flex-col space-y-4 items-center justify-center px-1 py-6 bg-white shadow border rounded-2xl border-gray-300`}
+            id="card_plan2"
+            onClick={() => {
+              if (meta.selectCard2 == false) {
+                meta.action.changeCard1(false);
+                meta.action.changeCard2(true);
+                meta.action.changeCard3(false);
+              } else {
+                meta.action.changeCard1(false);
+                meta.action.changeCard2(false);
+                meta.action.changeCard3(false);
+              }
+            }}
+            style={`width: 217.33px; min-width: 217.33px; max-width: 217.33px; height: 340px; min-height: 340px; max-height: 340px;`}
           >
             <div class="flex flex-col space-y-2 items-center justify-center">
               <div class="flex flex-col items-center justify-start">
@@ -267,8 +372,20 @@
             </div>
           </div>
           <div
-            class="flex flex-col space-y-4 items-center justify-start px-1 py-6 bg-white shadow border rounded-2xl border-gray-300"
-            style="width: 217.33px; min-width: 217.33px; max-width: 217.33px; height: 340px; min-height: 340px; max-height: 340px;"
+            class={`flex flex-col space-y-4 items-center justify-start px-1 py-6 bg-white shadow border rounded-2xl border-gray-300`}
+            id="card_plan3"
+            onClick={() => {
+              if (meta.selectCard3 == false) {
+                meta.action.changeCard1(false);
+                meta.action.changeCard2(false);
+                meta.action.changeCard3(true);
+              } else {
+                meta.action.changeCard1(false);
+                meta.action.changeCard2(false);
+                meta.action.changeCard3(false);
+              }
+            }}
+            style={`width: 217.33px; min-width: 217.33px; max-width: 217.33px; height: 340px; min-height: 340px; max-height: 340px;`}
           >
             <div class="flex flex-col space-y-2 items-start justify-start">
               <div />
