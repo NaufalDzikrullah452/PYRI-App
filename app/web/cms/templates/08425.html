@@ -198,7 +198,13 @@
 
       async readRecommend() {
         //reset
-        let recommendBook_temp = []; // based on the author book from user highest rating
+        let recommendBook_temp = [];
+        var birthday = new Date(window.user.user.user_birthday);
+        var ageDifMs = Date.now() - birthday.getTime();
+        var ageDate = new Date(ageDifMs); // miliseconds from epoch
+
+        var userAge = Math.abs(ageDate.getUTCFullYear() - 1970); // console.log(userAge);
+        // based on the author book from user highest rating
 
         api("/api/rating", {
           rating: {
@@ -271,7 +277,10 @@
                   return bNum - aNum;
                 });
 
-                if (data_recommendBook.length !== 0) {
+                if (
+                  data_recommendBook.length !== 0 &&
+                  data_recommendBook[0].book_age_restriction <= userAge
+                ) {
                   runInAction(() => {
                     data_recommendBook[0].recommend = "rating";
                     recommendBook_temp.push(data_recommendBook[0]);
@@ -312,7 +321,10 @@
                       );
                     });
 
-                    if (filter_popular_book.length !== 0) {
+                    if (
+                      filter_popular_book.length !== 0 &&
+                      filter_popular_book[0].book_age_restriction <= userAge
+                    ) {
                       runInAction(() => {
                         filter_popular_book[0].recommend = "history x interest";
                         recommendBook_temp.push(filter_popular_book[0]);
@@ -394,7 +406,10 @@
                     return bNum - aNum;
                   });
 
-                  if (data_recommendBook.length !== 0) {
+                  if (
+                    data_recommendBook.length !== 0 &&
+                    data_recommendBook[0].book_age_restriction <= userAge
+                  ) {
                     runInAction(() => {
                       data_recommendBook[0].recommend =
                         "history more than 3 pages";
@@ -470,9 +485,11 @@
                       : recommend_interest.length
                   )
                   .map((a, b) => {
-                    runInAction(() => {
-                      recommendBook_temp.push(a);
-                    });
+                    if (a.book_age_restriction <= userAge) {
+                      runInAction(() => {
+                        recommendBook_temp.push(a);
+                      });
+                    }
                   }); // distinct same book
 
                 let temp_id = [];
@@ -484,14 +501,14 @@
                     temp_id.push(v.book_id);
                   }
                 });
-                recommendBook_temp = temp_data; // console.log(recommendBook);
+                recommendBook_temp = temp_data; // console.log(this.recommendBook);
 
                 runInAction(() => {
                   this.recommendBook = recommendBook_temp;
                   this.recommend_length =
-                    recommendBook_temp.length > 5
+                    this.recommendBook.length > 5
                       ? 5
-                      : recommendBook_temp.length;
+                      : this.recommendBook.length;
                 });
                 setTimeout(() => {
                   runInAction(() => {
