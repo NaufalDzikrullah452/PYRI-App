@@ -290,7 +290,7 @@
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex items-start justify-start bg-white`}>
+    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
       <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
         <div
           class={`flex self-stretch flex-col space-y-10 items-center justify-start pt-4 pb-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -642,8 +642,8 @@
                 </div>
                 {meta.showProfile && (
                   <div
-                    class={`flex flex-col items-center justify-end px-4`}
-                    style={"margin-top: 30px; position: absolute;"}
+                    class={`flex flex-col items-center justify-end px-4 absolute`}
+                    style={"top:98px; z-index:1;"}
                   >
                     <div
                       class={`flex self-stretch flex-col space-y-1 items-center justify-start p-4 bg-white shadow rounded`}

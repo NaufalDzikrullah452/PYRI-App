@@ -15,11 +15,12 @@
     "install:signed": "adb install -r android/app/build/outputs/apk/release/app-release.apk"
   },
   "dependencies": {
+    "@capacitor-community/privacy-screen": "^2.1.0",
     "@capacitor/android": "^3.2.3",
     "@capacitor/app": "^1.0.2",
     "@capacitor/browser": "^1.0.2",
     "@capacitor/camera": "latest",
-    "@capacitor/core": "^3.3.2",
+    "@capacitor/core": "^3.4.0",
     "@capacitor/device": "^1.0.2",
     "@capacitor/geolocation": "^1.0.2",
     "@capacitor/local-notifications": "^1.0.5",
