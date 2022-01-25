@@ -15,6 +15,7 @@
     "install:signed": "adb install -r android/app/build/outputs/apk/release/app-release.apk"
   },
   "dependencies": {
+    "@capacitor-community/privacy-screen": "^2.1.0",
     "@capacitor/android": "^3.2.3",
     "@capacitor/app": "^1.0.2",
     "@capacitor/browser": "^1.0.2",
