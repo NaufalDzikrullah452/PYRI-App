@@ -48,7 +48,7 @@
             });
             window.mobileApp.app.sheet.close();
             var exp_date = dateFormat(
-              add(new Date(), {
+              dateAdd(new Date(), {
                 months: 1,
               }),
               "dd MMM yyyy"
@@ -199,7 +199,7 @@
               runInAction(() => {
                 this.free_book_amount = res.freeBook.freeBook_amount;
               });
-              let regis_month1 = add(
+              let regis_month1 = dateAdd(
                 new Date(this.freeBook.freeBook_date_registered),
                 {
                   months: 1,
@@ -294,7 +294,7 @@
                 runInAction(() => {
                   this.free_book_amount = res.freeBook.freeBook_amount;
                 });
-                let regis_month1 = add(
+                let regis_month1 = dateAdd(
                   new Date(this.freeBook.freeBook_date_registered),
                   {
                     months: 1,
@@ -797,7 +797,7 @@
                   ) {
                     navigate("/m/");
                   } else {
-                    back();
+                    window.back();
                   }
                 }}
               />
@@ -1130,6 +1130,10 @@
                                 <div class="flex items-start justify-start">
                                   <div
                                     class={`text-base font-bold leading-normal name`}
+                                    style={`overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 138px;`}
                                   >
                                     {window.user.role !== "guest" &&
                                     value.users.user_name ===

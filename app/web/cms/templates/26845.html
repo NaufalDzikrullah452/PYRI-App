@@ -320,6 +320,10 @@
     }}
     run={async () => {
       // read buku by book_id
+      if (!!window.capacitor.PrivacyScreen) {
+        window.capacitor.PrivacyScreen.enable();
+      }
+
       var page_chapter = [];
 
       if (window.user.role === "guest") {
@@ -495,9 +499,22 @@
       >
         <div
           class={`flex self-stretch flex-col items-start justify-start px-6 pt-9 pb-4 bg-white shadow`}
-          style={`${meta.hide_bar ? "transform: translateY(-100px);" : ""}
-    
-    transition: 0.5s;`}
+          style={`${
+            meta.hide_bar
+              ? `height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    `
+              : ` 
+    height: auto;
+    padding: auto;`
+          }
+width: 100%;
+position: absolute;
+z-index: 1;
+top: 0;
+overflow: hidden;
+    transition: 0.3s;`}
         >
           <div class="flex self-stretch items-center justify-start">
             <div class="flex flex-1 self-stretch items-center justify-start">
@@ -572,8 +589,12 @@
                 class={`flex flex-1 self-stretch space-x-2.5 items-center justify-center px-4
         ${meta.page_id === value.page_id ? "" : "hidden"}`}
                 id={"ch-" + meta.chapter_id + "-page-" + value.page_id}
-                style={`transition: padding 0.2s ease-in-out;
-        ${meta.hide_bar ? `padding: 0px;` : ""}`}
+                style={`transition: padding 0.3s ease-in-out;
+        ${
+          meta.hide_bar
+            ? `padding: 0px;`
+            : "padding-top: 88px;padding-bottom: 80px;"
+        }`}
               >
                 {!meta.loading_page && (
                   <div
@@ -671,8 +692,24 @@
         </m-fab>
         <div
           class={`flex self-stretch flex-col items-center justify-center p-6 bg-white shadow-inner`}
-          style={`${meta.hide_bar ? "transform: translateY(200px);" : ""}
-    transition: 0.5s;`}
+          style={`${
+            meta.hide_bar
+              ? ` 
+    height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    `
+              : ` 
+    height: auto;
+    padding: auto;`
+          }
+
+width: 100%;
+position: absolute;
+z-index: 1;
+bottom: 0;
+overflow: hidden;
+    transition: 0.3s;`}
         >
           <div class="flex self-stretch space-x-4 items-center justify-center">
             <div class="flex flex-1 self-stretch items-center justify-start">

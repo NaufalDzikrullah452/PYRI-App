@@ -82,7 +82,7 @@
             ? "Please reselect your birthdate! 12 Years old++."
             : this.user_level === "" || this.user_level === null
             ? "Please select role!"
-            : this.user_level && this.user_username == ""
+            : this.user_level && this.user_username === ""
             ? "Username cant be empty!"
             : this.user_password === "" || this.user_password === null
             ? "Password cant be empty!"
@@ -209,7 +209,7 @@
     }}
   />
   {window.user.roleAdmin === "admin" && (
-    <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
+    <div class={`w-full flex items-start justify-start bg-white`}>
       <div class={`w-full flex items-start justify-start`}>
         <div
           class={`flex self-stretch flex-col space-y-10 items-center justify-start pt-4 pb-9 bg-gray-900 fixed h-full overflow-y-auto`}

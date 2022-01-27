@@ -728,13 +728,46 @@
                               >
                                 <div
                                   class={`text-base font-medium leading-normal`}
+                                  id={"name-" + value.payment_id}
+                                  style={`overflow: hidden;
+  text-overflow: ellipsis;
+  width: 120px;
+  white-space: nowrap;
+  display: inline-block;`}
+                                  onMouseEnter={() => {
+                                    document.getElementById(
+                                      "name-" + value.payment_id
+                                    ).style = "overflow: visible; ";
+                                  }}
+                                  onMouseLeave={() => {
+                                    document.getElementById(
+                                      "name-" + value.payment_id
+                                    ).style = "overflow: hidden;  ";
+                                  }}
                                 >
-                                  {value.users.user_name || "-"}
+                                  {value.users.user_name || "Name"}
                                 </div>
                                 <div
                                   class={`text-sm leading-tight text-gray-600`}
+                                  id={"email-" + value.payment_id}
+                                  style={`overflow: hidden;
+  text-overflow: ellipsis;
+  width: 120px;
+  display: inline-block;`}
+                                  onMouseEnter={() => {
+                                    document.getElementById(
+                                      "email-" + value.payment_id
+                                    ).style =
+                                      "overflow: visible; word-break: break-word; width:100%;";
+                                  }}
+                                  onMouseLeave={() => {
+                                    document.getElementById(
+                                      "email-" + value.payment_id
+                                    ).style =
+                                      "overflow: hidden; white-space: nowrap;";
+                                  }}
                                 >
-                                  {value.users.user_email || "-"}
+                                  {value.users.user_email || "email"}
                                 </div>
                               </td>
                             </td>

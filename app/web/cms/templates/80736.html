@@ -118,7 +118,16 @@
           });
           setTimeout(() => {
             window.mobileApp.app.dialog.close();
-          }, 1500);
+            this.comment.map((value, index) => {
+              const target = ".comment-" + value.comment_id;
+              const text = value.users.user_name;
+              window.mobileApp.app.tooltip.destroy(target);
+              window.mobileApp.app.tooltip.create({
+                targetEl: target,
+                text: text,
+              });
+            });
+          }, 1000);
           runInAction(() => {
             this.loading = false;
           });
@@ -314,6 +323,10 @@
         }); // read comment
 
         meta.readComment();
+        setTimeout(() => {
+          if (meta.comment.length !== 0) {
+          }
+        }, 3000);
       }
     }}
   />
@@ -406,7 +419,7 @@
         </div>
         <m-list
           class={`flex flex-1 self-stretch flex-col space-y-2 items-start justify-start overflow-y-auto h-full`}
-          style={`padding-top: 10px`}
+          style={`padding-top: 10px; overflow-x:hidden;`}
         >
           {!meta.loading &&
             meta.comment.map((value, index) => {
@@ -457,9 +470,17 @@
                                 <div
                                   class={`flex self-stretch space-x-2 items-center justify-start w-full`}
                                 >
-                                  <div class="flex items-start justify-start">
+                                  <div
+                                    class={`flex items-start justify-start  ${
+                                      "comment-" + value.comment_id
+                                    }`}
+                                  >
                                     <div
                                       class={`text-base font-bold leading-normal name`}
+                                      style={`overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 148px;`}
                                     >
                                       {window.user.role !== "guest" &&
                                       value.users.user_name ===

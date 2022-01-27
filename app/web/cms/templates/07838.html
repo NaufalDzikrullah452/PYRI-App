@@ -113,7 +113,7 @@
               hi.setAttribute("src", "/fimgs/3135_52615.x1.svg");
 
               hi.onclick = () => {
-                meta.deleteChapter(chapter[ind].chapter_id);
+                this.deleteChapter(chapter[ind].chapter_id);
               };
 
               f.appendChild(gi);
@@ -206,7 +206,7 @@
                   hi.setAttribute("src", "/fimgs/3135_52615.x1.svg");
 
                   hi.onclick = () => {
-                    meta.deleteChapter(chapter[ind].chapter_id);
+                    this.deleteChapter(chapter[ind].chapter_id);
                   };
 
                   f.appendChild(gi);
@@ -295,7 +295,7 @@
               hi.setAttribute("src", "/fimgs/3135_52615.x1.svg");
 
               hi.onclick = () => {
-                meta.deleteChapter(chapter[ind].chapter_id);
+                this.deleteChapter(chapter[ind].chapter_id);
               };
 
               f.appendChild(gi);
@@ -1004,7 +1004,7 @@
                 {meta.showProfile && (
                   <div
                     class={`flex flex-col items-center justify-end px-4 absolute`}
-                    style={"top: 98px;"}
+                    style={"top: 98px;z-index:1;"}
                   >
                     <div
                       class={`flex self-stretch flex-col space-y-1 items-center justify-start p-4 bg-white shadow rounded`}

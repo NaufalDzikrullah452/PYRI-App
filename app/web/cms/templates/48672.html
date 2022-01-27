@@ -18,6 +18,7 @@
       pages: 1,
       sum_pages: 0,
       pages_array: [],
+      loading: true,
       loading_page: true,
       transaksi_sub_year: 0,
       sub_aktif_year: 0,
@@ -481,6 +482,9 @@
               }).map(Number.call, Number);
               meta.loading_page = false;
             });
+            setTimeout(() => {
+              meta.loading = false;
+            }, 3000);
           }
         });
         runInAction(() => {
@@ -996,7 +1000,7 @@
                       </div>
                     </div>
                   </div>
-                  <doughnutchart data={meta.data_total_user} />
+                  {<doughnutchart data={meta.data_total_user} />}
                 </div>
               </div>
               <div class="flex self-stretch items-start justify-start">
@@ -1370,13 +1374,46 @@
                                 >
                                   <div
                                     class={`text-base font-medium leading-normal`}
+                                    id={"name-" + value.payment_id}
+                                    style={`overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 120px;
+  display: inline-block;`}
+                                    onMouseEnter={() => {
+                                      document.getElementById(
+                                        "name-" + value.payment_id
+                                      ).style = "overflow: visible;";
+                                    }}
+                                    onMouseLeave={() => {
+                                      document.getElementById(
+                                        "name-" + value.payment_id
+                                      ).style = "overflow: hidden;";
+                                    }}
                                   >
-                                    {value.users.user_name || "-"}
+                                    {value.users.user_name || "Name"}
                                   </div>
                                   <div
                                     class={`text-sm leading-tight text-gray-600`}
+                                    id={"email-" + value.payment_id}
+                                    style={`overflow: hidden;
+  text-overflow: ellipsis;
+  width: 120px;
+  display: inline-block;`}
+                                    onMouseEnter={() => {
+                                      document.getElementById(
+                                        "email-" + value.payment_id
+                                      ).style =
+                                        "overflow: visible; word-break: break-word; width:100%;";
+                                    }}
+                                    onMouseLeave={() => {
+                                      document.getElementById(
+                                        "email-" + value.payment_id
+                                      ).style =
+                                        "overflow: hidden; white-space: nowrap;";
+                                    }}
                                   >
-                                    {value.users.user_name || "-"}
+                                    {value.users.user_email || "email"}
                                   </div>
                                 </td>
                               </td>

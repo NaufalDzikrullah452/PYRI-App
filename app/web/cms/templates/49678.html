@@ -439,7 +439,7 @@
         for (let ind = 0; ind < Math.ceil(categories.length / 2); ind++) {
           let a = document.createElement("div");
           a.className =
-            "flex self-stretch space-x-4 items-center justify-center";
+            "flex self-stretch space-x-2 items-center justify-center";
           a.id = "rc" + ind;
           document.getElementById("categories").appendChild(a);
         }
@@ -486,10 +486,12 @@
         document.getElementById("genres").innerHTML = "";
         document.getElementById("genres").className =
           "flex flex-1 self-stretch flex-col space-y-3 items-center justify-start px-6 mt-4 css-10rbni4 tab";
+        document.getElementById("genres").style =
+          "margin-top:25px; margin-bottom:25px";
 
         for (let ind = 0; ind < Math.ceil(genres.length / 3); ind++) {
           let a = document.createElement("div");
-          a.className = "flex self-stretch space-x-4 items-start justify-start";
+          a.className = "flex self-stretch space-x-2 items-start justify-start";
           a.id = "rc" + ind;
           document.getElementById("genres").appendChild(a);
         }
@@ -1001,7 +1003,7 @@
     }}
   />
   <div
-    class={`flex items-end justify-center bg-white`}
+    class={`flex self-stretch items-end justify-center bg-white`}
     style={"margin-bottom: 50px;"}
   >
     <div
@@ -1590,11 +1592,14 @@ display: -webkit-box;
                         <div class="text-xs leading-none text-center text-gray-500">
                           Show all Popular
                         </div>
-                        <div class="flex flex-col items-center justify-center bg-white border-2 rounded-full border-gray-300">
-                          <div class="flex items-start justify-start">
-                            <div />
-                          </div>
-                        </div>
+                        <ficon
+                          class={`flex flex-col items-center justify-center bg-white border-2 rounded-full border-gray-300`}
+                          ariaLabel="ChevronRight"
+                          iconName="ChevronRight"
+                          style={`border-radius: 50%;
+    padding: 1px 5px;
+    margin-top:10px;`}
+                        />
                       </div>
                     </div>
                   </div>
@@ -2177,9 +2182,9 @@ display: -webkit-box;
                 <div />
               </m-tab>
               <m-tab
-                class={`flex flex-1 self-stretch flex-col items-center justify-start px-6`}
+                class={`flex flex-1 self-stretch flex-col items-center justify-start px-4 w-full`}
                 id="genres"
-                style="margin-top:25px;"
+                style="margin-top:25px;margin-bottom:25px!important;"
               >
                 <div />
               </m-tab>
@@ -2573,7 +2578,7 @@ border-radius: 8%`}
         <m-tab
           class={`flex flex-1 self-stretch flex-col space-y-2.5 items-start justify-start px-6 pt-2`}
           id="profile"
-          style={`height: 1201px; min-height: 1201px; max-height: 1201px; padding-top:1rem`}
+          style={`padding-top:1rem; margin-bottom:20px`}
         >
           <div class="flex self-stretch space-x-2.5 items-center justify-start">
             <div

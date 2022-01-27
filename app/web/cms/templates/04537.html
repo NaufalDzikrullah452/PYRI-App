@@ -183,7 +183,7 @@
       });
     }}
   />
-  <div class={`w-full flex self-stretch items-start justify-start bg-white`}>
+  <div class={`w-full flex items-start justify-start bg-white`}>
     <div class={`w-full flex flex-1 self-stretch items-start justify-start`}>
       <div
         class={`flex self-stretch flex-col space-y-10 items-center justify-start pt-4 pb-9 bg-gray-900 fixed h-full overflow-y-auto`}
@@ -747,13 +747,45 @@
                             >
                               <div
                                 class={`text-base font-medium leading-normal`}
+                                id={"name-" + numList.user_id}
+                                style={`overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 120px;
+  display: inline-block;`}
+                                onMouseEnter={() => {
+                                  document.getElementById(
+                                    "name-" + numList.user_id
+                                  ).style = "overflow: visible;";
+                                }}
+                                onMouseLeave={() => {
+                                  document.getElementById(
+                                    "name-" + numList.user_id
+                                  ).style = "overflow: hidden;";
+                                }}
                               >
                                 {numList.user_name || "Name"}
                               </div>
                               <div
                                 class={`text-sm leading-tight text-gray-600`}
+                                id={"email-" + numList.user_id}
+                                style={`overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 120px;
+  display: inline-block;`}
+                                onMouseEnter={() => {
+                                  document.getElementById(
+                                    "email-" + numList.user_id
+                                  ).style = "overflow: visible;";
+                                }}
+                                onMouseLeave={() => {
+                                  document.getElementById(
+                                    "email-" + numList.user_id
+                                  ).style = "overflow: hidden;";
+                                }}
                               >
-                                {numList.user_email || "Email"}
+                                {numList.user_email || "email"}
                               </div>
                             </div>
                           </td>
