@@ -83,14 +83,17 @@
         class={`flex self-stretch flex-col items-start justify-center px-6 pt-9 pb-4 bg-white shadow`}
       >
         <div class="flex self-stretch space-x-4 items-center justify-start">
-          <div class={`flex self-stretch items-center justify-start`}>
+          <div
+            class={`flex self-stretch items-center justify-start`}
+            onClick={() => {
+              back();
+            }}
+            style={`z-index:1;`}
+          >
             <ficon
               aria-label="Back"
               iconName="Back"
               style="font-size:23px; color:black;"
-              onClick={() => {
-                back();
-              }}
               class={`flex self-stretch items-center justify-start`}
             />
           </div>
