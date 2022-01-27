@@ -36,7 +36,10 @@
       },
     }}
     run={async () => {
-      // const res = await api("/api/api-users", { users: "ReadMany", e: "RefreshAPI" });
+      if (!!window.capacitor.PrivacyScreen) {
+        window.capacitor.PrivacyScreen.disable();
+      } // const res = await api("/api/api-users", { users: "ReadMany", e: "RefreshAPI" });
+
       const tags = await api("/api/interests", {
         e: "index",
       });

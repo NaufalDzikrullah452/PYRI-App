@@ -14,7 +14,10 @@
       },
     }}
     run={async () => {
-      // read book
+      if (!!window.capacitor.PrivacyScreen) {
+        window.capacitor.PrivacyScreen.disable();
+      } // read book
+
       if (params.book_id !== undefined) {
         api("/api/books", {
           book: {

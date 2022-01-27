@@ -26,6 +26,10 @@
       },
     }}
     run={async () => {
+      if (!!window.capacitor.PrivacyScreen) {
+        window.capacitor.PrivacyScreen.disable();
+      }
+
       let books;
       let genre;
       let viewsCount;

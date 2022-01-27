@@ -73,6 +73,10 @@
       },
     }}
     run={async ({}) => {
+      if (!!window.capacitor.PrivacyScreen) {
+        window.capacitor.PrivacyScreen.disable();
+      }
+
       meta.readNewReleasesPage();
     }}
   />

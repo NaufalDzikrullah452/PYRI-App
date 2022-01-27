@@ -54,6 +54,8 @@
                 window.user = {
                   role: "guest",
                   user: res.users,
+                  roleAdmin: window.user.roleAdmin || "",
+                  admin: window.user.admin || "",
                 };
                 navigate("/m/verification-code");
               });
@@ -62,11 +64,13 @@
         }
       },
     }}
-    run={async () => {}}
+    run={async () => {
+      if (!!window.capacitor.PrivacyScreen) {
+        window.capacitor.PrivacyScreen.disable();
+      }
+    }}
   />
-  <div
-    class={`flex self-stretch flex-col items-start justify-start bg-white w-full h-full`}
-  >
+  <div class={`flex flex-col items-start justify-start bg-white w-full h-full`}>
     <div
       class="flex flex-1 self-stretch flex-col items-center justify-center"
       style="background-image: url('/fimgs/bg-f558037e16951308ea624af3363769bf064e6bba');background-size:100% 100%;background-repeat:no-repeat;"

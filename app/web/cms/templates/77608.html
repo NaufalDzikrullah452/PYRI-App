@@ -2,6 +2,10 @@
   <effect
     meta={{}}
     run={async () => {
+      if (!!window.capacitor.PrivacyScreen) {
+        window.capacitor.PrivacyScreen.disable();
+      }
+
       setTimeout(function () {
         navigate("/m/splash-screen-2");
       }, 3000);

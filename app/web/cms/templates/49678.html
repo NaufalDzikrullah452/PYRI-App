@@ -997,13 +997,17 @@
       },
     }}
     run={async ({}) => {
+      if (!!window.capacitor.PrivacyScreen) {
+        window.capacitor.PrivacyScreen.disable();
+      }
+
       meta.readHistory();
       meta.readBookmarks();
       meta.readHomeTabs();
     }}
   />
   <div
-    class={`flex self-stretch items-end justify-center bg-white`}
+    class={`flex items-end justify-center bg-white`}
     style={"margin-bottom: 50px;"}
   >
     <div

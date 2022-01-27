@@ -74,12 +74,12 @@
       },
     }}
     run={async () => {
-      console.log(window.user);
+      if (!!window.capacitor.PrivacyScreen) {
+        window.capacitor.PrivacyScreen.disable();
+      } // console.log(window.user)
     }}
   />
-  <div
-    class={`flex self-stretch flex-col items-start justify-start bg-white w-full h-full`}
-  >
+  <div class={`flex flex-col items-start justify-start bg-white w-full h-full`}>
     <div
       class="flex flex-1 self-stretch flex-col items-center justify-center"
       style="background-image: url('/fimgs/bg-313f9b74052a9292146393889c9f47b79637d981');background-size:100% 100%;background-repeat:no-repeat;"

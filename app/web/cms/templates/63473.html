@@ -64,9 +64,13 @@
         }
       },
     }}
-    run={async () => {}}
+    run={async () => {
+      if (!!window.capacitor.PrivacyScreen) {
+        window.capacitor.PrivacyScreen.disable();
+      }
+    }}
   />
-  <div class="flex self-stretch flex-col items-start justify-start bg-white">
+  <div class="flex flex-col items-start justify-start bg-white">
     <div
       class="flex flex-1 self-stretch flex-col items-center justify-end"
       style="height: 823px; min-height: 823px; max-height: 823px;background-image: url('/fimgs/bg-f558037e16951308ea624af3363769bf064e6bba');background-size:100% 100%;background-repeat:no-repeat;"

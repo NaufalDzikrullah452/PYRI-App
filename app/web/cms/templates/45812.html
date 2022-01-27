@@ -1,7 +1,14 @@
 <>
-  <effect meta={{}} run={async () => {}} />
+  <effect
+    meta={{}}
+    run={async () => {
+      if (!!window.capacitor.PrivacyScreen) {
+        window.capacitor.PrivacyScreen.disable();
+      }
+    }}
+  />
   <div
-    class={`flex self-stretch flex-col items-start justify-start bg-white`}
+    class={`flex flex-col items-start justify-start bg-white`}
     style={`height: 823px; min-height: 823px; max-height: 823px;`}
   >
     <div
